@@ -229,7 +229,7 @@
   const POLL_MS = 3000;
   const ANALYZE_MAX_S = 45;      // Cap "Reading The Market" at 45s max instead of 4.5 mins
   const OFFLINE_AFTER_S = 1800;  // GitHub cron runs every 5 min and can lag; 30 min without a heartbeat = offline
-  let status = null, sig = null, seenKey = null, showUntil = 0;
+  let status = null, sig = null, seenKey = null, showUntil = 0, lastSigTs = 0;
   const previewForce = new URLSearchParams(location.search).get('preview');
   const $ = id => document.getElementById(id);
   const SOUND_KEY = 'bb_sound';
@@ -299,26 +299,34 @@
   }
   async function poll() {
     const [s, l] = await Promise.all([getJSON('status.json'), getJSON('latest_signal.json')]);
-    if (s) status = s;
+    // GitHub's CDN can hand back an older copy of a file; never let state go backwards.
+    if (s && !(status && Date.parse(s.updated_at) < Date.parse(status.updated_at))) status = s;
     if (l) onSignal(l);
     render();
   }
   function onSignal(l) {
     const key = l.signal_at + '|' + (l.written_at || '');
     if (key === seenKey) return;
+    const ts = Date.parse(l.written_at || l.signal_at);
+    if (!isNaN(ts) && ts <= lastSigTs) return;           // older copy than what we already have: ignore
+    if (!isNaN(ts)) lastSigTs = ts;
     const first = seenKey === null;
     seenKey = key; sig = l;
+    // Only pop/chime for the scan that belongs to the current cycle; anything that arrives late updates quietly.
+    const stepMs = ((status && status.interval_minutes) || 5) * 60000;
+    const sigAge = Date.now() - Date.parse(l.signal_at);
+    const current = !isNaN(sigAge) && sigAge < Math.min(stepMs, 90000);
     if (first) {
-      const age = Date.now() - Date.parse(l.written_at || l.signal_at); // NaN -> no replay
+      const age = Date.now() - ts; // NaN -> no replay
       showUntil = age >= 0 && age < SIGNAL_VISIBLE_MS ? Date.now() + (SIGNAL_VISIBLE_MS - age) : 0;
     } else {
-      showUntil = Date.now() + SIGNAL_VISIBLE_MS;
+      showUntil = current ? Date.now() + SIGNAL_VISIBLE_MS : 0;
     }
     const n = l.trades ? l.trades.length : 0;
     $('trades').innerHTML = n ? tradesHTML(l) : '<div class="notrade">No trade</div>';
     $('trades').className = 'n' + n + (n > 1 ? ' multi' : '');
     $('sigQuiet').textContent = n && l.no_trade && l.no_trade.length ? 'No trade · ' + l.no_trade.join(', ') : '';
-    if (n && !first) {
+    if (n && !first && current) {
       popArmed = true;
       if (key !== lastChimeKey) { lastChimeKey = key; playChime(); }
     } else if (n && first && showUntil > Date.now()) {

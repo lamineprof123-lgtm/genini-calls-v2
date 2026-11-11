@@ -1,7 +1,7 @@
 {
-  "run_dir": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/113620.json",
-  "run_at_utc": "2026-11-11T07:36:20.087706+00:00",
-  "run_at_local": "2026-11-11T11:36:20.087706+04:00",
+  "run_dir": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/113820.json",
+  "run_at_utc": "2026-11-11T07:38:20.087429+00:00",
+  "run_at_local": "2026-11-11T11:38:20.087429+04:00",
   "dry_run": false,
   "model": "gemini-3.6-flash",
   "model_version": "gemini-3.6-flash",
@@ -433,7 +433,7 @@
   "data_errors": {},
   "parse_error": null,
   "ai_error": null,
-  "market_summary": "All five assets are currently trading in the LOW_LIQUIDITY_DEADZONE session where trading automation is blocked and high-noise chop is prevalent. While EURUSD and GBPUSD show volume expansion under VAL, CVD alignment and deadzone timing mandate a strict HOLD across the portfolio until higher-liquidity sessions commence.",
+  "market_summary": "All assets are currently in the LOW_LIQUIDITY_DEADZONE session where automated trade entries are restricted. EURUSD and GBPUSD show volume-backed breakdowns below Value Area Low, while US100 and XAUUSD test upper session resistance with muted or neutral order flow. Holding across all pairs until London/NY liquidity opens.",
   "signals": [
     {
       "symbol": "XAUUSD",
@@ -444,7 +444,7 @@
       "take_profit": null,
       "model_risk_reward": null,
       "rr_local": null,
-      "confidence": 0.2,
+      "confidence": 0.0,
       "model_risk_pct": null,
       "risk_pct": null,
       "risk_amount": 0.0,
@@ -452,10 +452,10 @@
       "position_lots": 0.0,
       "last_close": 4065.05,
       "atr": 6.217,
-      "rationale": "Price is above VAH (4051.45) and POC (4044.58), but currently testing upper ATR band (4065.16) and Session High (4066.79). CVD is NEUTRAL (+0.82) with negative slope (-0.03). RVOL is low (0.841) in LOW_LIQUIDITY_DEADZONE session. Lacks momentum confirmation to break session high; holding for pullback or session open.",
-      "trend_vs_vwap": "bullish short-term, close 4065.05 above VWAP 4046.81",
-      "volatility": "contracting",
-      "level_event": "none",
+      "rationale": "Price is above VAH (4051.45) and POC (4044.58). CVD is NEUTRAL (+0.82) with negative slope (-0.03). The market is in LOW_LIQUIDITY_DEADZONE session. Price is trading above VWAP (4046.81) and EMA50 (4049.18), approaching upper ATR band (4065.16) and Session High (4066.79) without RVOL confirmation (rvol 0.841). Lack of volume and unfavorable session timing advise holding.",
+      "trend_vs_vwap": "bullish bounce above VWAP",
+      "volatility": "normal",
+      "level_event": "rejection at Session High 4066.79",
       "downgraded": false,
       "reasons": [],
       "session": "LOW_LIQUIDITY_DEADZONE",
@@ -477,7 +477,7 @@
       "take_profit": null,
       "model_risk_reward": null,
       "rr_local": null,
-      "confidence": 0.3,
+      "confidence": 0.0,
       "model_risk_pct": null,
       "risk_pct": null,
       "risk_amount": 0.0,
@@ -485,10 +485,10 @@
       "position_lots": 0.0,
       "last_close": 1.11554,
       "atr": 0.000362,
-      "rationale": "Price broke below VAL (1.11597) with a high RVOL spike (2.223) and negative CVD (-2,924 BEARISH). However, session is LOW_LIQUIDITY_DEADZONE and price is sitting right above Session Low (1.11509) and Lower ATR Band (1.11531), risking a quick mean-reversion squeeze. Prefer HOLD until London/NY open.",
-      "trend_vs_vwap": "bearish, price 1.11554 below VWAP 1.11626 and EMA50 1.11660",
+      "rationale": "Price breaks below VAL (1.11597) and POC (1.11652) with an RVOL spike (2.223) and BEARISH CVD (-2924). However, session is LOW_LIQUIDITY_DEADZONE. Price is below VWAP (1.11626) and EMA50 (1.1166), sitting right near lower ATR band (1.11531) and Session Low (1.11509). Deadzone timing restricts systematic execution.",
+      "trend_vs_vwap": "bearish below VWAP",
       "volatility": "expanding",
-      "level_event": "rejection at S/R 1.11585",
+      "level_event": "break below VAL 1.11597",
       "downgraded": false,
       "reasons": [],
       "session": "LOW_LIQUIDITY_DEADZONE",
@@ -510,7 +510,7 @@
       "take_profit": null,
       "model_risk_reward": null,
       "rr_local": null,
-      "confidence": 0.25,
+      "confidence": 0.0,
       "model_risk_pct": null,
       "risk_pct": null,
       "risk_amount": 0.0,
@@ -518,10 +518,10 @@
       "position_lots": 0.0,
       "last_close": 1.33376,
       "atr": 0.000468,
-      "rationale": "Price is below VAL (1.33422) and POC (1.33467) with strong RVOL (2.796), but CVD is NEUTRAL (+480) showing lack of aggressive seller delta. Session is LOW_LIQUIDITY_DEADZONE and price is near Session Low (1.33317) and Lower ATR band (1.33334). Awaiting better alignment.",
-      "trend_vs_vwap": "bearish, price 1.33376 below VWAP 1.33452 and EMA50 1.33498",
+      "rationale": "Price is below VAL (1.33422) and POC (1.33467). CVD is NEUTRAL (+480) with a slightly negative slope. Current session is LOW_LIQUIDITY_DEADZONE. Price resides below VWAP (1.33452) and EMA50 (1.33498), pressing toward lower ATR band (1.33334) and Session Low (1.33317) with high RVOL (2.796), but off-hours timing recommends holding.",
+      "trend_vs_vwap": "bearish below VWAP",
       "volatility": "expanding",
-      "level_event": "none",
+      "level_event": "break below VAL 1.33422",
       "downgraded": false,
       "reasons": [],
       "session": "LOW_LIQUIDITY_DEADZONE",
@@ -543,7 +543,7 @@
       "take_profit": null,
       "model_risk_reward": null,
       "rr_local": null,
-      "confidence": 0.35,
+      "confidence": 0.0,
       "model_risk_pct": null,
       "risk_pct": null,
       "risk_amount": 0.0,
@@ -551,8 +551,8 @@
       "position_lots": 0.0,
       "last_close": 28124.54,
       "atr": 41.467,
-      "rationale": "Price is inside Value Area (VAL 27977.44..VAH 28184.15) and slightly above POC (28119.56). CVD is BULLISH (+5.85) but slope is negative (-0.65). Session is LOW_LIQUIDITY_DEADZONE with normal RVOL (0.976). Consolidation near VAH/Session High warrants a HOLD until US equity cash open.",
-      "trend_vs_vwap": "bullish, price 28124.54 above VWAP 28030.22 and EMA50 27971.10",
+      "rationale": "Price is inside Value Area (VAL 27977.44 .. VAH 28184.15) and above POC (28119.56). CVD is BULLISH (+5.85) but slope is fading (-0.65). Session is LOW_LIQUIDITY_DEADZONE. Price holds well above VWAP (28030.22) and EMA50 (27971.10), mid-channel near upper ATR band (28171.27) and Session High (28184.15). RVOL is low (0.976), typical for US100 off-hours. Await clearer session liquidity.",
+      "trend_vs_vwap": "bullish above VWAP",
       "volatility": "contracting",
       "level_event": "rejection near Session High 28184.15",
       "downgraded": false,
@@ -576,7 +576,7 @@
       "take_profit": null,
       "model_risk_reward": null,
       "rr_local": null,
-      "confidence": 0.2,
+      "confidence": 0.0,
       "model_risk_pct": null,
       "risk_pct": null,
       "risk_amount": 0.0,
@@ -584,10 +584,10 @@
       "position_lots": 0.0,
       "last_close": 73808.6,
       "atr": 223.51,
-      "rationale": "Price is above VAH (73780.85) and POC (73705.83), but CVD is BEARISH (-0.03) showing delta divergence on the push higher. RVOL is low (1.26) without yellow spikes, and session is LOW_LIQUIDITY_DEADZONE approaching Session High (73930.90). High risk of false breakout; holding.",
-      "trend_vs_vwap": "neutral/bullish, price 73808.60 above VWAP 73597.33",
+      "rationale": "Price moved above VAH (73780.85) and POC (73705.83). CVD is BEARISH (-0.03) diverging from price action. Session is LOW_LIQUIDITY_DEADZONE. Price trades above VWAP (73597.33) and EMA50 (73641.20) below upper ATR band (74078.47) and Session High (73930.90). RVOL is normal (1.26). CVD divergence and deadzone session favor HOLD.",
+      "trend_vs_vwap": "bullish above VWAP",
       "volatility": "contracting",
-      "level_event": "none",
+      "level_event": "testing VAH 73780.85 and Session High 73930.9",
       "downgraded": false,
       "reasons": [],
       "session": "LOW_LIQUIDITY_DEADZONE",
@@ -601,7 +601,7 @@
       "val": 73464.08
     }
   ],
-  "gemini_raw_text": "{\n  \"signals\": [\n    {\n      \"symbol\": \"XAUUSD\",\n      \"action\": \"HOLD\",\n      \"entry\": null,\n      \"stop_loss\": null,\n      \"take_profit\": null,\n      \"risk_reward\": null,\n      \"confidence\": 0.2,\n      \"risk_pct\": null,\n      \"trend_vs_vwap\": \"bullish short-term, close 4065.05 above VWAP 4046.81\",\n      \"volatility\": \"contracting\",\n      \"level_event\": \"none\",\n      \"rationale\": \"Price is above VAH (4051.45) and POC (4044.58), but currently testing upper ATR band (4065.16) and Session High (4066.79). CVD is NEUTRAL (+0.82) with negative slope (-0.03). RVOL is low (0.841) in LOW_LIQUIDITY_DEADZONE session. Lacks momentum confirmation to break session high; holding for pullback or session open.\"\n    },\n    {\n      \"symbol\": \"EURUSD\",\n      \"action\": \"HOLD\",\n      \"entry\": null,\n      \"stop_loss\": null,\n      \"take_profit\": null,\n      \"risk_reward\": null,\n      \"confidence\": 0.3,\n      \"risk_pct\": null,\n      \"trend_vs_vwap\": \"bearish, price 1.11554 below VWAP 1.11626 and EMA50 1.11660\",\n      \"volatility\": \"expanding\",\n      \"level_event\": \"rejection at S/R 1.11585\",\n      \"rationale\": \"Price broke below VAL (1.11597) with a high RVOL spike (2.223) and negative CVD (-2,924 BEARISH). However, session is LOW_LIQUIDITY_DEADZONE and price is sitting right above Session Low (1.11509) and Lower ATR Band (1.11531), risking a quick mean-reversion squeeze. Prefer HOLD until London/NY open.\"\n    },\n    {\n      \"symbol\": \"GBPUSD\",\n      \"action\": \"HOLD\",\n      \"entry\": null,\n      \"stop_loss\": null,\n      \"take_profit\": null,\n      \"risk_reward\": null,\n      \"confidence\": 0.25,\n      \"risk_pct\": null,\n      \"trend_vs_vwap\": \"bearish, price 1.33376 below VWAP 1.33452 and EMA50 1.33498\",\n      \"volatility\": \"expanding\",\n      \"level_event\": \"none\",\n      \"rationale\": \"Price is below VAL (1.33422) and POC (1.33467) with strong RVOL (2.796), but CVD is NEUTRAL (+480) showing lack of aggressive seller delta. Session is LOW_LIQUIDITY_DEADZONE and price is near Session Low (1.33317) and Lower ATR band (1.33334). Awaiting better alignment.\"\n    },\n    {\n      \"symbol\": \"US100\",\n      \"action\": \"HOLD\",\n      \"entry\": null,\n      \"stop_loss\": null,\n      \"take_profit\": null,\n      \"risk_reward\": null,\n      \"confidence\": 0.35,\n      \"risk_pct\": null,\n      \"trend_vs_vwap\": \"bullish, price 28124.54 above VWAP 28030.22 and EMA50 27971.10\",\n      \"volatility\": \"contracting\",\n      \"level_event\": \"rejection near Session High 28184.15\",\n      \"rationale\": \"Price is inside Value Area (VAL 27977.44..VAH 28184.15) and slightly above POC (28119.56). CVD is BULLISH (+5.85) but slope is negative (-0.65). Session is LOW_LIQUIDITY_DEADZONE with normal RVOL (0.976). Consolidation near VAH/Session High warrants a HOLD until US equity cash open.\"\n    },\n    {\n      \"symbol\": \"BTCUSD\",\n      \"action\": \"HOLD\",\n      \"entry\": null,\n      \"stop_loss\": null,\n      \"take_profit\": null,\n      \"risk_reward\": null,\n      \"confidence\": 0.2,\n      \"risk_pct\": null,\n      \"trend_vs_vwap\": \"neutral/bullish, price 73808.60 above VWAP 73597.33\",\n      \"volatility\": \"contracting\",\n      \"level_event\": \"none\",\n      \"rationale\": \"Price is above VAH (73780.85) and POC (73705.83), but CVD is BEARISH (-0.03) showing delta divergence on the push higher. RVOL is low (1.26) without yellow spikes, and session is LOW_LIQUIDITY_DEADZONE approaching Session High (73930.90). High risk of false breakout; holding.\"\n    }\n  ],\n  \"market_summary\": \"All five assets are currently trading in the LOW_LIQUIDITY_DEADZONE session where trading automation is blocked and high-noise chop is prevalent. While EURUSD and GBPUSD show volume expansion under VAL, CVD alignment and deadzone timing mandate a strict HOLD across the portfolio until higher-liquidity sessions commence.\"\n}",
+  "gemini_raw_text": "{\n  \"signals\": [\n    {\n      \"symbol\": \"XAUUSD\",\n      \"action\": \"HOLD\",\n      \"entry\": null,\n      \"stop_loss\": null,\n      \"take_profit\": null,\n      \"risk_reward\": null,\n      \"confidence\": 0.0,\n      \"risk_pct\": null,\n      \"trend_vs_vwap\": \"bullish bounce above VWAP\",\n      \"volatility\": \"normal\",\n      \"level_event\": \"rejection at Session High 4066.79\",\n      \"rationale\": \"Price is above VAH (4051.45) and POC (4044.58). CVD is NEUTRAL (+0.82) with negative slope (-0.03). The market is in LOW_LIQUIDITY_DEADZONE session. Price is trading above VWAP (4046.81) and EMA50 (4049.18), approaching upper ATR band (4065.16) and Session High (4066.79) without RVOL confirmation (rvol 0.841). Lack of volume and unfavorable session timing advise holding.\"\n    },\n    {\n      \"symbol\": \"EURUSD\",\n      \"action\": \"HOLD\",\n      \"entry\": null,\n      \"stop_loss\": null,\n      \"take_profit\": null,\n      \"risk_reward\": null,\n      \"confidence\": 0.0,\n      \"risk_pct\": null,\n      \"trend_vs_vwap\": \"bearish below VWAP\",\n      \"volatility\": \"expanding\",\n      \"level_event\": \"break below VAL 1.11597\",\n      \"rationale\": \"Price breaks below VAL (1.11597) and POC (1.11652) with an RVOL spike (2.223) and BEARISH CVD (-2924). However, session is LOW_LIQUIDITY_DEADZONE. Price is below VWAP (1.11626) and EMA50 (1.1166), sitting right near lower ATR band (1.11531) and Session Low (1.11509). Deadzone timing restricts systematic execution.\"\n    },\n    {\n      \"symbol\": \"GBPUSD\",\n      \"action\": \"HOLD\",\n      \"entry\": null,\n      \"stop_loss\": null,\n      \"take_profit\": null,\n      \"risk_reward\": null,\n      \"confidence\": 0.0,\n      \"risk_pct\": null,\n      \"trend_vs_vwap\": \"bearish below VWAP\",\n      \"volatility\": \"expanding\",\n      \"level_event\": \"break below VAL 1.33422\",\n      \"rationale\": \"Price is below VAL (1.33422) and POC (1.33467). CVD is NEUTRAL (+480) with a slightly negative slope. Current session is LOW_LIQUIDITY_DEADZONE. Price resides below VWAP (1.33452) and EMA50 (1.33498), pressing toward lower ATR band (1.33334) and Session Low (1.33317) with high RVOL (2.796), but off-hours timing recommends holding.\"\n    },\n    {\n      \"symbol\": \"US100\",\n      \"action\": \"HOLD\",\n      \"entry\": null,\n      \"stop_loss\": null,\n      \"take_profit\": null,\n      \"risk_reward\": null,\n      \"confidence\": 0.0,\n      \"risk_pct\": null,\n      \"trend_vs_vwap\": \"bullish above VWAP\",\n      \"volatility\": \"contracting\",\n      \"level_event\": \"rejection near Session High 28184.15\",\n      \"rationale\": \"Price is inside Value Area (VAL 27977.44 .. VAH 28184.15) and above POC (28119.56). CVD is BULLISH (+5.85) but slope is fading (-0.65). Session is LOW_LIQUIDITY_DEADZONE. Price holds well above VWAP (28030.22) and EMA50 (27971.10), mid-channel near upper ATR band (28171.27) and Session High (28184.15). RVOL is low (0.976), typical for US100 off-hours. Await clearer session liquidity.\"\n    },\n    {\n      \"symbol\": \"BTCUSD\",\n      \"action\": \"HOLD\",\n      \"entry\": null,\n      \"stop_loss\": null,\n      \"take_profit\": null,\n      \"risk_reward\": null,\n      \"confidence\": 0.0,\n      \"risk_pct\": null,\n      \"trend_vs_vwap\": \"bullish above VWAP\",\n      \"volatility\": \"contracting\",\n      \"level_event\": \"testing VAH 73780.85 and Session High 73930.9\",\n      \"rationale\": \"Price moved above VAH (73780.85) and POC (73705.83). CVD is BEARISH (-0.03) diverging from price action. Session is LOW_LIQUIDITY_DEADZONE. Price trades above VWAP (73597.33) and EMA50 (73641.20) below upper ATR band (74078.47) and Session High (73930.90). RVOL is normal (1.26). CVD divergence and deadzone session favor HOLD.\"\n    }\n  ],\n  \"market_summary\": \"All assets are currently in the LOW_LIQUIDITY_DEADZONE session where automated trade entries are restricted. EURUSD and GBPUSD show volume-backed breakdowns below Value Area Low, while US100 and XAUUSD test upper session resistance with muted or neutral order flow. Holding across all pairs until London/NY liquidity opens.\"\n}",
   "gemini_usage": {
     "cache_tokens_details": [
       {
@@ -614,18 +614,18 @@
       }
     ],
     "cached_content_token_count": 10029,
-    "candidates_token_count": 1342,
+    "candidates_token_count": 1421,
     "prompt_token_count": 11986,
     "prompt_tokens_details": [
       {
-        "modality": "TEXT",
-        "token_count": 6486
-      },
-      {
         "modality": "IMAGE",
         "token_count": 5500
+      },
+      {
+        "modality": "TEXT",
+        "token_count": 6486
       }
     ],
-    "total_token_count": 13328
+    "total_token_count": 13407
   }
 }

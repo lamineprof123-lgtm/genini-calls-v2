@@ -1,7 +1,7 @@
 {
   "version": 1,
   "created_at": "2026-11-09T13:59:39.073020+00:00",
-  "last_processed": "2026-11-11T17:09:00+00:00",
+  "last_processed": "2026-11-11T17:11:00+00:00",
   "account": {
     "no": 1,
     "phase": "eval",
@@ -23,121 +23,6 @@
   },
   "positions": [],
   "pending": [
-    {
-      "symbol": "US100",
-      "side": 1,
-      "created": "2026-11-11T17:08:31.907635+00:00",
-      "fill_after": "2026-11-11T17:09:00+00:00",
-      "expires": "2026-11-11T17:19:00+00:00",
-      "atr": 69.98,
-      "scalp": {
-        "action": "BUY",
-        "side": 1,
-        "entry": 28480.8,
-        "stop_loss": 28452.71,
-        "take_profit": 28485.8,
-        "sdist": 28.088999999999942,
-        "tdist": 5.0,
-        "stop_source": "structure",
-        "target_source": "fixed",
-        "rr": 0.178,
-        "structure_stop": 28452.711,
-        "atr_stop": 28424.816,
-        "fixed_tp": 28485.8,
-        "structure_tp": 28513.290399999998,
-        "structure_label": "Session High",
-        "candle": {
-          "high": 28514.69,
-          "low": 28456.21
-        }
-      },
-      "session": "NEW_YORK_SESSION",
-      "telemetry": {
-        "symbol": "US100",
-        "session": "NEW_YORK_SESSION",
-        "last_close": 28514.06,
-        "atr": 69.98,
-        "vwap": 28163.5,
-        "ema20": 28329.52,
-        "ema50": 28221.65,
-        "price_vs_vwap": {
-          "side": "above",
-          "dist_atr": 5.0094
-        },
-        "price_vs_ema50": {
-          "side": "above",
-          "dist_atr": 4.1785
-        },
-        "vwap_aligned_with_side": true,
-        "ema50_aligned_with_side": true,
-        "poc": 28263.5,
-        "vah": 28316.78,
-        "val": 28057.98,
-        "price_vs_value_area": "above_vah",
-        "dist_to_poc_atr": 3.5805,
-        "cvd": 13.48,
-        "cvd_label": "BULLISH",
-        "cvd_slope": 2.69,
-        "cvd_agrees_with_side": true,
-        "rvol": 0.853,
-        "rvol_spike": false,
-        "rvol_bars_since_spike": 9,
-        "atr_band_z": 2.637,
-        "atr_upper": 28469.48,
-        "atr_lower": 28189.56,
-        "nearest_sr": {
-          "above": {
-            "price": 28514.69,
-            "label": "Session High",
-            "dist_atr": 0.009
-          },
-          "below": {
-            "price": 28083.64,
-            "label": "S/R",
-            "dist_atr": 6.1506
-          }
-        },
-        "gemini": {
-          "action": "BUY",
-          "confidence": 0.85,
-          "confidence_band": ">=0.8",
-          "rationale": "Price is well above VAH (28316.78) and POC (28263.50), indicating strong trend expansion. CVD +13.48 is BULLISH with positive slope (+2.69), fully supporting price upside. NEW_YORK_SESSION prime trading window. Trend is strongly bullish, cleanly above rising VWAP (28163.50) and EMA50 (28221.65). Price broke above the upper ATR band (28469.48). US100 CFD volume rarely triggers yellow RVOL>2.0, but momentum is clear and steady. The forming M15 bar pulled back slightly from Session High (28514.69) to 28480.80, offering a high-probability continuation scalp.",
-          "model": "gemini-3.6-flash",
-          "model_action": "BUY"
-        },
-        "scalp": {
-          "stop_basis": "structure",
-          "target_basis": "fixed",
-          "tdist": 5.0,
-          "sdist": 28.088999999999942,
-          "structure_label": "Session High"
-        },
-        "planned": {
-          "tdist": 5.0,
-          "sdist": 28.088999999999942,
-          "qty": null,
-          "contract": null,
-          "target_usd_net": null,
-          "risk_usd": null
-        },
-        "run_at_utc": "2026-11-11T17:08:20.020876+00:00",
-        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/210820.json/US100.png"
-      },
-      "gemini": {
-        "action": "BUY",
-        "entry": 28480.8,
-        "stop_loss": 28452.71,
-        "take_profit": 28485.8,
-        "confidence": 0.85,
-        "rr": 0.178,
-        "shown_on_site": true,
-        "basis": "site signal",
-        "run_at_utc": "2026-11-11T17:08:20.020876+00:00",
-        "session": "NEW_YORK_SESSION",
-        "rationale": "Price is well above VAH (28316.78) and POC (28263.50), indicating strong trend expansion. CVD +13.48 is BULLISH with positive slope (+2.69), fully supporting price upside. NEW_YORK_SESSION prime trading window. Trend is strongly bullish, cleanly above rising VWAP (28163.50) and EMA50 (28221.65). Price broke above the upper ATR band (28469.48). US100 CFD volume rarely triggers yellow RVOL>2.0, but momentum is clear and steady. The forming M15 bar pulled back slightly from Session High (28514.69) to 28480.80, offering a high-probability continuation scalp.",
-        "model": "gemini-3.6-flash"
-      }
-    },
     {
       "symbol": "XAUUSD",
       "side": -1,
@@ -252,6 +137,121 @@
         "rationale": "Price is below VAL (4031.19) and below POC (4044.20). CVD -2.42 (BEARISH) agrees with down trend during NEW_YORK_SESSION. Price trades below VWAP (4038.70) and EMA50 (4033.52), expanding below lower ATR band (4005.96) and testing Session Low (3998.34). RVOL spike occurred recently on initial impulse down. High momentum break allows continuation scalp.",
         "model": "gemini-3.6-flash"
       }
+    },
+    {
+      "symbol": "US100",
+      "side": 1,
+      "created": "2026-11-11T17:12:31.868366+00:00",
+      "fill_after": "2026-11-11T17:13:00+00:00",
+      "expires": "2026-11-11T17:23:00+00:00",
+      "atr": 69.98,
+      "scalp": {
+        "action": "BUY",
+        "side": 1,
+        "entry": 28479.07,
+        "stop_loss": 28452.71,
+        "take_profit": 28484.07,
+        "sdist": 26.35900000000038,
+        "tdist": 5.0,
+        "stop_source": "structure",
+        "target_source": "fixed",
+        "rr": 0.19,
+        "structure_stop": 28452.711,
+        "atr_stop": 28423.086,
+        "fixed_tp": 28484.07,
+        "structure_tp": 28513.290399999998,
+        "structure_label": "Session High",
+        "candle": {
+          "high": 28514.69,
+          "low": 28456.21
+        }
+      },
+      "session": "NEW_YORK_SESSION",
+      "telemetry": {
+        "symbol": "US100",
+        "session": "NEW_YORK_SESSION",
+        "last_close": 28514.06,
+        "atr": 69.98,
+        "vwap": 28163.5,
+        "ema20": 28329.52,
+        "ema50": 28221.65,
+        "price_vs_vwap": {
+          "side": "above",
+          "dist_atr": 5.0094
+        },
+        "price_vs_ema50": {
+          "side": "above",
+          "dist_atr": 4.1785
+        },
+        "vwap_aligned_with_side": true,
+        "ema50_aligned_with_side": true,
+        "poc": 28263.5,
+        "vah": 28316.78,
+        "val": 28057.98,
+        "price_vs_value_area": "above_vah",
+        "dist_to_poc_atr": 3.5805,
+        "cvd": 13.48,
+        "cvd_label": "BULLISH",
+        "cvd_slope": 2.69,
+        "cvd_agrees_with_side": true,
+        "rvol": 0.853,
+        "rvol_spike": false,
+        "rvol_bars_since_spike": 9,
+        "atr_band_z": 2.637,
+        "atr_upper": 28469.48,
+        "atr_lower": 28189.56,
+        "nearest_sr": {
+          "above": {
+            "price": 28514.69,
+            "label": "Session High",
+            "dist_atr": 0.009
+          },
+          "below": {
+            "price": 28083.64,
+            "label": "S/R",
+            "dist_atr": 6.1506
+          }
+        },
+        "gemini": {
+          "action": "BUY",
+          "confidence": 0.85,
+          "confidence_band": ">=0.8",
+          "rationale": "Price is trading well above VAH (28316.78) and above POC (28263.50). CVD is strongly BULLISH (+13.48) with positive slope (+2.69) during NEW_YORK_SESSION. Price is clearly structured above rising VWAP (28163.50) and EMA50 (28221.65), pushing above upper ATR band (28469.48). US100 CFD index volume rarely prints RVOL > 2.0, but structural breakout above previous resistance levels to new session highs confirms institutional trend continuation. Live price at 28479.07 offers momentum buy setup.",
+          "model": "gemini-3.6-flash",
+          "model_action": "BUY"
+        },
+        "scalp": {
+          "stop_basis": "structure",
+          "target_basis": "fixed",
+          "tdist": 5.0,
+          "sdist": 26.35900000000038,
+          "structure_label": "Session High"
+        },
+        "planned": {
+          "tdist": 5.0,
+          "sdist": 26.35900000000038,
+          "qty": null,
+          "contract": null,
+          "target_usd_net": null,
+          "risk_usd": null
+        },
+        "run_at_utc": "2026-11-11T17:12:20.072876+00:00",
+        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/211220.json/US100.png"
+      },
+      "gemini": {
+        "action": "BUY",
+        "entry": 28479.07,
+        "stop_loss": 28452.71,
+        "take_profit": 28484.07,
+        "confidence": 0.85,
+        "rr": 0.19,
+        "shown_on_site": true,
+        "basis": "site signal",
+        "run_at_utc": "2026-11-11T17:12:20.072876+00:00",
+        "session": "NEW_YORK_SESSION",
+        "rationale": "Price is trading well above VAH (28316.78) and above POC (28263.50). CVD is strongly BULLISH (+13.48) with positive slope (+2.69) during NEW_YORK_SESSION. Price is clearly structured above rising VWAP (28163.50) and EMA50 (28221.65), pushing above upper ATR band (28469.48). US100 CFD index volume rarely prints RVOL > 2.0, but structural breakout above previous resistance levels to new session highs confirms institutional trend continuation. Live price at 28479.07 offers momentum buy setup.",
+        "model": "gemini-3.6-flash"
+      }
     }
   ],
   "next_pos_id": 8,
@@ -264,10 +264,10 @@
     "traded": true
   },
   "last_price": {
-    "US100": 28477.41,
+    "US100": 28481.965,
     "GBPUSD": 1.32812,
     "EURUSD": 1.10933,
-    "XAUUSD": 4000.015
+    "XAUUSD": 3999.055
   },
   "history": [],
   "ledger": {
@@ -296,7 +296,7 @@
     "gross_loss": -2169.1,
     "commissions": 219.6,
     "net_trade_pnl": -1411.85,
-    "skipped_signals": 396,
-    "accepted_signals": 189
+    "skipped_signals": 397,
+    "accepted_signals": 190
   }
 }

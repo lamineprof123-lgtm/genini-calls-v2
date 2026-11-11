@@ -313,3 +313,49 @@ US100  = { contracts = ["NQ"],        m1 = "usatechidxusd" }
 XAUUSD = { contracts = ["GC"],        m1 = "xauusd" }
 EURUSD = { contracts = ["6E"],        m1 = "eurusd" }
 GBPUSD = { contracts = ["6B"],        m1 = "gbpusd" }
+
+# ---------------------------------------------------------------------------------------------------------------
+# Gemini EXIT MANAGER (signals/exit_manager.py). PAPER ONLY. Two extra paper books copy every Lucid sim entry
+# (same contract / qty / entry / hard stop) and let Gemini manage the exit on the SAME M15 chart as the entry
+# model (+ ENTRY line). One Gemini call per open position per check, shared by both books:
+#   book A "1-strike": first CLOSE exits.
+#   book B "2-strike": while MFE < runner_mfe_atr, two consecutive CLOSEs exit (~36 s); once MFE >= runner_mfe_atr,
+#                      a single CLOSE exits.
+# Both books keep: server hard stop (never widened), $1,500 risk cap (inherited sizing), 16:45 ET flat, 3.5% daily
+# circuit breaker per book, max-hold safety. They DROP the fixed take-profit, the 2-bar time cut and the
+# deterministic 15m VWAP/EMA50 cross exits (Gemini owns the exit). The existing Lucid sim is unchanged (baseline).
+[exit_manager]
+enabled = true
+check_seconds = 18              # exit check cadence while any book position is open (runs beside the 2-min loop)
+runner_mfe_atr = 0.8            # MFE (in M15 ATR14 at entry) where rule 2 "milk the expansion" starts / 2-strike off
+wall_reject_atr = 0.10          # "within 0.10 ATR of the target wall"
+giveback_pct = 35.0             # profit-protection giveback threshold (after MFE >= giveback_min_mfe_atr)
+giveback_min_mfe_atr = 1.0
+early_minutes = 12              # "underwater in the first N minutes -> hold on wicks/rejections"
+max_hold_minutes = 90           # safety: force exit after N minutes (no fixed TP / time cut in these books)
+max_daily_loss_pct = 3.5        # per-book circuit breaker vs book start-of-day balance (Dubai day)
+start_balance = 100000.0
+gemini_timeout_seconds = 12     # per exit call; on error/timeout the decision is HOLD (logged)
+max_feed_age_minutes = 20       # ignore Lucid entries older than this when first seen (e.g. after a deploy)
+books = ["1-strike", "2-strike"]
+
+# ---------------------------------------------------------------------------------------------------------------
+# FirmTape options-gamma (GEX) levels + 1-second NQ price (signals/firmtape.py). Key: env FIRMTAPE_API_KEY only.
+# US100 -> NQ (additive basis to the Dukascopy CFD scale), XAUUSD -> GLD (ratio scale); FX / BTC: gex = null.
+# Gate: NY RTH 09:30-16:00 ET, session == "open", no error, age_s <= max_age_s; else gex = null, no chart lines.
+# FirmTape returns errors as HTTP 200 (top-level "error" or levels[i].error). Units differ per symbol: only the
+# SIGN of net_gamma is used. Raw FirmTape prices never reach the chart or Gemini (always basis/ratio adjusted).
+[firmtape]
+enabled = true
+url = "https://firmtape.com/api/v1/levels"
+timeout_seconds = 4
+symbols = { US100 = "NQ", XAUUSD = "GLD" }
+rth_et = ["09:30", "16:00"]
+max_age_s = 300                 # levels older than this -> gex = null
+min_cache_seconds = 3           # one request shared by the entry cycle and the 18 s exit checks
+max_cache_seconds = 60          # cache TTL = next_update_s clamped to [min, max]
+error_cache_seconds = 10        # back-off after a failed request
+walls_per_side = 2
+chart_margin_pct = 15           # draw GEX lines only within the visible candle range +/- this % of its height
+# US100 live price (NQ + rolling basis) is set by [live_price.firmtape] / signals/firmtape_live.py; GEX reuses its
+# basis and its FirmTape response (one shared request per cycle).

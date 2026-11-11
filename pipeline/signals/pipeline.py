@@ -16,6 +16,7 @@ from .validator import parse_raw, validate_batch
 from .scalp_levels import apply_server_levels
 from .lucid import lucid_step
 from .live_price import enrich_live_prices
+from .firmtape import enrich_firmtape
 
 log = logging.getLogger("signals")
 
@@ -100,6 +101,8 @@ async def run_once(cfg: dict, dry_run: bool = False, force: bool = True, model: 
     t_live0 = time.monotonic()
     live_info = await enrich_live_prices(payloads, cfg, now)
     log.info("timing live_m1=%.1fms (fetch_total was %.1fms)", live_info.get("ms"), fetch_ms)
+    # 1c. FirmTape GEX (US100/XAUUSD, NY RTH only) + US100 live price from NQ + rolling basis. Never raises.
+    await enrich_firmtape(payloads, cfg, now)
     price_stamp = {p["symbol"]: {"last_price": p["context"].get("live_price", p["context"].get("last_close")),
                                  "last_price_ts_utc": p["context"].get("live_price_ts_utc",
                                                                        p["context"].get("last_closed_bar_utc")),

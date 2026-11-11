@@ -49,6 +49,38 @@ class BandFill {
     } }) }];
   }
 }
+// FirmTape GEX lines (Call Wall #1 / Put Wall #1 dash-dot, Gamma Flip dotted). Lightweight Charts price lines
+// have no dash-dot style, so the line is drawn by this primitive; a lineVisible:false price line gives the label.
+class GexLines {
+  constructor() { this._lines = []; this._pts = []; }
+  attached({ chart, series, requestUpdate }) { this._chart = chart; this._series = series; this._req = requestUpdate; }
+  detached() {}
+  setLines(lines) { this._lines = lines || []; if (this._req) this._req(); }
+  updateAllViews() {
+    const s = this._series;
+    this._pts = this._lines.map(l => ({ ...l, y: s ? s.priceToCoordinate(l.price) : null })).filter(l => l.y !== null);
+  }
+  autoscaleInfo() {
+    if (!this._lines.length) return null;
+    const ps = this._lines.map(l => l.price);
+    return { priceRange: { minValue: Math.min(...ps), maxValue: Math.max(...ps) } };
+  }
+  paneViews() {
+    const self = this;
+    return [{ zOrder: () => 'top', renderer: () => ({ draw(target) {
+      target.useBitmapCoordinateSpace(({ context: ctx, bitmapSize, horizontalPixelRatio: hr, verticalPixelRatio: vr }) => {
+        self._pts.forEach(l => {
+          ctx.save();
+          ctx.strokeStyle = l.color; ctx.lineWidth = (l.width || 1) * vr;
+          ctx.setLineDash(l.style === 'dotted' ? [2 * hr, 3 * hr] : [9 * hr, 4 * hr, 2 * hr, 4 * hr]);
+          const y = Math.round(l.y * vr) + 0.5;
+          ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(bitmapSize.width, y); ctx.stroke();
+          ctx.restore();
+        });
+      });
+    } }) }];
+  }
+}
 function rgba(hex, a) { const n = parseInt(hex.slice(1), 16); return `rgba(${n >> 16},${(n >> 8) & 255},${n & 255},${a})`; }
 
 window.__rendered = false;
@@ -77,7 +109,9 @@ function _applyMeta(p) {
   // Deliberate 2-line header so CVD/SESSION never split mid-token
   const line1 = `src ${p.source}:${p.ticker}  |  close ${last.close.toFixed(prec)}  |  VWAP ${(c.vwap ?? NaN).toFixed(prec)} (${c.vwap_anchor})`
     + `  |  EMA50 ${(c.ema50 ?? NaN).toFixed(prec)}  |  ATR14 ${(c.atr ?? NaN).toFixed(prec)}`
-    + `  |  POC ${(c.poc ?? NaN).toFixed(prec)}  |  VAH ${(c.vah ?? NaN).toFixed(prec)}  |  VAL ${(c.val ?? NaN).toFixed(prec)}`;
+    + `  |  POC ${(c.poc ?? NaN).toFixed(prec)}  |  VAH ${(c.vah ?? NaN).toFixed(prec)}  |  VAL ${(c.val ?? NaN).toFixed(prec)}`
+    + (c.gex ? `  |  GEX: ${String(c.gex.regime || '').split('_')[0]}`
+        + (typeof c.gex.gamma_flip === 'number' ? ` (Flip ${Math.round(c.gex.gamma_flip)})` : '') : '');
   const live = (typeof c.live_price === 'number')
     ? `live ${Number(c.live_price).toFixed(prec)}${c.live_price_stale ? ' STALE' : ''}`
       + (c.minutes_into_bar != null ? `  +${Number(c.minutes_into_bar).toFixed(1)}m` : '')
@@ -85,7 +119,7 @@ function _applyMeta(p) {
   const line2 = [cvdTxt, sessTxt, live,
     `last bar ${new Date(last.time * 1000).toISOString().slice(0,16).replace('T',' ')} UTC`]
     .filter(Boolean).join('  |  ');
-  document.getElementById('meta').textContent = line1 + '\n' + line2;
+  document.getElementById('meta').textContent = line1 + '\n' + line2 + (p.position_header ? '\n' + p.position_header : '');
   const sw = (col, style, h) => `<span class="sw" style="border-top:${h}px ${style} ${col}"></span>`;
   document.getElementById('legend').innerHTML =
     sw(V.color || '#FF9800', 'solid', 2) + 'VWAP'
@@ -96,7 +130,10 @@ function _applyMeta(p) {
     + sw(R.resistance_color, 'dashed', 2) + 'Resistance'
     + sw(R.support_color, 'dashed', 2) + 'Support'
     + sw('#FACC15', 'solid', 3) + 'RVOL&gt;2'
-    + (p.forming_candle ? sw('#7AF7FF', 'solid', 3) + 'Forming' : '');
+    + (p.forming_candle ? sw('#7AF7FF', 'solid', 3) + 'Forming' : '')
+    + (p.entry_line ? sw(p.entry_line.color || '#FFFFFF', 'solid', 2) + 'ENTRY' : '')
+    + ((p.gex_lines || []).length ? sw('#FFB300', 'dashed', 2) + 'Call Wall' + sw('#00BFA5', 'dashed', 2) + 'Put Wall'
+       + sw('#E5E7EB', 'dotted', 1) + 'Flip' : '');
 }
 
 function _setAllData(st, p) {
@@ -134,6 +171,19 @@ function _setAllData(st, p) {
       lineWidth: Math.round(R.line_width), lineStyle: ls, axisLabelVisible: true, title: lv.label
     }));
   });
+  if (st.gex) st.gex.setLines(p.gex_lines || []);
+  (p.gex_lines || []).forEach(g => {
+    st.priceLines.push(st.cs.createPriceLine({
+      price: g.price, color: g.color, lineWidth: 1, lineVisible: false, axisLabelVisible: true, title: g.title
+    }));
+  });
+  // Exit manager: bright ENTRY line for the open position (absent on entry-model charts)
+  if (p.entry_line && typeof p.entry_line.price === 'number') {
+    st.priceLines.push(st.cs.createPriceLine({
+      price: p.entry_line.price, color: p.entry_line.color || '#FFFFFF', lineWidth: 2,
+      lineStyle: LightweightCharts.LineStyle.Solid, axisLabelVisible: true, title: p.entry_line.title || 'ENTRY'
+    }));
+  }
   const n = p.candles.length, vis = Math.max(80, Math.min(120, p.visible || 100));
   const extra = p.forming_candle ? 1 : 0;
   st.chart.timeScale().setVisibleLogicalRange({ from: n - vis - 0.5, to: n - 0.5 + extra });
@@ -197,7 +247,9 @@ window.renderChart = function (p) {
     borderUpColor: '#7AF7FF', borderDownColor: '#FF7AA8',
     wickUpColor: '#7AF7FF', wickDownColor: '#FF7AA8', priceFormat: fmt,
     lastValueVisible: false, priceLineVisible: false });
-  window.__chartState = { chart, vol, base, up, lo, fill, e50, vw, cs, form, priceLines: [], digits: p.digits };
+  const gex = new GexLines();
+  cs.attachPrimitive(gex);
+  window.__chartState = { chart, vol, base, up, lo, fill, e50, vw, cs, form, gex, priceLines: [], digits: p.digits };
   _setAllData(window.__chartState, p);
   _applyMeta(p);
   _markRendered(false);

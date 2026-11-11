@@ -252,10 +252,10 @@ locked_mll_balance = 100100.0   # floor locks here once an EOD close exceeds ini
 mll_intraday_binding = true     # conservative: intraday equity <= MLL floor blows the account (Lucid unconfirmed)
 dll_fixed = 1800.0              # soft: flatten + no more trades until next session
 lucidscale_pct = 0.60           # funded: after an EOD close above initial trail, DLL = 60% x peak EOD profit (never decreases)
-# USER RULE OVERRIDE (2026-11-09): LucidPro 100K real aggregate cap is 6 minis / 60 micros.
-# User set max_minis = 40 (400 micros) for this paper sim. DLL/MLL/risk caps are unchanged.
-max_minis = 40                  # USER OVERRIDE (Lucid real = 6); aggregate across open positions
-micros_per_mini = 10
+# USER RULE OVERRIDE (2026-11-09): LucidPro 100K real aggregate cap is 6 minis.
+# User set max_minis = 40 for this paper sim. DLL/MLL/risk caps are unchanged.
+# USER RULE (2026-11-11): FULL-SIZE futures only (NQ, GC, 6E, 6B), never micros. Size = 1..40 full-size contracts.
+max_minis = 40                  # USER OVERRIDE (Lucid real = 6); aggregate full-size contracts across open positions
 flat_by_et = "16:45"            # forced flat Mon-Fri (America/New_York)
 session_open_et = "18:00"       # reopen Sun-Thu
 no_new_entries_last_minutes = 15
@@ -299,15 +299,14 @@ correlated_groups = [["6E", "6B"]]  # no opposite-direction positions inside a g
 fresh_signal_max_age_minutes = 10
 
 [lucid.contracts]               # CME specs: point value $ per 1.0 price unit; commissions per side (Lucid list)
-MNQ = { point_value = 2.0,      tick = 0.25,    commission = 0.50, micro = true }
-NQ  = { point_value = 20.0,     tick = 0.25,    commission = 1.75, micro = false }
-MGC = { point_value = 10.0,     tick = 0.10,    commission = 0.80, micro = true }
-GC  = { point_value = 100.0,    tick = 0.10,    commission = 2.30, micro = false }
-6E  = { point_value = 125000.0, tick = 0.00005, commission = 2.40, micro = false }
-6B  = { point_value = 62500.0,  tick = 0.0001,  commission = 2.40, micro = false }
+# FULL-SIZE ONLY (user rule): no micro contracts are defined; any spec marked micro = true is refused.
+NQ  = { point_value = 20.0,     tick = 0.25,    commission = 1.75 }
+GC  = { point_value = 100.0,    tick = 0.10,    commission = 2.30 }
+6E  = { point_value = 125000.0, tick = 0.00005, commission = 2.40 }
+6B  = { point_value = 62500.0,  tick = 0.0001,  commission = 2.40 }
 
 [lucid.symbols]                 # signal symbol -> candidate Lucid contracts (BTCUSD excluded: not a Lucid product)
-US100  = { contracts = ["MNQ", "NQ"], m1 = "usatechidxusd" }
-XAUUSD = { contracts = ["MGC", "GC"], m1 = "xauusd" }
+US100  = { contracts = ["NQ"],        m1 = "usatechidxusd" }
+XAUUSD = { contracts = ["GC"],        m1 = "xauusd" }
 EURUSD = { contracts = ["6E"],        m1 = "eurusd" }
 GBPUSD = { contracts = ["6B"],        m1 = "gbpusd" }

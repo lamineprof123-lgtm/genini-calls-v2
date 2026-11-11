@@ -57,7 +57,7 @@ def skip_category(why):
     return why or 'unknown'
 
 
-def build_report(trades, events):
+def _build_core(trades, events):
     groups = {k: defaultdict(list) for k in ('session', 'value_area_position', 'cvd_agrees', 'rvol_spike',
                                            'vwap_aligned', 'ema50_aligned', 'vwap_ema50_aligned',
                                            'confidence_band', 'symbol', 'exit_reason')}
@@ -91,6 +91,31 @@ def build_report(trades, events):
                                  missing_telemetry='unknown, never backfilled from later bars'))
 
 
+def build_report(trades, events):
+    """Report; when the account was reset (a 'reset' event), the main tables cover post-reset trades only and the
+    pre-reset trades are summarised separately under 'eras'."""
+    resets = sorted(e.get('t') for e in events if e.get('event') == 'reset' and e.get('t'))
+    if not resets:
+        return _build_core(trades, events)
+    at = resets[-1]
+    ts = lambda x: datetime.fromisoformat(str(x).replace('Z', '+00:00'))
+    cut = ts(at)
+    is_post = lambda row, key: bool(row.get(key)) and ts(row[key]) >= cut
+    post = [t for t in trades if is_post(t, 't_exit')]
+    pre = [t for t in trades if not is_post(t, 't_exit')]
+    post_ev = [e for e in events if is_post(e, 't')]
+    r = _build_core(post, post_ev)
+    by_sym = defaultdict(list)
+    for t in pre:
+        by_sym[label(t.get('symbol'))].append(t)
+    reason = next((e.get('reason') for e in events if e.get('event') == 'reset' and e.get('t') == at), None)
+    r['scope'] = 'Post-reset account only (pre-reset trades listed separately); paper trades only; net P&L after round-trip commission'
+    r['eras'] = dict(reset_at=at, reason=reason, post_reset=stats(post), pre_reset=stats(pre), all=stats(trades),
+                     pre_reset_by_symbol={k: stats(v) for k, v in sorted(by_sym.items())},
+                     pre_reset_skips=sum(1 for e in events if e.get('event') == 'entry_skipped' and not is_post(e, 't')))
+    return r
+
+
 def format_report(r):
     lines = ['# Lucid paper confluence report', '', r['scope'], '',
              f"Updated: {r.get('generated_at_dubai', 'on demand')} (Dubai UTC+4)", '',
@@ -104,7 +129,19 @@ def format_report(r):
             name = str(name).replace('|', '/')
             out.append(f"| {name} | {s['count']} | {wr} | {money(s['net_pnl'])} | {money(s['avg_win'])} | {money(s['avg_loss'])} | {money(s['expectancy'])} | {'LOW CONFIDENCE' if s['low_confidence'] else 'n >= 20'} |")
         return out
-    lines += table([('All closed trades', r['summary'])])
+    era = r.get('eras')
+    if era:
+        lines += [f"Account reset at {era['reset_at']} ({era.get('reason') or 'reset'}). Tables below are POST-RESET only;"
+                  " pre-reset trades are kept as history and listed separately.", '']
+        lines += table([(f"Post-reset (since {era['reset_at'][:16]}Z)", era['post_reset']),
+                        ('Pre-reset (archived account history)', era['pre_reset']),
+                        ('All closed trades (both)', era['all'])])
+        if era['pre_reset_by_symbol']:
+            lines += ['', '## Pre-reset history by symbol', '']
+            lines += table(era['pre_reset_by_symbol'].items())
+            lines += ['', f"Pre-reset entry skips: {era['pre_reset_skips']}"]
+    else:
+        lines += table([('All closed trades', r['summary'])])
     if not r['summary']['count']: lines += ['', 'No closed paper trades yet. Win rate/expectancy are unavailable, not zero.']
     for kind, bucket in r['groups'].items():
         lines += ['', '## ' + kind.replace('_', ' ').title(), '']

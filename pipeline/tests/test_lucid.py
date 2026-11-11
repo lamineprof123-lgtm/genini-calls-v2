@@ -14,16 +14,16 @@ UTC = timezone.utc
 TUE_0900_ET = datetime(2026, 11, 10, 14, 0, tzinfo=UTC)  # 09:00 New York (EST)
 ATR = 40.0
 
-def _shrink(sim, qty=5, sdist=40.0, tdist=20.0):
-    """Rewrite the open position to a small MNQ risk so legacy DLL/flat assertions stay meaningful."""
+def _shrink(sim, qty=1, sdist=40.0, tdist=20.0):
+    """Rewrite the open position to a small full-size NQ risk so legacy DLL/flat assertions stay meaningful."""
     p = sim.s["positions"][0]
-    p["contract"] = "MNQ"
+    p["contract"] = "NQ"
     p["qty"] = qty
     tick = 0.25
     p["stop"] = round(p["entry"] - p["side"] * sdist, 10)
     p["target"] = round(p["entry"] + p["side"] * tdist, 10)
-    p["risk_usd"] = round(sdist * qty * 2.0, 2)
-    p["target_usd"] = round(tdist * qty * 2.0 - 2 * 0.50 * qty, 2)
+    p["risk_usd"] = round(sdist * qty * 20.0, 2)
+    p["target_usd"] = round(tdist * qty * 20.0 - 2 * 1.75 * qty, 2)
     # Disable scalp time-cut / cross exits for these structural tests
     p["time_cut_deadline"] = None
     p["mfe_min"] = 0.0
@@ -74,7 +74,7 @@ def test_sizing_low_rr(sim):
     assert sim.L["target_usd_min"] == 381
     # Fixed US100 tactical target = 5.0 pts; pair with a 10-pt stop so unit_net is large enough
     sz = sim.size_trade("US100", 1, ATR, tdist=20.0, sdist=30.0)
-    assert sz is not None and sz["contract"] in ("MNQ", "NQ")
+    assert sz is not None and sz["contract"] == "NQ"
     assert sz["target_usd"] >= 381  # NET floor
     assert sz["risk_usd"] <= 1500
     assert "target_usd_gross" in sz and "commission_rt" in sz
@@ -85,8 +85,8 @@ def test_sizing_net_of_commission_all_symbols(sim):
     """Every tradable Lucid symbol must size to >= $381 NET at a reachable distance, or return None (skip)."""
     # Distances: fixed tactical (or a bit wider) so the 40-mini cap can clear $381
     cases = {
-        "US100":  (40.0, 20.0, 30.0),      # 20 pts MNQ
-        "XAUUSD": (8.0,  3.0,  5.0),       # wider than 1.25 fixed so micros can clear $381
+        "US100":  (40.0, 20.0, 30.0),      # 20 pts on NQ
+        "XAUUSD": (8.0,  3.0,  5.0),       # wider than 1.25 fixed
         "EURUSD": (0.0012, 0.00125, 0.0020),
         "GBPUSD": (0.0015, 0.00125, 0.0020),
     }
@@ -99,7 +99,7 @@ def test_sizing_net_of_commission_all_symbols(sim):
 
 
 def test_sizing_skips_when_381_unreachable_at_cap(sim):
-    """A stop so wide that even 1 MNQ breaks the $1,500 risk cap -> None (SKIP) with the reason."""
+    """A stop so wide that even 1 NQ breaks the $1,500 risk cap -> None (SKIP) with the reason."""
     sz = sim.size_trade("US100", 1, ATR, tdist=5.0, sdist=800.0)
     assert sz is None and "cannot reach $381" in sim.last_size_why
 
@@ -115,7 +115,7 @@ def test_sizing_extends_small_target_instead_of_skipping(sim):
 def test_format_status_mentions_override(sim):
     text = format_status(sim.summary(), sim.cfg)
     assert "USER RULE OVERRIDE" in text
-    assert "max_minis=40" in text or "max_minis=40" in text.replace(" ", "")
+    assert "max 40 full-size contracts" in text and "no micros" in text
     assert "NET of RT commission" in text
 
 
@@ -180,10 +180,10 @@ def test_dll_soft_breach_stops_day_then_resets(sim):
     sim.process({}, t)
     sim.on_record(rec(t), t)
     sim.process(bars([(t + timedelta(minutes=1), 20000, 20001, 19999, 20000)]), t + timedelta(minutes=2))
-    p = _shrink(sim, qty=5, sdist=40.0)  # risk $400; gap 60 pts -> ~$600 + room for DLL soft hit via liquidation
-    # Bigger gap through a wider stop so day loss clears DLL ($1800) but stays above MLL ($3000)
-    p["qty"] = 20
-    p["risk_usd"] = round(40 * 20 * 2.0, 2)
+    p = _shrink(sim, qty=2, sdist=40.0)  # 2 NQ, risk $1,600
+    # Gap through the stop so the day loss clears DLL ($1800) but stays above MLL ($3000)
+    p["qty"] = 2
+    p["risk_usd"] = round(40 * 2 * 20.0, 2)
     p["stop"] = p["entry"] - 40
     # gap through the stop: filled at the gap open, day loss > $1,800 but < $3,000 -> soft DLL stop, not blown
     sim.process(bars([(t + timedelta(minutes=2), p["entry"] - 60, p["entry"] - 55, p["entry"] - 70, p["entry"] - 65)]),
@@ -212,11 +212,11 @@ def test_dll_liquidation_with_two_open_positions(sim):
     assert len(sim.s["positions"]) == 2
     # Normalize to known small risks so the shared adverse bar liquidates at the DLL level
     for p, sdist, pv, tick in (
-        (sim.s["positions"][0], 40.0, 2.0, 0.25),
-        (sim.s["positions"][1], 5.0, 10.0, 0.1),
+        (sim.s["positions"][0], 60.0, 20.0, 0.25),     # 1 NQ, $1,200
+        (sim.s["positions"][1], 7.5, 100.0, 0.1),      # 1 GC, $750
     ):
-        p["qty"] = 15
-        p["contract"] = "MNQ" if p["symbol"] == "US100" else "MGC"
+        p["qty"] = 1
+        p["contract"] = "NQ" if p["symbol"] == "US100" else "GC"
         p["stop"] = round(p["entry"] - sdist, 10)
         p["target"] = round(p["entry"] + sdist / 2, 10)
         p["risk_usd"] = round(sdist * p["qty"] * pv, 2)

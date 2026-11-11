@@ -110,6 +110,8 @@ class LucidSim:
         _atomic_write(arch, old)
         self._fresh_state(now)
         self.s["reset_token"] = token
+        self.s["reset_at"] = _iso(now)
+        self.s["reset_reason"] = self.L.get("reset_reason") or token
         oa = old.get("account") or {}
         self._event(now, "reset", reason=self.L.get("reset_reason") or token, token=token, archived=arch.name,
                     previous={"no": oa.get("no"), "balance": oa.get("balance"), "realized_pnl": oa.get("realized_pnl"),
@@ -164,7 +166,7 @@ class LucidSim:
         return self.L["contracts"][c]
 
     def mini_eq(self, c: str, qty: int) -> float:
-        return qty / self.L.get("micros_per_mini", 10) if self.spec(c).get("micro") else float(qty)
+        return float(qty)                                   # full-size contracts only (user rule)
 
     def pnl(self, p: dict, price: float) -> float:
         return p["side"] * (price - p["entry"]) * p["qty"] * self.spec(p["contract"])["point_value"]
@@ -334,7 +336,7 @@ class LucidSim:
                "risk_usd": p["risk_usd"], "target_usd": p["target_usd"],  # planned NET of RT commission
                "target_usd_is_net": True,
                "max_minis": self.L["max_minis"],
-               "max_minis_note": "USER RULE OVERRIDE (Lucid real LucidPro 100K cap is 6 minis / 60 micros)",
+               "max_minis_note": "USER RULE OVERRIDE (Lucid real LucidPro 100K cap is 6 minis); full-size only",
                "gemini": p.get("gemini"),
                "telemetry": telem,
                "mfe_usd": telem.get("mfe_usd"), "mae_usd": telem.get("mae_usd"),
@@ -396,7 +398,7 @@ class LucidSim:
             tdist0=float(tdist), sdist=float(sdist), atr=float(atr), contracts=contracts, struct_dists=struct,
             net_min=float(L["target_usd_min"]), net_aim=float(L["target_usd_aim"]), net_max=float(L["target_usd_max"]),
             max_risk_usd=float(L["max_risk_usd"]), budget=float(budget), room_minis=float(room_minis),
-            micros_per_mini=int(L.get("micros_per_mini", 10)), min_target_atr=float(L.get("min_target_atr", 0)),
+            min_target_atr=float(L.get("min_target_atr", 0)),
             max_target_atr=float(L.get("max_target_atr", 1e9)),
             extend_max_target_atr=float(L.get("extend_max_target_atr", 1.0)),
             target_source0=str((scalp or {}).get("target_source") or "scalp"))
@@ -786,6 +788,64 @@ class LucidSim:
             self._event(t, "dll_hit", dll=a["dll"], balance=self.s["account"]["balance"])
 
     # ------------------------------------------------------------------ status
+    def reset_at(self) -> str | None:
+        """When the current account history starts (last one-shot reset; else state creation)."""
+        return self.s.get("reset_at") or self.s.get("created_at")
+
+    def post_reset_trades(self) -> list[dict]:
+        from .lucid_report import read_records
+        since = _dt(self.reset_at()) if self.reset_at() else None
+        rows, _ = read_records(self.logs_dir, "lucid_trades.jsonl")
+        out = [r for r in rows if since is None or (r.get("t_exit") and _dt(r["t_exit"]) >= since)]
+        out.sort(key=lambda r: r.get("t_exit") or "")
+        return out
+
+    def site_payload(self, recent: int = 10) -> dict:
+        """Public site view of the paper account (site/lucid.json). Post-reset only; no secrets, no telemetry."""
+        a = self.s["account"]
+        eq = self.equity()
+        trades = self.post_reset_trades()
+        lp = self.s.get("last_price") or {}
+        pos = []
+        for p in self.s["positions"]:
+            px = lp.get(p["symbol"], p["entry"])
+            pos.append({"symbol": p["symbol"], "contract": p["contract"], "qty": p["qty"],
+                        "side": "LONG" if p["side"] > 0 else "SHORT", "entry_time": p.get("entry_time"),
+                        "entry": p["entry"], "stop": p["stop"], "target": p["target"], "last": px,
+                        "unrealized": round(self.pnl(p, px), 2), "risk_usd": p.get("risk_usd"),
+                        "target_usd_net": p.get("target_usd"), "target_source": p.get("target_source")})
+        keep = ("t_exit", "symbol", "contract", "qty", "side", "entry_time", "entry", "exit", "reason", "net",
+                "balance_after")
+        return {
+            "updated_at": datetime.now(UTC).isoformat(), "paper_only": True, "plan": self.L.get("plan"),
+            "sizing_rule": f"full-size futures only (NQ, GC, 6E, 6B), 1-{self.L['max_minis']:g} contracts; "
+                           f"${self.L['target_usd_min']:g}-${self.L['target_usd_max']:g} NET target "
+                           f"(aim ${self.L['target_usd_aim']:g}), max risk ${self.L['max_risk_usd']:g}",
+            "reset": {"at": self.reset_at(), "reason": self.s.get("reset_reason") or self.L.get("reset_reason"),
+                      "token": self.s.get("reset_token")},
+            "account": {"no": a["no"], "phase": a["phase"], "start_balance": a["start_balance"],
+                        "balance": round(a["balance"], 2), "equity": round(eq, 2),
+                        "realized_pnl_since_reset": round(sum(float(t.get("net") or 0) for t in trades), 2) + 0.0,
+                        "open_pnl": round(eq - a["balance"], 2),
+                        "commission_on_open": round(a["start_balance"] + a.get("realized_pnl", 0) - a["balance"], 2),
+                        "trades_since_reset": len(trades),
+                        "wins": sum(1 for t in trades if float(t.get("net") or 0) > 0),
+                        "losses": sum(1 for t in trades if float(t.get("net") or 0) < 0),
+                        "mll_floor": a["mll_floor"], "mll_room": round(eq - a["mll_floor"], 2),
+                        "dll": a["dll"], "day_realized": round(float((self.s.get("day") or {}).get("realized") or 0), 2),
+                        "day_locked": (self.s.get("day") or {}).get("locked"),
+                        "to_target": round(a["start_balance"] + self.L["eval_profit_target"] - a["balance"], 2)
+                        if a["phase"] == "eval" else None},
+            "open_positions": pos, "pending": len(self.s["pending"]),
+            "recent_trades": [{k: t.get(k) for k in keep} for t in trades[-recent:]][::-1],
+            "last_processed": self.s.get("last_processed"),
+        }
+
+    def write_site(self, site_dir) -> Path:
+        p = Path(site_dir) / "lucid.json"
+        _atomic_write(p, self.site_payload())
+        return p
+
     def summary(self) -> dict:
         a, lg = self.s["account"], self.s["ledger"]
         n = lg["trades"]
@@ -906,6 +966,10 @@ async def lucid_step(cfg: dict, record: dict | None = None, now: datetime | None
                 await asyncio.to_thread(write_report, sim.logs_dir)
             except Exception:
                 log.exception("lucid report refresh failed (sim state already saved)")
+            try:
+                await asyncio.to_thread(sim.write_site, cfg["site"]["dir"])
+            except Exception:
+                log.exception("lucid site json failed (sim state already saved)")
             return {"decisions": dec, "processed_until": sim.s["last_processed"]}
         except Exception:
             log.exception("lucid step failed (paper sim only; signals unaffected)")
@@ -922,7 +986,7 @@ def format_status(sm: dict, cfg: dict) -> str:
     real_cap = 6
     mm = cfg["lucid"]["max_minis"]
     if mm > real_cap:
-        L.append(f"  SIZE CAP: max_minis={mm:g} / {mm * cfg['lucid'].get('micros_per_mini', 10):g} micros  "
+        L.append(f"  SIZE CAP: max {mm:g} full-size contracts (NQ/GC/6E/6B, no micros)  "
                  f"** USER RULE OVERRIDE ** (Lucid real LucidPro 100K cap is {real_cap} minis)")
     else:
         L.append(f"  SIZE CAP: max_minis={mm:g}")

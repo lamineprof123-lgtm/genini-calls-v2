@@ -76,7 +76,7 @@ def test_build_entry_snapshot_fields():
     snap = build_entry_snapshot(
         symbol="US100", side=1, signal=_rec(T_NY)["signals"][0],
         ctx=_ctx(), scalp={"tdist": 20, "sdist": 30, "stop_source": "structure", "target_source": "fixed"},
-        size={"qty": 7, "contract": "MNQ", "target_usd": 500, "risk_usd": 800, "tdist": 20, "sdist": 30},
+        size={"qty": 7, "contract": "NQ", "target_usd": 500, "risk_usd": 800, "tdist": 20, "sdist": 30},
         record={"run_at_utc": T_NY.isoformat(), "model": "m", "run_dir": "/r"},
     )
     required = {
@@ -116,7 +116,7 @@ def test_snapshot_on_accepted_trade_and_close(tmp_path):
     assert sim.s["positions"] and sim.s["positions"][0].get("telemetry")
     # shrink for a clean target hit
     p = sim.s["positions"][0]
-    p["contract"] = "MNQ"; p["qty"] = 5
+    p["contract"] = "NQ"; p["qty"] = 1
     p["stop"] = px - 40; p["target"] = px + 20
     p["time_cut_deadline"] = None; p["mfe_min"] = 0
     # drive MFE/MAE: first dip then hit target

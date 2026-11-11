@@ -173,6 +173,25 @@
     backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
     border: 1px solid rgba(28, 33, 41, 0.95);
   }
+  .lucid { position: relative; z-index: 1; width: 100%; max-width: 720px; margin: 8px auto 0; padding: 18px 20px 16px;
+           background: #121722; border: 1px solid var(--line); border-radius: 16px; font-size: 13px; color: var(--muted); }
+  .lucid[hidden] { display: none; }
+  .lucid h2 { font-size: 11px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase; color: var(--muted);
+              display: flex; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
+  .lucid h2 small { font-weight: 400; letter-spacing: .04em; text-transform: none; color: var(--faint); }
+  .lu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(118px, 1fr)); gap: 10px 14px; }
+  .lu-k { font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: var(--faint); }
+  .lu-v { font-family: var(--mono); font-variant-numeric: tabular-nums; font-size: 17px; color: var(--fg); margin-top: 2px; }
+  .lu-v.pos { color: var(--buy); } .lu-v.neg { color: var(--sell); }
+  .lucid h3 { font-size: 10px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: var(--faint);
+              margin: 16px 0 6px; }
+  .lu-t { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 12px; font-variant-numeric: tabular-nums; }
+  .lu-t td, .lu-t th { padding: 5px 4px; border-top: 1px solid var(--line); text-align: right; white-space: nowrap; }
+  .lu-t th { font-family: var(--sans); font-weight: 500; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--faint); }
+  .lu-t td:first-child, .lu-t th:first-child { text-align: left; }
+  .lu-t .pos { color: var(--buy); } .lu-t .neg { color: var(--sell); }
+  .lu-wrap { overflow-x: auto; }
+  .lu-note { margin-top: 12px; font-size: 11px; color: var(--faint); line-height: 1.5; }
 </style>
 </head>
 <body>
@@ -222,6 +241,16 @@
     <div class="sub" id="pausedLast"></div>
   </section>
 </main>
+
+<section class="lucid" id="lucid" hidden aria-label="Lucid paper account">
+  <h2><span>Lucid paper account</span><small id="luUpd"></small></h2>
+  <div class="lu-grid" id="luGrid"></div>
+  <h3>Open positions</h3>
+  <div class="lu-wrap" id="luPos"></div>
+  <h3>Recent trades since reset</h3>
+  <div class="lu-wrap" id="luTrades"></div>
+  <div class="lu-note" id="luNote"></div>
+</section>
 
 <script>
 (() => {
@@ -437,6 +466,49 @@
     }
     if (view !== 'v-signal') vs.classList.remove('pop');
   }
+
+  // ---- Lucid paper account (lucid.json, written each cycle; paper trading only) ----
+  let lucid = null;
+  const usd = (v, sign) => v == null ? '—' : (sign && v > 0 ? '+' : (v < 0 ? '−' : '')) + '$' +
+    Math.abs(Number(v)).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const cls = v => v > 0 ? 'pos' : (v < 0 ? 'neg' : '');
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  function renderLucid() {
+    const L = lucid; if (!L || !L.account) return;
+    const a = L.account;
+    const cell = (k, v, c) => `<div><div class="lu-k">${k}</div><div class="lu-v ${c || ''}">${v}</div></div>`;
+    $('luGrid').innerHTML = [
+      cell('Balance', usd(a.balance)), cell('Equity', usd(a.equity)),
+      cell('Realized P&amp;L', usd(a.realized_pnl_since_reset, true), cls(a.realized_pnl_since_reset)),
+      cell('Open P&L', usd(a.open_pnl, true), cls(a.open_pnl)),
+      cell('Trades', `${a.trades_since_reset}${a.trades_since_reset ? ` <small>(${a.wins}W/${a.losses}L)</small>` : ''}`),
+      cell('MLL floor', usd(a.mll_floor)), cell('Room to MLL', usd(a.mll_room), a.mll_room < 1000 ? 'neg' : ''),
+    ].join('');
+    const P = L.open_positions || [];
+    $('luPos').innerHTML = P.length ? `<table class="lu-t"><tr><th>Symbol</th><th>Size</th><th>Side</th><th>Entry</th>
+      <th>Stop</th><th>Target</th><th>Open P&amp;L</th></tr>${P.map(p => `<tr><td>${esc(p.symbol)}</td>
+      <td>${p.qty} ${esc(p.contract)}</td><td>${esc(p.side)}</td><td>${px(p.entry, 2)}</td><td>${px(p.stop, 2)}</td>
+      <td>${px(p.target, 2)}</td><td class="${cls(p.unrealized)}">${usd(p.unrealized, true)}</td></tr>`).join('')}</table>`
+      : `<div class="lu-note">None${L.pending ? ` · ${L.pending} pending entry` : ''}</div>`;
+    const T = L.recent_trades || [];
+    $('luTrades').innerHTML = T.length ? `<table class="lu-t"><tr><th>Closed</th><th>Symbol</th><th>Size</th><th>Side</th>
+      <th>Exit</th><th>Net</th></tr>${T.map(t => `<tr><td>${dayhm(t.t_exit)}</td><td>${esc(t.symbol)}</td>
+      <td>${t.qty} ${esc(t.contract)}</td><td>${esc(t.side)}</td><td>${esc(t.reason)}</td>
+      <td class="${cls(t.net)}">${usd(t.net, true)}</td></tr>`).join('')}</table>`
+      : '<div class="lu-note">No closed trades since the reset yet.</div>';
+    const r = L.reset || {};
+    $('luUpd').textContent = L.updated_at ? `updated ${hm(L.updated_at)} ${city()}` : '';
+    $('luNote').textContent = `Paper trading only · ${L.sizing_rule || ''}` +
+      (r.at ? ` · fresh $${Number(a.start_balance).toLocaleString('en-US')} account since ${dayhm(r.at)} ${city()}` +
+       (r.reason ? ` (${r.reason})` : '') : '');
+    $('lucid').hidden = false;
+  }
+  async function pollLucid() {
+    const j = await getJSON('lucid.json');
+    if (j && !(lucid && Date.parse(j.updated_at) < Date.parse(lucid.updated_at))) { lucid = j; renderLucid(); }
+  }
+  pollLucid();
+  setInterval(pollLucid, 15000);
 
   poll();
   setInterval(poll, POLL_MS);

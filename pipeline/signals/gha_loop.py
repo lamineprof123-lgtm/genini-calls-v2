@@ -20,7 +20,7 @@ from .pipeline import next_boundary, run_once
 from .site import write_status
 
 log = logging.getLogger("signals.gha")
-SITE_JSON = ("status.json", "latest_signal.json", "history.json")
+SITE_JSON = ("status.json", "latest_signal.json", "history.json", "lucid.json")
 CYCLE_LOG_KEEP_DAYS = 14
 
 

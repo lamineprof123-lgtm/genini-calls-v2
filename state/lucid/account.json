@@ -1,7 +1,7 @@
 {
   "version": 1,
   "created_at": "2026-11-11T17:32:34.420596+00:00",
-  "last_processed": "2026-11-11T17:53:00+00:00",
+  "last_processed": "2026-11-11T17:55:00+00:00",
   "account": {
     "no": 1,
     "phase": "eval",
@@ -192,24 +192,24 @@
     {
       "symbol": "XAUUSD",
       "side": -1,
-      "created": "2026-11-11T17:52:30.693949+00:00",
-      "fill_after": "2026-11-11T17:53:00+00:00",
-      "expires": "2026-11-11T18:03:00+00:00",
+      "created": "2026-11-11T17:56:30.976584+00:00",
+      "fill_after": "2026-11-11T17:57:00+00:00",
+      "expires": "2026-11-11T18:07:00+00:00",
       "atr": 6.431,
       "scalp": {
         "action": "SELL",
         "side": -1,
-        "entry": 3996.54,
+        "entry": 3996.21,
         "stop_loss": 4004.81,
-        "take_profit": 3990.14,
-        "sdist": 8.271549999999934,
+        "take_profit": 3989.81,
+        "sdist": 8.601549999999861,
         "tdist": 6.4,
         "stop_source": "structure",
         "target_source": "extended:min_net",
-        "rr": 0.774,
+        "rr": 0.744,
         "structure_stop": 4004.81155,
-        "atr_stop": 4001.6848,
-        "fixed_tp": 3995.29,
+        "atr_stop": 4001.3548,
+        "fixed_tp": 3994.96,
         "structure_tp": null,
         "structure_label": null,
         "candle": {
@@ -239,15 +239,15 @@
           "vah": 4062.67,
           "val": 4029.76
         },
-        "target_scalp": 3995.29,
+        "target_scalp": 3994.96,
         "lucid_plan": {
           "contract": "GC",
           "qty": 1,
           "tdist": 6.4,
           "target_usd": 635.4,
-          "risk_usd": 830.0,
+          "risk_usd": 870.0,
           "target_source": "extended:min_net",
-          "sizing": "fixed target 1.25 cannot reach $381 net within $1500 risk; extended:min_net: 1 GC (fewest that fit) target 6.4 -> $635 net, risk $830"
+          "sizing": "fixed target 1.25 cannot reach $381 net within $1500 risk; extended:min_net: 1 GC (fewest that fit) target 6.4 -> $635 net, risk $870"
         }
       },
       "session": "NEW_YORK_SESSION",
@@ -300,7 +300,7 @@
           "action": "SELL",
           "confidence": 0.82,
           "confidence_band": ">=0.8",
-          "rationale": "Price is below VAL (4029.76) and below POC (4044.16). CVD is BEARISH (-2.40) agreeing with downside momentum during NEW_YORK_SESSION. Price is well below VWAP (4037.35) and EMA50 (4029.89), stretching outside the lower ATR band (4001.80) to break new Session Lows. Recent sell-off printed yellow RVOL spikes confirming real liquidity imbalance. Initiating short momentum scalp.",
+          "rationale": "Price is below VAL (4029.76) and below POC (4044.16). CVD is BEARISH (-2.40) agreeing with strong downward momentum during NEW_YORK_SESSION. Price is well below VWAP (4037.35) and EMA50 (4029.89), pushing beyond the lower ATR band (4001.80) with active extension breaking key Session Low support at 3998.22.",
           "model": "gemini-3.6-flash",
           "model_action": "SELL"
         },
@@ -308,32 +308,32 @@
           "stop_basis": "structure",
           "target_basis": "extended:min_net",
           "tdist": 6.4,
-          "sdist": 8.271549999999934,
+          "sdist": 8.601549999999861,
           "structure_label": null
         },
         "planned": {
           "tdist": 6.4,
-          "sdist": 8.271549999999934,
+          "sdist": 8.601549999999861,
           "qty": null,
           "contract": null,
           "target_usd_net": null,
           "risk_usd": null
         },
-        "run_at_utc": "2026-11-11T17:52:20.085033+00:00",
-        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/215220.json/XAUUSD.png"
+        "run_at_utc": "2026-11-11T17:56:20.038479+00:00",
+        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/215620.json/XAUUSD.png"
       },
       "gemini": {
         "action": "SELL",
-        "entry": 3996.54,
+        "entry": 3996.21,
         "stop_loss": 4004.81,
-        "take_profit": 3990.14,
+        "take_profit": 3989.81,
         "confidence": 0.82,
-        "rr": 0.774,
+        "rr": 0.744,
         "shown_on_site": true,
         "basis": "site signal",
-        "run_at_utc": "2026-11-11T17:52:20.085033+00:00",
+        "run_at_utc": "2026-11-11T17:56:20.038479+00:00",
         "session": "NEW_YORK_SESSION",
-        "rationale": "Price is below VAL (4029.76) and below POC (4044.16). CVD is BEARISH (-2.40) agreeing with downside momentum during NEW_YORK_SESSION. Price is well below VWAP (4037.35) and EMA50 (4029.89), stretching outside the lower ATR band (4001.80) to break new Session Lows. Recent sell-off printed yellow RVOL spikes confirming real liquidity imbalance. Initiating short momentum scalp.",
+        "rationale": "Price is below VAL (4029.76) and below POC (4044.16). CVD is BEARISH (-2.40) agreeing with strong downward momentum during NEW_YORK_SESSION. Price is well below VWAP (4037.35) and EMA50 (4029.89), pushing beyond the lower ATR band (4001.80) with active extension breaking key Session Low support at 3998.22.",
         "model": "gemini-3.6-flash"
       }
     }
@@ -348,8 +348,8 @@
     "traded": true
   },
   "last_price": {
-    "US100": 28539.709,
-    "XAUUSD": 3996.636
+    "US100": 28543.398,
+    "XAUUSD": 3997.306
   },
   "history": [],
   "ledger": {
@@ -378,8 +378,8 @@
     "gross_loss": 0.0,
     "commissions": 1.75,
     "net_trade_pnl": 0.0,
-    "skipped_signals": 13,
-    "accepted_signals": 3
+    "skipped_signals": 15,
+    "accepted_signals": 4
   },
   "reset_token": "2026-11-11-target-sizing-fix"
 }

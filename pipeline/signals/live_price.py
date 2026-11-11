@@ -361,7 +361,7 @@ async def enrich_live_prices(payloads: list[dict], cfg: dict, now: datetime | No
         tick_tasks.append(_fetch_duka_ticks(duka, tick_since, float(lcfg.get("tick_timeout_seconds", _TICK_TIMEOUT)))
                           if (use_ticks and duka) else _none())
     want_ft = FT.wanted(payloads, cfg, now)
-    res = await asyncio.gather(*m1_tasks, *tick_tasks, *([FT.fetch_levels(cfg)] if want_ft else []),
+    res = await asyncio.gather(*m1_tasks, *tick_tasks, *([FT.shared_levels(cfg, max_age_s=2.0)] if want_ft else []),
                                return_exceptions=True)
     n = len(payloads)
     m1_res, tick_res = res[:n], res[n:2 * n]
@@ -370,8 +370,10 @@ async def enrich_live_prices(payloads: list[dict], cfg: dict, now: datetime | No
         r = res[2 * n]
         ft_data, ft_err = (None, f"{type(r).__name__}: {r}") if isinstance(r, BaseException) else r
     fetched = datetime.now(timezone.utc)
-    timings, stale_n = {}, 0
+    timings, stale_n, m1_frames = {}, 0, {}
     for p, mr, tr in zip(payloads, m1_res, tick_res):
+        if not isinstance(mr, BaseException):
+            m1_frames[p["symbol"]] = mr[0]
         ctx = p.get("context") or {}
         digits = int(ctx.get("digits") or p.get("digits") or 5)
         live = build_live(p["symbol"], mr, tr, tf_min=tf, now=now, digits=digits, ctx=ctx)
@@ -388,4 +390,4 @@ async def enrich_live_prices(payloads: list[dict], cfg: dict, now: datetime | No
                                 **({"fallback": live["live_price_fallback"]} if live.get("live_price_fallback") else {})}
     ms = round((time.monotonic() - t0) * 1000, 1)
     log.info("timing live_total=%.1fms stale=%d/%d prices=%s", ms, stale_n, len(payloads), timings)
-    return {"ms": ms, "stale": stale_n, "n": len(payloads), "prices": timings}
+    return {"ms": ms, "stale": stale_n, "n": len(payloads), "prices": timings, "m1": m1_frames}

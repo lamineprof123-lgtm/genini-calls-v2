@@ -347,9 +347,5 @@ max_cache_seconds = 60          # cache TTL = next_update_s clamped to [min, max
 error_cache_seconds = 10        # back-off after a failed request
 walls_per_side = 2
 chart_margin_pct = 15           # draw GEX lines only within the visible candle range +/- this % of its height
-# US100 live price: FirmTape NQ (1 s) + rolling basis to Dukascopy, during RTH when price_as_of <= live_max_age_s old
-live_price_override = true
-live_max_age_s = 5
-basis_align_s = 20              # a basis sample needs Dukascopy live ts and FirmTape price_as_of within N s
-basis_window = 7                # rolling median of the last N aligned samples ...
-basis_max_age_minutes = 30      # ... no older than this
+# US100 live price (NQ + rolling basis) is set by [live_price.firmtape] / signals/firmtape_live.py; GEX reuses its
+# basis and its FirmTape response (one shared request per cycle).

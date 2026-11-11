@@ -569,13 +569,15 @@ async def market_snapshot(sym: str, cfg: dict, now: datetime) -> tuple[dict, pd.
     """(entry-model payload with live fields, M1 frame). Raises on data failure."""
     from .data_providers import fetch_symbol
     from .indicators import build_payload
-    from .live_price import apply_live_fields, fetch_symbol_m1, live_from_m1
-    (df, src, ticker), (m1, m1src) = await asyncio.gather(fetch_symbol(sym, cfg), fetch_symbol_m1(sym, cfg, now))
+    from .live_price import enrich_live_prices
+    df, src, ticker = await fetch_symbol(sym, cfg)
     payload = build_payload(sym, df, cfg, src, ticker)
-    tf = int(cfg["general"]["timeframe_minutes"])
-    digits = int(payload["context"].get("digits") or 5)
-    apply_live_fields(payload, live_from_m1(m1, tf_min=tf, now=now, digits=digits, source=m1src), tf_min=tf)
-    from .firmtape import enrich_firmtape   # shared cached request with the entry cycle
+    # same live path as the entry cycle: Dukascopy ticks, US100 FirmTape NQ + basis in RTH, M1 fallback
+    info = await enrich_live_prices([payload], cfg, now)
+    m1 = (info.get("m1") or {}).get(sym)
+    if m1 is None:
+        raise RuntimeError(f"{sym}: live M1 unavailable")
+    from .firmtape import enrich_firmtape   # GEX levels only; reuses the shared FirmTape response
     await enrich_firmtape([payload], cfg, now)
     return payload, m1
 

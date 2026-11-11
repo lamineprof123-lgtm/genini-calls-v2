@@ -11,7 +11,7 @@ GET {url}?sym=NQ  (Authorization: Bearer $FIRMTAPE_API_KEY; the key only ever co
     No aligned sample -> no override (the Dukascopy tick price stays).
 """
 from __future__ import annotations
-import logging, os, statistics
+import logging, os, statistics, time
 from collections import deque
 from datetime import datetime, time as dtime, timedelta, timezone
 from zoneinfo import ZoneInfo
@@ -53,10 +53,19 @@ def _ts(s) -> datetime | None:
         return None
 
 
-async def fetch_levels(cfg: dict, fetch=None) -> tuple[dict | None, str | None]:
+def all_symbols(cfg: dict) -> list[str]:
+    """FirmTape symbols for the live price plus the GEX levels ([firmtape].symbols) -> one shared request."""
+    syms = list(ft_cfg(cfg)["symbols"].values())
+    gex = cfg.get("firmtape") or {}
+    if gex.get("enabled"):
+        syms += list((gex.get("symbols") or {}).values())
+    return list(dict.fromkeys(syms))
+
+
+async def fetch_levels(cfg: dict, fetch=None, syms: list[str] | None = None) -> tuple[dict | None, str | None]:
     """(response json, error). Never raises. `fetch` is a test hook: async (syms) -> json."""
     f = ft_cfg(cfg)
-    syms = ",".join(dict.fromkeys(f["symbols"].values()))
+    syms = ",".join(syms or dict.fromkeys(f["symbols"].values()))
     try:
         if fetch is not None:
             data = await fetch(syms)
@@ -78,6 +87,30 @@ async def fetch_levels(cfg: dict, fetch=None) -> tuple[dict | None, str | None]:
         err = f"{type(e).__name__}: {str(e)[:160]}"
         log.warning("firmtape request failed: %s", err)
         return None, err
+
+
+# One FirmTape response shared by the live price (entry cycle + exit checks) and the GEX levels (firmtape.py).
+_SHARED = {"t": None, "data": None, "err": None, "requests": 0}
+
+
+def reset_shared() -> None:
+    _SHARED.update({"t": None, "data": None, "err": None})
+
+
+def shared_peek() -> tuple[float | None, dict | None, str | None]:
+    """(age in s or None, data, err) of the last shared response."""
+    t = _SHARED["t"]
+    return (None if t is None else time.monotonic() - t), _SHARED["data"], _SHARED["err"]
+
+
+async def shared_levels(cfg: dict, max_age_s: float, fetch=None) -> tuple[dict | None, str | None]:
+    """Reuse the last response when it is at most max_age_s old, else one request for all_symbols(cfg)."""
+    age, data, err = shared_peek()
+    if age is not None and age <= max_age_s:
+        return data, err
+    data, err = await fetch_levels(cfg, fetch=fetch, syms=all_symbols(cfg))
+    _SHARED.update({"t": time.monotonic(), "data": data, "err": err, "requests": _SHARED["requests"] + 1})
+    return data, err
 
 
 def entry_for(data: dict | None, ft_sym: str) -> dict | None:

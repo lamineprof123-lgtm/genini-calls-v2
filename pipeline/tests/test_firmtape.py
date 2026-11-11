@@ -9,6 +9,7 @@ import pytest
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from signals.config import load_config
 from signals import firmtape as ft
+from signals import firmtape_live as fl
 from signals import exit_manager as em
 from signals.gemini_client import slim_gemini_context, system_prompt
 
@@ -99,8 +100,22 @@ def test_top_level_error_200_and_cache(cfg):
         assert syms == "NQ,GLD"
         return {"next_update_s": 3, "levels": [nq(), gld()]}
     c2 = ft.FirmTapeClient()
+    c2.reset()                                  # drop the shared error back-off
     asyncio.run(c2.get(cfg, fetch=good)); asyncio.run(c2.get(cfg, fetch=good))
     assert calls["n"] == 2                      # 3 s TTL shared by entry cycle + exit checks
+
+
+def test_one_shared_request_for_live_price_and_gex(cfg):
+    calls = []
+
+    async def good(syms):
+        calls.append(syms)
+        return {"next_update_s": 3, "levels": [nq(), gld()]}
+    # live-price step (enrich_live_prices) asks first, for NQ + the GEX symbols ...
+    d1, _ = asyncio.run(fl.shared_levels(cfg, max_age_s=2.0, fetch=good))
+    # ... then the GEX step reuses that response
+    d2, _ = asyncio.run(ft.FirmTapeClient().get(cfg))
+    assert calls == ["NQ,GLD"] and d1 is d2
 
 
 def test_no_key_means_null(cfg, monkeypatch):
@@ -164,7 +179,7 @@ def test_chart_lines_margin_and_or_levels(cfg):
 
 
 # ------------------------------------------------------------------ basis + live price
-def test_rolling_basis_and_live_override(cfg):
+def test_rolling_basis_tracker(cfg):
     tr = ft.BasisTracker()
     t = OPEN_T
     assert not tr.add("US100", 27900, t, 27800, t + timedelta(seconds=60), cfg)   # not aligned
@@ -173,32 +188,33 @@ def test_rolling_basis_and_live_override(cfg):
         assert tr.add("US100", 27800 + b, ts, 27800, ts + timedelta(seconds=1), cfg)
     assert tr.basis("US100", t + timedelta(minutes=1), cfg) == (100.0, 3)       # median
     assert tr.basis("US100", t + timedelta(minutes=45), cfg) == (None, 0)       # window expired
-    p = payload("US100", live=27901.0, ts="2026-11-11T15:00:29+00:00")
-    ft.get_basis_tracker().samples.clear()
-    ft.apply_firmtape(p, {"levels": [nq(price=27801.0)]}, None, OPEN_T, cfg)
+
+
+def test_gex_never_overrides_live_price_and_uses_firmtape_live_basis(cfg):
+    # live step already set US100 = NQ + rolling basis (firmtape_live); GEX must keep it and reuse the basis
+    p = payload("US100", live=27907.0, ts="2026-11-11T15:00:29+00:00")
+    p["context"].update({"live_price_source": "firmtape:NQ", "live_basis": 100.0, "live_basis_n": 3,
+                         "live_price_dukascopy": 27903.0})
+    res = ft.apply_firmtape(p, {"levels": [nq(price=27807.0)]}, None, OPEN_T, cfg)
     c = p["context"]
-    assert c["live_price_source"] == "firmtape_nq+basis" and c["live_basis"] == 100.0
-    assert c["live_price"] == 27901.0 and c["live_price_dukascopy"] == 27901.0
-    # next scan: NQ moved +6 within the M15 bar; Dukascopy unchanged & stale ts -> no new sample, basis kept
-    p2 = payload("US100", live=27901.0, ts="2026-11-11T15:00:00+00:00")
-    t2 = OPEN_T + timedelta(seconds=18)
-    ft.apply_firmtape(p2, {"levels": [nq(price=27807.0, price_as_of="2026-11-11T10:00:47-05:00")]}, None, t2, cfg)
-    assert p2["context"]["live_price"] == 27907.0 and p2["context"]["live_basis_n"] == 1
-    assert p2["context"]["forming_m15_high"] == 27907.0 and p2["forming_candle"]["close"] == 27907.0
+    assert res["gex"] == "ok" and res["basis"] == 100.0 and c["live_basis_quality"] == "rolling_median"
+    assert c["live_price"] == 27907.0 and c["live_price_source"] == "firmtape:NQ"
+    assert c["gex"]["gamma_flip"] == 27850.0                                  # 27750 + 100
+    assert p["forming_candle"]["close"] == 27907.0
 
 
-def test_live_override_needs_fresh_quote_and_basis(cfg):
-    p = payload("US100", live=27901.0, ts="2026-11-11T15:00:00+00:00")     # 30 s apart -> no aligned sample
+def test_gex_instant_basis_without_firmtape_live(cfg):
+    p = payload("US100", live=27901.0, ts="2026-11-11T15:00:00+00:00")
+    p["context"]["live_price_source"] = "dukascopy:tick"
     ft.apply_firmtape(p, {"levels": [nq()]}, None, OPEN_T, cfg)
-    assert p["context"]["live_price"] == 27901.0 and p["context"]["live_basis_quality"] == "instant"
-    assert "live_price_dukascopy" not in p["context"]
-    p2 = payload("US100", live=27901.0, ts="2026-11-11T15:00:29+00:00")
-    ft.apply_firmtape(p2, {"levels": [nq(price_as_of="2026-11-11T10:00:20-05:00")]}, None, OPEN_T, cfg)
-    assert p2["context"].get("live_price_source") != "firmtape_nq+basis"     # quote 10 s old > 5 s
+    c = p["context"]
+    assert c["live_price"] == 27901.0 and c["live_basis_quality"] == "instant"
+    assert c["gex"]["gamma_flip"] == 27851.0 and "live_price_dukascopy" not in c
 
 
 def test_log_only_keys_not_sent_to_gemini(cfg):
     p = payload("US100", live=27901.0, ts="2026-11-11T15:00:29+00:00")
+    p["context"].update({"live_basis": 100.0, "live_basis_n": 1, "live_price_dukascopy": 27901.0})
     ft.apply_firmtape(p, {"levels": [nq(price=27801.0)]}, None, OPEN_T, cfg)
     slim = slim_gemini_context(p["context"])
     assert "gex" in slim and not any(k in slim for k in ft.LOG_ONLY_KEYS)

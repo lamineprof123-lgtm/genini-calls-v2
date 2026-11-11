@@ -1,0 +1,939 @@
+"""Lucid Trading LucidPro 100K PAPER account simulator. PAPER ONLY: never sends an order anywhere.
+
+Feeds on each pipeline cycle's validated Gemini record (direction + entry), derives a low-R:R prop stop/target
+sized in Lucid futures contracts, and replays 1-minute proxy prices (Dukascopy spot/CFD) between cycles to
+fill entries and detect stop / target / MLL / DLL / 16:45 ET force-flat events. Account lifecycle:
+eval -> pass (+$6,000) -> funded -> payouts (40% consistency, buffer, caps, 90/10) ; MLL breach -> blown ->
+pay reset / new-eval fee -> fresh account. All state in state/lucid/, trade log logs/YYYY-MM-DD/lucid_trades.jsonl.
+"""
+from __future__ import annotations
+import asyncio, glob, json, logging, math, shutil, tempfile
+from datetime import date, datetime, time as dtime, timedelta, timezone
+from pathlib import Path
+from zoneinfo import ZoneInfo
+
+import pandas as pd
+
+from .risk import _atomic_write
+from .validator import validate_signal
+from .scalp_levels import compute_scalp_levels, size_for_target, fixed_target_distance
+from .indicators import market_session, session_blocks_automation
+from .telemetry import build_entry_snapshot, enrich_close_metrics
+
+log = logging.getLogger("signals.lucid")
+ET = ZoneInfo("America/New_York")
+UTC = timezone.utc
+STATE_VERSION = 1
+
+
+def _hm(s: str) -> dtime:
+    h, m = s.split(":")
+    return dtime(int(h), int(m))
+
+
+def floor_min(t: datetime) -> datetime:
+    return t.replace(second=0, microsecond=0)
+
+
+def ceil_min(t: datetime) -> datetime:
+    f = floor_min(t)
+    return f if f == t else f + timedelta(minutes=1)
+
+
+def _iso(t: datetime | None) -> str | None:
+    return t.astimezone(UTC).isoformat() if t else None
+
+
+def _dt(s: str | None) -> datetime | None:
+    return datetime.fromisoformat(s) if s else None
+
+
+class LucidSim:
+    def __init__(self, cfg: dict, state_dir: str | Path | None = None, logs_dir: str | Path | None = None):
+        self.cfg = cfg
+        self.L = cfg["lucid"]
+        self.state_dir = Path(state_dir or Path(cfg["general"]["state_dir"]) / "lucid")
+        self.logs_dir = Path(logs_dir or cfg["general"]["logs_dir"])
+        self.tz_local = ZoneInfo(cfg["general"]["session_tz"])
+        self.flat_t = _hm(self.L.get("flat_by_et", "16:45"))
+        self.open_t = _hm(self.L.get("session_open_et", "18:00"))
+        self.path = self.state_dir / "account.json"
+        self.s = self._load()
+
+    # ------------------------------------------------------------------ state
+    def _new_account(self, phase: str, now: datetime, no: int) -> dict:
+        sb = float(self.L["start_balance"])
+        return {"no": no, "phase": phase, "started_at": _iso(now), "start_balance": sb, "balance": sb,
+                "highest_close": sb, "mll_floor": sb - self.L["mll"], "mll_locked": False,
+                "dll": float(self.L["dll_fixed"]), "lucidscale": False, "peak_eod_profit": 0.0,
+                "cycle_start_balance": sb, "cycle_day_pnl": {}, "payouts": [], "trading_days": 0,
+                "realized_pnl": 0.0, "trades": 0}
+
+    def _fresh_state(self, now: datetime) -> dict:
+        st = {"version": STATE_VERSION, "created_at": _iso(now), "last_processed": _iso(floor_min(now)),
+              "account": self._new_account("eval", now, 1), "positions": [], "pending": [], "next_pos_id": 1,
+              "day": {"id": None, "start_balance": None, "realized": 0.0, "locked": None, "eod_done": None,
+                      "traded": False},
+              "last_price": {}, "history": [],
+              "ledger": {"fees_total": 0.0, "fees": [], "evals_bought": 0, "resets": 0, "passes": 0,
+                         "funded_accounts": 0, "blown_evals": 0, "blown_funded": 0, "payouts_gross": 0.0,
+                         "payouts_received": 0.0, "payout_count": 0, "trades": 0, "wins": 0, "losses": 0,
+                         "gross_win": 0.0, "gross_loss": 0.0, "commissions": 0.0, "net_trade_pnl": 0.0,
+                         "skipped_signals": 0, "accepted_signals": 0}}
+        self.s = st
+        self._fee("eval", self.L["eval_fee"], now, "first LucidPro 100K evaluation")
+        st["ledger"]["evals_bought"] = 1
+        return st
+
+    def _load(self) -> dict:
+        if self.path.exists():
+            return json.loads(self.path.read_text())
+        st = self._fresh_state(datetime.now(UTC))
+        self.save()
+        return st
+
+    def save(self) -> None:
+        _atomic_write(self.path, self.s)
+
+    # ------------------------------------------------------------------ logging
+    def _jsonl(self, name: str, t: datetime, obj: dict) -> None:
+        d = self.logs_dir / t.astimezone(self.tz_local).strftime("%Y-%m-%d")
+        d.mkdir(parents=True, exist_ok=True)
+        with open(d / name, "a") as f:
+            f.write(json.dumps(obj, default=str) + "\n")
+
+    def _event(self, t: datetime, event: str, **kw) -> None:
+        ev = {"t": _iso(t), "event": event, "account_no": self.s["account"]["no"],
+              "phase": self.s["account"]["phase"], **kw}
+        self._jsonl("lucid_events.jsonl", t, ev)
+        log.info("lucid %s %s", event, {k: v for k, v in kw.items() if k != "detail"})
+
+    def _fee(self, kind: str, amount: float, t: datetime, note: str) -> None:
+        lg = self.s["ledger"]
+        lg["fees_total"] = round(lg["fees_total"] + amount, 2)
+        lg["fees"].append({"t": _iso(t), "kind": kind, "amount": amount, "note": note})
+        self._event(t, "fee", kind=kind, amount=amount, note=note)
+
+    # ------------------------------------------------------------------ calendar
+    def day_id(self, t: datetime) -> date:
+        """Lucid trading day: 18:00 ET (previous day) -> 16:45 ET. 18:00 ET onward belongs to the next date."""
+        et = t.astimezone(ET)
+        return (et + timedelta(days=1)).date() if et.time() >= self.open_t else et.date()
+
+    def in_session(self, t: datetime) -> bool:
+        et = t.astimezone(ET)
+        d = self.day_id(t)
+        if d.weekday() >= 5:
+            return False
+        return not (et.date() == d and et.time() >= self.flat_t)
+
+    def entries_allowed(self, t: datetime) -> bool:
+        if not self.in_session(t + timedelta(minutes=self.L.get("no_new_entries_last_minutes", 15))):
+            return False
+        return self.in_session(t)
+
+    # ------------------------------------------------------------------ helpers
+    def spec(self, c: str) -> dict:
+        return self.L["contracts"][c]
+
+    def mini_eq(self, c: str, qty: int) -> float:
+        return qty / self.L.get("micros_per_mini", 10) if self.spec(c).get("micro") else float(qty)
+
+    def pnl(self, p: dict, price: float) -> float:
+        return p["side"] * (price - p["entry"]) * p["qty"] * self.spec(p["contract"])["point_value"]
+
+    def _round_tick(self, x: float, tick: float) -> float:
+        return round(round(x / tick) * tick, 10)
+
+    def equity(self) -> float:
+        a = self.s["account"]
+        return a["balance"] + sum(self.pnl(p, self.s["last_price"].get(p["symbol"], p["entry"]))
+                                  for p in self.s["positions"])
+
+    def open_risk(self) -> float:
+        return sum(max(0.0, -self.pnl(p, p["stop"])) for p in self.s["positions"])
+
+    def dll_level(self) -> float:
+        d = self.s["day"]
+        sb = d["start_balance"] if d["start_balance"] is not None else self.s["account"]["balance"]
+        return sb - self.s["account"]["dll"]
+
+    # ------------------------------------------------------------------ day roll / EOD
+    def _roll_day(self, t: datetime) -> None:
+        did = self.day_id(t).isoformat()
+        d = self.s["day"]
+        if d["id"] == did:
+            return
+        self.s["day"] = {"id": did, "start_balance": self.s["account"]["balance"], "realized": 0.0,
+                         "locked": None, "eod_done": None, "traded": False}
+
+    def _eod(self, t: datetime) -> None:
+        """16:45 ET close: trail update, LucidScale DLL, payouts, pass check."""
+        a, d = self.s["account"], self.s["day"]
+        d["eod_done"] = d["id"]
+        bal = a["balance"]
+        if d["traded"]:
+            a["trading_days"] += 1
+        # day P&L for the funded consistency rule
+        if a["phase"] == "funded":
+            day_pnl = round(bal - d["start_balance"], 2)
+            if d["traded"]:
+                a["cycle_day_pnl"][d["id"]] = round(a["cycle_day_pnl"].get(d["id"], 0.0) + day_pnl, 2)
+        # EOD trailing MLL (non-intraday mode: closing balance at/under floor blows the account)
+        if bal <= a["mll_floor"] + 1e-9:
+            self._blow(t, f"EOD balance {bal:.2f} <= MLL floor {a['mll_floor']:.2f}")
+            return
+        if not a["mll_locked"]:
+            a["highest_close"] = max(a["highest_close"], bal)
+            if a["highest_close"] > self.L["initial_trail_balance"]:
+                a["mll_locked"] = True
+                a["mll_floor"] = float(self.L["locked_mll_balance"])
+            else:
+                a["mll_floor"] = min(a["highest_close"] - self.L["mll"], self.L["locked_mll_balance"])
+        if a["phase"] == "funded":
+            if bal > self.L["initial_trail_balance"]:
+                a["lucidscale"] = True
+            a["peak_eod_profit"] = max(a["peak_eod_profit"], bal - a["start_balance"])
+            if a["lucidscale"]:
+                a["dll"] = max(a["dll"], round(self.L["lucidscale_pct"] * a["peak_eod_profit"], 2))
+            self._try_payout(t)
+        self._event(t, "eod", balance=round(bal, 2), mll_floor=a["mll_floor"], mll_locked=a["mll_locked"],
+                    dll=a["dll"], day=d["id"])
+
+    def payout_status(self) -> dict:
+        a = self.s["account"]
+        if a["phase"] != "funded":
+            return {"eligible": False, "why": "not funded"}
+        cp = round(a["balance"] - a["cycle_start_balance"], 2)
+        days = [v for v in a["cycle_day_pnl"].values()]
+        largest = max([0.0] + days)
+        cap = self.L["max_payout_first"] if not a["payouts"] else self.L["max_payout_later"]
+        amt = round(min(cap, a["balance"] - self.L["payout_buffer"]), 2)
+        why = []
+        if cp < self.L["min_cycle_profit"]:
+            why.append(f"cycle profit {cp:.0f} < {self.L['min_cycle_profit']:.0f}")
+        if cp > 0 and largest > self.L["funded_consistency"] * cp + 1e-9:
+            why.append(f"consistency: best day {largest:.0f} > {self.L['funded_consistency']:.0%} of {cp:.0f}")
+        if amt < self.L["min_payout"]:
+            why.append(f"withdrawable {max(amt, 0):.0f} < min {self.L['min_payout']:.0f} (buffer {self.L['payout_buffer']:.0f})")
+        return {"eligible": not why, "amount": max(amt, 0.0), "cycle_profit": cp, "best_day": largest,
+                "why": "; ".join(why) or "ok"}
+
+    def _try_payout(self, t: datetime) -> None:
+        a, lg = self.s["account"], self.s["ledger"]
+        ps = self.payout_status()
+        if not ps["eligible"]:
+            return
+        amt = ps["amount"]
+        recv = round(amt * self.L["trader_split"], 2)
+        a["balance"] = round(a["balance"] - amt, 2)
+        a["payouts"].append({"t": _iso(t), "gross": amt, "received": recv, "cycle_profit": ps["cycle_profit"]})
+        a["cycle_start_balance"] = a["balance"]
+        a["cycle_day_pnl"] = {}
+        lg["payouts_gross"] = round(lg["payouts_gross"] + amt, 2)
+        lg["payouts_received"] = round(lg["payouts_received"] + recv, 2)
+        lg["payout_count"] += 1
+        self._event(t, "payout", gross=amt, received=recv, n=len(a["payouts"]), balance_after=a["balance"])
+
+    # ------------------------------------------------------------------ account lifecycle
+    def _archive_and_start(self, t: datetime, result: str, phase: str) -> None:
+        a = self.s["account"]
+        self.s["history"].append({**{k: a[k] for k in ("no", "phase", "started_at", "balance", "trading_days",
+                                                        "realized_pnl", "trades")},
+                                  "payouts": len(a["payouts"]),
+                                  "payouts_received": round(sum(p["received"] for p in a["payouts"]), 2),
+                                  "ended_at": _iso(t), "result": result})
+        self.s["account"] = self._new_account(phase, t, a["no"] + 1)
+        # no pause: the fresh account keeps trading immediately (user instruction); its DLL day starts now
+        self.s["day"]["start_balance"] = self.s["account"]["balance"]
+        self.s["day"]["realized"] = 0.0
+        self.s["day"]["locked"] = None
+
+    def _blow(self, t: datetime, why: str) -> None:
+        a, lg = self.s["account"], self.s["ledger"]
+        self._event(t, "blown", reason=why, balance=round(a["balance"], 2))
+        if a["phase"] == "eval":
+            lg["blown_evals"] += 1; lg["resets"] += 1
+            self._archive_and_start(t, "blown", "eval")
+            self._fee("reset", self.L["reset_fee"], t, "eval reset after MLL breach")
+            self.s["history"][-1]["fee_charged"] = {"kind": "reset", "amount": self.L["reset_fee"]}
+        else:
+            lg["blown_funded"] += 1; lg["evals_bought"] += 1
+            self._archive_and_start(t, "blown", "eval")
+            self._fee("eval", self.L["eval_fee"], t, "new evaluation after funded account breach")
+            self.s["history"][-1]["fee_charged"] = {"kind": "new eval", "amount": self.L["eval_fee"]}
+
+    def _check_pass(self, t: datetime) -> None:
+        a = self.s["account"]
+        if a["phase"] == "eval" and not self.s["positions"] and \
+                a["balance"] >= a["start_balance"] + self.L["eval_profit_target"] - 1e-9:
+            self.s["ledger"]["passes"] += 1
+            self.s["ledger"]["funded_accounts"] += 1
+            self._event(t, "passed", balance=round(a["balance"], 2))
+            self._archive_and_start(t, "passed", "funded")
+
+    # ------------------------------------------------------------------ positions
+    def _close(self, p: dict, price: float, t: datetime, reason: str) -> None:
+        sp = self.spec(p["contract"])
+        gross = round(self.pnl(p, price), 2)
+        comm = round(sp["commission"] * p["qty"], 2)  # exit side (entry side was charged at fill)
+        a, lg, d = self.s["account"], self.s["ledger"], self.s["day"]
+        a["balance"] = round(a["balance"] + gross - comm, 2)
+        net = round(gross - 2 * comm, 2)
+        a["realized_pnl"] = round(a["realized_pnl"] + net, 2); a["trades"] += 1
+        d["realized"] = round(d["realized"] + net, 2)
+        lg["trades"] += 1; lg["commissions"] = round(lg["commissions"] + comm, 2)
+        lg["net_trade_pnl"] = round(lg["net_trade_pnl"] + net, 2)
+        if net > 0:
+            lg["wins"] += 1; lg["gross_win"] = round(lg["gross_win"] + net, 2)
+        else:
+            lg["losses"] += 1; lg["gross_loss"] = round(lg["gross_loss"] + net, 2)
+        self.s["positions"] = [q for q in self.s["positions"] if q["id"] != p["id"]]
+        hold = (t - _dt(p["entry_time"])).total_seconds()
+        pv_total = self.spec(p["contract"])["point_value"] * p["qty"]
+        telem = enrich_close_metrics(
+            p.get("telemetry"),
+            mfe_pts=float(p.get("mfe") or 0.0),
+            mae_pts=float(p.get("mae") or 0.0),
+            atr=p.get("atr"),
+            point_value_total=pv_total,
+            hold_seconds=hold,
+        )
+        rec = {"t_exit": _iso(t), "account_no": a["no"], "phase": a["phase"], "id": p["id"], "symbol": p["symbol"],
+               "contract": p["contract"], "qty": p["qty"], "side": "LONG" if p["side"] > 0 else "SHORT",
+               "entry_time": p["entry_time"], "entry": p["entry"], "stop": p["stop"], "target": p["target"],
+               "exit": round(price, 6), "reason": reason, "gross": gross, "commission": round(2 * comm, 2),
+               "net": net, "hold_seconds": int(hold), "balance_after": a["balance"],
+               "risk_usd": p["risk_usd"], "target_usd": p["target_usd"],  # planned NET of RT commission
+               "target_usd_is_net": True,
+               "max_minis": self.L["max_minis"],
+               "max_minis_note": "USER RULE OVERRIDE (Lucid real LucidPro 100K cap is 6 minis / 60 micros)",
+               "gemini": p.get("gemini"),
+               "telemetry": telem,
+               "mfe_usd": telem.get("mfe_usd"), "mae_usd": telem.get("mae_usd"),
+               "mfe_atr": telem.get("mfe_atr"), "mae_atr": telem.get("mae_atr"),
+               "bars_to_exit_m1": telem.get("bars_to_exit_m1"),
+               "price_source": "proxy spot/CFD M1 (not CME futures)"}
+        self._jsonl("lucid_trades.jsonl", t, rec)
+        log.info("lucid close %s %s x%d %s @%s net=%.2f bal=%.2f", p["symbol"], p["contract"], p["qty"],
+                 reason, price, net, a["balance"])
+
+    def _slip(self, p_or_contract, side: int, price: float, adverse: bool = True) -> float:
+        c = p_or_contract if isinstance(p_or_contract, str) else p_or_contract["contract"]
+        tick = self.spec(c)["tick"]
+        n = self.L.get("slippage_ticks", 0)
+        return price - side * n * tick if adverse else price  # adverse for an exit of `side` position
+
+    def size_trade(self, symbol: str, side: int, atr: float,
+                   tdist: float | None = None, sdist: float | None = None) -> dict | None:
+        """Pick (contract, qty) so NET of RT commission at ``tdist`` is >= target_usd_min.
+
+        Stop/target *distances* come from server-side scalp levels (structure / 0.8 ATR stop,
+        fixed-or-structural target). Qty = ceil to clear the NET $ floor, capped at max_minis
+        (USER RULE OVERRIDE may exceed Lucid's real 6-mini cap). If the floor is unreachable
+        within the cap / risk budget, return None so the caller SKIPS and logs why.
+        """
+        L = self.L
+        if not atr or atr <= 0:
+            return None
+        # Fallback distances when caller has no scalp package (legacy / tests)
+        if tdist is None or sdist is None:
+            tdist = tdist or fixed_target_distance(symbol, self.cfg) or (L.get("target_atr_mult", 0.6) * atr)
+            sdist = sdist or (float((self.cfg.get("scalp") or {}).get("atr_stop_mult", 0.8)) * atr)
+        if tdist <= 0 or sdist <= 0:
+            return None
+        budget = min(L["max_risk_usd"],
+                     self.equity() - self.dll_level() - self.open_risk() - L.get("dll_safety_usd", 0))
+        if L.get("respect_mll_room"):
+            budget = min(budget, self.equity() - self.s["account"]["mll_floor"] - self.open_risk() - 50)
+        if budget < L.get("min_risk_usd", 0):
+            return None
+        used = sum(self.mini_eq(p["contract"], p["qty"]) for p in self.s["positions"])
+        room_minis = L["max_minis"] - used
+        if room_minis <= 0:
+            return None
+        best = None
+        for c in L["symbols"][symbol]["contracts"]:
+            sp = self.spec(c)
+            per = L.get("micros_per_mini", 10) if sp.get("micro") else 1
+            max_q = int(math.floor(room_minis * per + 1e-9))
+            # Round distances to this contract's tick
+            td = round(math.ceil(tdist / sp["tick"] - 1e-9) * sp["tick"], 10)
+            sd = round(math.ceil(sdist / sp["tick"] - 1e-9) * sp["tick"], 10)
+            if td <= 0 or sd <= 0:
+                continue
+            # Soft ATR sanity (do not silently break the $ floor rule)
+            if atr > 0:
+                if td < L.get("min_target_atr", 0) * atr or td > L.get("max_target_atr", 1e9) * atr:
+                    continue
+            sized = size_for_target(
+                point_value=sp["point_value"], tick=sp["tick"], commission=sp["commission"],
+                tdist=td, sdist=sd, max_qty=max_q,
+                net_min=float(L["target_usd_min"]), net_aim=float(L["target_usd_aim"]),
+                net_max=float(L["target_usd_max"]), max_risk_usd=float(L["max_risk_usd"]),
+                budget=float(budget), micro=bool(sp.get("micro")),
+                micros_per_mini=int(L.get("micros_per_mini", 10)),
+            )
+            if not sized:
+                continue
+            # Prefer full-size contracts when mini-equivalent count is similar and net is closer to aim
+            score = (abs(sized["target_usd"] - L["target_usd_aim"]) / L["target_usd_aim"]
+                     + 0.001 * sized["commission_rt"]
+                     + (0.0 if not sp.get("micro") else 0.05))
+            cand = dict(contract=c, **sized)
+            if best is None or score < best[0]:
+                best = (score, cand)
+        return best[1] if best else None
+
+    # ------------------------------------------------------------------ signal intake
+    def _build_snapshot(self, v: dict, ctx: dict, record: dict, side, scalp=None, size=None) -> dict:
+        """Confluence telemetry from the validated signal + chart context (same numbers as the header)."""
+        run_dir = record.get("run_dir")
+        chart = f"{run_dir}/{v['symbol']}.png" if run_dir else None
+        return build_entry_snapshot(
+            symbol=v["symbol"], side=side, signal=v, ctx=ctx, scalp=scalp, size=size,
+            record=record, chart_path=chart, run_at_utc=record.get("run_at_utc"),
+        )
+
+    def _skip_entry(self, t, sym: str, why: str, snapshot: dict | None = None, **extra) -> None:
+        """Log an entry_skipped event with full telemetry (session_blocked / sizing / chase / ...)."""
+        self.s["ledger"]["skipped_signals"] = self.s["ledger"].get("skipped_signals", 0) + 1
+        payload = {"symbol": sym, "why": why}
+        if snapshot is not None:
+            payload["telemetry"] = snapshot
+        payload.update(extra)
+        self._event(t, "entry_skipped", **payload)
+
+    def sim_candidate(self, v: dict) -> tuple[dict | None, str]:
+        """Gemini direction for the sim. Site-approved signals pass straight through; HOLDs that were only
+        downgraded for the R:R minimum are re-validated with min_rr=0 (direction/side/entry/confidence checks kept)."""
+        if v["action"] in ("BUY", "SELL"):
+            return v, "site signal"
+        if v.get("model_action") not in ("BUY", "SELL"):
+            return None, "HOLD"
+        sig = {"action": v["model_action"], "entry": v["entry"], "stop_loss": v["stop_loss"],
+               "take_profit": v["take_profit"], "confidence": v["confidence"], "risk_pct": v.get("model_risk_pct")}
+        ctx = {"last_close": v["last_close"], "atr": v["atr"]}
+        r = validate_signal(sig, v["symbol"], ctx, self.cfg, 100000.0, min_rr=0.0,
+                            min_confidence=self.L["min_confidence"])
+        if r["action"] in ("BUY", "SELL"):
+            return r, "raw direction (R:R minimum skipped for sim)"
+        return None, "; ".join(r["reasons"]) or "rejected"
+
+    def on_record(self, record: dict, now: datetime | None = None) -> list[dict]:
+        """Queue pending entries from one cycle's validated record. Returns per-symbol decisions.
+
+        Every accepted pending carries a full ``telemetry`` snapshot (Volume Profile, CVD, session,
+        VWAP/EMA50, RVOL, ATR band, S/R, Gemini, scalp plan). Every skip that is not a plain HOLD
+        writes an ``entry_skipped`` event with the same snapshot.
+        """
+        now = now or datetime.now(UTC)
+        self._roll_day(now)
+        out = []
+        run_at = _dt(record.get("run_at_utc")) or now
+        if (now - run_at) > timedelta(minutes=self.L.get("fresh_signal_max_age_minutes", 10)):
+            return [{"why": "stale record"}]
+        data_by = record.get("data") or {}
+        for v in record.get("signals", []):
+            sym = v["symbol"]
+            # Merge chart context (candle / VP / S/R) onto the signal for scalp levels
+            ctx = data_by.get(sym) or {}
+            for k in ("signal_candle", "last_candle", "levels", "poc", "vah", "val", "digits",
+                      "vwap", "ema50", "ema20_baseline", "atr_upper", "atr_lower",
+                      "rvol_last", "rvol_bars_since_spike", "price_vs_value_area", "close_vs_vwap",
+                      "cvd", "cvd_label", "cvd_slope", "session"):
+                if v.get(k) is None and ctx.get(k) is not None:
+                    v[k] = ctx[k]
+            if sym not in self.L["symbols"]:
+                if v.get("model_action") in ("BUY", "SELL"):
+                    out.append({"symbol": sym, "taken": False, "why": "not a Lucid product (excluded)"})
+                continue
+            cand, why = self.sim_candidate(v)
+            if not cand:
+                # HOLD with no tradeable direction: ignore. Directional rejects (confidence etc.): snapshot + skip.
+                if v.get("model_action") in ("BUY", "SELL"):
+                    side = 1 if v["model_action"] == "BUY" else -1
+                    snap = self._build_snapshot(v, ctx, record, side, scalp=v.get("scalp"))
+                    self._skip_entry(now, sym, why, snapshot=snap)
+                    out.append({"symbol": sym, "taken": False, "why": why, "telemetry": True})
+                continue
+            side = 1 if cand["action"] == "BUY" else -1
+            # Prefer signal-bar session (replay-correct) over wall clock
+            bar_ts = (v.get("last_closed_bar_utc") or v.get("last_price_ts_utc")
+                      or ctx.get("last_closed_bar_utc") or ctx.get("last_price_ts_utc"))
+            sess = v.get("session") or ctx.get("session") or self._market_session_for(now, bar_ts)
+            scalp = cand.get("scalp") or v.get("scalp")
+            if not scalp:
+                candle = (v.get("signal_candle") or v.get("last_candle")
+                          or {"high": cand["entry"], "low": cand["entry"]})
+                vp = {k: v[k] for k in ("poc", "vah", "val") if v.get(k) is not None}
+                scalp = compute_scalp_levels(
+                    cand["action"], cand["entry"], candle, cand["atr"], sym, self.cfg,
+                    levels=v.get("levels"), vp=vp or None,
+                    tick=(self.spec(self.L["symbols"][sym]["contracts"][0])["tick"]
+                          if sym in self.L["symbols"] else None),
+                    digits=self.cfg.get("symbols", {}).get(sym, {}).get("digits", 5),
+                )
+            snap = self._build_snapshot(v, ctx, record, side, scalp=scalp)
+            reason = self._block_reason(sym, side, now, session=sess, bar_ts=bar_ts)
+            if reason:
+                self._skip_entry(now, sym, reason, snapshot=snap, session=sess)
+                out.append({"symbol": sym, "taken": False, "why": reason, "session": sess, "telemetry": True})
+                continue
+            pend = {"symbol": sym, "side": side, "created": _iso(now), "fill_after": _iso(ceil_min(now)),
+                    "expires": _iso(ceil_min(now) + timedelta(minutes=self.L["pending_expiry_minutes"])),
+                    "atr": cand["atr"], "scalp": scalp, "session": sess, "telemetry": snap,
+                    "gemini": {"action": cand["action"], "entry": cand["entry"],
+                                                    "stop_loss": cand["stop_loss"], "take_profit": cand["take_profit"],
+                                                    "confidence": cand["confidence"], "rr": cand.get("rr_local"),
+                                                    "shown_on_site": v["action"] in ("BUY", "SELL"), "basis": why,
+                                                    "run_at_utc": record.get("run_at_utc"), "session": sess,
+                                                    "rationale": v.get("rationale") or v.get("reason"),
+                                                    "model": record.get("model")}}
+            self.s["pending"].append(pend)
+            self.s["ledger"]["accepted_signals"] += 1
+            out.append({"symbol": sym, "taken": True, "why": why, "session": sess})
+        for o in out:
+            # Keep the compact "signal" decision log; skips also have a dedicated entry_skipped event.
+            self._event(now, "signal", **{k: v for k, v in o.items() if k != "telemetry"})
+        return out
+
+    def _market_session_for(self, t: datetime, bar_ts=None) -> str:
+        """Liquidity window from SIGNAL BAR time when available (replay-correct), else wall time."""
+        sc = (self.cfg.get("chart") or {}).get("session") or {}
+        windows = {
+            "LONDON_SESSION": tuple(sc.get("london", ["03:00", "08:00"])),
+            "LONDON_NY_OVERLAP": tuple(sc.get("overlap", ["08:00", "11:00"])),
+            "NEW_YORK_SESSION": tuple(sc.get("new_york", ["11:00", "16:00"])),
+        }
+        asian = tuple(sc.get("asian", ["18:00", "02:00"]))
+        return market_session(bar_ts if bar_ts is not None else t, windows=windows, asian=asian)
+
+    def _block_reason(self, sym: str, side: int, t: datetime, *, session: str | None = None,
+                      bar_ts=None) -> str | None:
+        if self.s["day"].get("locked"):
+            return f"day locked: {self.s['day']['locked']}"
+        if not self.entries_allowed(t):
+            return "outside Lucid session / last minutes before 16:45 ET flat"
+        sess = session or self._market_session_for(t, bar_ts)
+        sc = (self.cfg.get("chart") or {}).get("session") or {}
+        blocked = sc.get("blocked_for_automation") or [
+            "ASIAN_SESSION_CHOP", "LOW_LIQUIDITY_DEADZONE"]
+        if session_blocks_automation(sess, blocked):
+            return "session_blocked"
+        if any(p["symbol"] == sym for p in self.s["positions"]) or any(p["symbol"] == sym for p in self.s["pending"]):
+            return "already in a position / pending on this symbol (one per symbol)"
+        my = set(self.L["symbols"][sym]["contracts"])
+        for grp in self.L.get("correlated_groups", []):
+            if my & set(grp):
+                for p in self.s["positions"] + self.s["pending"]:
+                    if set(self.L["symbols"][p["symbol"]]["contracts"]) & set(grp) and p["side"] != side:
+                        return "opposite position in a correlated contract (anti-hedge)"
+        return None
+
+    # ------------------------------------------------------------------ minute replay
+    def process(self, bars: dict[str, pd.DataFrame], until: datetime,
+                m15: dict[str, pd.DataFrame] | None = None) -> None:
+        """Replay closed 1-minute bars (index = bar open UTC) for each signal symbol from last_processed up to
+        `until` (exclusive). Symbols without a bar in a minute are simply not checked that minute.
+
+        Optional ``m15`` maps symbol -> DataFrame of 15-minute bars with columns close/vwap/ema50
+        (index = bar open UTC). Used for VWAP/EMA50 cross exits at 15m closes.
+        """
+        t = floor_min(_dt(self.s["last_processed"]))
+        until = floor_min(until)
+        idx = {s: {int(ts.timestamp()): row for ts, row in zip(df.index, df[["open", "high", "low", "close"]].itertuples(index=False))}
+               for s, df in bars.items() if df is not None and len(df)}
+        m15_idx = {}
+        for s, df in (m15 or {}).items():
+            if df is None or not len(df):
+                continue
+            cols = [c for c in ("close", "vwap", "ema50") if c in df.columns]
+            m15_idx[s] = {int(ts.timestamp()): {c: float(row[c]) for c in cols if pd.notna(row[c])}
+                          for ts, row in df[cols].iterrows()}
+        self._m15_idx = m15_idx
+        while t < until:
+            self._minute(t, {s: m.get(int(t.timestamp())) for s, m in idx.items()})
+            t += timedelta(minutes=1)
+        self.s["last_processed"] = _iso(t)
+        self._roll_day(t - timedelta(minutes=1))
+
+    def _minute(self, t: datetime, bar: dict) -> None:
+        self._roll_day(t)
+        d, a = self.s["day"], self.s["account"]
+        sess = self.in_session(t)
+        et = t.astimezone(ET)
+        # 1. forced flat at 16:45 ET (at this bar's open, adverse slippage)
+        if not sess and self.s["positions"]:
+            for p in list(self.s["positions"]):
+                b = bar.get(p["symbol"])
+                px = b[0] if b is not None else self.s["last_price"].get(p["symbol"], p["entry"])
+                self._close(p, self._slip(p, p["side"], px), t, "flat_by_16:45_ET")
+            self._check_pass(t)
+        if not sess:
+            self.s["pending"] = []
+        if (not sess and d["eod_done"] != d["id"] and date.fromisoformat(d["id"]).weekday() < 5
+                and et.date().isoformat() == d["id"] and et.time() >= self.flat_t):
+            self._eod(t)
+        if not sess:
+            return
+        # 2. pending entries
+        for pe in list(self.s["pending"]):
+            if t > _dt(pe["expires"]):
+                self.s["pending"].remove(pe); self._event(t, "pending_expired", symbol=pe["symbol"]); continue
+            if t < _dt(pe["fill_after"]) or bar.get(pe["symbol"]) is None:
+                continue
+            self._try_fill(pe, bar[pe["symbol"]], t)
+        # 3. exits: stop has priority when both levels are inside one bar; target never on the entry bar.
+        #    Also: MFE tracking, time/momentum cut, 15m VWAP/EMA50 cross exits (scalp framework).
+        sc = self.cfg.get("scalp") or {}
+        for p in list(self.s["positions"]):
+            b = bar.get(p["symbol"])
+            if b is None:
+                continue
+            o, h, l, c = b
+            sd = p["side"]
+            # Favourable / adverse extremes this minute (MFE / MAE in price points)
+            fav = h if sd > 0 else l
+            adv = l if sd > 0 else h
+            mfe = max(float(p.get("mfe") or 0.0), max(0.0, sd * (fav - p["entry"])))
+            mae = max(float(p.get("mae") or 0.0), max(0.0, -sd * (adv - p["entry"])))
+            p["mfe"] = mfe
+            p["mae"] = mae
+            stop_hit = (l <= p["stop"]) if sd > 0 else (h >= p["stop"])
+            tgt_hit = ((h >= p["target"]) if sd > 0 else (l <= p["target"])) and p["entry_time"] != _iso(t)
+            if stop_hit:
+                gap = (o <= p["stop"]) if sd > 0 else (o >= p["stop"])
+                self._close(p, self._slip(p, sd, o if gap else p["stop"]), t, "stop")
+                continue
+            if tgt_hit:
+                self._close(p, p["target"], t, "target")
+                continue
+            # Time / momentum cut: no meaningful MFE within N x 15m candles
+            deadline = _dt(p.get("time_cut_deadline"))
+            if deadline and t >= deadline and mfe < float(p.get("mfe_min") or 0.0):
+                self._close(p, self._slip(p, sd, c), t, "time_cut_no_mfe")
+                continue
+            # 15m close across VWAP / EMA50 against the position
+            # A 15m bar that opened at T closes when we reach T+15 (t.minute % 15 == 0 and t > entry).
+            if t.minute % 15 == 0 and t > _dt(p["entry_time"]):
+                opened = int((t - timedelta(minutes=15)).timestamp())
+                row = (getattr(self, "_m15_idx", {}) or {}).get(p["symbol"], {}).get(opened)
+                if row and "close" in row:
+                    px = row["close"]
+                    against = False
+                    reason = None
+                    if sc.get("vwap_cross_exit", True) and "vwap" in row:
+                        if (sd > 0 and px < row["vwap"]) or (sd < 0 and px > row["vwap"]):
+                            against, reason = True, "vwap_cross_15m"
+                    if (not against) and sc.get("ema50_cross_exit", True) and "ema50" in row:
+                        if (sd > 0 and px < row["ema50"]) or (sd < 0 and px > row["ema50"]):
+                            against, reason = True, "ema50_cross_15m"
+                    if against:
+                        self._close(p, self._slip(p, sd, c), t, reason)
+        for s, b in bar.items():
+            if b is not None:
+                self.s["last_price"][s] = float(b[3])
+        self._check_pass(t)
+        # 4. intraday MLL / DLL on worst-case equity inside the bar
+        self._breach_check(t, bar)
+
+    def _try_fill(self, pe: dict, b, t: datetime) -> None:
+        self.s["pending"].remove(pe)
+        sym, side = pe["symbol"], pe["side"]
+        snap = pe.get("telemetry")
+        why = self._block_reason(sym, side, t)
+        if why and "pending" not in why:
+            # Don't double-count if on_record already skipped; this is a late block at fill time.
+            self._skip_entry(t, sym, why, snapshot=snap); return
+        o, h, l, c = b
+        g = pe["gemini"]
+        if self.L.get("entry_mode") == "limit":
+            touched = (l <= g["entry"]) if side > 0 else (h >= g["entry"])
+            if not touched:
+                self.s["pending"].append(pe); return
+            px = min(o, g["entry"]) if side > 0 else max(o, g["entry"])
+        else:
+            px = o
+        scalp = pe.get("scalp") or {}
+        tdist = scalp.get("tdist")
+        sdist = scalp.get("sdist")
+        # Re-anchor stop/target distances to the actual fill when we have a candle package
+        if scalp.get("candle") and pe.get("atr"):
+            fresh = compute_scalp_levels(
+                "BUY" if side > 0 else "SELL", px, scalp["candle"], pe["atr"], sym, self.cfg,
+                levels=scalp.get("levels"), vp=scalp.get("vp"),
+                tick=self.spec(self.L["symbols"][sym]["contracts"][0])["tick"],
+                digits=self.cfg.get("symbols", {}).get(sym, {}).get("digits", 5),
+            )
+            if fresh:
+                tdist, sdist = fresh["tdist"], fresh["sdist"]
+                scalp = {**scalp, **fresh}
+        size = self.size_trade(sym, side, pe["atr"], tdist=tdist, sdist=sdist)
+        if not size:
+            why = (f"cannot reach ${self.L['target_usd_min']:g} NET within max_minis={self.L['max_minis']:g} "
+                   f"at tdist={tdist} / risk budget (SKIP)")
+            if snap is not None:
+                snap = {**snap, "scalp": {**(snap.get("scalp") or {}), "tdist": tdist, "sdist": sdist,
+                                          "stop_basis": scalp.get("stop_source"),
+                                          "target_basis": scalp.get("target_source")},
+                        "planned": {**(snap.get("planned") or {}), "tdist": tdist, "sdist": sdist}}
+            self._skip_entry(t, sym, why, snapshot=snap, tdist=tdist, sdist=sdist)
+            return
+        tick = self.spec(size["contract"])["tick"]
+        px = self._round_tick(px + side * self.L.get("slippage_ticks", 0) * tick, tick) if self.L.get("entry_mode") != "limit" \
+            else self._round_tick(px, tick)
+        if self.L.get("entry_mode") != "limit" and side * (px - g["entry"]) > self.L["max_chase_atr"] * pe["atr"]:
+            why = f"price ran {abs(px - g['entry']):.5g} past Gemini entry (chase)"
+            self._skip_entry(t, sym, why, snapshot=snap)
+            return
+        sp = self.spec(size["contract"])
+        sc = self.cfg.get("scalp") or {}
+        cut_bars = int(sc.get("time_cut_candles", 2))
+        mfe_min = float(sc.get("mfe_min_atr", 0.25)) * float(pe["atr"] or 0)
+        # Stamp final plan into the carried snapshot
+        if snap is not None:
+            snap = {**snap,
+                    "scalp": {**(snap.get("scalp") or {}),
+                              "tdist": size["tdist"], "sdist": size["sdist"],
+                              "stop_basis": scalp.get("stop_source") or (snap.get("scalp") or {}).get("stop_basis"),
+                              "target_basis": scalp.get("target_source") or (snap.get("scalp") or {}).get("target_basis"),
+                              "structure_label": scalp.get("structure_label")},
+                    "planned": {"tdist": size["tdist"], "sdist": size["sdist"], "qty": size["qty"],
+                                "contract": size["contract"], "target_usd_net": size["target_usd"],
+                                "risk_usd": size["risk_usd"]}}
+        p = {"id": self.s["next_pos_id"], "symbol": sym, "contract": size["contract"], "qty": size["qty"], "side": side,
+             "entry": px, "stop": self._round_tick(px - side * size["sdist"], tick),
+             "target": self._round_tick(px + side * size["tdist"], tick), "entry_time": _iso(t),
+             "risk_usd": size["risk_usd"], "target_usd": size["target_usd"],  # NET of RT commission
+             "target_usd_gross": size.get("target_usd_gross", size["target_usd"]),
+             "commission_rt": size.get("commission_rt", 0.0),
+             "atr": pe["atr"], "gemini": g, "scalp": scalp, "telemetry": snap,
+             "mfe": 0.0, "mae": 0.0, "mfe_min": mfe_min,
+             "time_cut_deadline": _iso(t + timedelta(minutes=15 * cut_bars)),
+             "time_cut_candles": cut_bars}
+        self.s["next_pos_id"] += 1
+        comm = round(sp["commission"] * p["qty"], 2)
+        self.s["account"]["balance"] = round(self.s["account"]["balance"] - comm, 2)
+        self.s["ledger"]["commissions"] = round(self.s["ledger"]["commissions"] + comm, 2)
+        self.s["positions"].append(p)
+        self.s["day"]["traded"] = True
+        self.s["last_price"][sym] = c
+        self._event(t, "entry", symbol=sym, contract=p["contract"], qty=p["qty"], side="LONG" if side > 0 else "SHORT",
+                    entry=px, stop=p["stop"], target=p["target"], risk_usd=p["risk_usd"],
+                    target_usd_net=p["target_usd"], target_usd_gross=p["target_usd_gross"],
+                    commission_rt=p["commission_rt"],
+                    max_minis=self.L["max_minis"],
+                    max_minis_note="USER RULE OVERRIDE (Lucid real = 6 minis)",
+                    telemetry_keys=sorted((snap or {}).keys()))
+
+    def _breach_check(self, t: datetime, bar: dict) -> None:
+        a = self.s["account"]
+        pos = [p for p in self.s["positions"] if bar.get(p["symbol"]) is not None]
+        if not self.s["positions"]:  # realized-only checks (e.g. a stop filled through a gap)
+            if self.L.get("mll_intraday_binding", True) and a["balance"] <= a["mll_floor"] + 1e-9:
+                self._blow(t, f"balance {a['balance']:.2f} at/below MLL floor {a['mll_floor']:.2f} after exit")
+            elif a["balance"] <= self.dll_level() + 1e-9 and not self.s["day"].get("locked"):
+                self.s["day"]["locked"] = f"DLL {a['dll']:.0f} hit (soft breach) - no trading until next session"
+                self.s["pending"] = []
+                self._event(t, "dll_hit", dll=a["dll"], balance=a["balance"])
+            return
+        ref = {p["id"]: (bar[p["symbol"]][0] if p in pos else self.s["last_price"].get(p["symbol"], p["entry"]))
+               for p in self.s["positions"]}
+        ext = {p["id"]: ((bar[p["symbol"]][2] if p["side"] > 0 else bar[p["symbol"]][1]) if p in pos else ref[p["id"]])
+               for p in self.s["positions"]}
+        eq = lambda f: a["balance"] + sum(self.pnl(p, ref[p["id"]] + f * (ext[p["id"]] - ref[p["id"]]))
+                                          for p in self.s["positions"])
+        e0, e1 = eq(0.0), eq(1.0)
+        mll_lvl = a["mll_floor"] if self.L.get("mll_intraday_binding", True) else -math.inf
+        dll_lvl = self.dll_level()
+        lvl = max(mll_lvl, dll_lvl)
+        if e1 > lvl:
+            return
+        f = 0.0 if e0 <= lvl else (e0 - lvl) / (e0 - e1)
+        kind = "MLL" if mll_lvl >= dll_lvl else "DLL"
+        for p in list(self.s["positions"]):
+            px = ref[p["id"]] + f * (ext[p["id"]] - ref[p["id"]])
+            self._close(p, px, t, f"{kind}_liquidation")
+        if kind == "MLL":
+            self._blow(t, f"intraday equity hit MLL floor {a['mll_floor']:.2f}")
+        else:
+            self.s["day"]["locked"] = f"DLL {a['dll']:.0f} hit (soft breach) - no trading until next session"
+            self.s["pending"] = []
+            self._event(t, "dll_hit", dll=a["dll"], balance=self.s["account"]["balance"])
+
+    # ------------------------------------------------------------------ status
+    def summary(self) -> dict:
+        a, lg = self.s["account"], self.s["ledger"]
+        n = lg["trades"]
+        net_strategy = round(lg["payouts_received"] - lg["fees_total"], 2)
+        return {
+            "account": {"no": a["no"], "phase": a["phase"], "balance": a["balance"], "equity": round(self.equity(), 2),
+                        "profit": round(a["balance"] - a["start_balance"], 2),
+                        "to_target": round(a["start_balance"] + self.L["eval_profit_target"] - a["balance"], 2)
+                        if a["phase"] == "eval" else None,
+                        "mll_floor": a["mll_floor"], "mll_locked": a["mll_locked"],
+                        "room_to_mll": round(self.equity() - a["mll_floor"], 2), "dll": a["dll"],
+                        "trading_days": a["trading_days"], "payouts": len(a["payouts"])},
+            "day": self.s["day"], "positions": self.s["positions"], "pending": self.s["pending"],
+            "payout": self.payout_status(),
+            "ledger": {**{k: v for k, v in lg.items() if k != "fees"},
+                       "win_rate": round(lg["wins"] / n, 3) if n else None,
+                       "avg_win": round(lg["gross_win"] / lg["wins"], 2) if lg["wins"] else None,
+                       "avg_loss": round(lg["gross_loss"] / lg["losses"], 2) if lg["losses"] else None,
+                       "net_strategy_cash": net_strategy,
+                       "net_incl_open_account_profit": round(net_strategy + max(0.0, a["balance"] - a["start_balance"])
+                                                             * (self.L["trader_split"] if a["phase"] == "funded" else 0), 2)},
+            "history": self.s["history"], "last_processed": self.s["last_processed"],
+        }
+
+
+# ---------------------------------------------------------------------- live data + loop glue
+
+def build_m15_indicators(df_m1: pd.DataFrame, anchor: str = "utc_day") -> pd.DataFrame:
+    """Aggregate M1 -> M15 and compute session VWAP + EMA50 the same way indicators.py does."""
+    from .indicators import vwap
+    if df_m1 is None or len(df_m1) == 0:
+        return pd.DataFrame(columns=["open", "high", "low", "close", "volume", "vwap", "ema50"])
+    d = df_m1.copy()
+    if d.index.tz is None:
+        d.index = d.index.tz_localize("UTC")
+    agg = dict(open=("open", "first"), high=("high", "max"), low=("low", "min"), close=("close", "last"))
+    if "volume" in d.columns:
+        agg["volume"] = ("volume", "sum")
+    ohlc = d.resample("15min", label="left", closed="left").agg(**agg).dropna(subset=["close"])
+    if "volume" not in ohlc.columns:
+        ohlc["volume"] = 1.0
+    ohlc["volume"] = ohlc["volume"].fillna(0).clip(lower=0)
+    ohlc["vwap"] = vwap(ohlc, anchor)
+    ohlc["ema50"] = ohlc["close"].ewm(span=50, adjust=False).mean()
+    return ohlc
+
+
+async def fetch_m1(ticker: str, since: datetime, now: datetime, timeout: float = 60) -> pd.DataFrame:
+    """Dukascopy 1-minute bid bars (closed only) from `since` to now."""
+    from .data_providers import DukascopyProvider, closed_only
+    dp = DukascopyProvider()
+    out = tempfile.mkdtemp(prefix="duka_m1_")
+    try:
+        args = dp.cmd + ["-i", ticker, "-from", (since - timedelta(minutes=5)).strftime("%Y-%m-%d"),
+                         "-to", (now + timedelta(days=1)).strftime("%Y-%m-%d"), "-t", "m1", "-f", "json",
+                         "-v", "true", "-dir", out, "-r", "2"]
+        proc = await asyncio.create_subprocess_exec(*args, stdout=asyncio.subprocess.PIPE,
+                                                    stderr=asyncio.subprocess.STDOUT)
+        stdout, _ = await asyncio.wait_for(proc.communicate(), timeout)
+        files = glob.glob(f"{out}/*.json")
+        if not files:
+            raise RuntimeError(f"dukascopy m1 {ticker}: no file ({stdout.decode()[-200:].strip()})")
+        rows = json.load(open(files[0]))
+    finally:
+        shutil.rmtree(out, ignore_errors=True)
+    if not rows:
+        return pd.DataFrame(columns=["open", "high", "low", "close", "volume"])
+    df = pd.DataFrame(rows)
+    df.index = pd.to_datetime(df.pop("timestamp"), unit="ms", utc=True)
+    df = closed_only(df[["open", "high", "low", "close", "volume"]].astype(float), 1, now)
+    return df[df.index >= pd.Timestamp(since)]
+
+
+_LOCK = asyncio.Lock()
+
+
+async def lucid_step(cfg: dict, record: dict | None = None, now: datetime | None = None) -> dict:
+    """One sim step: replay M1 bars since last_processed, then queue this cycle's signals. Never raises."""
+    if not cfg.get("lucid", {}).get("enabled"):
+        return {}
+    async with _LOCK:
+        try:
+            now = now or datetime.now(UTC)
+            sim = await asyncio.to_thread(LucidSim, cfg)
+            since = _dt(sim.s["last_processed"])
+            need = {p["symbol"] for p in sim.s["positions"]} | {p["symbol"] for p in sim.s["pending"]}
+            bars, m15, until = {}, {}, floor_min(now)
+            if need:
+                # Extra lookback so EMA50 / session VWAP on M15 are warm for cross-exit checks
+                lookback = since - timedelta(hours=36)
+                res = await asyncio.gather(*[fetch_m1(cfg["lucid"]["symbols"][s]["m1"], lookback, now) for s in need],
+                                           return_exceptions=True)
+                lasts = []
+                for s, r in zip(need, res):
+                    if isinstance(r, Exception):
+                        log.warning("lucid m1 %s failed: %s", s, r); continue
+                    bars[s] = r[r.index >= pd.Timestamp(since)] if len(r) else r
+                    anchor = cfg.get("symbols", {}).get(s, {}).get(
+                        "vwap_anchor", cfg.get("chart", {}).get("vwap", {}).get("default_anchor", "utc_day"))
+                    try:
+                        m15[s] = build_m15_indicators(r, anchor)
+                    except Exception:
+                        log.exception("lucid m15 indicators %s failed", s)
+                    if len(r):
+                        lasts.append(r.index[-1].to_pydatetime() + timedelta(minutes=1))
+                # wait for the slowest fresh feed; a feed silent > 20 min (closed / gap) is not waited for
+                fresh = [x for x in lasts if now - x <= timedelta(minutes=20)]
+                if fresh:
+                    until = min(until, min(fresh))
+                elif sim.in_session(now):
+                    until = min(until, max(lasts)) if lasts else since
+                until = max(until, since)
+            sim.process(bars, until, m15=m15)
+            dec = sim.on_record(record, now) if record else []
+            sim.save()
+            from .lucid_report import write_report
+            try:
+                await asyncio.to_thread(write_report, sim.logs_dir)
+            except Exception:
+                log.exception("lucid report refresh failed (sim state already saved)")
+            return {"decisions": dec, "processed_until": sim.s["last_processed"]}
+        except Exception:
+            log.exception("lucid step failed (paper sim only; signals unaffected)")
+            return {}
+
+
+def format_status(sm: dict, cfg: dict) -> str:
+    a, lg, d, po = sm["account"], sm["ledger"], sm["day"], sm["payout"]
+    tz = ZoneInfo(cfg["general"]["session_tz"])
+    lp = _dt(sm["last_processed"]).astimezone(tz).strftime("%Y-%m-%d %H:%M")
+    L = []
+    L.append(f"LUCID PAPER SIM - {cfg['lucid']['plan']}  (paper only, proxy spot/CFD prices)")
+    L.append(f"  processed through {lp} Dubai")
+    real_cap = 6
+    mm = cfg["lucid"]["max_minis"]
+    if mm > real_cap:
+        L.append(f"  SIZE CAP: max_minis={mm:g} / {mm * cfg['lucid'].get('micros_per_mini', 10):g} micros  "
+                 f"** USER RULE OVERRIDE ** (Lucid real LucidPro 100K cap is {real_cap} minis)")
+    else:
+        L.append(f"  SIZE CAP: max_minis={mm:g}")
+    L.append(f"  TARGETS: ${cfg['lucid']['target_usd_min']:g}-${cfg['lucid']['target_usd_max']:g} "
+             f"NET of RT commission (aim ${cfg['lucid']['target_usd_aim']:g} net)")
+    if (cfg.get("scalp") or {}).get("enabled", False):
+        L.append("  SL/TP: server-side scalp (structure or 0.8xATR stop; fixed/structural target; "
+                 "time-cut + VWAP/EMA50 15m cross exits). Gemini = direction+confidence only.")
+    L.append(f"Account #{a['no']}  phase={a['phase'].upper()}  balance=${a['balance']:,.2f}  equity=${a['equity']:,.2f}  "
+             f"P&L=${a['profit']:+,.2f}")
+    if a["phase"] == "eval":
+        L.append(f"  to pass: ${a['to_target']:,.2f} more (target +${cfg['lucid']['eval_profit_target']:,.0f})")
+    L.append(f"  MLL floor ${a['mll_floor']:,.2f} ({'locked' if a['mll_locked'] else 'trailing'})  room ${a['room_to_mll']:,.2f}"
+             f"  | DLL ${a['dll']:,.0f}  day {d['id']} realized ${d['realized']:+,.2f}"
+             + (f"  LOCKED: {d['locked']}" if d.get("locked") else ""))
+    L.append(f"  trading days {a['trading_days']}  payouts on this account {a['payouts']}")
+    if a["phase"] == "funded":
+        L.append(f"  payout: {'ELIGIBLE $%.0f' % po['amount'] if po['eligible'] else 'not yet - ' + po['why']}")
+    L.append(f"Open positions: {len(sm['positions'])}  pending: {len(sm['pending'])}")
+    for p in sm["positions"]:
+        L.append(f"  {p['symbol']}->{p['contract']} x{p['qty']} {'LONG' if p['side'] > 0 else 'SHORT'} @ {p['entry']} "
+                 f"stop {p['stop']} (-${p['risk_usd']:,.0f}) target {p['target']} "
+                 f"(+${p['target_usd']:,.0f} net)")
+    L.append("Strategy ledger (all accounts):")
+    wr = f"{lg['win_rate']:.0%}" if lg["win_rate"] is not None else "n/a"
+    L.append(f"  trades {lg['trades']}  wins {lg['wins']}  losses {lg['losses']}  win rate {wr}  "
+             f"avg win {lg['avg_win']}  avg loss {lg['avg_loss']}  commissions ${lg['commissions']:,.2f}")
+    L.append(f"  net trade P&L ${lg['net_trade_pnl']:+,.2f}  signals taken {lg['accepted_signals']}  skipped {lg['skipped_signals']}")
+    L.append(f"  accounts used {a['no']}  evals bought {lg['evals_bought']}  resets {lg['resets']}  passes {lg['passes']}  "
+             f"blown evals {lg['blown_evals']}  blown funded {lg['blown_funded']}")
+    L.append(f"  fees paid ${lg['fees_total']:,.2f}  payouts {lg['payout_count']} gross ${lg['payouts_gross']:,.2f} "
+             f"-> received (90%) ${lg['payouts_received']:,.2f}")
+    L.append(f"  NET CASH (payouts received - fees) ${lg['net_strategy_cash']:+,.2f}")
+    for h in sm["history"][-5:]:
+        L.append(f"  past #{h['no']} {h['phase']} {h['result']} bal ${h['balance']:,.2f} trades {h['trades']} "
+                 f"payouts {h['payouts']} (${h['payouts_received']:,.2f})")
+    return "\n".join(L)

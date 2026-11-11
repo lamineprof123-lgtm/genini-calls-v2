@@ -1,82 +1,133 @@
 name: Signal Pipeline
 
-# One job does everything: analyze -> write status -> commit -> deploy Pages.
-# Deploying here matters: pushes made with GITHUB_TOKEN never trigger other
-# workflows, so pages.yml never ran after bot commits and the live site kept
-# serving stale status.json (that's why the panel went Offline).
+# Project Blue Bird signal loop, fully on GitHub Actions (SIGNALS ONLY - nothing places orders).
 #
-# GitHub's fastest cron is every 5 minutes (and runs are often late).
+# One run owns a long-running in-job loop (pipeline/signals/gha_loop.py): a cycle every N minutes
+# (default 2, clock-aligned), warm Chromium, Pages deploy + state commit after every cycle, ~5h30m then
+# hand off to the next run. GitHub cron (min 5 min, often late) is only the watchdog / successor trigger;
+# the loop also dispatches its own successor 20 min before its end.
+#
+#   gate job (seconds, no deps): decides holder / successor / exit using the lock files on the
+#            pipeline-data branch. Most cron runs exit here because a loop is already alive.
+#   loop job: setup, then (successor) waits for the handoff, then loops.
+#
+# State, logs and site JSON live on the `pipeline-data` branch so `main` stays clean.
+# Stop: run this workflow with action=stop (writes STOP on pipeline-data). Start: action=start.
 
 on:
   schedule:
     - cron: '*/5 * * * *'
   workflow_dispatch:
+    inputs:
+      action:
+        description: 'start (default) or stop'
+        type: choice
+        options: [start, stop]
+        default: start
+      interval_minutes:
+        description: 'cycle interval in minutes (status.json + UI countdown follow it)'
+        default: '2'
+      max_runtime_minutes:
+        description: 'loop length before handoff (job cap is 360)'
+        default: '330'
 
 permissions:
   contents: write
   pages: write
   id-token: write
+  actions: write
 
-concurrency:
-  group: signal-pipeline
-  cancel-in-progress: false
+env:
+  DATA_BRANCH: pipeline-data
+  LOOP_RUN_ID: ${{ github.run_id }}-${{ github.run_attempt }}
+  RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+  SIGNALS_INTERVAL_MINUTES: ${{ inputs.interval_minutes || '2' }}
+  SIGNALS_MAX_RUNTIME_MIN: ${{ inputs.max_runtime_minutes || '330' }}
 
 jobs:
-  run:
+  gate:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+    timeout-minutes: 5
+    outputs:
+      role: ${{ steps.gate.outputs.role }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          sparse-checkout: pipeline/signals
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.DATA_BRANCH }}
+          path: data
+      - id: gate
+        run: python3 pipeline/signals/gha_lock.py gate --data data --action "${{ inputs.action || 'start' }}"
+
+  loop:
+    needs: gate
+    if: needs.gate.outputs.role == 'holder' || needs.gate.outputs.role == 'successor'
+    runs-on: ubuntu-latest
+    timeout-minutes: 358
+    environment:
+      name: github-pages
+      url: https://lamineprof123-lgtm.github.io/genini-calls-v2/
+    defaults:
+      run:
+        working-directory: pipeline
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.DATA_BRANCH }}
+          path: data
 
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+          cache: pip
+          cache-dependency-path: pipeline/requirements.txt
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: pipeline/package-lock.json
 
-      - name: Install dependencies
-        run: pip install google-genai
+      - name: Install Python + Node deps
+        run: |
+          pip install -r requirements.txt
+          npm ci --no-audit --no-fund
+          echo "PW_VERSION=$(python -c 'import importlib.metadata as m;print(m.version("playwright"))')" >> "$GITHUB_ENV"
 
-      - name: Mark cycle start
-        run: echo "CYCLE_START=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_ENV"
+      - name: Cache Playwright Chromium
+        id: pwcache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-chromium-${{ runner.os }}-${{ env.PW_VERSION }}
+      - name: Install Chromium
+        run: |
+          if [ "${{ steps.pwcache.outputs.cache-hit }}" = "true" ]; then
+            python -m playwright install-deps chromium
+          else
+            python -m playwright install --with-deps chromium
+          fi
 
-      - name: Run Gemini analysis
+      - name: Unit tests
+        run: python -m pytest -q tests
+
+      - name: Expose Actions runtime to the in-loop Pages deployer
+        uses: actions/github-script@v7
+        with:
+          script: |
+            core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN)
+            core.exportVariable('ACTIONS_RESULTS_URL', process.env.ACTIONS_RESULTS_URL)
+
+      - name: Signal loop
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GEMINI_MODEL: ${{ vars.GEMINI_MODEL }}
-        run: python gemini_vision_runner.py
-
-      - name: Write status heartbeat
+          GITHUB_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ github.token }}
+          PYTHONUNBUFFERED: '1'
         run: |
-          now=$(date -u +%Y-%m-%dT%H:%M:%SZ)
-          next=$(date -u -d "+5 minutes" +%Y-%m-%dT%H:%M:%SZ)
-          cat > status.json <<EOF
-          {
-            "state": "running",
-            "interval_minutes": 5,
-            "align_offset_seconds": 0,
-            "tz": "Asia/Dubai",
-            "next_run_at": "$next",
-            "updated_at": "$now",
-            "last_cycle_started_at": "$CYCLE_START",
-            "last_cycle_finished_at": "$now"
-          }
-          EOF
-
-      - name: Commit and push
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add status.json latest_signal.json history.json
-          git commit -m "Signal cycle $(date -u +%H:%M)" || exit 0
-          for i in 1 2 3; do
-            git pull --rebase -X theirs origin main && git push && break
-            sleep 5
-          done
-
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: .
-      - id: deployment
-        uses: actions/deploy-pages@v4
+          git -C ../data config user.name "github-actions[bot]"
+          git -C ../data config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          python run.py gha-loop --data ../data --role "${{ needs.gate.outputs.role }}" --run-id "$LOOP_RUN_ID"

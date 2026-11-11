@@ -1,0 +1,282 @@
+# Gemini Signals configuration. SIGNALS ONLY: this project never places orders.
+
+[general]
+symbols = ["XAUUSD", "EURUSD", "GBPUSD", "US100", "BTCUSD"]
+timeframe_minutes = 15
+candles = 120            # closed candles shown/analysed per symbol
+warmup_candles = 60      # extra history fetched so ATR/EMA are warmed up (not drawn)
+session_tz = "Asia/Dubai" # trading-day boundary for the circuit breaker and log folders
+logs_dir = "logs"
+state_dir = "state"
+
+[chart]
+width = 1280
+height = 720
+background = "#0E1117"
+text_color = "#C9D1D9"
+visible_candles = 100    # exactly N visible candles, fixed bar spacing (clamped to 80..120)
+volume_pane_pct = 11     # low-opacity volume histogram height, % of canvas (10-12); price pane margins follow it
+bull_color = "#26A69A"   # body + wick
+bear_color = "#EF5350"   # body + wick
+template = "chart_v2.html"  # live: EMA50 + RVOL + warm Playwright pool / bar cache
+
+[chart.ema50]
+length = 50
+color = "#9CA3AF"         # 1px dashed structural baseline (chart_v2 only)
+width = 1
+
+[chart.rvol]
+length = 20               # average-volume lookback
+threshold = 2.0           # RVOL > this -> spike color on volume bars (chart_v2)
+spike_color = "#FACC15"
+normal_color = "#374151"
+
+[chart.volume_profile]
+# Session Volume Profile (POC / VAH / VAL). Session = same anchor as VWAP per symbol
+# (utc_day for FX/gold/BTC; cme_globex 18:00 ET for US100).
+# Value Area is the contiguous 70% of session volume expanding from the POC bin.
+# Dukascopy FX/gold/index volume is tick volume; Binance BTC is exchange volume.
+price_bins = 50
+value_area_pct = 0.70
+
+[chart.cvd]
+# Approximate Cumulative Delta from OHLCV (Dukascopy = tick volume). Same session anchor as VWAP/VP.
+# Flat bars (high==low) contribute 0 delta (no /0.0001 hack).
+# Label NEUTRAL when |CVD| < neutral_pct * session_volume.
+neutral_pct = 0.05
+slope_bars = 4               # cvd_slope = sum of last N per-bar deltas
+
+[chart.session]
+# Institutional windows in America/New_York (half-open). Computed from the SIGNAL BAR time
+# (last closed candle), not wall clock — required for replay correctness.
+# Flaw fixed vs naive snippet: LONDON 03-08 / OVERLAP 08-11 / NEW_YORK 11-16 are distinct
+# (the old 03-11 branch shadowed NEW_YORK forever).
+london   = ["03:00", "08:00"]   # LONDON_SESSION
+overlap  = ["08:00", "11:00"]   # LONDON_NY_OVERLAP
+new_york = ["11:00", "16:00"]   # NEW_YORK_SESSION
+asian    = ["18:00", "02:00"]   # ASIAN_SESSION_CHOP (wraps midnight); else LOW_LIQUIDITY_DEADZONE
+# Lucid paper sim hard-blocks new entries in these (existing positions still managed).
+blocked_for_automation = ["ASIAN_SESSION_CHOP", "LOW_LIQUIDITY_DEADZONE"]
+
+[chart.vwap]
+# Session-anchored VWAP, offset 0, no deviation bands.
+# Default anchor: 00:00 UTC (FX, gold, BTC). Per-symbol override via [symbols.X].vwap_anchor:
+#   "utc_day" = reset 00:00 UTC; "cme_globex" = reset 18:00 America/New_York (CME futures session open, used for US100)
+default_anchor = "utc_day"
+color = "#FF9800"
+width = 3
+
+[chart.atr_channel]
+ema_length = 20
+atr_length = 14
+mult = 2.0
+baseline_color = "#4B5563"   # 1px dashed
+upper_color = "#00E676"      # 1px solid
+lower_color = "#FF1744"      # 1px solid
+fill_color = "#64B5F6"
+fill_opacity = 0.08          # fill between bands (custom series primitive)
+
+[chart.sr]
+pivot_lookback = 12          # bars each side for pivot highs/lows (10-15)
+rolling_hours = 24           # rolling 24h high/low
+dedupe_atr = 0.35            # merge levels closer than N x ATR (higher-priority label wins)
+max_per_side = 3
+resistance_color = "#E91E63"
+support_color = "#7C4DFF"
+line_width = 2               # Lightweight Charts only supports integer widths (1.5 -> 2)
+line_style = "dashed"        # "dashed" | "dotted"
+
+[gemini]
+# Default: gemini-3.6-flash first, gemini-3.8-flash (newest, often 503 under load) as fallback. On retryable errors (429/5xx/UNAVAILABLE/rate limit) each
+# model is retried with exponential backoff + jitter, then the next model in `fallback_models` is tried; if all
+# fail, every symbol is HOLD. 402 (billing) / 404 (model unavailable) are not retried on the same model.
+# History: gemini-2.0-flash shut down 2026-06-01; gemini-2.5-flash returns 404 "no longer available to new users".
+model = "gemini-3.6-flash"            # first choice (fastest to answer under load); override with --model
+fallback_models = ["gemini-3.6-flash", "gemini-3.8-flash"]
+thinking_level = "low"                # Gemini 3.x: "minimal" | "low" | "medium" | "high" (low = faster)
+temperature = 0.2                     # sent ONLY to pre-3.x models (3.6+ deprecate sampling params)
+timeout_seconds = 45                  # per request
+max_attempts_per_model = 2
+retry_budget_seconds = 60             # per model, incl. request time
+backoff_base_seconds = 1.5
+backoff_max_seconds = 5.0
+
+[risk]
+min_rr = 0.0               # server-side scalp SL/TP (see [scalp]); Gemini = direction+confidence only. Was 2.5.
+min_confidence = 0.55      # 0..1; below this the signal is downgraded to HOLD
+max_entry_distance_atr = 1.0  # entry must be within N x ATR of the last close
+min_stop_distance_atr = 0.25  # reject stops tighter than N x ATR (noise)
+default_risk_pct = 0.5     # % of equity risked per signal when the model gives none
+max_risk_pct = 1.0
+max_daily_loss_pct = 3.5   # circuit breaker: > this % loss vs start-of-day equity => HOLD all, halt for the session
+
+[equity]
+provider = "paper_file"    # "paper_file" | "mt5"
+paper_file = "state/paper_equity.json"
+paper_start_equity = 100000.0
+
+[scheduler]
+interval_minutes = 2       # GitHub Actions in-job loop default (env SIGNALS_INTERVAL_MINUTES overrides). Was 5.
+# user schedule: a signal every 5 min (blueprint said 10; 15 aligns to M15 closes)
+align_offset_seconds = 20  # wait N s after the boundary so the closed candle is published
+skip_if_no_new_candle = false  # testing: call Gemini every cycle (set true for production)
+
+[data]
+default_chain = ["dukascopy", "yfinance"]
+
+# Per-symbol provider chain + provider-specific tickers. First provider that returns enough candles wins.
+[symbols.XAUUSD]
+name = "GOLD"            # asset label shown on the signal page
+chain = ["dukascopy", "yfinance"]
+dukascopy = "xauusd"
+yfinance = "GC=F"          # proxy: COMEX gold futures (not spot)
+mt5 = "XAUUSD"
+contract_size = 100        # units per 1.0 lot (broker-specific)
+digits = 2
+
+[symbols.EURUSD]
+name = "EURO"            # asset label shown on the signal page
+chain = ["dukascopy", "yfinance"]
+dukascopy = "eurusd"
+yfinance = "EURUSD=X"
+mt5 = "EURUSD"
+contract_size = 100000
+digits = 5
+
+[symbols.GBPUSD]
+name = "POUND"            # asset label shown on the signal page
+chain = ["dukascopy", "yfinance"]
+dukascopy = "gbpusd"
+yfinance = "GBPUSD=X"
+mt5 = "GBPUSD"
+contract_size = 100000
+digits = 5
+
+[symbols.US100]
+name = "NASDAQ"            # asset label shown on the signal page
+chain = ["dukascopy", "yfinance"]
+dukascopy = "usatechidxusd" # Dukascopy USA Tech 100 CFD (Nasdaq-100)
+vwap_anchor = "cme_globex"  # reset 18:00 New York (futures session open)
+yfinance = "NQ=F"           # proxy: E-mini Nasdaq-100 futures
+mt5 = "US100"
+contract_size = 1
+digits = 2
+
+[symbols.BTCUSD]
+name = "BITCOIN"            # asset label shown on the signal page
+chain = ["binance", "dukascopy", "yfinance"]
+binance = "BTCUSDT"         # proxy: Binance spot BTC/USDT (real exchange volume)
+dukascopy = "btcusd"
+yfinance = "BTC-USD"
+mt5 = "BTCUSD"
+contract_size = 1
+digits = 2
+
+[site]
+# Static one-page signal site (index.html + JSON). The loop writes status.json and latest_signal.json here.
+# Pure static: publish this folder as-is (e.g. GitHub Pages). Contains no secrets.
+dir = "site"
+
+[publish]
+# Push site/status.json + site/latest_signal.json to the GitHub Pages repo after every loop event (non-blocking).
+enabled = false                 # GitHub Actions loop (signals/gha_loop.py) commits + deploys instead
+repo_dir = ""
+branch = "main"
+author_name = "lamineprof123-lgtm"
+author_email = "lamineprof123-lgtm@users.noreply.github.com"
+max_retries = 3
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# Dynamic scalp stop / take-profit (signals/scalp_levels.py). Server-side source of truth for public site + Lucid.
+# Gemini supplies direction + confidence + rationale; stop/target are overwritten every cycle.
+# Thesis: high directional accuracy, quick 1-3 bar momentum scalps, tight/negative R:R, size to clear NET $ floor.
+[scalp]
+enabled = true
+atr_stop_mult = 0.8             # ATR leg of the stop (Wilder ATR14 on M15)
+structure_buffer_atr = 0.05     # buffer beyond signal-candle high/low
+min_stop_atr = 0.25             # never tighter than this (noise floor)
+time_cut_candles = 2            # exit if no MFE within N x 15m candles (default 30 min)
+mfe_min_atr = 0.25              # "moved in favor" = MFE >= this x ATR
+vwap_cross_exit = true          # 15m close back across VWAP against the position -> market exit
+ema50_cross_exit = true         # 15m close back across EMA50 against the position -> market exit
+tp_before_level_ticks = 1       # take profit just before the next structural wall
+
+# Fixed tactical targets = midpoint of the user ranges (indices 15-25 ticks, FX/gold 10-15 pips)
+[scalp.fixed_target]
+US100  = { ticks = 20, tick_size = 0.25 }       # 5.0 index points
+XAUUSD = { pips = 12.5, pip_size = 0.10 }       # 1.25 gold
+EURUSD = { pips = 12.5, pip_size = 0.0001 }     # 12.5 FX pips
+GBPUSD = { pips = 12.5, pip_size = 0.0001 }
+BTCUSD = { ticks = 20, tick_size = 5.0 }        # public site only (not a Lucid product)
+
+# ---------------------------------------------------------------------------------------------------------------
+# Lucid Trading LucidPro 100K PAPER simulator (signals/lucid.py). PAPER ONLY: nothing is ever sent to a broker.
+# Rules source: Lucid help center as summarised 2026-11-09 (attachment "Lucid Trading - 100K account rules & fees").
+# Prices come from the spot/CFD proxy feed (Dukascopy M1), not real CME futures quotes (basis/spread ignored).
+[lucid]
+enabled = true
+plan = "LucidPro 100K (DLL on)"
+start_balance = 100000.0
+eval_profit_target = 6000.0
+mll = 3000.0                    # EOD trailing on highest closing balance
+initial_trail_balance = 103100.0
+locked_mll_balance = 100100.0   # floor locks here once an EOD close exceeds initial_trail_balance
+mll_intraday_binding = true     # conservative: intraday equity <= MLL floor blows the account (Lucid unconfirmed)
+dll_fixed = 1800.0              # soft: flatten + no more trades until next session
+lucidscale_pct = 0.60           # funded: after an EOD close above initial trail, DLL = 60% x peak EOD profit (never decreases)
+# USER RULE OVERRIDE (2026-11-09): LucidPro 100K real aggregate cap is 6 minis / 60 micros.
+# User set max_minis = 40 (400 micros) for this paper sim. DLL/MLL/risk caps are unchanged.
+max_minis = 40                  # USER OVERRIDE (Lucid real = 6); aggregate across open positions
+micros_per_mini = 10
+flat_by_et = "16:45"            # forced flat Mon-Fri (America/New_York)
+session_open_et = "18:00"       # reopen Sun-Thu
+no_new_entries_last_minutes = 15
+# fees (third-party card reads, NOT checkout-verified)
+eval_fee = 190.40               # VAULT code price, DLL on
+reset_fee = 190.0               # charged when an eval is blown (a blown funded account buys a new eval at eval_fee)
+# funded payouts
+funded_consistency = 0.40       # largest single day <= 40% of cycle profit
+min_cycle_profit = 750.0
+payout_buffer = 103100.0        # balance after payout must stay >= this
+min_payout = 500.0
+max_payout_first = 2500.0
+max_payout_later = 3000.0       # inferred from "$106,100 min balance for max payout"
+trader_split = 0.90
+# --- strategy: dynamic scalp SL/TP (see [scalp]); size to clear NET $ floor ---
+# target_usd_aim/min/max are NET of round-trip commission (entry+exit). size_trade skips if net < min.
+# USER UPDATE 2026-11-09: minimum per trade is $381 NET (was $500).
+target_usd_aim = 750.0          # preferred NET target per trade (after RT commission)
+target_usd_min = 381.0          # minimum NET target; skip trade if net would be below this
+target_usd_max = 1000.0         # max NET target
+stop_to_target_ratio = 2.0      # legacy fallback only; live path uses [scalp] structure/ATR stop
+max_risk_usd = 1500.0           # hard cap on a single stop-out (always < DLL)
+min_risk_usd = 381.0            # skip if remaining DLL room cannot cover at least the net floor
+target_atr_mult = 0.6           # legacy; live path uses [scalp] fixed/structural target
+min_target_atr = 0.10           # reject absurdly tight targets (noise)
+max_target_atr = 3.0            # reject absurdly wide targets
+min_stop_atr = 0.25             # floor used by [scalp] (was 0.6 loose-stop era)
+respect_mll_room = false        # false = a stop may exceed the room above the MLL floor (accept blow-ups; user's style)
+dll_safety_usd = 50.0           # keep (open risk + new stop) under remaining DLL minus this
+min_confidence = 0.55
+max_entry_distance_atr = 1.0    # Gemini entry must be within N x ATR of the last M15 close
+entry_mode = "market"           # "market": next M1 open after the signal; "limit": wait for Gemini's entry price
+max_chase_atr = 0.5             # market mode: skip if the fill is > N x ATR worse than Gemini's entry
+pending_expiry_minutes = 10
+slippage_ticks = 1              # adverse ticks on market entries and stop / forced exits
+correlated_groups = [["6E", "6B"]]  # no opposite-direction positions inside a group (anti-hedge)
+fresh_signal_max_age_minutes = 10
+
+[lucid.contracts]               # CME specs: point value $ per 1.0 price unit; commissions per side (Lucid list)
+MNQ = { point_value = 2.0,      tick = 0.25,    commission = 0.50, micro = true }
+NQ  = { point_value = 20.0,     tick = 0.25,    commission = 1.75, micro = false }
+MGC = { point_value = 10.0,     tick = 0.10,    commission = 0.80, micro = true }
+GC  = { point_value = 100.0,    tick = 0.10,    commission = 2.30, micro = false }
+6E  = { point_value = 125000.0, tick = 0.00005, commission = 2.40, micro = false }
+6B  = { point_value = 62500.0,  tick = 0.0001,  commission = 2.40, micro = false }
+
+[lucid.symbols]                 # signal symbol -> candidate Lucid contracts (BTCUSD excluded: not a Lucid product)
+US100  = { contracts = ["MNQ", "NQ"], m1 = "usatechidxusd" }
+XAUUSD = { contracts = ["MGC", "GC"], m1 = "xauusd" }
+EURUSD = { contracts = ["6E"],        m1 = "eurusd" }
+GBPUSD = { contracts = ["6B"],        m1 = "gbpusd" }

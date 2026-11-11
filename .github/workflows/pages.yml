@@ -1,8 +1,13 @@
 name: Deploy Pages
 
+# Deploys main's site files (index.html, logos) when main changes. The live signal data (status.json,
+# latest_signal.json, history.json) is overlaid from the pipeline-data branch so a push to main never
+# rolls the panel back to stale JSON. The signal loop (pipeline.yml) deploys the same layout every cycle.
+
 on:
   push:
     branches: [main]
+    paths-ignore: ['pipeline/**', '.github/workflows/pipeline.yml']
   workflow_dispatch:
 
 permissions:
@@ -22,9 +27,19 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+      - name: Build site folder (main files + live data from pipeline-data)
+        run: |
+          mkdir -p _site
+          find . -maxdepth 1 -type f ! -name '*.py' ! -name '*.md' ! -name '.git*' -exec cp {} _site/ \;
+          if git fetch -q --depth 1 origin pipeline-data; then
+            for f in status.json latest_signal.json history.json; do
+              git show "FETCH_HEAD:$f" > "/tmp/$f" 2>/dev/null && mv "/tmp/$f" "_site/$f" || true
+            done
+          fi
+          ls -la _site
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: _site
       - id: deployment
         uses: actions/deploy-pages@v4

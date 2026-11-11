@@ -1,0 +1,118 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>gemini-signals chart</title>
+<script src="static/lightweight-charts.standalone.production.js"></script>
+<style>
+  html, body { margin: 0; padding: 0; background: #0E1117; overflow: hidden; }
+  #capture { position: relative; width: 1280px; height: 720px; background: #0E1117;
+             font-family: "DejaVu Sans", Arial, sans-serif; }
+  #chart { position: absolute; inset: 0; }
+  #hdr { position: absolute; top: 8px; left: 12px; z-index: 10; color: #e6e6e6; pointer-events: none; }
+  #hdr .sym { font-size: 22px; font-weight: 700; }
+  #hdr .meta { font-size: 13px; color: #9aa4b2; margin-top: 2px; }
+  #legend { position: absolute; top: 10px; right: 90px; z-index: 10; font-size: 12px; color: #c9d1d9;
+            background: rgba(14,17,23,0.8); padding: 4px 8px; border-radius: 4px; }
+  .sw { display: inline-block; width: 16px; height: 0; vertical-align: middle; margin: 0 4px 0 10px; }
+</style>
+</head>
+<body>
+<div id="capture">
+  <div id="chart"></div>
+  <div id="hdr"><div class="sym" id="sym">-</div><div class="meta" id="meta"></div></div>
+  <div id="legend"></div>
+</div>
+<script>
+// Custom series primitive: fills the area between the upper and lower ATR bands (LWC has no native band fill).
+class BandFill {
+  constructor(upper, lower, color) { this._u = upper; this._l = lower; this._color = color; this._pts = []; }
+  attached({ chart, series, requestUpdate }) { this._chart = chart; this._series = series; requestUpdate(); }
+  detached() {}
+  updateAllViews() {
+    const ts = this._chart.timeScale(), s = this._series, lo = new Map(this._l.map(p => [p.time, p.value]));
+    this._pts = this._u.filter(p => lo.has(p.time)).map(p => ({
+      x: ts.timeToCoordinate(p.time), yu: s.priceToCoordinate(p.value), yl: s.priceToCoordinate(lo.get(p.time)) }))
+      .filter(p => p.x !== null && p.yu !== null && p.yl !== null);
+  }
+  paneViews() {
+    const self = this;
+    return [{ zOrder: () => 'bottom', renderer: () => ({ draw(target) {
+      target.useBitmapCoordinateSpace(({ context: ctx, horizontalPixelRatio: hr, verticalPixelRatio: vr }) => {
+        const P = self._pts; if (P.length < 2) return;
+        ctx.beginPath();
+        P.forEach((p, i) => i ? ctx.lineTo(p.x * hr, p.yu * vr) : ctx.moveTo(p.x * hr, p.yu * vr));
+        for (let i = P.length - 1; i >= 0; i--) ctx.lineTo(P[i].x * hr, P[i].yl * vr);
+        ctx.closePath(); ctx.fillStyle = self._color; ctx.fill();
+      });
+    } }) }];
+  }
+}
+function rgba(hex, a) { const n = parseInt(hex.slice(1), 16); return `rgba(${n >> 16},${(n >> 8) & 255},${n & 255},${a})`; }
+
+window.__rendered = false;
+window.renderChart = function (p) {
+  const LC = LightweightCharts, S = p.style, A = S.atr_channel, V = S.vwap, R = S.sr;
+  const cap = document.getElementById('capture');
+  cap.style.width = S.width + 'px'; cap.style.height = S.height + 'px'; cap.style.background = S.background;
+  document.body.style.background = S.background;
+  const prec = Math.max(0, Math.min(8, p.digits));
+  const fmt = { type: 'price', precision: prec, minMove: Math.pow(10, -prec) };
+  const volFrac = (S.volume_pane_pct || 11) / 100;
+  const chart = LC.createChart(document.getElementById('chart'), {
+    width: S.width, height: S.height,
+    layout: { background: { type: 'solid', color: S.background }, textColor: S.text_color, fontSize: 11,
+              attributionLogo: false },
+    grid: { vertLines: { color: 'rgba(255,255,255,0.035)' }, horzLines: { color: 'rgba(255,255,255,0.035)' } },
+    rightPriceScale: { borderColor: '#2a2e39', scaleMargins: { top: 0.09, bottom: volFrac + 0.02 } },
+    timeScale: { borderColor: '#2a2e39', timeVisible: true, secondsVisible: false, rightOffset: 0,
+                 fixLeftEdge: false, fixRightEdge: false, lockVisibleTimeRangeOnResize: true },
+    crosshair: { mode: LC.CrosshairMode.Hidden, vertLine: { visible: false }, horzLine: { visible: false } },
+    handleScroll: false, handleScale: false,
+  });
+  const ov = { lastValueVisible: false, priceLineVisible: false, crosshairMarkerVisible: false, priceFormat: fmt };
+  // volume: low-opacity histogram in the bottom ~15% (own overlay scale)
+  const vol = chart.addSeries(LC.HistogramSeries, { priceScaleId: 'vol', lastValueVisible: false, priceLineVisible: false,
+                                                     priceFormat: { type: 'volume' } });
+  chart.priceScale('vol').applyOptions({ scaleMargins: { top: 1 - volFrac, bottom: 0 }, visible: false });
+  vol.setData(p.volume.map(v => ({ time: v.time, value: v.value,
+                                   color: rgba(v.up ? S.bull_color : S.bear_color, 0.28) })));
+  // ATR channel
+  const base = chart.addSeries(LC.LineSeries, { ...ov, color: A.baseline_color, lineWidth: 1, lineStyle: LC.LineStyle.Dashed });
+  base.setData(p.mid);
+  const up = chart.addSeries(LC.LineSeries, { ...ov, color: A.upper_color, lineWidth: 1, lineStyle: LC.LineStyle.Solid });
+  up.setData(p.upper);
+  const lo = chart.addSeries(LC.LineSeries, { ...ov, color: A.lower_color, lineWidth: 1, lineStyle: LC.LineStyle.Solid });
+  lo.setData(p.lower);
+  up.attachPrimitive(new BandFill(p.upper, p.lower, rgba(A.fill_color, A.fill_opacity)));
+  // VWAP
+  const vw = chart.addSeries(LC.LineSeries, { ...ov, color: V.color, lineWidth: V.width, lineStyle: LC.LineStyle.Solid });
+  vw.setData(p.vwap);
+  // candles
+  const cs = chart.addSeries(LC.CandlestickSeries, {
+    upColor: S.bull_color, downColor: S.bear_color, borderUpColor: S.bull_color, borderDownColor: S.bear_color,
+    wickUpColor: S.bull_color, wickDownColor: S.bear_color, priceFormat: fmt });
+  cs.setData(p.candles);
+  const ls = R.line_style === 'dotted' ? LC.LineStyle.Dotted : LC.LineStyle.Dashed;
+  (p.levels || []).forEach(lv => {
+    cs.createPriceLine({ price: lv.price, color: lv.type === 'resistance' ? R.resistance_color : R.support_color,
+      lineWidth: Math.round(R.line_width), lineStyle: ls, axisLabelVisible: true, title: lv.label });
+  });
+  // exactly `visible` candles, fixed spacing, no autofit
+  const n = p.candles.length, vis = Math.max(80, Math.min(120, p.visible || 100));
+  chart.timeScale().setVisibleLogicalRange({ from: n - vis - 0.5, to: n - 0.5 });
+  const last = p.candles[n - 1], c = p.context || {};
+  document.getElementById('sym').textContent = p.symbol + '  ·  ' + p.timeframe;
+  document.getElementById('meta').textContent =
+    `src ${p.source}:${p.ticker}  |  close ${last.close.toFixed(prec)}  |  VWAP ${(c.vwap ?? NaN).toFixed(prec)} (${c.vwap_anchor})`
+    + `  |  ATR14 ${(c.atr ?? NaN).toFixed(prec)}  |  last bar ${new Date(last.time * 1000).toISOString().slice(0,16).replace('T',' ')} UTC`;
+  const sw = (col, style, h) => `<span class="sw" style="border-top:${h}px ${style} ${col}"></span>`;
+  document.getElementById('legend').innerHTML =
+    sw(V.color, 'solid', 3) + 'VWAP' + sw(A.baseline_color, 'dashed', 1) + 'EMA20' + sw(A.upper_color, 'solid', 1) + '+2 ATR'
+    + sw(A.lower_color, 'solid', 1) + '-2 ATR' + sw(R.resistance_color, 'dashed', 2) + 'Resistance'
+    + sw(R.support_color, 'dashed', 2) + 'Support';
+  requestAnimationFrame(() => requestAnimationFrame(() => { window.__rendered = true; }));
+};
+</script>
+</body>
+</html>

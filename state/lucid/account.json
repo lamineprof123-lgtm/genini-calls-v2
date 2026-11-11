@@ -1,7 +1,7 @@
 {
   "version": 1,
   "created_at": "2026-11-11T17:32:34.420596+00:00",
-  "last_processed": "2026-11-11T18:13:00+00:00",
+  "last_processed": "2026-11-11T18:15:00+00:00",
   "account": {
     "no": 1,
     "phase": "eval",
@@ -188,7 +188,156 @@
       "time_cut_candles": 2
     }
   ],
-  "pending": [],
+  "pending": [
+    {
+      "symbol": "US100",
+      "side": 1,
+      "created": "2026-11-11T18:16:31.771889+00:00",
+      "fill_after": "2026-11-11T18:17:00+00:00",
+      "expires": "2026-11-11T18:27:00+00:00",
+      "atr": 62.467,
+      "scalp": {
+        "action": "BUY",
+        "side": 1,
+        "entry": 28546.31,
+        "stop_loss": 28498.56,
+        "take_profit": 28584.06,
+        "sdist": 47.75335000000268,
+        "tdist": 37.75,
+        "stop_source": "structure",
+        "target_source": "extended:aim_net",
+        "rr": 0.791,
+        "structure_stop": 28498.55665,
+        "atr_stop": 28496.3364,
+        "fixed_tp": 28551.31,
+        "structure_tp": 28563.860660000002,
+        "structure_label": "Session High",
+        "candle": {
+          "high": 28549.64,
+          "low": 28501.68
+        },
+        "levels": [
+          {
+            "price": 28565.11,
+            "label": "Session High"
+          },
+          {
+            "price": 28083.64,
+            "label": "S/R"
+          },
+          {
+            "price": 28001.29,
+            "label": "Prev High"
+          },
+          {
+            "price": 27945.11,
+            "label": "S/R"
+          }
+        ],
+        "vp": {
+          "poc": 28264.82,
+          "vah": 28337.86,
+          "val": 27996.99
+        },
+        "target_scalp": 28551.31,
+        "lucid_plan": {
+          "contract": "NQ",
+          "qty": 1,
+          "tdist": 37.75,
+          "target_usd": 751.5,
+          "risk_usd": 960.0,
+          "target_source": "extended:aim_net",
+          "sizing": "fixed target 5 cannot reach $381 net within $1500 risk; extended:aim_net: 1 NQ (fewest that fit) target 37.75 -> $752 net, risk $960"
+        }
+      },
+      "session": "NEW_YORK_SESSION",
+      "telemetry": {
+        "symbol": "US100",
+        "session": "NEW_YORK_SESSION",
+        "last_close": 28540.95,
+        "atr": 62.467,
+        "vwap": 28190.61,
+        "ema20": 28408.39,
+        "ema50": 28277.38,
+        "price_vs_vwap": {
+          "side": "above",
+          "dist_atr": 5.6084
+        },
+        "price_vs_ema50": {
+          "side": "above",
+          "dist_atr": 4.2193
+        },
+        "vwap_aligned_with_side": true,
+        "ema50_aligned_with_side": true,
+        "poc": 28264.82,
+        "vah": 28337.86,
+        "val": 27996.99,
+        "price_vs_value_area": "above_vah",
+        "dist_to_poc_atr": 4.4204,
+        "cvd": 13.39,
+        "cvd_label": "BULLISH",
+        "cvd_slope": -0.07,
+        "cvd_agrees_with_side": true,
+        "rvol": 0.876,
+        "rvol_spike": false,
+        "rvol_bars_since_spike": 14,
+        "atr_band_z": 2.1221,
+        "atr_upper": 28533.33,
+        "atr_lower": 28283.46,
+        "nearest_sr": {
+          "above": {
+            "price": 28565.11,
+            "label": "Session High",
+            "dist_atr": 0.3868
+          },
+          "below": {
+            "price": 28083.64,
+            "label": "S/R",
+            "dist_atr": 7.3208
+          }
+        },
+        "gemini": {
+          "action": "BUY",
+          "confidence": 0.85,
+          "confidence_band": ">=0.8",
+          "rationale": "Price is well above VAH (28337.86) and POC (28264.82). CVD is BULLISH (+13.39) showing steady buying pressure. Session is NEW_YORK_SESSION. Price is riding strongly above VWAP (28190.61) and EMA50 (28277.38) with expanding ATR bands. Price is pushing against upper ATR band (28533.33) and approaching Session High (28565.11). Although RVOL is 0.876, US100 CFD tick volume rarely prints >2.0 RVOL yellow bars; structural trend expansion and CVD agreement confirm high momentum. Taking a long scalp at live price 28546.31.",
+          "model": "gemini-3.6-flash",
+          "model_action": "BUY"
+        },
+        "scalp": {
+          "stop_basis": "structure",
+          "target_basis": "extended:aim_net",
+          "tdist": 37.75,
+          "sdist": 47.75335000000268,
+          "structure_label": "Session High"
+        },
+        "planned": {
+          "tdist": 37.75,
+          "sdist": 47.75335000000268,
+          "qty": null,
+          "contract": null,
+          "target_usd_net": null,
+          "risk_usd": null
+        },
+        "run_at_utc": "2026-11-11T18:16:20.034397+00:00",
+        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/221620.json/US100.png"
+      },
+      "gemini": {
+        "action": "BUY",
+        "entry": 28546.31,
+        "stop_loss": 28498.56,
+        "take_profit": 28584.06,
+        "confidence": 0.85,
+        "rr": 0.791,
+        "shown_on_site": true,
+        "basis": "site signal",
+        "run_at_utc": "2026-11-11T18:16:20.034397+00:00",
+        "session": "NEW_YORK_SESSION",
+        "rationale": "Price is well above VAH (28337.86) and POC (28264.82). CVD is BULLISH (+13.39) showing steady buying pressure. Session is NEW_YORK_SESSION. Price is riding strongly above VWAP (28190.61) and EMA50 (28277.38) with expanding ATR bands. Price is pushing against upper ATR band (28533.33) and approaching Session High (28565.11). Although RVOL is 0.876, US100 CFD tick volume rarely prints >2.0 RVOL yellow bars; structural trend expansion and CVD agreement confirm high momentum. Taking a long scalp at live price 28546.31.",
+        "model": "gemini-3.6-flash"
+      }
+    }
+  ],
   "next_pos_id": 3,
   "day": {
     "id": "2026-11-11",
@@ -200,7 +349,7 @@
   },
   "last_price": {
     "US100": 28542.043,
-    "XAUUSD": 3993.895
+    "XAUUSD": 3992.655
   },
   "history": [],
   "ledger": {
@@ -230,7 +379,7 @@
     "commissions": 5.8,
     "net_trade_pnl": -693.1,
     "skipped_signals": 29,
-    "accepted_signals": 8
+    "accepted_signals": 9
   },
   "reset_token": "2026-11-11-target-sizing-fix"
 }

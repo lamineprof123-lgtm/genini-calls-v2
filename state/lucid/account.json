@@ -1,7 +1,7 @@
 {
   "version": 1,
   "created_at": "2026-11-09T13:59:39.073020+00:00",
-  "last_processed": "2026-11-11T09:47:00+00:00",
+  "last_processed": "2026-11-11T09:49:00+00:00",
   "account": {
     "no": 1,
     "phase": "eval",
@@ -271,7 +271,7 @@
         "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/134020.json/EURUSD.png"
       },
       "mfe": 0.0,
-      "mae": 0.00021000000000004349,
+      "mae": 0.00034999999999985043,
       "mfe_min": 0.00012875,
       "time_cut_deadline": "2026-11-11T10:11:00+00:00",
       "time_cut_candles": 2
@@ -281,24 +281,24 @@
     {
       "symbol": "US100",
       "side": 1,
-      "created": "2026-11-11T09:46:32.340338+00:00",
-      "fill_after": "2026-11-11T09:47:00+00:00",
-      "expires": "2026-11-11T09:57:00+00:00",
+      "created": "2026-11-11T09:50:28.956852+00:00",
+      "fill_after": "2026-11-11T09:51:00+00:00",
+      "expires": "2026-11-11T10:01:00+00:00",
       "atr": 46.412,
       "scalp": {
         "action": "BUY",
         "side": 1,
-        "entry": 28195.52,
+        "entry": 28200.91,
         "stop_loss": 28160.33,
-        "take_profit": 28200.52,
-        "sdist": 35.190599999998085,
+        "take_profit": 28205.91,
+        "sdist": 40.5805999999975,
         "tdist": 5.0,
         "stop_source": "structure",
         "target_source": "fixed",
-        "rr": 0.142,
+        "rr": 0.123,
         "structure_stop": 28160.329400000002,
-        "atr_stop": 28158.3904,
-        "fixed_tp": 28200.52,
+        "atr_stop": 28163.7804,
+        "fixed_tp": 28205.91,
         "structure_tp": 28229.921759999997,
         "structure_label": "Session High",
         "candle": {
@@ -354,9 +354,9 @@
         },
         "gemini": {
           "action": "BUY",
-          "confidence": 0.8,
-          "confidence_band": ">=0.8",
-          "rationale": "1) VP: Price is inside Value Area (28001.73..28230.85), well above POC (28111.52) and pressing upper VAH boundaries. 2) CVD: BULLISH (+7.70) with positive slope (+0.86), showing steady buying interest. 3) SESSION: LONDON_SESSION. 4) VWAP/EMA50: Price trading strongly above VWAP (28061.65) and EMA50 (28032.13) with strong upward slope. 5) ATR: Volatility expanding, trading near upper ATR band (28233.19). 6) Volume: RVOL 1.10 (US100 index tick volume rarely prints >2.0 yellow spikes; trend structure is reliable). 7) S/R: Swept previous high resistance zones and trending up toward Session High (28230.85). Strong momentum trend supports BUY.",
+          "confidence": 0.75,
+          "confidence_band": "0.7-0.8",
+          "rationale": "Price is inside VA approaching VAH (28230.85) and significantly above POC (28111.52). CVD is BULLISH (+7.70) with positive slope (+0.86). Session is LONDON_SESSION. Price is holding firmly above rising VWAP (28061.65) and EMA50 (28032.13), riding near the upper ATR band (28233.19). Note US100 Dukascopy tick volume caveat applies (low yellow RVOL frequency), but structural trend and delta align bullishly.",
           "model": "gemini-3.6-flash",
           "model_action": "BUY"
         },
@@ -364,32 +364,32 @@
           "stop_basis": "structure",
           "target_basis": "fixed",
           "tdist": 5.0,
-          "sdist": 35.190599999998085,
+          "sdist": 40.5805999999975,
           "structure_label": "Session High"
         },
         "planned": {
           "tdist": 5.0,
-          "sdist": 35.190599999998085,
+          "sdist": 40.5805999999975,
           "qty": null,
           "contract": null,
           "target_usd_net": null,
           "risk_usd": null
         },
-        "run_at_utc": "2026-11-11T09:46:20.062195+00:00",
-        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/134620.json/US100.png"
+        "run_at_utc": "2026-11-11T09:50:20.096426+00:00",
+        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/135020.json/US100.png"
       },
       "gemini": {
         "action": "BUY",
-        "entry": 28195.52,
+        "entry": 28200.91,
         "stop_loss": 28160.33,
-        "take_profit": 28200.52,
-        "confidence": 0.8,
-        "rr": 0.142,
+        "take_profit": 28205.91,
+        "confidence": 0.75,
+        "rr": 0.123,
         "shown_on_site": true,
         "basis": "site signal",
-        "run_at_utc": "2026-11-11T09:46:20.062195+00:00",
+        "run_at_utc": "2026-11-11T09:50:20.096426+00:00",
         "session": "LONDON_SESSION",
-        "rationale": "1) VP: Price is inside Value Area (28001.73..28230.85), well above POC (28111.52) and pressing upper VAH boundaries. 2) CVD: BULLISH (+7.70) with positive slope (+0.86), showing steady buying interest. 3) SESSION: LONDON_SESSION. 4) VWAP/EMA50: Price trading strongly above VWAP (28061.65) and EMA50 (28032.13) with strong upward slope. 5) ATR: Volatility expanding, trading near upper ATR band (28233.19). 6) Volume: RVOL 1.10 (US100 index tick volume rarely prints >2.0 yellow spikes; trend structure is reliable). 7) S/R: Swept previous high resistance zones and trending up toward Session High (28230.85). Strong momentum trend supports BUY.",
+        "rationale": "Price is inside VA approaching VAH (28230.85) and significantly above POC (28111.52). CVD is BULLISH (+7.70) with positive slope (+0.86). Session is LONDON_SESSION. Price is holding firmly above rising VWAP (28061.65) and EMA50 (28032.13), riding near the upper ATR band (28233.19). Note US100 Dukascopy tick volume caveat applies (low yellow RVOL frequency), but structural trend and delta align bullishly.",
         "model": "gemini-3.6-flash"
       }
     }
@@ -404,9 +404,9 @@
     "traded": true
   },
   "last_price": {
-    "US100": 28210.432,
-    "GBPUSD": 1.33175,
-    "EURUSD": 1.11355,
+    "US100": 28204.219,
+    "GBPUSD": 1.33182,
+    "EURUSD": 1.1136,
     "XAUUSD": 4049.015
   },
   "history": [],
@@ -436,7 +436,7 @@
     "gross_loss": -738.6,
     "commissions": 87.6,
     "net_trade_pnl": 18.65,
-    "skipped_signals": 106,
-    "accepted_signals": 20
+    "skipped_signals": 109,
+    "accepted_signals": 21
   }
 }

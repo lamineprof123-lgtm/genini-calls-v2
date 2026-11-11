@@ -1,0 +1,624 @@
+{
+  "run_dir": "/workspace/gemini-signals/logs/2026-11-09/212520",
+  "run_at_utc": "2026-11-09T17:25:20.087411+00:00",
+  "run_at_local": "2026-11-09T21:25:20.087411+04:00",
+  "dry_run": false,
+  "model": null,
+  "model_version": null,
+  "gemini_attempts": [
+    {
+      "model": "gemini-3.6-flash",
+      "attempt": 1,
+      "ok": false,
+      "retryable": false,
+      "error": "ClientError: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://aistudio.google.com/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Q"
+    },
+    {
+      "model": "gemini-3.8-flash",
+      "attempt": 1,
+      "ok": false,
+      "retryable": true,
+      "error": "ServerError: 504 DEADLINE_EXCEEDED. {'error': {'code': 504, 'message': 'Deadline expired before operation could complete.', 'status': 'DEADLINE_EXCEEDED'}}"
+    },
+    {
+      "model": "gemini-3.8-flash",
+      "attempt": 2,
+      "ok": false,
+      "retryable": true,
+      "error": "ServerError: 504 DEADLINE_EXCEEDED. {'error': {'code': 504, 'message': 'Deadline expired before operation could complete.', 'status': 'DEADLINE_EXCEEDED'}}"
+    }
+  ],
+  "signals_only": true,
+  "equity": 100000.0,
+  "circuit_breaker": {
+    "session_day": "2026-11-09",
+    "start_equity": 100000.0,
+    "equity": 100000.0,
+    "loss_pct": 0.0,
+    "halted": false,
+    "halted_at": null,
+    "reason": null
+  },
+  "data": {
+    "XAUUSD": {
+      "source": "dukascopy",
+      "ticker": "xauusd",
+      "last_closed_bar_utc": "2026-11-09T17:00:00+00:00",
+      "digits": 2,
+      "signal_candle": {
+        "open": 4110.39,
+        "high": 4112.5,
+        "low": 4104.97,
+        "close": 4105.71
+      },
+      "last_candle": {
+        "open": 4110.39,
+        "high": 4112.5,
+        "low": 4104.97,
+        "close": 4105.71
+      },
+      "last_close": 4105.71,
+      "last_price": 4105.71,
+      "last_price_ts_utc": "2026-11-09T17:00:00+00:00",
+      "vwap": 4111.9,
+      "vwap_anchor": "utc_day",
+      "atr": 8.077,
+      "ema20_baseline": 4115.26,
+      "ema50": 4109.8,
+      "atr_upper": 4131.42,
+      "atr_lower": 4099.11,
+      "atr_expanding_vs_20bar_avg": true,
+      "close_vs_vwap": "below",
+      "rvol_last": 0.806,
+      "rvol_spike_count": 6,
+      "rvol_bars_since_spike": 62,
+      "poc": 4120.41,
+      "vah": 4130.71,
+      "val": 4105.36,
+      "vp_session_anchor": "utc_day",
+      "vp_session_bars": 69,
+      "vp_value_area_pct": 0.7,
+      "price_vs_value_area": "inside",
+      "close_vs_poc": "below",
+      "cvd": 1.08,
+      "cvd_label": "NEUTRAL",
+      "cvd_slope": -2.12,
+      "cvd_session_volume": 65.671,
+      "cvd_header": "CVD +1.08 (NEUTRAL)",
+      "session": "NEW_YORK_SESSION",
+      "session_tz": "America/New_York",
+      "session_blocks_automation": false,
+      "levels": [
+        {
+          "type": "resistance",
+          "label": "S/R",
+          "price": 4106.66,
+          "touches": 1
+        },
+        {
+          "type": "resistance",
+          "label": "Session High",
+          "price": 4133.88,
+          "touches": 3
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 4084.49,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 4080.96,
+          "touches": 2
+        },
+        {
+          "type": "support",
+          "label": "Prev High",
+          "price": 4073.11,
+          "touches": 1
+        }
+      ]
+    },
+    "EURUSD": {
+      "source": "dukascopy",
+      "ticker": "eurusd",
+      "last_closed_bar_utc": "2026-11-09T17:00:00+00:00",
+      "digits": 5,
+      "signal_candle": {
+        "open": 1.12034,
+        "high": 1.12058,
+        "low": 1.12023,
+        "close": 1.12027
+      },
+      "last_candle": {
+        "open": 1.12034,
+        "high": 1.12058,
+        "low": 1.12023,
+        "close": 1.12027
+      },
+      "last_close": 1.12027,
+      "last_price": 1.12027,
+      "last_price_ts_utc": "2026-11-09T17:00:00+00:00",
+      "vwap": 1.11824,
+      "vwap_anchor": "utc_day",
+      "atr": 0.000579,
+      "ema20_baseline": 1.11963,
+      "ema50": 1.11863,
+      "atr_upper": 1.12079,
+      "atr_lower": 1.11847,
+      "atr_expanding_vs_20bar_avg": true,
+      "close_vs_vwap": "above",
+      "rvol_last": 0.714,
+      "rvol_spike_count": 6,
+      "rvol_bars_since_spike": 9,
+      "poc": 1.11933,
+      "vah": 1.12058,
+      "val": 1.11713,
+      "vp_session_anchor": "utc_day",
+      "vp_session_bars": 69,
+      "vp_value_area_pct": 0.7,
+      "price_vs_value_area": "inside",
+      "close_vs_poc": "above",
+      "cvd": -3021.41,
+      "cvd_label": "NEUTRAL",
+      "cvd_slope": -2110.06,
+      "cvd_session_volume": 128358.96,
+      "cvd_header": "CVD -3,021 (NEUTRAL)",
+      "session": "NEW_YORK_SESSION",
+      "session_tz": "America/New_York",
+      "session_blocks_automation": false,
+      "levels": [
+        {
+          "type": "resistance",
+          "label": "Session High",
+          "price": 1.12058,
+          "touches": 2
+        },
+        {
+          "type": "resistance",
+          "label": "S/R",
+          "price": 1.12345,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 1.11673,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 1.11579,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "Prev High",
+          "price": 1.11499,
+          "touches": 1
+        }
+      ]
+    },
+    "GBPUSD": {
+      "source": "dukascopy",
+      "ticker": "gbpusd",
+      "last_closed_bar_utc": "2026-11-09T17:00:00+00:00",
+      "digits": 5,
+      "signal_candle": {
+        "open": 1.34191,
+        "high": 1.34229,
+        "low": 1.34191,
+        "close": 1.34198
+      },
+      "last_candle": {
+        "open": 1.34191,
+        "high": 1.34229,
+        "low": 1.34191,
+        "close": 1.34198
+      },
+      "last_close": 1.34198,
+      "last_price": 1.34198,
+      "last_price_ts_utc": "2026-11-09T17:00:00+00:00",
+      "vwap": 1.34026,
+      "vwap_anchor": "utc_day",
+      "atr": 0.000666,
+      "ema20_baseline": 1.34126,
+      "ema50": 1.34049,
+      "atr_upper": 1.34259,
+      "atr_lower": 1.33993,
+      "atr_expanding_vs_20bar_avg": true,
+      "close_vs_vwap": "above",
+      "rvol_last": 0.552,
+      "rvol_spike_count": 9,
+      "rvol_bars_since_spike": 9,
+      "poc": 1.34133,
+      "vah": 1.34233,
+      "val": 1.33992,
+      "vp_session_anchor": "utc_day",
+      "vp_session_bars": 69,
+      "vp_value_area_pct": 0.7,
+      "price_vs_value_area": "inside",
+      "close_vs_poc": "above",
+      "cvd": 2267.47,
+      "cvd_label": "NEUTRAL",
+      "cvd_slope": 428.66,
+      "cvd_session_volume": 78291.71,
+      "cvd_header": "CVD +2,267 (NEUTRAL)",
+      "session": "NEW_YORK_SESSION",
+      "session_tz": "America/New_York",
+      "session_blocks_automation": false,
+      "levels": [
+        {
+          "type": "resistance",
+          "label": "Session High",
+          "price": 1.3426,
+          "touches": 3
+        },
+        {
+          "type": "resistance",
+          "label": "S/R",
+          "price": 1.34633,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 1.34039,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "Prev High",
+          "price": 1.3362,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "Session Low",
+          "price": 1.3359,
+          "touches": 1
+        }
+      ]
+    },
+    "US100": {
+      "source": "dukascopy",
+      "ticker": "usatechidxusd",
+      "last_closed_bar_utc": "2026-11-09T17:00:00+00:00",
+      "digits": 2,
+      "signal_candle": {
+        "open": 27821.82,
+        "high": 27870.78,
+        "low": 27799.55,
+        "close": 27862.88
+      },
+      "last_candle": {
+        "open": 27821.82,
+        "high": 27870.78,
+        "low": 27799.55,
+        "close": 27862.88
+      },
+      "last_close": 27862.88,
+      "last_price": 27862.88,
+      "last_price_ts_utc": "2026-11-09T17:00:00+00:00",
+      "vwap": 27144.46,
+      "vwap_anchor": "cme_globex",
+      "atr": 91.466,
+      "ema20_baseline": 27563.0,
+      "ema50": 27318.92,
+      "atr_upper": 27745.93,
+      "atr_lower": 27380.07,
+      "atr_expanding_vs_20bar_avg": true,
+      "close_vs_vwap": "above",
+      "rvol_last": 0.883,
+      "rvol_spike_count": 0,
+      "rvol_bars_since_spike": null,
+      "poc": 27140.12,
+      "vah": 27203.03,
+      "val": 26825.58,
+      "vp_session_anchor": "cme_globex",
+      "vp_session_bars": 73,
+      "vp_value_area_pct": 0.7,
+      "price_vs_value_area": "above_vah",
+      "close_vs_poc": "above",
+      "cvd": 5.11,
+      "cvd_label": "NEUTRAL",
+      "cvd_slope": 2.0,
+      "cvd_session_volume": 107.144,
+      "cvd_header": "CVD +5.11 (NEUTRAL)",
+      "session": "NEW_YORK_SESSION",
+      "session_tz": "America/New_York",
+      "session_blocks_automation": false,
+      "levels": [
+        {
+          "type": "resistance",
+          "label": "Session High",
+          "price": 27907.61,
+          "touches": 2
+        },
+        {
+          "type": "support",
+          "label": "Prev High",
+          "price": 27318.65,
+          "touches": 2
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 27216.52,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 27146.1,
+          "touches": 1
+        }
+      ]
+    },
+    "BTCUSD": {
+      "source": "binance",
+      "ticker": "BTCUSDT",
+      "last_closed_bar_utc": "2026-11-09T17:00:00+00:00",
+      "digits": 2,
+      "signal_candle": {
+        "open": 75070.01,
+        "high": 75070.01,
+        "low": 74816.0,
+        "close": 74900.01
+      },
+      "last_candle": {
+        "open": 75070.01,
+        "high": 75070.01,
+        "low": 74816.0,
+        "close": 74900.01
+      },
+      "last_close": 74900.01,
+      "last_price": 74900.01,
+      "last_price_ts_utc": "2026-11-09T17:00:00+00:00",
+      "vwap": 74639.71,
+      "vwap_anchor": "utc_day",
+      "atr": 303.566,
+      "ema20_baseline": 74882.6,
+      "ema50": 74781.64,
+      "atr_upper": 75489.74,
+      "atr_lower": 74275.47,
+      "atr_expanding_vs_20bar_avg": true,
+      "close_vs_vwap": "above",
+      "rvol_last": 0.608,
+      "rvol_spike_count": 9,
+      "rvol_bars_since_spike": 7,
+      "poc": 75025.96,
+      "vah": 75155.41,
+      "val": 74156.83,
+      "vp_session_anchor": "utc_day",
+      "vp_session_bars": 69,
+      "vp_value_area_pct": 0.7,
+      "price_vs_value_area": "inside",
+      "close_vs_poc": "below",
+      "cvd": 113.11,
+      "cvd_label": "NEUTRAL",
+      "cvd_slope": -195.78,
+      "cvd_session_volume": 13355.834,
+      "cvd_header": "CVD +113 (NEUTRAL)",
+      "session": "NEW_YORK_SESSION",
+      "session_tz": "America/New_York",
+      "session_blocks_automation": false,
+      "levels": [
+        {
+          "type": "resistance",
+          "label": "Session High",
+          "price": 75599.22,
+          "touches": 4
+        },
+        {
+          "type": "resistance",
+          "label": "S/R",
+          "price": 75779.89,
+          "touches": 2
+        },
+        {
+          "type": "resistance",
+          "label": "24h High",
+          "price": 75970.0,
+          "touches": 4
+        },
+        {
+          "type": "support",
+          "label": "Session Low",
+          "price": 73750.0,
+          "touches": 2
+        },
+        {
+          "type": "support",
+          "label": "Prev Low",
+          "price": 73510.0,
+          "touches": 3
+        }
+      ]
+    }
+  },
+  "data_errors": {},
+  "parse_error": "GeminiFailed: all models failed (3 attempts); last: ServerError: 504 DEADLINE_EXCEEDED. {'error': {'code': 504, 'message': 'Deadline expired before operation could complete.', 'status': 'DEADLINE_EXCEEDED'}}",
+  "ai_error": "GeminiFailed: all models failed (3 attempts); last: ServerError: 504 DEADLINE_EXCEEDED. {'error': {'code': 504, 'message': 'Deadline expired before operation could complete.', 'status': 'DEADLINE_EXCEEDED'}}",
+  "market_summary": null,
+  "signals": [
+    {
+      "symbol": "XAUUSD",
+      "model_action": null,
+      "action": "HOLD",
+      "entry": null,
+      "stop_loss": null,
+      "take_profit": null,
+      "model_risk_reward": null,
+      "rr_local": null,
+      "confidence": null,
+      "model_risk_pct": null,
+      "risk_pct": null,
+      "risk_amount": 0.0,
+      "position_units": 0.0,
+      "position_lots": 0.0,
+      "last_close": 4105.71,
+      "atr": 8.077,
+      "rationale": null,
+      "trend_vs_vwap": null,
+      "volatility": null,
+      "level_event": null,
+      "downgraded": false,
+      "reasons": [
+        "AI call failed: GeminiFailed: all models failed (3 attempts); last: ServerError: 504 DEADLINE_EXCEEDED. {'error': {'code': 504, 'message': 'Deadline expired before operation co"
+      ],
+      "session": "NEW_YORK_SESSION",
+      "cvd": 1.08,
+      "cvd_label": "NEUTRAL",
+      "cvd_slope": -2.12,
+      "last_closed_bar_utc": "2026-11-09T17:00:00+00:00",
+      "last_price_ts_utc": "2026-11-09T17:00:00+00:00",
+      "poc": 4120.41,
+      "vah": 4130.71,
+      "val": 4105.36
+    },
+    {
+      "symbol": "EURUSD",
+      "model_action": null,
+      "action": "HOLD",
+      "entry": null,
+      "stop_loss": null,
+      "take_profit": null,
+      "model_risk_reward": null,
+      "rr_local": null,
+      "confidence": null,
+      "model_risk_pct": null,
+      "risk_pct": null,
+      "risk_amount": 0.0,
+      "position_units": 0.0,
+      "position_lots": 0.0,
+      "last_close": 1.12027,
+      "atr": 0.000579,
+      "rationale": null,
+      "trend_vs_vwap": null,
+      "volatility": null,
+      "level_event": null,
+      "downgraded": false,
+      "reasons": [
+        "AI call failed: GeminiFailed: all models failed (3 attempts); last: ServerError: 504 DEADLINE_EXCEEDED. {'error': {'code': 504, 'message': 'Deadline expired before operation co"
+      ],
+      "session": "NEW_YORK_SESSION",
+      "cvd": -3021.41,
+      "cvd_label": "NEUTRAL",
+      "cvd_slope": -2110.06,
+      "last_closed_bar_utc": "2026-11-09T17:00:00+00:00",
+      "last_price_ts_utc": "2026-11-09T17:00:00+00:00",
+      "poc": 1.11933,
+      "vah": 1.12058,
+      "val": 1.11713
+    },
+    {
+      "symbol": "GBPUSD",
+      "model_action": null,
+      "action": "HOLD",
+      "entry": null,
+      "stop_loss": null,
+      "take_profit": null,
+      "model_risk_reward": null,
+      "rr_local": null,
+      "confidence": null,
+      "model_risk_pct": null,
+      "risk_pct": null,
+      "risk_amount": 0.0,
+      "position_units": 0.0,
+      "position_lots": 0.0,
+      "last_close": 1.34198,
+      "atr": 0.000666,
+      "rationale": null,
+      "trend_vs_vwap": null,
+      "volatility": null,
+      "level_event": null,
+      "downgraded": false,
+      "reasons": [
+        "AI call failed: GeminiFailed: all models failed (3 attempts); last: ServerError: 504 DEADLINE_EXCEEDED. {'error': {'code': 504, 'message': 'Deadline expired before operation co"
+      ],
+      "session": "NEW_YORK_SESSION",
+      "cvd": 2267.47,
+      "cvd_label": "NEUTRAL",
+      "cvd_slope": 428.66,
+      "last_closed_bar_utc": "2026-11-09T17:00:00+00:00",
+      "last_price_ts_utc": "2026-11-09T17:00:00+00:00",
+      "poc": 1.34133,
+      "vah": 1.34233,
+      "val": 1.33992
+    },
+    {
+      "symbol": "US100",
+      "model_action": null,
+      "action": "HOLD",
+      "entry": null,
+      "stop_loss": null,
+      "take_profit": null,
+      "model_risk_reward": null,
+      "rr_local": null,
+      "confidence": null,
+      "model_risk_pct": null,
+      "risk_pct": null,
+      "risk_amount": 0.0,
+      "position_units": 0.0,
+      "position_lots": 0.0,
+      "last_close": 27862.88,
+      "atr": 91.466,
+      "rationale": null,
+      "trend_vs_vwap": null,
+      "volatility": null,
+      "level_event": null,
+      "downgraded": false,
+      "reasons": [
+        "AI call failed: GeminiFailed: all models failed (3 attempts); last: ServerError: 504 DEADLINE_EXCEEDED. {'error': {'code': 504, 'message': 'Deadline expired before operation co"
+      ],
+      "session": "NEW_YORK_SESSION",
+      "cvd": 5.11,
+      "cvd_label": "NEUTRAL",
+      "cvd_slope": 2.0,
+      "last_closed_bar_utc": "2026-11-09T17:00:00+00:00",
+      "last_price_ts_utc": "2026-11-09T17:00:00+00:00",
+      "poc": 27140.12,
+      "vah": 27203.03,
+      "val": 26825.58
+    },
+    {
+      "symbol": "BTCUSD",
+      "model_action": null,
+      "action": "HOLD",
+      "entry": null,
+      "stop_loss": null,
+      "take_profit": null,
+      "model_risk_reward": null,
+      "rr_local": null,
+      "confidence": null,
+      "model_risk_pct": null,
+      "risk_pct": null,
+      "risk_amount": 0.0,
+      "position_units": 0.0,
+      "position_lots": 0.0,
+      "last_close": 74900.01,
+      "atr": 303.566,
+      "rationale": null,
+      "trend_vs_vwap": null,
+      "volatility": null,
+      "level_event": null,
+      "downgraded": false,
+      "reasons": [
+        "AI call failed: GeminiFailed: all models failed (3 attempts); last: ServerError: 504 DEADLINE_EXCEEDED. {'error': {'code': 504, 'message': 'Deadline expired before operation co"
+      ],
+      "session": "NEW_YORK_SESSION",
+      "cvd": 113.11,
+      "cvd_label": "NEUTRAL",
+      "cvd_slope": -195.78,
+      "last_closed_bar_utc": "2026-11-09T17:00:00+00:00",
+      "last_price_ts_utc": "2026-11-09T17:00:00+00:00",
+      "poc": 75025.96,
+      "vah": 75155.41,
+      "val": 74156.83
+    }
+  ]
+}

@@ -1,0 +1,605 @@
+{
+  "run_at_utc": "2026-11-09T16:35:20.102932+00:00",
+  "run_at_local": "2026-11-09T20:35:20.102932+04:00",
+  "dry_run": false,
+  "model": null,
+  "model_version": null,
+  "gemini_attempts": [
+    {
+      "model": "gemini-3.6-flash",
+      "attempt": 1,
+      "ok": false,
+      "retryable": false,
+      "error": "ClientError: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://aistudio.google.com/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Q"
+    },
+    {
+      "model": "gemini-3.8-flash",
+      "attempt": 1,
+      "ok": false,
+      "retryable": false,
+      "error": "ClientError: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://aistudio.google.com/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Q"
+    }
+  ],
+  "signals_only": true,
+  "equity": 100000.0,
+  "circuit_breaker": {
+    "session_day": "2026-11-09",
+    "start_equity": 100000.0,
+    "equity": 100000.0,
+    "loss_pct": 0.0,
+    "halted": false,
+    "halted_at": null,
+    "reason": null
+  },
+  "data": {
+    "XAUUSD": {
+      "source": "dukascopy",
+      "ticker": "xauusd",
+      "last_closed_bar_utc": "2026-11-09T16:15:00+00:00",
+      "digits": 2,
+      "signal_candle": {
+        "open": 4127.07,
+        "high": 4127.61,
+        "low": 4112.97,
+        "close": 4114.39
+      },
+      "last_candle": {
+        "open": 4127.07,
+        "high": 4127.61,
+        "low": 4112.97,
+        "close": 4114.39
+      },
+      "last_close": 4114.39,
+      "last_price": 4114.39,
+      "last_price_ts_utc": "2026-11-09T16:15:00+00:00",
+      "vwap": 4111.93,
+      "vwap_anchor": "utc_day",
+      "atr": 8.257,
+      "ema20_baseline": 4117.19,
+      "ema50": 4109.78,
+      "atr_upper": 4133.7,
+      "atr_lower": 4100.68,
+      "atr_expanding_vs_20bar_avg": true,
+      "close_vs_vwap": "above",
+      "rvol_last": 1.169,
+      "rvol_spike_count": 6,
+      "poc": 4120.41,
+      "vah": 4130.71,
+      "val": 4103.78,
+      "vp_session_anchor": "utc_day",
+      "vp_session_bars": 66,
+      "vp_value_area_pct": 0.7,
+      "price_vs_value_area": "inside",
+      "close_vs_poc": "below",
+      "cvd": 2.32,
+      "cvd_label": "NEUTRAL",
+      "cvd_slope": -0.05,
+      "cvd_session_volume": 63.361,
+      "cvd_header": "CVD +2.32 (NEUTRAL)",
+      "session": "NEW_YORK_SESSION",
+      "session_tz": "America/New_York",
+      "session_blocks_automation": false,
+      "levels": [
+        {
+          "type": "resistance",
+          "label": "Session High",
+          "price": 4133.88,
+          "touches": 3
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 4106.66,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 4084.49,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 4080.96,
+          "touches": 2
+        }
+      ]
+    },
+    "EURUSD": {
+      "source": "dukascopy",
+      "ticker": "eurusd",
+      "last_closed_bar_utc": "2026-11-09T16:15:00+00:00",
+      "digits": 5,
+      "signal_candle": {
+        "open": 1.12032,
+        "high": 1.12048,
+        "low": 1.12013,
+        "close": 1.12027
+      },
+      "last_candle": {
+        "open": 1.12032,
+        "high": 1.12048,
+        "low": 1.12013,
+        "close": 1.12027
+      },
+      "last_close": 1.12027,
+      "last_price": 1.12027,
+      "last_price_ts_utc": "2026-11-09T16:15:00+00:00",
+      "vwap": 1.11812,
+      "vwap_anchor": "utc_day",
+      "atr": 0.000629,
+      "ema20_baseline": 1.1194,
+      "ema50": 1.11842,
+      "atr_upper": 1.12066,
+      "atr_lower": 1.11814,
+      "atr_expanding_vs_20bar_avg": true,
+      "close_vs_vwap": "above",
+      "rvol_last": 1.112,
+      "rvol_spike_count": 6,
+      "poc": 1.11937,
+      "vah": 1.12048,
+      "val": 1.11674,
+      "vp_session_anchor": "utc_day",
+      "vp_session_bars": 66,
+      "vp_value_area_pct": 0.7,
+      "price_vs_value_area": "inside",
+      "close_vs_poc": "above",
+      "cvd": -1517.81,
+      "cvd_label": "NEUTRAL",
+      "cvd_slope": 4399.39,
+      "cvd_session_volume": 121380.53,
+      "cvd_header": "CVD -1,518 (NEUTRAL)",
+      "session": "NEW_YORK_SESSION",
+      "session_tz": "America/New_York",
+      "session_blocks_automation": false,
+      "levels": [
+        {
+          "type": "resistance",
+          "label": "Session High",
+          "price": 1.12048,
+          "touches": 2
+        },
+        {
+          "type": "resistance",
+          "label": "S/R",
+          "price": 1.12345,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 1.11673,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 1.11579,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "Prev High",
+          "price": 1.11499,
+          "touches": 1
+        }
+      ]
+    },
+    "GBPUSD": {
+      "source": "dukascopy",
+      "ticker": "gbpusd",
+      "last_closed_bar_utc": "2026-11-09T16:15:00+00:00",
+      "digits": 5,
+      "signal_candle": {
+        "open": 1.34135,
+        "high": 1.34168,
+        "low": 1.34124,
+        "close": 1.34144
+      },
+      "last_candle": {
+        "open": 1.34135,
+        "high": 1.34168,
+        "low": 1.34124,
+        "close": 1.34144
+      },
+      "last_close": 1.34144,
+      "last_price": 1.34144,
+      "last_price_ts_utc": "2026-11-09T16:15:00+00:00",
+      "vwap": 1.3402,
+      "vwap_anchor": "utc_day",
+      "atr": 0.000705,
+      "ema20_baseline": 1.34106,
+      "ema50": 1.34032,
+      "atr_upper": 1.34247,
+      "atr_lower": 1.33965,
+      "atr_expanding_vs_20bar_avg": true,
+      "close_vs_vwap": "above",
+      "rvol_last": 0.821,
+      "rvol_spike_count": 9,
+      "poc": 1.34133,
+      "vah": 1.34233,
+      "val": 1.33992,
+      "vp_session_anchor": "utc_day",
+      "vp_session_bars": 66,
+      "vp_value_area_pct": 0.7,
+      "price_vs_value_area": "inside",
+      "close_vs_poc": "above",
+      "cvd": 1692.79,
+      "cvd_label": "NEUTRAL",
+      "cvd_slope": 3566.14,
+      "cvd_session_volume": 75341.95,
+      "cvd_header": "CVD +1,693 (NEUTRAL)",
+      "session": "NEW_YORK_SESSION",
+      "session_tz": "America/New_York",
+      "session_blocks_automation": false,
+      "levels": [
+        {
+          "type": "resistance",
+          "label": "Session High",
+          "price": 1.3426,
+          "touches": 3
+        },
+        {
+          "type": "resistance",
+          "label": "S/R",
+          "price": 1.34633,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 1.34039,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "Prev High",
+          "price": 1.3362,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "Session Low",
+          "price": 1.3359,
+          "touches": 1
+        }
+      ]
+    },
+    "US100": {
+      "source": "dukascopy",
+      "ticker": "usatechidxusd",
+      "last_closed_bar_utc": "2026-11-09T16:15:00+00:00",
+      "digits": 2,
+      "signal_candle": {
+        "open": 27797.87,
+        "high": 27824.19,
+        "low": 27731.23,
+        "close": 27745.26
+      },
+      "last_candle": {
+        "open": 27797.87,
+        "high": 27824.19,
+        "low": 27731.23,
+        "close": 27745.26
+      },
+      "last_close": 27745.26,
+      "last_price": 27745.26,
+      "last_price_ts_utc": "2026-11-09T16:15:00+00:00",
+      "vwap": 27118.47,
+      "vwap_anchor": "cme_globex",
+      "atr": 97.034,
+      "ema20_baseline": 27470.84,
+      "ema50": 27254.45,
+      "atr_upper": 27664.91,
+      "atr_lower": 27276.78,
+      "atr_expanding_vs_20bar_avg": true,
+      "close_vs_vwap": "above",
+      "rvol_last": 1.114,
+      "rvol_spike_count": 0,
+      "poc": 27140.12,
+      "vah": 27203.03,
+      "val": 26850.74,
+      "vp_session_anchor": "cme_globex",
+      "vp_session_bars": 70,
+      "vp_value_area_pct": 0.7,
+      "price_vs_value_area": "above_vah",
+      "close_vs_poc": "above",
+      "cvd": 2.14,
+      "cvd_label": "NEUTRAL",
+      "cvd_slope": -0.63,
+      "cvd_session_volume": 102.928,
+      "cvd_header": "CVD +2.14 (NEUTRAL)",
+      "session": "NEW_YORK_SESSION",
+      "session_tz": "America/New_York",
+      "session_blocks_automation": false,
+      "levels": [
+        {
+          "type": "resistance",
+          "label": "Session High",
+          "price": 27907.61,
+          "touches": 2
+        },
+        {
+          "type": "support",
+          "label": "Prev High",
+          "price": 27318.65,
+          "touches": 2
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 27216.52,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 27146.1,
+          "touches": 1
+        }
+      ]
+    },
+    "BTCUSD": {
+      "source": "binance",
+      "ticker": "BTCUSDT",
+      "last_closed_bar_utc": "2026-11-09T16:15:00+00:00",
+      "digits": 2,
+      "signal_candle": {
+        "open": 75111.01,
+        "high": 75182.01,
+        "low": 74784.0,
+        "close": 74829.21
+      },
+      "last_candle": {
+        "open": 75111.01,
+        "high": 75182.01,
+        "low": 74784.0,
+        "close": 74829.21
+      },
+      "last_close": 74829.21,
+      "last_price": 74829.21,
+      "last_price_ts_utc": "2026-11-09T16:15:00+00:00",
+      "vwap": 74631.93,
+      "vwap_anchor": "utc_day",
+      "atr": 318.277,
+      "ema20_baseline": 74853.79,
+      "ema50": 74758.19,
+      "atr_upper": 75490.34,
+      "atr_lower": 74217.23,
+      "atr_expanding_vs_20bar_avg": true,
+      "close_vs_vwap": "above",
+      "rvol_last": 1.26,
+      "rvol_spike_count": 9,
+      "poc": 74212.3,
+      "vah": 75081.44,
+      "val": 74082.86,
+      "vp_session_anchor": "utc_day",
+      "vp_session_bars": 66,
+      "vp_value_area_pct": 0.7,
+      "price_vs_value_area": "inside",
+      "close_vs_poc": "above",
+      "cvd": 115.27,
+      "cvd_label": "NEUTRAL",
+      "cvd_slope": -43.09,
+      "cvd_session_volume": 13033.314,
+      "cvd_header": "CVD +115 (NEUTRAL)",
+      "session": "NEW_YORK_SESSION",
+      "session_tz": "America/New_York",
+      "session_blocks_automation": false,
+      "levels": [
+        {
+          "type": "resistance",
+          "label": "Session High",
+          "price": 75599.22,
+          "touches": 4
+        },
+        {
+          "type": "resistance",
+          "label": "S/R",
+          "price": 75779.89,
+          "touches": 2
+        },
+        {
+          "type": "resistance",
+          "label": "S/R",
+          "price": 75924.0,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "Session Low",
+          "price": 73750.0,
+          "touches": 2
+        },
+        {
+          "type": "support",
+          "label": "Prev Low",
+          "price": 73510.0,
+          "touches": 3
+        }
+      ]
+    }
+  },
+  "data_errors": {},
+  "parse_error": "GeminiFailed: all models failed (2 attempts); last: ClientError: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://aistudio.google.com/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Q",
+  "ai_error": "GeminiFailed: all models failed (2 attempts); last: ClientError: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://aistudio.google.com/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Q",
+  "market_summary": null,
+  "signals": [
+    {
+      "symbol": "XAUUSD",
+      "model_action": null,
+      "action": "HOLD",
+      "entry": null,
+      "stop_loss": null,
+      "take_profit": null,
+      "model_risk_reward": null,
+      "rr_local": null,
+      "confidence": null,
+      "model_risk_pct": null,
+      "risk_pct": null,
+      "risk_amount": 0.0,
+      "position_units": 0.0,
+      "position_lots": 0.0,
+      "last_close": 4114.39,
+      "atr": 8.257,
+      "rationale": null,
+      "trend_vs_vwap": null,
+      "volatility": null,
+      "level_event": null,
+      "downgraded": false,
+      "reasons": [
+        "AI call failed: GeminiFailed: all models failed (2 attempts); last: ClientError: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, pl"
+      ],
+      "session": "NEW_YORK_SESSION",
+      "cvd": 2.32,
+      "cvd_label": "NEUTRAL",
+      "cvd_slope": -0.05,
+      "last_closed_bar_utc": "2026-11-09T16:15:00+00:00",
+      "last_price_ts_utc": "2026-11-09T16:15:00+00:00",
+      "poc": 4120.41,
+      "vah": 4130.71,
+      "val": 4103.78
+    },
+    {
+      "symbol": "EURUSD",
+      "model_action": null,
+      "action": "HOLD",
+      "entry": null,
+      "stop_loss": null,
+      "take_profit": null,
+      "model_risk_reward": null,
+      "rr_local": null,
+      "confidence": null,
+      "model_risk_pct": null,
+      "risk_pct": null,
+      "risk_amount": 0.0,
+      "position_units": 0.0,
+      "position_lots": 0.0,
+      "last_close": 1.12027,
+      "atr": 0.000629,
+      "rationale": null,
+      "trend_vs_vwap": null,
+      "volatility": null,
+      "level_event": null,
+      "downgraded": false,
+      "reasons": [
+        "AI call failed: GeminiFailed: all models failed (2 attempts); last: ClientError: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, pl"
+      ],
+      "session": "NEW_YORK_SESSION",
+      "cvd": -1517.81,
+      "cvd_label": "NEUTRAL",
+      "cvd_slope": 4399.39,
+      "last_closed_bar_utc": "2026-11-09T16:15:00+00:00",
+      "last_price_ts_utc": "2026-11-09T16:15:00+00:00",
+      "poc": 1.11937,
+      "vah": 1.12048,
+      "val": 1.11674
+    },
+    {
+      "symbol": "GBPUSD",
+      "model_action": null,
+      "action": "HOLD",
+      "entry": null,
+      "stop_loss": null,
+      "take_profit": null,
+      "model_risk_reward": null,
+      "rr_local": null,
+      "confidence": null,
+      "model_risk_pct": null,
+      "risk_pct": null,
+      "risk_amount": 0.0,
+      "position_units": 0.0,
+      "position_lots": 0.0,
+      "last_close": 1.34144,
+      "atr": 0.000705,
+      "rationale": null,
+      "trend_vs_vwap": null,
+      "volatility": null,
+      "level_event": null,
+      "downgraded": false,
+      "reasons": [
+        "AI call failed: GeminiFailed: all models failed (2 attempts); last: ClientError: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, pl"
+      ],
+      "session": "NEW_YORK_SESSION",
+      "cvd": 1692.79,
+      "cvd_label": "NEUTRAL",
+      "cvd_slope": 3566.14,
+      "last_closed_bar_utc": "2026-11-09T16:15:00+00:00",
+      "last_price_ts_utc": "2026-11-09T16:15:00+00:00",
+      "poc": 1.34133,
+      "vah": 1.34233,
+      "val": 1.33992
+    },
+    {
+      "symbol": "US100",
+      "model_action": null,
+      "action": "HOLD",
+      "entry": null,
+      "stop_loss": null,
+      "take_profit": null,
+      "model_risk_reward": null,
+      "rr_local": null,
+      "confidence": null,
+      "model_risk_pct": null,
+      "risk_pct": null,
+      "risk_amount": 0.0,
+      "position_units": 0.0,
+      "position_lots": 0.0,
+      "last_close": 27745.26,
+      "atr": 97.034,
+      "rationale": null,
+      "trend_vs_vwap": null,
+      "volatility": null,
+      "level_event": null,
+      "downgraded": false,
+      "reasons": [
+        "AI call failed: GeminiFailed: all models failed (2 attempts); last: ClientError: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, pl"
+      ],
+      "session": "NEW_YORK_SESSION",
+      "cvd": 2.14,
+      "cvd_label": "NEUTRAL",
+      "cvd_slope": -0.63,
+      "last_closed_bar_utc": "2026-11-09T16:15:00+00:00",
+      "last_price_ts_utc": "2026-11-09T16:15:00+00:00",
+      "poc": 27140.12,
+      "vah": 27203.03,
+      "val": 26850.74
+    },
+    {
+      "symbol": "BTCUSD",
+      "model_action": null,
+      "action": "HOLD",
+      "entry": null,
+      "stop_loss": null,
+      "take_profit": null,
+      "model_risk_reward": null,
+      "rr_local": null,
+      "confidence": null,
+      "model_risk_pct": null,
+      "risk_pct": null,
+      "risk_amount": 0.0,
+      "position_units": 0.0,
+      "position_lots": 0.0,
+      "last_close": 74829.21,
+      "atr": 318.277,
+      "rationale": null,
+      "trend_vs_vwap": null,
+      "volatility": null,
+      "level_event": null,
+      "downgraded": false,
+      "reasons": [
+        "AI call failed: GeminiFailed: all models failed (2 attempts); last: ClientError: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, pl"
+      ],
+      "session": "NEW_YORK_SESSION",
+      "cvd": 115.27,
+      "cvd_label": "NEUTRAL",
+      "cvd_slope": -43.09,
+      "last_closed_bar_utc": "2026-11-09T16:15:00+00:00",
+      "last_price_ts_utc": "2026-11-09T16:15:00+00:00",
+      "poc": 74212.3,
+      "vah": 75081.44,
+      "val": 74082.86
+    }
+  ]
+}

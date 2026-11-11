@@ -1,0 +1,46 @@
+{
+  "model": "gemini-3.6-flash",
+  "model_version": "gemini-3.6-flash",
+  "raw_text": "{\n  \"signals\": [\n    {\n      \"symbol\": \"XAUUSD\",\n      \"action\": \"HOLD\",\n      \"entry\": null,\n      \"stop_loss\": null,\n      \"take_profit\": null,\n      \"risk_reward\": null,\n      \"confidence\": 0.4,\n      \"risk_pct\": null,\n      \"trend_vs_vwap\": \"bullish above VWAP\",\n      \"volatility\": \"expanding\",\n      \"level_event\": \"rejection at Session High 4133.88\",\n      \"rationale\": \"Price is trading near session highs and testing resistance around 4133.88. Though trend relative to VWAP is strong, reward-to-risk toward higher resistance is insufficient without a deeper retracement back to VWAP or S/R at 4106.66.\"\n    },\n    {\n      \"symbol\": \"EURUSD\",\n      \"action\": \"HOLD\",\n      \"entry\": null,\n      \"stop_loss\": null,\n      \"take_profit\": null,\n      \"risk_reward\": null,\n      \"confidence\": 0.45,\n      \"risk_pct\": null,\n      \"trend_vs_vwap\": \"bullish strong uptrend above VWAP\",\n      \"volatility\": \"expanding\",\n      \"level_event\": \"rejection near Session High 1.12026\",\n      \"rationale\": \"Strong upward momentum and ATR expansion, but price is right below key Session High resistance (1.12026) with extended distance from VWAP (1.11759). Buying here lacks valid R:R.\"\n    },\n    {\n      \"symbol\": \"GBPUSD\",\n      \"action\": \"HOLD\",\n      \"entry\": null,\n      \"stop_loss\": null,\n      \"take_profit\": null,\n      \"risk_reward\": null,\n      \"confidence\": 0.45,\n      \"risk_pct\": null,\n      \"trend_vs_vwap\": \"bullish above VWAP\",\n      \"volatility\": \"expanding\",\n      \"level_event\": \"rejection near Session High 1.34260\",\n      \"rationale\": \"Price pushed near upper ATR band and Session High (1.34260) following a strong rally. Entering long right into resistance after an extended move offers poor R:R.\"\n    },\n    {\n      \"symbol\": \"US100\",\n      \"action\": \"HOLD\",\n      \"entry\": null,\n      \"stop_loss\": null,\n      \"take_profit\": null,\n      \"risk_reward\": null,\n      \"confidence\": 0.35,\n      \"risk_pct\": null,\n      \"trend_vs_vwap\": \"bullish recovery above VWAP\",\n      \"volatility\": \"contracting\",\n      \"level_event\": \"rejection at S/R 27216.52\",\n      \"rationale\": \"US100 recovered sharply from low wick sweeps but is now squeezed right against S/R 27216.52 and Session High 27274.70. Overhead resistance caps potential gain relative to required stop size.\"\n    },\n    {\n      \"symbol\": \"BTCUSD\",\n      \"action\": \"HOLD\",\n      \"entry\": null,\n      \"stop_loss\": null,\n      \"take_profit\": null,\n      \"risk_reward\": null,\n      \"confidence\": 0.4,\n      \"risk_pct\": null,\n      \"trend_vs_vwap\": \"neutral reclaimed VWAP\",\n      \"volatility\": \"normal\",\n      \"level_event\": \"none\",\n      \"rationale\": \"Price is bouncing around VWAP after sweeping session lows near 73750, but remains bound within a broad consolidation below 75599 resistance. Risk/reward is unclear mid-range.\"\n    }\n  ],\n  \"market_summary\": \"FX pairs (EURUSD, GBPUSD) and XAUUSD exhibit strong bullish intraday momentum above session VWAP, but all are currently testing major session high resistances. US100 and BTCUSD have recovered from lower intraday selloffs but remain capped mid-range by local overhead levels. Due to poor reward-to-risk profiles across all instruments at current breakout/resistance zones, a disciplined HOLD stance is recommended.\"\n}",
+  "usage": {
+    "cache_tokens_details": [
+      {
+        "modality": "TEXT",
+        "token_count": 2257
+      },
+      {
+        "modality": "IMAGE",
+        "token_count": 4247
+      }
+    ],
+    "cached_content_token_count": 6504,
+    "candidates_token_count": 1004,
+    "prompt_token_count": 8423,
+    "prompt_tokens_details": [
+      {
+        "modality": "TEXT",
+        "token_count": 2923
+      },
+      {
+        "modality": "IMAGE",
+        "token_count": 5500
+      }
+    ],
+    "total_token_count": 9427
+  },
+  "attempts": [
+    {
+      "model": "gemini-3.6-flash",
+      "attempt": 1,
+      "ok": false,
+      "retryable": true,
+      "error": "ServerError: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}"
+    },
+    {
+      "model": "gemini-3.6-flash",
+      "attempt": 2,
+      "ok": true
+    }
+  ],
+  "parse_error": null
+}

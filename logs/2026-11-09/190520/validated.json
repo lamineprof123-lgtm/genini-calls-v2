@@ -1,0 +1,402 @@
+{
+  "run_at_utc": "2026-11-09T15:05:20.107176+00:00",
+  "run_at_local": "2026-11-09T19:05:20.107176+04:00",
+  "dry_run": false,
+  "model": "gemini-3.6-flash",
+  "model_version": "gemini-3.6-flash",
+  "gemini_attempts": [
+    {
+      "model": "gemini-3.6-flash",
+      "attempt": 1,
+      "ok": true
+    }
+  ],
+  "signals_only": true,
+  "equity": 100000.0,
+  "circuit_breaker": {
+    "session_day": "2026-11-09",
+    "start_equity": 100000.0,
+    "equity": 100000.0,
+    "loss_pct": 0.0,
+    "halted": false,
+    "halted_at": null,
+    "reason": null
+  },
+  "data": {
+    "XAUUSD": {
+      "source": "dukascopy",
+      "ticker": "xauusd",
+      "last_closed_bar_utc": "2026-11-09T14:45:00+00:00",
+      "last_close": 4120.62,
+      "last_price": 4120.62,
+      "last_price_ts_utc": "2026-11-09T14:45:00+00:00",
+      "vwap": 4111.06,
+      "vwap_anchor": "utc_day",
+      "atr": 7.98,
+      "ema20_baseline": 4115.47,
+      "ema50": 4107.22,
+      "atr_upper": 4131.43,
+      "atr_lower": 4099.51,
+      "atr_expanding_vs_20bar_avg": true,
+      "close_vs_vwap": "above",
+      "rvol_last": 1.564,
+      "rvol_spike_count": 6,
+      "levels": [
+        {
+          "type": "resistance",
+          "label": "Session High",
+          "price": 4133.88,
+          "touches": 3
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 4106.66,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 4084.49,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 4080.96,
+          "touches": 2
+        }
+      ]
+    },
+    "EURUSD": {
+      "source": "dukascopy",
+      "ticker": "eurusd",
+      "last_closed_bar_utc": "2026-11-09T14:45:00+00:00",
+      "last_close": 1.11965,
+      "last_price": 1.11965,
+      "last_price_ts_utc": "2026-11-09T14:45:00+00:00",
+      "vwap": 1.11785,
+      "vwap_anchor": "utc_day",
+      "atr": 0.000609,
+      "ema20_baseline": 1.11912,
+      "ema50": 1.11807,
+      "atr_upper": 1.12034,
+      "atr_lower": 1.1179,
+      "atr_expanding_vs_20bar_avg": true,
+      "close_vs_vwap": "above",
+      "rvol_last": 2.06,
+      "rvol_spike_count": 6,
+      "levels": [
+        {
+          "type": "resistance",
+          "label": "Session High",
+          "price": 1.12026,
+          "touches": 2
+        },
+        {
+          "type": "resistance",
+          "label": "S/R",
+          "price": 1.12345,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 1.11673,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 1.11579,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "Prev High",
+          "price": 1.11499,
+          "touches": 1
+        }
+      ]
+    },
+    "GBPUSD": {
+      "source": "dukascopy",
+      "ticker": "gbpusd",
+      "last_closed_bar_utc": "2026-11-09T14:45:00+00:00",
+      "last_close": 1.3409,
+      "last_price": 1.3409,
+      "last_price_ts_utc": "2026-11-09T14:45:00+00:00",
+      "vwap": 1.34009,
+      "vwap_anchor": "utc_day",
+      "atr": 0.000651,
+      "ema20_baseline": 1.3413,
+      "ema50": 1.34021,
+      "atr_upper": 1.3426,
+      "atr_lower": 1.34,
+      "atr_expanding_vs_20bar_avg": true,
+      "close_vs_vwap": "above",
+      "rvol_last": 2.034,
+      "rvol_spike_count": 9,
+      "levels": [
+        {
+          "type": "resistance",
+          "label": "Session High",
+          "price": 1.3426,
+          "touches": 3
+        },
+        {
+          "type": "resistance",
+          "label": "S/R",
+          "price": 1.34442,
+          "touches": 1
+        },
+        {
+          "type": "resistance",
+          "label": "S/R",
+          "price": 1.34633,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 1.34039,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "Prev High",
+          "price": 1.3362,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "Session Low",
+          "price": 1.3359,
+          "touches": 1
+        }
+      ]
+    },
+    "US100": {
+      "source": "dukascopy",
+      "ticker": "usatechidxusd",
+      "last_closed_bar_utc": "2026-11-09T14:45:00+00:00",
+      "last_close": 27680.21,
+      "last_price": 27680.21,
+      "last_price_ts_utc": "2026-11-09T14:45:00+00:00",
+      "vwap": 27051.48,
+      "vwap_anchor": "cme_globex",
+      "atr": 93.279,
+      "ema20_baseline": 27221.27,
+      "ema50": 27114.51,
+      "atr_upper": 27407.83,
+      "atr_lower": 27034.71,
+      "atr_expanding_vs_20bar_avg": true,
+      "close_vs_vwap": "above",
+      "rvol_last": 1.652,
+      "rvol_spike_count": 0,
+      "levels": [
+        {
+          "type": "resistance",
+          "label": "Session High",
+          "price": 27692.1,
+          "touches": 2
+        },
+        {
+          "type": "support",
+          "label": "Prev High",
+          "price": 27318.65,
+          "touches": 2
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 27216.52,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 27146.1,
+          "touches": 1
+        }
+      ]
+    },
+    "BTCUSD": {
+      "source": "binance",
+      "ticker": "BTCUSDT",
+      "last_closed_bar_utc": "2026-11-09T14:45:00+00:00",
+      "last_close": 74902.42,
+      "last_price": 74902.42,
+      "last_price_ts_utc": "2026-11-09T14:45:00+00:00",
+      "vwap": 74549.78,
+      "vwap_anchor": "utc_day",
+      "atr": 286.862,
+      "ema20_baseline": 74615.3,
+      "ema50": 74652.83,
+      "atr_upper": 75189.02,
+      "atr_lower": 74041.58,
+      "atr_expanding_vs_20bar_avg": true,
+      "close_vs_vwap": "above",
+      "rvol_last": 1.836,
+      "rvol_spike_count": 8,
+      "levels": [
+        {
+          "type": "resistance",
+          "label": "Session High",
+          "price": 75599.22,
+          "touches": 5
+        },
+        {
+          "type": "resistance",
+          "label": "S/R",
+          "price": 75779.89,
+          "touches": 2
+        },
+        {
+          "type": "resistance",
+          "label": "S/R",
+          "price": 75924.0,
+          "touches": 2
+        },
+        {
+          "type": "support",
+          "label": "Session Low",
+          "price": 73750.0,
+          "touches": 2
+        },
+        {
+          "type": "support",
+          "label": "Prev Low",
+          "price": 73510.0,
+          "touches": 3
+        }
+      ]
+    }
+  },
+  "data_errors": {},
+  "parse_error": null,
+  "ai_error": null,
+  "market_summary": "USD pairs and Risk assets (US100, Gold) have experienced strong upward expansions against intraday VWAPs and EMA50 baselines. However, all major symbols are currently testing key Session High resistances or upper ATR channel extremes, making fresh trend-continuation entries unfavorable due to poor Risk-to-Reward profiles. Waiting for structural pullbacks or clean level breaks.",
+  "signals": [
+    {
+      "symbol": "XAUUSD",
+      "model_action": "HOLD",
+      "action": "HOLD",
+      "entry": null,
+      "stop_loss": null,
+      "take_profit": null,
+      "model_risk_reward": null,
+      "rr_local": null,
+      "confidence": 0.55,
+      "model_risk_pct": null,
+      "risk_pct": null,
+      "risk_amount": 0.0,
+      "position_units": 0.0,
+      "position_lots": 0.0,
+      "last_close": 4120.62,
+      "atr": 7.98,
+      "rationale": "Price is above VWAP (4111.06) and EMA50 (4107.22), showing intraday bullish trend context. However, it is pulling back after rejecting the Session High resistance level at 4133.88. Currently trading mid-channel near EMA20 without a high volume breakout (RVOL is 1.56, no current yellow spike). Lacks immediate R:R edge near high resistance.",
+      "trend_vs_vwap": "bullish context above VWAP and EMA50",
+      "volatility": "expanding",
+      "level_event": "rejection at Session High 4133.88",
+      "downgraded": false,
+      "reasons": []
+    },
+    {
+      "symbol": "EURUSD",
+      "model_action": "HOLD",
+      "action": "HOLD",
+      "entry": null,
+      "stop_loss": null,
+      "take_profit": null,
+      "model_risk_reward": null,
+      "rr_local": null,
+      "confidence": 0.5,
+      "model_risk_pct": null,
+      "risk_pct": null,
+      "risk_amount": 0.0,
+      "position_units": 0.0,
+      "position_lots": 0.0,
+      "last_close": 1.11965,
+      "atr": 0.000609,
+      "rationale": "EURUSD is holding well above VWAP (1.11785) and EMA50 (1.11807), confirmed by a recent RVOL spike (2.06). However, price is extended near the upper ATR band (1.12034) and testing resistance at Session High (1.12026). Buying into upper ATR band resistance lacks risk/reward profile (>2.5), requiring a pullback to lower baseline levels before entering.",
+      "trend_vs_vwap": "bullish extension above VWAP and EMA50",
+      "volatility": "expanding",
+      "level_event": "rejection near Session High 1.12026",
+      "downgraded": false,
+      "reasons": []
+    },
+    {
+      "symbol": "GBPUSD",
+      "model_action": "HOLD",
+      "action": "HOLD",
+      "entry": null,
+      "stop_loss": null,
+      "take_profit": null,
+      "model_risk_reward": null,
+      "rr_local": null,
+      "confidence": 0.55,
+      "model_risk_pct": null,
+      "risk_pct": null,
+      "risk_amount": 0.0,
+      "position_units": 0.0,
+      "position_lots": 0.0,
+      "last_close": 1.3409,
+      "atr": 0.000651,
+      "rationale": "Price remains above VWAP (1.34009) and EMA50 (1.34021) with recent RVOL > 2.0 (2.034). However, it is experiencing a upper ATR band contraction after failing to break Session High at 1.3426. Price is pulling back toward support near 1.34039. Awaiting clearer signal or structural pullback to offer >=2.5 R:R.",
+      "trend_vs_vwap": "bullish above VWAP and EMA50",
+      "volatility": "expanding",
+      "level_event": "rejection at Session High 1.3426",
+      "downgraded": false,
+      "reasons": []
+    },
+    {
+      "symbol": "US100",
+      "model_action": "HOLD",
+      "action": "HOLD",
+      "entry": null,
+      "stop_loss": null,
+      "take_profit": null,
+      "model_risk_reward": null,
+      "rr_local": null,
+      "confidence": 0.45,
+      "model_risk_pct": null,
+      "risk_pct": null,
+      "risk_amount": 0.0,
+      "position_units": 0.0,
+      "position_lots": 0.0,
+      "last_close": 27680.21,
+      "atr": 93.279,
+      "rationale": "Price shows a strong momentum expansion significantly above VWAP (27051.48) and EMA50 (27114.51), piercing upper ATR channel. While US100 broker volume typically lacks yellow RVOL spikes (0 spikes present), entry here at the extreme high right below Session High (27692.10) is severe chasing with no structural invalidation tight enough to yield 2.5 R:R.",
+      "trend_vs_vwap": "strongly bullish above VWAP and EMA50",
+      "volatility": "expanding",
+      "level_event": "testing Session High 27692.1",
+      "downgraded": false,
+      "reasons": []
+    },
+    {
+      "symbol": "BTCUSD",
+      "model_action": "HOLD",
+      "action": "HOLD",
+      "entry": null,
+      "stop_loss": null,
+      "take_profit": null,
+      "model_risk_reward": null,
+      "rr_local": null,
+      "confidence": 0.5,
+      "model_risk_pct": null,
+      "risk_pct": null,
+      "risk_amount": 0.0,
+      "position_units": 0.0,
+      "position_lots": 0.0,
+      "last_close": 74902.42,
+      "atr": 286.862,
+      "rationale": "BTCUSD is floating slightly above VWAP (74549.78) and EMA50 (74652.83). The price is stuck in a chop zone between Session Low (73750) and Session High (75599.22). RVOL is moderate (1.836). Mid-channel positioning without clear level sweep or breakout confirmation warrants a HOLD.",
+      "trend_vs_vwap": "neutral above VWAP and EMA50",
+      "volatility": "expanding",
+      "level_event": "rejection from upper ATR band / mid-range balance",
+      "downgraded": false,
+      "reasons": []
+    }
+  ]
+}

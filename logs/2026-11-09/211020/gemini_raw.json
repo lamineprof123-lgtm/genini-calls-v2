@@ -1,0 +1,28 @@
+{
+  "model": "gemini-3.6-flash",
+  "model_version": "gemini-3.6-flash",
+  "raw_text": "{\n  \"signals\": [\n    {\n      \"symbol\": \"XAUUSD\",\n      \"action\": \"HOLD\",\n      \"entry\": null,\n      \"stop_loss\": null,\n      \"take_profit\": null,\n      \"risk_reward\": null,\n      \"confidence\": 0.45,\n      \"risk_pct\": null,\n      \"trend_vs_vwap\": \"neutral + testing VWAP after rejection\",\n      \"volatility\": \"expanding\",\n      \"level_event\": \"rejection at S/R 4106.66 / Session High bounce fading\",\n      \"rationale\": \"Price is inside the Value Area (VAL 4103.78 to VAH 4130.71), sitting below POC 4120.41 and testing VWAP (4111.93) and EMA50 (4109.96). CVD +1.71 is NEUTRAL with negative slope (-1.15). Occurring in NEW_YORK_SESSION. RVOL is 0.825 (no volume confirmation). Positioned mid-channel after failing near Session High 4133.88. Holding for clearer directional signal.\"\n    },\n    {\n      \"symbol\": \"EURUSD\",\n      \"action\": \"HOLD\",\n      \"entry\": null,\n      \"stop_loss\": null,\n      \"take_profit\": null,\n      \"risk_reward\": null,\n      \"confidence\": 0.5,\n      \"risk_pct\": null,\n      \"trend_vs_vwap\": \"bullish + holding above VWAP and EMA50\",\n      \"volatility\": \"expanding\",\n      \"level_event\": \"testing Session High 1.12048\",\n      \"rationale\": \"Price is inside Value Area (VAL 1.11709 to VAH 1.12048), right at VAH and testing Session High 1.12048. It trades above POC 1.11937, VWAP 1.11821, and EMA50 1.11856. However, CVD is NEUTRAL (-1,497) despite positive slope, and RVOL is low at 0.741 without yellow bar confirmation near upper ATR band (1.12075). NEW_YORK_SESSION context recommends waiting for clean breakout or rejection.\"\n    },\n    {\n      \"symbol\": \"GBPUSD\",\n      \"action\": \"HOLD\",\n      \"entry\": null,\n      \"stop_loss\": null,\n      \"take_profit\": null,\n      \"risk_reward\": null,\n      \"confidence\": 0.5,\n      \"risk_pct\": null,\n      \"trend_vs_vwap\": \"bullish + trading above VWAP and EMA50\",\n      \"volatility\": \"expanding\",\n      \"level_event\": \"consolidation below Session High 1.34260\",\n      \"rationale\": \"Price is inside the Value Area (VAL 1.33992 to VAH 1.34233), trading above POC 1.34133, VWAP 1.34023, and EMA50 1.34043. CVD +2,896 is NEUTRAL despite strong slope. NEW_YORK_SESSION. RVOL is weak at 0.480. Price is consolidating mid-range between EMA20 baseline (1.34118) and Session High resistance (1.34260) with ATR bands expanding, favoring a HOLD until liquidity sweep or volume-backed break.\"\n    },\n    {\n      \"symbol\": \"US100\",\n      \"action\": \"BUY\",\n      \"entry\": 27820.89,\n      \"stop_loss\": 27746.51,\n      \"take_profit\": 27907.61,\n      \"risk_reward\": 1.16,\n      \"confidence\": 0.72,\n      \"risk_pct\": 0.5,\n      \"trend_vs_vwap\": \"bullish + far above VWAP and EMA50 baseline\",\n      \"volatility\": \"expanding\",\n      \"level_event\": \"acceptance above VAH 27203.03 and Prev High 27318.65\",\n      \"rationale\": \"Price is well above VAH 27203.03 and POC 27140.12, displaying a strong trend expansion in NEW_YORK_SESSION. It holds comfortably above VWAP 27136.37 and EMA50 27296.73. While RVOL is 0.923 (lacking yellow spikes due to Dukascopy index tick volume characteristics), structural momentum remains intact above upper ATR band 27717.37. CVD +4.23 is NEUTRAL. Targeting next structural resistance at Session High 27907.61.\"\n    },\n    {\n      \"symbol\": \"BTCUSD\",\n      \"action\": \"HOLD\",\n      \"entry\": null,\n      \"stop_loss\": null,\n      \"take_profit\": null,\n      \"risk_reward\": null,\n      \"confidence\": 0.45,\n      \"risk_pct\": null,\n      \"trend_vs_vwap\": \"neutral + floating above VWAP after rally rejection\",\n      \"volatility\": \"expanding\",\n      \"level_event\": \"rejection at Session High 75599.22\",\n      \"rationale\": \"Price is inside the Value Area (VAL 74082.86 to VAH 75081.44), sitting above POC 74212.30, VWAP 74637.10, and EMA50 74776.85. CVD +154 is NEUTRAL with negative cvd_slope (-365.58). NEW_YORK_SESSION. Low RVOL at 0.394. Following a sharp rejection at Session High 75599.22, price is trapped mid-channel near VAH 75081.44 without volume backing, warranting a HOLD.\"\n    }\n  ],\n  \"market_summary\": \"US100 shows a strong bullish trend expansion well above its session Value Area and baselines. Meanwhile, Gold (XAUUSD), EURUSD, GBPUSD, and BTCUSD are consolidating inside their respective Value Areas near key intraday levels with neutral CVD metrics and sub-1.0 RVOL, making US100 the only clear high-probability trend momentum candidate.\"\n}",
+  "usage": {
+    "candidates_token_count": 1544,
+    "prompt_token_count": 11921,
+    "prompt_tokens_details": [
+      {
+        "modality": "TEXT",
+        "token_count": 6421
+      },
+      {
+        "modality": "IMAGE",
+        "token_count": 5500
+      }
+    ],
+    "total_token_count": 13465
+  },
+  "attempts": [
+    {
+      "model": "gemini-3.6-flash",
+      "attempt": 1,
+      "ok": true
+    }
+  ],
+  "parse_error": null
+}

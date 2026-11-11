@@ -1,0 +1,389 @@
+{
+  "run_at_utc": "2026-11-09T13:50:20.106694+00:00",
+  "run_at_local": "2026-11-09T17:50:20.106694+04:00",
+  "dry_run": false,
+  "model": "gemini-3.6-flash",
+  "model_version": "gemini-3.6-flash",
+  "gemini_attempts": [
+    {
+      "model": "gemini-3.6-flash",
+      "attempt": 1,
+      "ok": true
+    }
+  ],
+  "signals_only": true,
+  "equity": 100000.0,
+  "circuit_breaker": {
+    "session_day": "2026-11-09",
+    "start_equity": 100000.0,
+    "equity": 100000.0,
+    "loss_pct": 0.0,
+    "halted": false,
+    "halted_at": null,
+    "reason": null
+  },
+  "data": {
+    "XAUUSD": {
+      "source": "dukascopy",
+      "ticker": "xauusd",
+      "last_closed_bar_utc": "2026-11-09T13:30:00+00:00",
+      "last_close": 4119.27,
+      "vwap": 4109.71,
+      "vwap_anchor": "utc_day",
+      "atr": 6.988,
+      "ema20_baseline": 4110.5,
+      "atr_upper": 4124.48,
+      "atr_lower": 4096.52,
+      "atr_expanding_vs_20bar_avg": true,
+      "close_vs_vwap": "above",
+      "levels": [
+        {
+          "type": "resistance",
+          "label": "Session High",
+          "price": 4133.88,
+          "touches": 3
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 4106.66,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 4084.49,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 4080.96,
+          "touches": 1
+        }
+      ]
+    },
+    "EURUSD": {
+      "source": "dukascopy",
+      "ticker": "eurusd",
+      "last_closed_bar_utc": "2026-11-09T13:30:00+00:00",
+      "last_close": 1.11904,
+      "vwap": 1.11753,
+      "vwap_anchor": "utc_day",
+      "atr": 0.000494,
+      "ema20_baseline": 1.11877,
+      "atr_upper": 1.11976,
+      "atr_lower": 1.11778,
+      "atr_expanding_vs_20bar_avg": true,
+      "close_vs_vwap": "above",
+      "levels": [
+        {
+          "type": "resistance",
+          "label": "Session High",
+          "price": 1.11983,
+          "touches": 2
+        },
+        {
+          "type": "resistance",
+          "label": "S/R",
+          "price": 1.12345,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 1.11673,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 1.11579,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "Prev High",
+          "price": 1.11499,
+          "touches": 1
+        }
+      ]
+    },
+    "GBPUSD": {
+      "source": "dukascopy",
+      "ticker": "gbpusd",
+      "last_closed_bar_utc": "2026-11-09T13:30:00+00:00",
+      "last_close": 1.341,
+      "vwap": 1.33979,
+      "vwap_anchor": "utc_day",
+      "atr": 0.000596,
+      "ema20_baseline": 1.34122,
+      "atr_upper": 1.34242,
+      "atr_lower": 1.34003,
+      "atr_expanding_vs_20bar_avg": true,
+      "close_vs_vwap": "above",
+      "levels": [
+        {
+          "type": "resistance",
+          "label": "Session High",
+          "price": 1.3426,
+          "touches": 2
+        },
+        {
+          "type": "resistance",
+          "label": "S/R",
+          "price": 1.34442,
+          "touches": 1
+        },
+        {
+          "type": "resistance",
+          "label": "S/R",
+          "price": 1.34633,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 1.34039,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "Prev High",
+          "price": 1.3362,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "Session Low",
+          "price": 1.3359,
+          "touches": 1
+        }
+      ]
+    },
+    "US100": {
+      "source": "dukascopy",
+      "ticker": "usatechidxusd",
+      "last_closed_bar_utc": "2026-11-09T13:30:00+00:00",
+      "last_close": 27202.96,
+      "vwap": 27019.12,
+      "vwap_anchor": "cme_globex",
+      "atr": 71.905,
+      "ema20_baseline": 27099.58,
+      "atr_upper": 27243.39,
+      "atr_lower": 26955.77,
+      "atr_expanding_vs_20bar_avg": false,
+      "close_vs_vwap": "above",
+      "levels": [
+        {
+          "type": "resistance",
+          "label": "S/R",
+          "price": 27216.52,
+          "touches": 1
+        },
+        {
+          "type": "resistance",
+          "label": "Session High",
+          "price": 27274.7,
+          "touches": 1
+        },
+        {
+          "type": "resistance",
+          "label": "Prev High",
+          "price": 27318.65,
+          "touches": 3
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 27146.1,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 27054.24,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 26882.5,
+          "touches": 1
+        }
+      ]
+    },
+    "BTCUSD": {
+      "source": "binance",
+      "ticker": "BTCUSDT",
+      "last_closed_bar_utc": "2026-11-09T13:30:00+00:00",
+      "last_close": 74632.0,
+      "vwap": 74536.75,
+      "vwap_anchor": "utc_day",
+      "atr": 269.026,
+      "ema20_baseline": 74542.49,
+      "atr_upper": 75080.55,
+      "atr_lower": 74004.44,
+      "atr_expanding_vs_20bar_avg": false,
+      "close_vs_vwap": "above",
+      "levels": [
+        {
+          "type": "resistance",
+          "label": "Session High",
+          "price": 75599.22,
+          "touches": 5
+        },
+        {
+          "type": "resistance",
+          "label": "S/R",
+          "price": 75779.89,
+          "touches": 2
+        },
+        {
+          "type": "resistance",
+          "label": "S/R",
+          "price": 75924.0,
+          "touches": 3
+        },
+        {
+          "type": "support",
+          "label": "Session Low",
+          "price": 73750.0,
+          "touches": 2
+        },
+        {
+          "type": "support",
+          "label": "Prev Low",
+          "price": 73510.0,
+          "touches": 3
+        }
+      ]
+    }
+  },
+  "data_errors": {},
+  "parse_error": null,
+  "ai_error": null,
+  "market_summary": "USD pairs and Gold are showing strong bullish intraday trends above rising VWAPs but are currently consolidating near session highs. US100 provides a high R:R short opportunity off resistance rejections, while BTCUSD remains neutral in a mid-range squeeze around VWAP.",
+  "signals": [
+    {
+      "symbol": "XAUUSD",
+      "model_action": "HOLD",
+      "action": "HOLD",
+      "entry": null,
+      "stop_loss": null,
+      "take_profit": null,
+      "model_risk_reward": null,
+      "rr_local": null,
+      "confidence": 0.55,
+      "model_risk_pct": null,
+      "risk_pct": null,
+      "risk_amount": 0.0,
+      "position_units": 0.0,
+      "position_lots": 0.0,
+      "last_close": 4119.27,
+      "atr": 6.988,
+      "rationale": "Price strong recovery above VWAP and S/R 4106.66, but currently pulling back after testing Session High at 4133.88. Reward-to-risk is insufficient for a market entry before a proper retest of 4106-4110 support zone.",
+      "trend_vs_vwap": "bullish price holding above upward sloping VWAP",
+      "volatility": "expanding",
+      "level_event": "rejection at Session High 4133.88",
+      "downgraded": false,
+      "reasons": []
+    },
+    {
+      "symbol": "EURUSD",
+      "model_action": "HOLD",
+      "action": "HOLD",
+      "entry": null,
+      "stop_loss": null,
+      "take_profit": null,
+      "model_risk_reward": null,
+      "rr_local": null,
+      "confidence": 0.6,
+      "model_risk_pct": null,
+      "risk_pct": null,
+      "risk_amount": 0.0,
+      "position_units": 0.0,
+      "position_lots": 0.0,
+      "last_close": 1.11904,
+      "atr": 0.000494,
+      "rationale": "Strong intraday uptrend above VWAP, but price is consolidating just below Session High resistance at 1.11983. Entering long right below high offers poor risk-reward.",
+      "trend_vs_vwap": "bullish price holding well above rising VWAP",
+      "volatility": "expanding",
+      "level_event": "rejection at Session High 1.11983",
+      "downgraded": false,
+      "reasons": []
+    },
+    {
+      "symbol": "GBPUSD",
+      "model_action": "HOLD",
+      "action": "HOLD",
+      "entry": null,
+      "stop_loss": null,
+      "take_profit": null,
+      "model_risk_reward": null,
+      "rr_local": null,
+      "confidence": 0.55,
+      "model_risk_pct": null,
+      "risk_pct": null,
+      "risk_amount": 0.0,
+      "position_units": 0.0,
+      "position_lots": 0.0,
+      "last_close": 1.341,
+      "atr": 0.000596,
+      "rationale": "Strong impulsive move above S/R 1.34039 peaked at 1.34260 and is now pulling back. Entry near high does not offer a 1:2.5 risk-to-reward ratio prior to a deeper retracement toward 1.3404.",
+      "trend_vs_vwap": "bullish price above rising VWAP",
+      "volatility": "expanding",
+      "level_event": "rejection at Session High 1.34260",
+      "downgraded": false,
+      "reasons": []
+    },
+    {
+      "symbol": "US100",
+      "model_action": "SELL",
+      "action": "SELL",
+      "entry": 27202.96,
+      "stop_loss": 27285.0,
+      "take_profit": 26950.0,
+      "model_risk_reward": 3.08,
+      "rr_local": 3.083,
+      "confidence": 0.65,
+      "model_risk_pct": 0.5,
+      "risk_pct": 0.5,
+      "risk_amount": 500.0,
+      "position_units": 6.094588,
+      "position_lots": 6.09,
+      "last_close": 27202.96,
+      "atr": 71.905,
+      "rationale": "Price rallied sharply into key S/R resistance at 27216.52 and Session High 27274.70, showing immediate upper wicks and rejection. Expecting a rotation down towards the lower ATR band and VWAP support.",
+      "trend_vs_vwap": "neutral price retesting upper range after sharp reversal",
+      "volatility": "normal",
+      "level_event": "rejection at S/R 27216.52 and Session High 27274.70",
+      "downgraded": false,
+      "reasons": []
+    },
+    {
+      "symbol": "BTCUSD",
+      "model_action": "HOLD",
+      "action": "HOLD",
+      "entry": null,
+      "stop_loss": null,
+      "take_profit": null,
+      "model_risk_reward": null,
+      "rr_local": null,
+      "confidence": 0.5,
+      "model_risk_pct": null,
+      "risk_pct": null,
+      "risk_amount": 0.0,
+      "position_units": 0.0,
+      "position_lots": 0.0,
+      "last_close": 74632.0,
+      "atr": 269.026,
+      "rationale": "Price is stuck in a mid-range consolidation around VWAP (74536.75) following a large impulse down. No clear directional signal or favorable risk-reward present.",
+      "trend_vs_vwap": "neutral price hovering right around VWAP",
+      "volatility": "contracting",
+      "level_event": "none around current price",
+      "downgraded": false,
+      "reasons": []
+    }
+  ]
+}

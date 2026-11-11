@@ -1,0 +1,385 @@
+{
+  "run_at_utc": "2026-11-09T12:59:30.887041+00:00",
+  "run_at_local": "2026-11-09T16:59:30.887041+04:00",
+  "dry_run": false,
+  "model": "gemini-3.6-flash",
+  "signals_only": true,
+  "equity": 100000.0,
+  "circuit_breaker": {
+    "session_day": "2026-11-09",
+    "start_equity": 100000.0,
+    "equity": 100000.0,
+    "loss_pct": 0.0,
+    "halted": false,
+    "halted_at": null,
+    "reason": null
+  },
+  "data": {
+    "XAUUSD": {
+      "source": "dukascopy",
+      "ticker": "xauusd",
+      "last_closed_bar_utc": "2026-11-09T12:30:00+00:00",
+      "last_close": 4117.22,
+      "vwap": 4108.75,
+      "vwap_anchor": "utc_day",
+      "atr": 6.231,
+      "ema20_baseline": 4105.1,
+      "atr_upper": 4117.56,
+      "atr_lower": 4092.64,
+      "atr_expanding_vs_20bar_avg": false,
+      "close_vs_vwap": "above",
+      "levels": [
+        {
+          "type": "resistance",
+          "label": "Session High",
+          "price": 4133.88,
+          "touches": 3
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 4106.66,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 4084.49,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 4080.96,
+          "touches": 1
+        }
+      ]
+    },
+    "EURUSD": {
+      "source": "dukascopy",
+      "ticker": "eurusd",
+      "last_closed_bar_utc": "2026-11-09T12:30:00+00:00",
+      "last_close": 1.11875,
+      "vwap": 1.11726,
+      "vwap_anchor": "utc_day",
+      "atr": 0.000456,
+      "ema20_baseline": 1.11857,
+      "atr_upper": 1.11948,
+      "atr_lower": 1.11766,
+      "atr_expanding_vs_20bar_avg": true,
+      "close_vs_vwap": "above",
+      "levels": [
+        {
+          "type": "resistance",
+          "label": "Session High",
+          "price": 1.11983,
+          "touches": 2
+        },
+        {
+          "type": "resistance",
+          "label": "S/R",
+          "price": 1.12345,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 1.11673,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 1.11579,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "Prev High",
+          "price": 1.11499,
+          "touches": 1
+        }
+      ]
+    },
+    "GBPUSD": {
+      "source": "dukascopy",
+      "ticker": "gbpusd",
+      "last_closed_bar_utc": "2026-11-09T12:30:00+00:00",
+      "last_close": 1.3417,
+      "vwap": 1.33948,
+      "vwap_anchor": "utc_day",
+      "atr": 0.000554,
+      "ema20_baseline": 1.3411,
+      "atr_upper": 1.34221,
+      "atr_lower": 1.33999,
+      "atr_expanding_vs_20bar_avg": true,
+      "close_vs_vwap": "above",
+      "levels": [
+        {
+          "type": "resistance",
+          "label": "Session High",
+          "price": 1.3426,
+          "touches": 2
+        },
+        {
+          "type": "resistance",
+          "label": "S/R",
+          "price": 1.34442,
+          "touches": 1
+        },
+        {
+          "type": "resistance",
+          "label": "S/R",
+          "price": 1.34633,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 1.34039,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "Prev High",
+          "price": 1.3362,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "Session Low",
+          "price": 1.3359,
+          "touches": 1
+        }
+      ]
+    },
+    "US100": {
+      "source": "dukascopy",
+      "ticker": "usatechidxusd",
+      "last_closed_bar_utc": "2026-11-09T12:30:00+00:00",
+      "last_close": 27164.44,
+      "vwap": 27008.66,
+      "vwap_anchor": "cme_globex",
+      "atr": 67.589,
+      "ema20_baseline": 27051.39,
+      "atr_upper": 27186.57,
+      "atr_lower": 26916.21,
+      "atr_expanding_vs_20bar_avg": false,
+      "close_vs_vwap": "above",
+      "levels": [
+        {
+          "type": "resistance",
+          "label": "Session High",
+          "price": 27216.52,
+          "touches": 2
+        },
+        {
+          "type": "resistance",
+          "label": "Prev High",
+          "price": 27318.65,
+          "touches": 3
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 27146.1,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 27054.24,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 26882.5,
+          "touches": 1
+        }
+      ]
+    },
+    "BTCUSD": {
+      "source": "binance",
+      "ticker": "BTCUSDT",
+      "last_closed_bar_utc": "2026-11-09T12:30:00+00:00",
+      "last_close": 74797.66,
+      "vwap": 74520.83,
+      "vwap_anchor": "utc_day",
+      "atr": 276.915,
+      "ema20_baseline": 74435.12,
+      "atr_upper": 74988.96,
+      "atr_lower": 73881.29,
+      "atr_expanding_vs_20bar_avg": false,
+      "close_vs_vwap": "above",
+      "levels": [
+        {
+          "type": "resistance",
+          "label": "Session High",
+          "price": 75599.22,
+          "touches": 5
+        },
+        {
+          "type": "resistance",
+          "label": "S/R",
+          "price": 75779.89,
+          "touches": 2
+        },
+        {
+          "type": "resistance",
+          "label": "S/R",
+          "price": 75924.0,
+          "touches": 3
+        },
+        {
+          "type": "support",
+          "label": "Session Low",
+          "price": 73750.0,
+          "touches": 2
+        },
+        {
+          "type": "support",
+          "label": "Prev Low",
+          "price": 73510.0,
+          "touches": 3
+        }
+      ]
+    }
+  },
+  "data_errors": {},
+  "parse_error": "ServerError: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}",
+  "ai_error": "ServerError: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}",
+  "market_summary": null,
+  "signals": [
+    {
+      "symbol": "XAUUSD",
+      "model_action": null,
+      "action": "HOLD",
+      "entry": null,
+      "stop_loss": null,
+      "take_profit": null,
+      "model_risk_reward": null,
+      "rr_local": null,
+      "confidence": null,
+      "model_risk_pct": null,
+      "risk_pct": null,
+      "risk_amount": 0.0,
+      "position_units": 0.0,
+      "position_lots": 0.0,
+      "last_close": 4117.22,
+      "atr": 6.231,
+      "rationale": null,
+      "trend_vs_vwap": null,
+      "volatility": null,
+      "level_event": null,
+      "downgraded": false,
+      "reasons": [
+        "AI call failed: ServerError: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Plea"
+      ]
+    },
+    {
+      "symbol": "EURUSD",
+      "model_action": null,
+      "action": "HOLD",
+      "entry": null,
+      "stop_loss": null,
+      "take_profit": null,
+      "model_risk_reward": null,
+      "rr_local": null,
+      "confidence": null,
+      "model_risk_pct": null,
+      "risk_pct": null,
+      "risk_amount": 0.0,
+      "position_units": 0.0,
+      "position_lots": 0.0,
+      "last_close": 1.11875,
+      "atr": 0.000456,
+      "rationale": null,
+      "trend_vs_vwap": null,
+      "volatility": null,
+      "level_event": null,
+      "downgraded": false,
+      "reasons": [
+        "AI call failed: ServerError: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Plea"
+      ]
+    },
+    {
+      "symbol": "GBPUSD",
+      "model_action": null,
+      "action": "HOLD",
+      "entry": null,
+      "stop_loss": null,
+      "take_profit": null,
+      "model_risk_reward": null,
+      "rr_local": null,
+      "confidence": null,
+      "model_risk_pct": null,
+      "risk_pct": null,
+      "risk_amount": 0.0,
+      "position_units": 0.0,
+      "position_lots": 0.0,
+      "last_close": 1.3417,
+      "atr": 0.000554,
+      "rationale": null,
+      "trend_vs_vwap": null,
+      "volatility": null,
+      "level_event": null,
+      "downgraded": false,
+      "reasons": [
+        "AI call failed: ServerError: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Plea"
+      ]
+    },
+    {
+      "symbol": "US100",
+      "model_action": null,
+      "action": "HOLD",
+      "entry": null,
+      "stop_loss": null,
+      "take_profit": null,
+      "model_risk_reward": null,
+      "rr_local": null,
+      "confidence": null,
+      "model_risk_pct": null,
+      "risk_pct": null,
+      "risk_amount": 0.0,
+      "position_units": 0.0,
+      "position_lots": 0.0,
+      "last_close": 27164.44,
+      "atr": 67.589,
+      "rationale": null,
+      "trend_vs_vwap": null,
+      "volatility": null,
+      "level_event": null,
+      "downgraded": false,
+      "reasons": [
+        "AI call failed: ServerError: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Plea"
+      ]
+    },
+    {
+      "symbol": "BTCUSD",
+      "model_action": null,
+      "action": "HOLD",
+      "entry": null,
+      "stop_loss": null,
+      "take_profit": null,
+      "model_risk_reward": null,
+      "rr_local": null,
+      "confidence": null,
+      "model_risk_pct": null,
+      "risk_pct": null,
+      "risk_amount": 0.0,
+      "position_units": 0.0,
+      "position_lots": 0.0,
+      "last_close": 74797.66,
+      "atr": 276.915,
+      "rationale": null,
+      "trend_vs_vwap": null,
+      "volatility": null,
+      "level_event": null,
+      "downgraded": false,
+      "reasons": [
+        "AI call failed: ServerError: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Plea"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,428 @@
+{
+  "run_at_utc": "2026-11-09T15:25:20.103507+00:00",
+  "run_at_local": "2026-11-09T19:25:20.103507+04:00",
+  "dry_run": false,
+  "model": null,
+  "model_version": null,
+  "gemini_attempts": [
+    {
+      "model": "gemini-3.6-flash",
+      "attempt": 1,
+      "ok": false,
+      "retryable": false,
+      "error": "ClientError: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://aistudio.google.com/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Q"
+    },
+    {
+      "model": "gemini-3.8-flash",
+      "attempt": 1,
+      "ok": false,
+      "retryable": true,
+      "error": "ServerError: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}"
+    },
+    {
+      "model": "gemini-3.8-flash",
+      "attempt": 2,
+      "ok": false,
+      "retryable": true,
+      "error": "ServerError: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}"
+    }
+  ],
+  "signals_only": true,
+  "equity": 100000.0,
+  "circuit_breaker": {
+    "session_day": "2026-11-09",
+    "start_equity": 100000.0,
+    "equity": 100000.0,
+    "loss_pct": 0.0,
+    "halted": false,
+    "halted_at": null,
+    "reason": null
+  },
+  "data": {
+    "XAUUSD": {
+      "source": "dukascopy",
+      "ticker": "xauusd",
+      "last_closed_bar_utc": "2026-11-09T15:00:00+00:00",
+      "last_close": 4116.96,
+      "last_price": 4116.96,
+      "last_price_ts_utc": "2026-11-09T15:00:00+00:00",
+      "vwap": 4111.18,
+      "vwap_anchor": "utc_day",
+      "atr": 8.035,
+      "ema20_baseline": 4115.61,
+      "ema50": 4107.61,
+      "atr_upper": 4131.68,
+      "atr_lower": 4099.54,
+      "atr_expanding_vs_20bar_avg": true,
+      "close_vs_vwap": "above",
+      "rvol_last": 1.298,
+      "rvol_spike_count": 6,
+      "levels": [
+        {
+          "type": "resistance",
+          "label": "Session High",
+          "price": 4133.88,
+          "touches": 3
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 4106.66,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 4084.49,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 4080.96,
+          "touches": 2
+        }
+      ]
+    },
+    "EURUSD": {
+      "source": "dukascopy",
+      "ticker": "eurusd",
+      "last_closed_bar_utc": "2026-11-09T15:00:00+00:00",
+      "last_close": 1.11941,
+      "last_price": 1.11941,
+      "last_price_ts_utc": "2026-11-09T15:00:00+00:00",
+      "vwap": 1.11791,
+      "vwap_anchor": "utc_day",
+      "atr": 0.000612,
+      "ema20_baseline": 1.11915,
+      "ema50": 1.11812,
+      "atr_upper": 1.12037,
+      "atr_lower": 1.11792,
+      "atr_expanding_vs_20bar_avg": true,
+      "close_vs_vwap": "above",
+      "rvol_last": 1.356,
+      "rvol_spike_count": 6,
+      "levels": [
+        {
+          "type": "resistance",
+          "label": "Session High",
+          "price": 1.12026,
+          "touches": 2
+        },
+        {
+          "type": "resistance",
+          "label": "S/R",
+          "price": 1.12345,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 1.11673,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 1.11579,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "Prev High",
+          "price": 1.11499,
+          "touches": 1
+        }
+      ]
+    },
+    "GBPUSD": {
+      "source": "dukascopy",
+      "ticker": "gbpusd",
+      "last_closed_bar_utc": "2026-11-09T15:00:00+00:00",
+      "last_close": 1.34081,
+      "last_price": 1.34081,
+      "last_price_ts_utc": "2026-11-09T15:00:00+00:00",
+      "vwap": 1.34012,
+      "vwap_anchor": "utc_day",
+      "atr": 0.00066,
+      "ema20_baseline": 1.34125,
+      "ema50": 1.34023,
+      "atr_upper": 1.34258,
+      "atr_lower": 1.33993,
+      "atr_expanding_vs_20bar_avg": true,
+      "close_vs_vwap": "above",
+      "rvol_last": 1.684,
+      "rvol_spike_count": 8,
+      "levels": [
+        {
+          "type": "resistance",
+          "label": "Session High",
+          "price": 1.3426,
+          "touches": 3
+        },
+        {
+          "type": "resistance",
+          "label": "S/R",
+          "price": 1.34442,
+          "touches": 1
+        },
+        {
+          "type": "resistance",
+          "label": "S/R",
+          "price": 1.34633,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 1.34039,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "Prev High",
+          "price": 1.3362,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "Session Low",
+          "price": 1.3359,
+          "touches": 1
+        }
+      ]
+    },
+    "US100": {
+      "source": "dukascopy",
+      "ticker": "usatechidxusd",
+      "last_closed_bar_utc": "2026-11-09T15:00:00+00:00",
+      "last_close": 27705.84,
+      "last_price": 27705.84,
+      "last_price_ts_utc": "2026-11-09T15:00:00+00:00",
+      "vwap": 27064.56,
+      "vwap_anchor": "cme_globex",
+      "atr": 95.657,
+      "ema20_baseline": 27267.42,
+      "ema50": 27137.56,
+      "atr_upper": 27458.73,
+      "atr_lower": 27076.1,
+      "atr_expanding_vs_20bar_avg": true,
+      "close_vs_vwap": "above",
+      "rvol_last": 1.553,
+      "rvol_spike_count": 0,
+      "levels": [
+        {
+          "type": "resistance",
+          "label": "Session High",
+          "price": 27711.89,
+          "touches": 2
+        },
+        {
+          "type": "support",
+          "label": "Prev High",
+          "price": 27318.65,
+          "touches": 2
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 27216.52,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 27146.1,
+          "touches": 1
+        }
+      ]
+    },
+    "BTCUSD": {
+      "source": "binance",
+      "ticker": "BTCUSDT",
+      "last_closed_bar_utc": "2026-11-09T15:00:00+00:00",
+      "last_close": 74890.01,
+      "last_price": 74890.01,
+      "last_price_ts_utc": "2026-11-09T15:00:00+00:00",
+      "vwap": 74555.45,
+      "vwap_anchor": "utc_day",
+      "atr": 294.516,
+      "ema20_baseline": 74641.46,
+      "ema50": 74662.08,
+      "atr_upper": 75230.49,
+      "atr_lower": 74052.43,
+      "atr_expanding_vs_20bar_avg": true,
+      "close_vs_vwap": "above",
+      "rvol_last": 1.363,
+      "rvol_spike_count": 8,
+      "levels": [
+        {
+          "type": "resistance",
+          "label": "Session High",
+          "price": 75599.22,
+          "touches": 5
+        },
+        {
+          "type": "resistance",
+          "label": "S/R",
+          "price": 75779.89,
+          "touches": 2
+        },
+        {
+          "type": "resistance",
+          "label": "S/R",
+          "price": 75924.0,
+          "touches": 2
+        },
+        {
+          "type": "support",
+          "label": "Session Low",
+          "price": 73750.0,
+          "touches": 2
+        },
+        {
+          "type": "support",
+          "label": "Prev Low",
+          "price": 73510.0,
+          "touches": 3
+        }
+      ]
+    }
+  },
+  "data_errors": {},
+  "parse_error": "GeminiFailed: all models failed (3 attempts); last: ServerError: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}",
+  "ai_error": "GeminiFailed: all models failed (3 attempts); last: ServerError: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}",
+  "market_summary": null,
+  "signals": [
+    {
+      "symbol": "XAUUSD",
+      "model_action": null,
+      "action": "HOLD",
+      "entry": null,
+      "stop_loss": null,
+      "take_profit": null,
+      "model_risk_reward": null,
+      "rr_local": null,
+      "confidence": null,
+      "model_risk_pct": null,
+      "risk_pct": null,
+      "risk_amount": 0.0,
+      "position_units": 0.0,
+      "position_lots": 0.0,
+      "last_close": 4116.96,
+      "atr": 8.035,
+      "rationale": null,
+      "trend_vs_vwap": null,
+      "volatility": null,
+      "level_event": null,
+      "downgraded": false,
+      "reasons": [
+        "AI call failed: GeminiFailed: all models failed (3 attempts); last: ServerError: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high "
+      ]
+    },
+    {
+      "symbol": "EURUSD",
+      "model_action": null,
+      "action": "HOLD",
+      "entry": null,
+      "stop_loss": null,
+      "take_profit": null,
+      "model_risk_reward": null,
+      "rr_local": null,
+      "confidence": null,
+      "model_risk_pct": null,
+      "risk_pct": null,
+      "risk_amount": 0.0,
+      "position_units": 0.0,
+      "position_lots": 0.0,
+      "last_close": 1.11941,
+      "atr": 0.000612,
+      "rationale": null,
+      "trend_vs_vwap": null,
+      "volatility": null,
+      "level_event": null,
+      "downgraded": false,
+      "reasons": [
+        "AI call failed: GeminiFailed: all models failed (3 attempts); last: ServerError: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high "
+      ]
+    },
+    {
+      "symbol": "GBPUSD",
+      "model_action": null,
+      "action": "HOLD",
+      "entry": null,
+      "stop_loss": null,
+      "take_profit": null,
+      "model_risk_reward": null,
+      "rr_local": null,
+      "confidence": null,
+      "model_risk_pct": null,
+      "risk_pct": null,
+      "risk_amount": 0.0,
+      "position_units": 0.0,
+      "position_lots": 0.0,
+      "last_close": 1.34081,
+      "atr": 0.00066,
+      "rationale": null,
+      "trend_vs_vwap": null,
+      "volatility": null,
+      "level_event": null,
+      "downgraded": false,
+      "reasons": [
+        "AI call failed: GeminiFailed: all models failed (3 attempts); last: ServerError: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high "
+      ]
+    },
+    {
+      "symbol": "US100",
+      "model_action": null,
+      "action": "HOLD",
+      "entry": null,
+      "stop_loss": null,
+      "take_profit": null,
+      "model_risk_reward": null,
+      "rr_local": null,
+      "confidence": null,
+      "model_risk_pct": null,
+      "risk_pct": null,
+      "risk_amount": 0.0,
+      "position_units": 0.0,
+      "position_lots": 0.0,
+      "last_close": 27705.84,
+      "atr": 95.657,
+      "rationale": null,
+      "trend_vs_vwap": null,
+      "volatility": null,
+      "level_event": null,
+      "downgraded": false,
+      "reasons": [
+        "AI call failed: GeminiFailed: all models failed (3 attempts); last: ServerError: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high "
+      ]
+    },
+    {
+      "symbol": "BTCUSD",
+      "model_action": null,
+      "action": "HOLD",
+      "entry": null,
+      "stop_loss": null,
+      "take_profit": null,
+      "model_risk_reward": null,
+      "rr_local": null,
+      "confidence": null,
+      "model_risk_pct": null,
+      "risk_pct": null,
+      "risk_amount": 0.0,
+      "position_units": 0.0,
+      "position_lots": 0.0,
+      "last_close": 74890.01,
+      "atr": 294.516,
+      "rationale": null,
+      "trend_vs_vwap": null,
+      "volatility": null,
+      "level_event": null,
+      "downgraded": false,
+      "reasons": [
+        "AI call failed: GeminiFailed: all models failed (3 attempts); last: ServerError: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high "
+      ]
+    }
+  ]
+}

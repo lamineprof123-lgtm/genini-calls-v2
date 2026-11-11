@@ -1,0 +1,408 @@
+{
+  "run_at_utc": "2026-11-09T14:35:20.102887+00:00",
+  "run_at_local": "2026-11-09T18:35:20.102887+04:00",
+  "dry_run": false,
+  "model": "gemini-3.6-flash",
+  "model_version": "gemini-3.6-flash",
+  "gemini_attempts": [
+    {
+      "model": "gemini-3.6-flash",
+      "attempt": 1,
+      "ok": true
+    }
+  ],
+  "signals_only": true,
+  "equity": 100000.0,
+  "circuit_breaker": {
+    "session_day": "2026-11-09",
+    "start_equity": 100000.0,
+    "equity": 100000.0,
+    "loss_pct": 0.0,
+    "halted": false,
+    "halted_at": null,
+    "reason": null
+  },
+  "data": {
+    "XAUUSD": {
+      "source": "dukascopy",
+      "ticker": "xauusd",
+      "last_closed_bar_utc": "2026-11-09T14:15:00+00:00",
+      "last_close": 4127.32,
+      "last_price": 4127.32,
+      "last_price_ts_utc": "2026-11-09T14:15:00+00:00",
+      "vwap": 4110.55,
+      "vwap_anchor": "utc_day",
+      "atr": 7.177,
+      "ema20_baseline": 4114.39,
+      "ema50": 4106.13,
+      "atr_upper": 4128.75,
+      "atr_lower": 4100.04,
+      "atr_expanding_vs_20bar_avg": true,
+      "close_vs_vwap": "above",
+      "rvol_last": 1.56,
+      "rvol_spike_count": 6,
+      "levels": [
+        {
+          "type": "resistance",
+          "label": "Session High",
+          "price": 4133.88,
+          "touches": 3
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 4106.66,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 4084.49,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 4080.96,
+          "touches": 2
+        }
+      ]
+    },
+    "EURUSD": {
+      "source": "dukascopy",
+      "ticker": "eurusd",
+      "last_closed_bar_utc": "2026-11-09T14:15:00+00:00",
+      "last_close": 1.11964,
+      "last_price": 1.11964,
+      "last_price_ts_utc": "2026-11-09T14:15:00+00:00",
+      "vwap": 1.1177,
+      "vwap_anchor": "utc_day",
+      "atr": 0.000568,
+      "ema20_baseline": 1.11903,
+      "ema50": 1.11795,
+      "atr_upper": 1.12017,
+      "atr_lower": 1.11789,
+      "atr_expanding_vs_20bar_avg": true,
+      "close_vs_vwap": "above",
+      "rvol_last": 1.08,
+      "rvol_spike_count": 5,
+      "levels": [
+        {
+          "type": "resistance",
+          "label": "Session High",
+          "price": 1.12026,
+          "touches": 2
+        },
+        {
+          "type": "resistance",
+          "label": "S/R",
+          "price": 1.12345,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 1.11673,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 1.11579,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "Prev High",
+          "price": 1.11499,
+          "touches": 1
+        }
+      ]
+    },
+    "GBPUSD": {
+      "source": "dukascopy",
+      "ticker": "gbpusd",
+      "last_closed_bar_utc": "2026-11-09T14:15:00+00:00",
+      "last_close": 1.3418,
+      "last_price": 1.3418,
+      "last_price_ts_utc": "2026-11-09T14:15:00+00:00",
+      "vwap": 1.33998,
+      "vwap_anchor": "utc_day",
+      "atr": 0.000646,
+      "ema20_baseline": 1.34136,
+      "ema50": 1.34014,
+      "atr_upper": 1.34265,
+      "atr_lower": 1.34007,
+      "atr_expanding_vs_20bar_avg": true,
+      "close_vs_vwap": "above",
+      "rvol_last": 1.086,
+      "rvol_spike_count": 7,
+      "levels": [
+        {
+          "type": "resistance",
+          "label": "Session High",
+          "price": 1.3426,
+          "touches": 3
+        },
+        {
+          "type": "resistance",
+          "label": "S/R",
+          "price": 1.34442,
+          "touches": 1
+        },
+        {
+          "type": "resistance",
+          "label": "S/R",
+          "price": 1.34633,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 1.34039,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "Prev High",
+          "price": 1.3362,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "Session Low",
+          "price": 1.3359,
+          "touches": 1
+        }
+      ]
+    },
+    "US100": {
+      "source": "dukascopy",
+      "ticker": "usatechidxusd",
+      "last_closed_bar_utc": "2026-11-09T14:15:00+00:00",
+      "last_close": 27241.72,
+      "last_price": 27241.72,
+      "last_price_ts_utc": "2026-11-09T14:15:00+00:00",
+      "vwap": 27026.9,
+      "vwap_anchor": "cme_globex",
+      "atr": 68.235,
+      "ema20_baseline": 27131.56,
+      "ema50": 27072.46,
+      "atr_upper": 27268.03,
+      "atr_lower": 26995.08,
+      "atr_expanding_vs_20bar_avg": false,
+      "close_vs_vwap": "above",
+      "rvol_last": 0.967,
+      "rvol_spike_count": 0,
+      "levels": [
+        {
+          "type": "resistance",
+          "label": "Session High",
+          "price": 27274.7,
+          "touches": 1
+        },
+        {
+          "type": "resistance",
+          "label": "Prev High",
+          "price": 27318.65,
+          "touches": 3
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 27216.52,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 27146.1,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 27054.24,
+          "touches": 1
+        }
+      ]
+    },
+    "BTCUSD": {
+      "source": "binance",
+      "ticker": "BTCUSDT",
+      "last_closed_bar_utc": "2026-11-09T14:15:00+00:00",
+      "last_close": 74632.0,
+      "last_price": 74632.0,
+      "last_price_ts_utc": "2026-11-09T14:15:00+00:00",
+      "vwap": 74540.26,
+      "vwap_anchor": "utc_day",
+      "atr": 254.24,
+      "ema20_baseline": 74568.56,
+      "ema50": 74638.58,
+      "atr_upper": 75077.04,
+      "atr_lower": 74060.08,
+      "atr_expanding_vs_20bar_avg": false,
+      "close_vs_vwap": "above",
+      "rvol_last": 0.696,
+      "rvol_spike_count": 8,
+      "levels": [
+        {
+          "type": "resistance",
+          "label": "Session High",
+          "price": 75599.22,
+          "touches": 5
+        },
+        {
+          "type": "resistance",
+          "label": "S/R",
+          "price": 75779.89,
+          "touches": 2
+        },
+        {
+          "type": "resistance",
+          "label": "S/R",
+          "price": 75924.0,
+          "touches": 3
+        },
+        {
+          "type": "support",
+          "label": "Session Low",
+          "price": 73750.0,
+          "touches": 2
+        },
+        {
+          "type": "support",
+          "label": "Prev Low",
+          "price": 73510.0,
+          "touches": 3
+        }
+      ]
+    }
+  },
+  "data_errors": {},
+  "parse_error": null,
+  "ai_error": null,
+  "market_summary": "Major instruments (XAUUSD, EURUSD, GBPUSD, US100) are experiencing strong intraday bullish momentum above their respective VWAP and EMA50 baselines, but prices across the board are pressing against upper ATR bands and session high resistance levels without immediate breakout volume confirmation. BTCUSD remains in neutral, mid-channel consolidation around its mean baselines. All assets currently lack high-probability setups with the mandatory 1:2.5 risk-reward ratio, signaling a patient HOLD strategy across the batch until retracements or clear high-volume breakouts occur.",
+  "signals": [
+    {
+      "symbol": "XAUUSD",
+      "model_action": "HOLD",
+      "action": "HOLD",
+      "entry": null,
+      "stop_loss": null,
+      "take_profit": null,
+      "model_risk_reward": null,
+      "rr_local": null,
+      "confidence": 0.55,
+      "model_risk_pct": null,
+      "risk_pct": null,
+      "risk_amount": 0.0,
+      "position_units": 0.0,
+      "position_lots": 0.0,
+      "last_close": 4127.32,
+      "atr": 7.177,
+      "rationale": "Price is trading above rising VWAP (4110.55) and EMA50 (4106.13) in a clear uptrend. However, the last candle closed right against the upper ATR band (4128.75) and was rejected near Session High (4133.88). Current RVOL (1.56) shows volume, but buying at extended upper band levels right under Session High resistance offers poor risk-reward. Awaiting a pullback toward EMA20/VWAP for a safer re-entry.",
+      "trend_vs_vwap": "bullish (above VWAP 4110.55 & EMA50 4106.13)",
+      "volatility": "expanding",
+      "level_event": "rejection at Session High 4133.88",
+      "downgraded": false,
+      "reasons": []
+    },
+    {
+      "symbol": "EURUSD",
+      "model_action": "HOLD",
+      "action": "HOLD",
+      "entry": null,
+      "stop_loss": null,
+      "take_profit": null,
+      "model_risk_reward": null,
+      "rr_local": null,
+      "confidence": 0.5,
+      "model_risk_pct": null,
+      "risk_pct": null,
+      "risk_amount": 0.0,
+      "position_units": 0.0,
+      "position_lots": 0.0,
+      "last_close": 1.11964,
+      "atr": 0.000568,
+      "rationale": "Price is solidly bullish, holding well above rising VWAP (1.11770) and EMA50 (1.11795). However, candles are pressing against the upper ATR band (1.12017) and stalled right at Session High (1.12026). RVOL is normal (1.08), showing no fresh breakout volume spike. Risk-to-reward ratio for a long at these high levels does not reach the 1:2.5 minimum threshold before major overhead resistance (1.12345).",
+      "trend_vs_vwap": "bullish (well above VWAP 1.11770 & EMA50 1.11795)",
+      "volatility": "expanding",
+      "level_event": "rejection near Session High 1.12026",
+      "downgraded": false,
+      "reasons": []
+    },
+    {
+      "symbol": "GBPUSD",
+      "model_action": "HOLD",
+      "action": "HOLD",
+      "entry": null,
+      "stop_loss": null,
+      "take_profit": null,
+      "model_risk_reward": null,
+      "rr_local": null,
+      "confidence": 0.5,
+      "model_risk_pct": null,
+      "risk_pct": null,
+      "risk_amount": 0.0,
+      "position_units": 0.0,
+      "position_lots": 0.0,
+      "last_close": 1.3418,
+      "atr": 0.000646,
+      "rationale": "Strong uptrend holding above VWAP (1.33998) and EMA50 (1.34014). However, price has formed a triple top rejection at Session High (1.34260) right near the upper ATR band (1.34265). Recent volume (RVOL 1.086) lacks breakout strength. Entering long into resistance mid-expansion yields unacceptable R:R (< 2.5). HOLD for retracement to EMA20 baseline or a confirmed high-volume breakout.",
+      "trend_vs_vwap": "bullish (above VWAP 1.33998 & EMA50 1.34014)",
+      "volatility": "expanding",
+      "level_event": "rejection at Session High 1.34260",
+      "downgraded": false,
+      "reasons": []
+    },
+    {
+      "symbol": "US100",
+      "model_action": "HOLD",
+      "action": "HOLD",
+      "entry": null,
+      "stop_loss": null,
+      "take_profit": null,
+      "model_risk_reward": null,
+      "rr_local": null,
+      "confidence": 0.55,
+      "model_risk_pct": null,
+      "risk_pct": null,
+      "risk_amount": 0.0,
+      "position_units": 0.0,
+      "position_lots": 0.0,
+      "last_close": 27241.72,
+      "atr": 68.235,
+      "rationale": "Price has rallied above VWAP (27026.90) and EMA50 (27072.46), pushing into upper ATR band (27268.03) and approaching Session High (27274.70) / Prev High (27318.65). Note US100 broker CFD volume rarely prints yellow RVOL spikes. While trend is up, entering immediately below key resistance levels with price stretched near the upper ATR band leaves insufficient upside potential to satisfy the mandatory 1:2.5 risk-reward requirement.",
+      "trend_vs_vwap": "bullish (above VWAP 27026.90 & EMA50 27072.46)",
+      "volatility": "contracting",
+      "level_event": "testing Session High 27274.70",
+      "downgraded": false,
+      "reasons": []
+    },
+    {
+      "symbol": "BTCUSD",
+      "model_action": "HOLD",
+      "action": "HOLD",
+      "entry": null,
+      "stop_loss": null,
+      "take_profit": null,
+      "model_risk_reward": null,
+      "rr_local": null,
+      "confidence": 0.6,
+      "model_risk_pct": null,
+      "risk_pct": null,
+      "risk_amount": 0.0,
+      "position_units": 0.0,
+      "position_lots": 0.0,
+      "last_close": 74632.0,
+      "atr": 254.24,
+      "rationale": "BTCUSD is in tight mid-range consolidation, hovering around VWAP (74540.26), EMA20 (74568.56), and EMA50 (74638.58). Price is sitting dead-center in the ATR channel with low volume (RVOL 0.696, grey bars). With no directional bias, no active level sweep, and price trapped in a choppy squeeze far from Session High (75599.22) or Session Low (73750.00), a strict HOLD is warranted.",
+      "trend_vs_vwap": "neutral (chopping around VWAP 74540.26 & EMA50 74638.58)",
+      "volatility": "contracting",
+      "level_event": "none (mid-range consolidation)",
+      "downgraded": false,
+      "reasons": []
+    }
+  ]
+}

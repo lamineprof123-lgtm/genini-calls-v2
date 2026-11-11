@@ -1,0 +1,39 @@
+{
+  "model": "gemini-3.6-flash",
+  "model_version": "gemini-3.6-flash",
+  "raw_text": "{\n  \"signals\": [\n    {\n      \"symbol\": \"XAUUSD\",\n      \"action\": \"HOLD\",\n      \"entry\": null,\n      \"stop_loss\": null,\n      \"take_profit\": null,\n      \"risk_reward\": null,\n      \"confidence\": 0.5,\n      \"risk_pct\": null,\n      \"trend_vs_vwap\": \"bullish price holding above VWAP\",\n      \"volatility\": \"expanding\",\n      \"level_event\": \"rejection at Session High\",\n      \"rationale\": \"Price is trading near the upper end of the range right below Session High resistance (4133.88). While price extended back above VWAP, it recently showed sell pressure near the highs. Reward-to-risk ratio to upside resistance is insufficient for a clean long entry here.\"\n    },\n    {\n      \"symbol\": \"EURUSD\",\n      \"action\": \"HOLD\",\n      \"entry\": null,\n      \"stop_loss\": null,\n      \"take_profit\": null,\n      \"risk_reward\": null,\n      \"confidence\": 0.55,\n      \"risk_pct\": null,\n      \"trend_vs_vwap\": \"bullish upward VWAP slope\",\n      \"volatility\": \"expanding\",\n      \"level_event\": \"rejection at Session High 1.11983\",\n      \"rationale\": \"EURUSD has trended strongly above VWAP but just printed a strong lower wick rejection / pull back right at the Session High level (1.11983). Buying at the high of the move offers poor R:R to overhead S/R levels.\"\n    },\n    {\n      \"symbol\": \"GBPUSD\",\n      \"action\": \"HOLD\",\n      \"entry\": null,\n      \"stop_loss\": null,\n      \"take_profit\": null,\n      \"risk_reward\": null,\n      \"confidence\": 0.5,\n      \"risk_pct\": null,\n      \"trend_vs_vwap\": \"bullish trend above VWAP\",\n      \"volatility\": \"expanding\",\n      \"level_event\": \"rejection at Session High 1.34260\",\n      \"rationale\": \"Price tested the Session High (1.34260) and reacted lower. Although overall momentum is bullish, entry near resistance without a full pullback to VWAP or S/R support (1.34039) limits achievable reward-to-risk.\"\n    },\n    {\n      \"symbol\": \"US100\",\n      \"action\": \"HOLD\",\n      \"entry\": null,\n      \"stop_loss\": null,\n      \"take_profit\": null,\n      \"risk_reward\": null,\n      \"confidence\": 0.55,\n      \"risk_pct\": null,\n      \"trend_vs_vwap\": \"bullish recovery above VWAP\",\n      \"volatility\": \"normal\",\n      \"level_event\": \"rejection near Session High 27274.70\",\n      \"rationale\": \"US100 staged a sharp recovery from lower S/R levels and pushed up to 27240 near Session High, but the latest bar is a pullback candle. Price is extended away from VWAP and support levels.\"\n    },\n    {\n      \"symbol\": \"BTCUSD\",\n      \"action\": \"HOLD\",\n      \"entry\": null,\n      \"stop_loss\": null,\n      \"take_profit\": null,\n      \"risk_reward\": null,\n      \"confidence\": 0.45,\n      \"risk_pct\": null,\n      \"trend_vs_vwap\": \"neutral flat around VWAP\",\n      \"volatility\": \"contracting\",\n      \"level_event\": \"none\",\n      \"rationale\": \"BTCUSD is chopping sideways right around the flat VWAP line following a previous drop. Volatility is contracting and price is mid-range between Session Low (73750) and Session High (75599).\"\n    }\n  ],\n  \"market_summary\": \"Major FX pairs (EURUSD, GBPUSD) and Gold (XAUUSD) are displaying strong intraday bullish trends above VWAP but are currently stalling/rejecting near session highs. Equity indices (US100) staged an aggressive V-shaped recovery off lows, while BTCUSD remains locked in a consolidation range post-selloff. Holding across assets until cleaner pullback entries to VWAP or breakout acceptances materialize.\"\n}",
+  "usage": {
+    "cache_tokens_details": [
+      {
+        "modality": "TEXT",
+        "token_count": 2100
+      },
+      {
+        "modality": "IMAGE",
+        "token_count": 4221
+      }
+    ],
+    "cached_content_token_count": 6321,
+    "candidates_token_count": 1018,
+    "prompt_token_count": 8237,
+    "prompt_tokens_details": [
+      {
+        "modality": "IMAGE",
+        "token_count": 5500
+      },
+      {
+        "modality": "TEXT",
+        "token_count": 2737
+      }
+    ],
+    "total_token_count": 9255
+  },
+  "attempts": [
+    {
+      "model": "gemini-3.6-flash",
+      "attempt": 1,
+      "ok": true
+    }
+  ],
+  "parse_error": null
+}

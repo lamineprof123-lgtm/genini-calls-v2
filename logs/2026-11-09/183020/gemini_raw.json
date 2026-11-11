@@ -1,0 +1,35 @@
+{
+  "model": "gemini-3.6-flash",
+  "model_version": "gemini-3.6-flash",
+  "raw_text": "{\n  \"signals\": [\n    {\n      \"symbol\": \"XAUUSD\",\n      \"action\": \"HOLD\",\n      \"entry\": null,\n      \"stop_loss\": null,\n      \"take_profit\": null,\n      \"risk_reward\": null,\n      \"confidence\": 0.55,\n      \"risk_pct\": null,\n      \"trend_vs_vwap\": \"bullish above VWAP and EMA50\",\n      \"volatility\": \"expanding\",\n      \"level_event\": \"rejection near Session High 4133.88\",\n      \"rationale\": \"Price is above rising VWAP (4110.55) and EMA50 (4106.13), showing strong bullish structure. However, candles are currently stretched right against the upper ATR band (4128.75) and just below Session High resistance (4133.88). RVOL is moderate (1.56). With price extended near resistance without a clear consolidation or pullback to EMA20, buying here offers poor risk-reward.\"\n    },\n    {\n      \"symbol\": \"EURUSD\",\n      \"action\": \"HOLD\",\n      \"entry\": null,\n      \"stop_loss\": null,\n      \"take_profit\": null,\n      \"risk_reward\": null,\n      \"confidence\": 0.5,\n      \"risk_pct\": null,\n      \"trend_vs_vwap\": \"bullish above VWAP and EMA50\",\n      \"volatility\": \"expanding\",\n      \"level_event\": \"rejection at Session High 1.12026\",\n      \"rationale\": \"Price remains above VWAP (1.1177) and EMA50 (1.11795) following a strong expansion leg. However, the last bar rejected sharply off the Session High at 1.12026 and the upper ATR band (1.12017). Current volume is normal (RVOL 1.08). Entering long at upper ATR band resistance lacks a favorable risk-reward structure; awaiting a retracement toward EMA20/VWAP.\"\n    },\n    {\n      \"symbol\": \"GBPUSD\",\n      \"action\": \"HOLD\",\n      \"entry\": null,\n      \"stop_loss\": null,\n      \"take_profit\": null,\n      \"risk_reward\": null,\n      \"confidence\": 0.55,\n      \"risk_pct\": null,\n      \"trend_vs_vwap\": \"bullish above VWAP and EMA50\",\n      \"volatility\": \"expanding\",\n      \"level_event\": \"rejection at Session High 1.3426\",\n      \"rationale\": \"Strong intraday trend above VWAP (1.33998) and EMA50 (1.34014). Price tested the Session High (1.3426) and upper ATR band (1.34265) but failed to break through, showing upper wicks. RVOL is at 1.086 (normal). Entering long at range resistance yields an R:R below 2.5. Prefer to wait for a breakout consolidation or pullbacks to EMA20.\"\n    },\n    {\n      \"symbol\": \"US100\",\n      \"action\": \"HOLD\",\n      \"entry\": null,\n      \"stop_loss\": null,\n      \"take_profit\": null,\n      \"risk_reward\": null,\n      \"confidence\": 0.5,\n      \"risk_pct\": null,\n      \"trend_vs_vwap\": \"bullish above VWAP and EMA50\",\n      \"volatility\": \"normal\",\n      \"level_event\": \"rejection near Session High 27274.70\",\n      \"rationale\": \"Price expanded strongly off VWAP (27026.90) and EMA50 (27072.46) but is currently stalling near Session High (27274.70) and testing upper ATR band (27268.03). Dukascopy CFD volume shows no yellow RVOL spikes (typical for this stream). With immediate resistance overhead at Prev High (27318.65), risk-reward for long entries is restricted.\"\n    },\n    {\n      \"symbol\": \"BTCUSD\",\n      \"action\": \"HOLD\",\n      \"entry\": null,\n      \"stop_loss\": null,\n      \"take_profit\": null,\n      \"risk_reward\": null,\n      \"confidence\": 0.45,\n      \"risk_pct\": null,\n      \"trend_vs_vwap\": \"neutral hovering at VWAP and EMA50\",\n      \"volatility\": \"contracting\",\n      \"level_event\": \"none\",\n      \"rationale\": \"BTCUSD is chopping sideways mid-range around VWAP (74540.26) and EMA50 (74638.58). ATR channel is flat and price is positioned in the middle of the range with low RVOL (0.696). No structural breakout or sweep event is active. Standing aside until price tests outer boundaries (Session High 75599.22 or Session Low 73750.0).\"\n    }\n  ],\n  \"market_summary\": \"FX majors and Gold have experienced strong intraday upward moves but are currently stretched at or near upper ATR band limits and Session High resistance levels. US100 is similarly testing upper resistance while BTCUSD remains locked in a tight consolidation around its daily VWAP and EMA50. With all assets extended near resistance or stuck mid-range, risk-reward parameters across the board favor holding for pullbacks or high-volume breakouts.\"\n}",
+  "usage": {
+    "candidates_token_count": 1300,
+    "prompt_token_count": 9366,
+    "prompt_tokens_details": [
+      {
+        "modality": "IMAGE",
+        "token_count": 5500
+      },
+      {
+        "modality": "TEXT",
+        "token_count": 3866
+      }
+    ],
+    "total_token_count": 10666
+  },
+  "attempts": [
+    {
+      "model": "gemini-3.6-flash",
+      "attempt": 1,
+      "ok": false,
+      "retryable": true,
+      "error": "ServerError: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}"
+    },
+    {
+      "model": "gemini-3.6-flash",
+      "attempt": 2,
+      "ok": true
+    }
+  ],
+  "parse_error": null
+}

@@ -1,0 +1,35 @@
+{
+  "model": "gemini-3.6-flash",
+  "model_version": "gemini-3.6-flash",
+  "raw_text": "{\n  \"signals\": [\n    {\n      \"symbol\": \"XAUUSD\",\n      \"action\": \"HOLD\",\n      \"entry\": null,\n      \"stop_loss\": null,\n      \"take_profit\": null,\n      \"risk_reward\": null,\n      \"confidence\": 0.55,\n      \"risk_pct\": null,\n      \"trend_vs_vwap\": \"bullish price reclaimed VWAP and expanding upward\",\n      \"volatility\": \"normal\",\n      \"level_event\": \"none near Session High resistance\",\n      \"rationale\": \"Price is approaching the main Session High resistance level at 4133.88 after reclaiming VWAP. Current risk/reward to trade into overhead resistance before a pullback or clean breakout is unfavorable.\"\n    },\n    {\n      \"symbol\": \"EURUSD\",\n      \"action\": \"HOLD\",\n      \"entry\": null,\n      \"stop_loss\": null,\n      \"take_profit\": null,\n      \"risk_reward\": null,\n      \"confidence\": 0.5,\n      \"risk_pct\": null,\n      \"trend_vs_vwap\": \"bullish strong upward push above VWAP\",\n      \"volatility\": \"expanding\",\n      \"level_event\": \"rejection at Session High 1.11983\",\n      \"rationale\": \"EURUSD has extended into the Session High resistance at 1.11983 with upper wicks showing supply overhead. Buying right under key resistance offers poor risk-reward (< 2.5).\"\n    },\n    {\n      \"symbol\": \"GBPUSD\",\n      \"action\": \"HOLD\",\n      \"entry\": null,\n      \"stop_loss\": null,\n      \"take_profit\": null,\n      \"risk_reward\": null,\n      \"confidence\": 0.5,\n      \"risk_pct\": null,\n      \"trend_vs_vwap\": \"bullish strong uptrend above VWAP\",\n      \"volatility\": \"expanding\",\n      \"level_event\": \"rejection at Session High 1.3426\",\n      \"rationale\": \"Price rejected Session High (1.3426) after a strong bullish expansion. Standard pullback to S/R baseline is needed before entering long.\"\n    },\n    {\n      \"symbol\": \"US100\",\n      \"action\": \"HOLD\",\n      \"entry\": null,\n      \"stop_loss\": null,\n      \"take_profit\": null,\n      \"risk_reward\": null,\n      \"confidence\": 0.45,\n      \"risk_pct\": null,\n      \"trend_vs_vwap\": \"bullish price above rising VWAP\",\n      \"volatility\": \"normal\",\n      \"level_event\": \"rejection at S/R 27216.52\",\n      \"rationale\": \"Price had a strong V-shape recovery back above VWAP but encountered resistance near 27216.52. Reward to risk to Session High (27274.70) does not meet minimum 1:2.5 requirement from current price.\"\n    },\n    {\n      \"symbol\": \"BTCUSD\",\n      \"action\": \"HOLD\",\n      \"entry\": null,\n      \"stop_loss\": null,\n      \"take_profit\": null,\n      \"risk_reward\": null,\n      \"confidence\": 0.4,\n      \"risk_pct\": null,\n      \"trend_vs_vwap\": \"neutral price consolidating around VWAP\",\n      \"volatility\": \"contracting\",\n      \"level_event\": \"rejection of session low sweep earlier, now neutral\",\n      \"rationale\": \"BTCUSD is chopping sideways around VWAP following a volatility contraction post-dump. No clear directional signal or high R:R trade location present.\"\n    }\n  ],\n  \"market_summary\": \"USD pairs and equity futures display bullish intraday momentum reclaiming their daily VWAPs, but most instruments (XAUUSD, EURUSD, GBPUSD, US100) are currently pressing directly into key session high resistance levels. BTCUSD remains in a tight consolidation around VWAP after sweeping earlier session lows. Standing aside across all instruments until clear breakouts or pullback entries with >= 2.5 R:R present themselves.\"\n}",
+  "usage": {
+    "candidates_token_count": 969,
+    "prompt_token_count": 8235,
+    "prompt_tokens_details": [
+      {
+        "modality": "TEXT",
+        "token_count": 2735
+      },
+      {
+        "modality": "IMAGE",
+        "token_count": 5500
+      }
+    ],
+    "total_token_count": 9204
+  },
+  "attempts": [
+    {
+      "model": "gemini-3.6-flash",
+      "attempt": 1,
+      "ok": false,
+      "retryable": true,
+      "error": "ServerError: 504 DEADLINE_EXCEEDED. {'error': {'code': 504, 'message': 'Deadline expired before operation could complete.', 'status': 'DEADLINE_EXCEEDED'}}"
+    },
+    {
+      "model": "gemini-3.6-flash",
+      "attempt": 2,
+      "ok": true
+    }
+  ],
+  "parse_error": null
+}

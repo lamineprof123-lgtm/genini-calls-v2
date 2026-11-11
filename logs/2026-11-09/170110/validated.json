@@ -1,0 +1,381 @@
+{
+  "run_at_utc": "2026-11-09T13:01:10.710431+00:00",
+  "run_at_local": "2026-11-09T17:01:10.710431+04:00",
+  "dry_run": true,
+  "model": "mock-dry-run",
+  "model_version": null,
+  "gemini_attempts": null,
+  "signals_only": true,
+  "equity": 100000.0,
+  "circuit_breaker": {
+    "session_day": "2026-11-09",
+    "start_equity": 100000.0,
+    "equity": 100000.0,
+    "loss_pct": 0.0,
+    "halted": false,
+    "halted_at": null,
+    "reason": null
+  },
+  "data": {
+    "XAUUSD": {
+      "source": "dukascopy",
+      "ticker": "xauusd",
+      "last_closed_bar_utc": "2026-11-09T12:45:00+00:00",
+      "last_close": 4121.79,
+      "vwap": 4108.93,
+      "vwap_anchor": "utc_day",
+      "atr": 6.439,
+      "ema20_baseline": 4106.69,
+      "atr_upper": 4119.57,
+      "atr_lower": 4093.81,
+      "atr_expanding_vs_20bar_avg": false,
+      "close_vs_vwap": "above",
+      "levels": [
+        {
+          "type": "resistance",
+          "label": "Session High",
+          "price": 4133.88,
+          "touches": 3
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 4106.66,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 4084.49,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 4080.96,
+          "touches": 1
+        }
+      ]
+    },
+    "EURUSD": {
+      "source": "dukascopy",
+      "ticker": "eurusd",
+      "last_closed_bar_utc": "2026-11-09T12:45:00+00:00",
+      "last_close": 1.11922,
+      "vwap": 1.11731,
+      "vwap_anchor": "utc_day",
+      "atr": 0.000475,
+      "ema20_baseline": 1.11863,
+      "atr_upper": 1.11958,
+      "atr_lower": 1.11768,
+      "atr_expanding_vs_20bar_avg": true,
+      "close_vs_vwap": "above",
+      "levels": [
+        {
+          "type": "resistance",
+          "label": "Session High",
+          "price": 1.11983,
+          "touches": 2
+        },
+        {
+          "type": "resistance",
+          "label": "S/R",
+          "price": 1.12345,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 1.11673,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 1.11579,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "Prev High",
+          "price": 1.11499,
+          "touches": 1
+        }
+      ]
+    },
+    "GBPUSD": {
+      "source": "dukascopy",
+      "ticker": "gbpusd",
+      "last_closed_bar_utc": "2026-11-09T12:45:00+00:00",
+      "last_close": 1.34169,
+      "vwap": 1.33956,
+      "vwap_anchor": "utc_day",
+      "atr": 0.000567,
+      "ema20_baseline": 1.34116,
+      "atr_upper": 1.34229,
+      "atr_lower": 1.34002,
+      "atr_expanding_vs_20bar_avg": true,
+      "close_vs_vwap": "above",
+      "levels": [
+        {
+          "type": "resistance",
+          "label": "Session High",
+          "price": 1.3426,
+          "touches": 2
+        },
+        {
+          "type": "resistance",
+          "label": "S/R",
+          "price": 1.34442,
+          "touches": 1
+        },
+        {
+          "type": "resistance",
+          "label": "S/R",
+          "price": 1.34633,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 1.34039,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "Prev High",
+          "price": 1.3362,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "Session Low",
+          "price": 1.3359,
+          "touches": 1
+        }
+      ]
+    },
+    "US100": {
+      "source": "dukascopy",
+      "ticker": "usatechidxusd",
+      "last_closed_bar_utc": "2026-11-09T12:45:00+00:00",
+      "last_close": 27246.61,
+      "vwap": 27011.61,
+      "vwap_anchor": "cme_globex",
+      "atr": 71.062,
+      "ema20_baseline": 27069.98,
+      "atr_upper": 27212.11,
+      "atr_lower": 26927.86,
+      "atr_expanding_vs_20bar_avg": false,
+      "close_vs_vwap": "above",
+      "levels": [
+        {
+          "type": "resistance",
+          "label": "Session High",
+          "price": 27274.7,
+          "touches": 1
+        },
+        {
+          "type": "resistance",
+          "label": "Prev High",
+          "price": 27318.65,
+          "touches": 3
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 27216.52,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 27146.1,
+          "touches": 1
+        },
+        {
+          "type": "support",
+          "label": "S/R",
+          "price": 27054.24,
+          "touches": 1
+        }
+      ]
+    },
+    "BTCUSD": {
+      "source": "binance",
+      "ticker": "BTCUSDT",
+      "last_closed_bar_utc": "2026-11-09T12:45:00+00:00",
+      "last_close": 74920.2,
+      "vwap": 74528.84,
+      "vwap_anchor": "utc_day",
+      "atr": 279.263,
+      "ema20_baseline": 74481.32,
+      "atr_upper": 75039.85,
+      "atr_lower": 73922.8,
+      "atr_expanding_vs_20bar_avg": false,
+      "close_vs_vwap": "above",
+      "levels": [
+        {
+          "type": "resistance",
+          "label": "Session High",
+          "price": 75599.22,
+          "touches": 5
+        },
+        {
+          "type": "resistance",
+          "label": "S/R",
+          "price": 75779.89,
+          "touches": 2
+        },
+        {
+          "type": "resistance",
+          "label": "S/R",
+          "price": 75924.0,
+          "touches": 3
+        },
+        {
+          "type": "support",
+          "label": "Session Low",
+          "price": 73750.0,
+          "touches": 2
+        },
+        {
+          "type": "support",
+          "label": "Prev Low",
+          "price": 73510.0,
+          "touches": 3
+        }
+      ]
+    }
+  },
+  "data_errors": {},
+  "parse_error": null,
+  "ai_error": null,
+  "market_summary": "dry-run mock",
+  "signals": [
+    {
+      "symbol": "XAUUSD",
+      "model_action": "BUY",
+      "action": "BUY",
+      "entry": 4121.79,
+      "stop_loss": 4115.35,
+      "take_profit": 4141.11,
+      "model_risk_reward": 3.0,
+      "rr_local": 3.0,
+      "confidence": 0.7,
+      "model_risk_pct": 0.5,
+      "risk_pct": 0.5,
+      "risk_amount": 500.0,
+      "position_units": 77.639752,
+      "position_lots": 0.77,
+      "last_close": 4121.79,
+      "atr": 6.439,
+      "rationale": "mock: trend-following vs VWAP, 1:3 target",
+      "trend_vs_vwap": "above VWAP",
+      "volatility": "normal",
+      "level_event": "none",
+      "downgraded": false,
+      "reasons": []
+    },
+    {
+      "symbol": "EURUSD",
+      "model_action": "BUY",
+      "action": "BUY",
+      "entry": 1.11922,
+      "stop_loss": 1.11875,
+      "take_profit": 1.12065,
+      "model_risk_reward": 3.0,
+      "rr_local": 3.043,
+      "confidence": 0.7,
+      "model_risk_pct": 0.5,
+      "risk_pct": 0.5,
+      "risk_amount": 500.0,
+      "position_units": 1063829.787234,
+      "position_lots": 10.63,
+      "last_close": 1.11922,
+      "atr": 0.000475,
+      "rationale": "mock: trend-following vs VWAP, 1:3 target",
+      "trend_vs_vwap": "above VWAP",
+      "volatility": "expanding",
+      "level_event": "none",
+      "downgraded": false,
+      "reasons": []
+    },
+    {
+      "symbol": "GBPUSD",
+      "model_action": "BUY",
+      "action": "BUY",
+      "entry": 1.34169,
+      "stop_loss": 1.34112,
+      "take_profit": 1.34339,
+      "model_risk_reward": 3.0,
+      "rr_local": 2.982,
+      "confidence": 0.7,
+      "model_risk_pct": 0.5,
+      "risk_pct": 0.5,
+      "risk_amount": 500.0,
+      "position_units": 877192.982456,
+      "position_lots": 8.77,
+      "last_close": 1.34169,
+      "atr": 0.000567,
+      "rationale": "mock: trend-following vs VWAP, 1:3 target",
+      "trend_vs_vwap": "above VWAP",
+      "volatility": "expanding",
+      "level_event": "none",
+      "downgraded": false,
+      "reasons": []
+    },
+    {
+      "symbol": "US100",
+      "model_action": "BUY",
+      "action": "HOLD",
+      "entry": 27246.61,
+      "stop_loss": 27175.55,
+      "take_profit": 27353.2,
+      "model_risk_reward": 1.5,
+      "rr_local": 1.5,
+      "confidence": 0.7,
+      "model_risk_pct": 0.5,
+      "risk_pct": null,
+      "risk_amount": 0.0,
+      "position_units": 0.0,
+      "position_lots": 0.0,
+      "last_close": 27246.61,
+      "atr": 71.062,
+      "rationale": "mock: deliberately R:R 1.5 (validator must downgrade)",
+      "trend_vs_vwap": "above VWAP",
+      "volatility": "normal",
+      "level_event": "none",
+      "downgraded": true,
+      "reasons": [
+        "R:R 1:1.5 below minimum 1:2.5"
+      ]
+    },
+    {
+      "symbol": "BTCUSD",
+      "model_action": "BUY",
+      "action": "HOLD",
+      "entry": 74920.2,
+      "stop_loss": 75199.46,
+      "take_profit": 75757.99,
+      "model_risk_reward": 3.0,
+      "rr_local": null,
+      "confidence": 0.7,
+      "model_risk_pct": 0.5,
+      "risk_pct": null,
+      "risk_amount": 0.0,
+      "position_units": 0.0,
+      "position_lots": 0.0,
+      "last_close": 74920.2,
+      "atr": 279.263,
+      "rationale": "mock: deliberately stop on wrong side (validator must downgrade)",
+      "trend_vs_vwap": "above VWAP",
+      "volatility": "normal",
+      "level_event": "none",
+      "downgraded": true,
+      "reasons": [
+        "BUY requires stop_loss < entry < take_profit"
+      ]
+    }
+  ]
+}

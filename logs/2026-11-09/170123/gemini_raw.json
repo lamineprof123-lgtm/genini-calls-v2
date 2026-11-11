@@ -1,0 +1,64 @@
+{
+  "model": "gemini-3.6-flash",
+  "model_version": "gemini-3.6-flash",
+  "raw_text": "{\n  \"signals\": [\n    {\n      \"symbol\": \"XAUUSD\",\n      \"action\": \"HOLD\",\n      \"entry\": null,\n      \"stop_loss\": null,\n      \"take_profit\": null,\n      \"risk_reward\": null,\n      \"confidence\": 0.55,\n      \"risk_pct\": null,\n      \"trend_vs_vwap\": \"bullish - price holding above VWAP and EMA20 baseline\",\n      \"volatility\": \"normal\",\n      \"level_event\": \"rejection at S/R 4106.66 followed by bounce\",\n      \"rationale\": \"Gold rebounded strongly from the 4084-4106 support zone and reclaimed VWAP (4108.93). However, price is approaching Session High resistance at 4133.88 with inadequate reward-to-risk space for a new long before hitting resistance.\"\n    },\n    {\n      \"symbol\": \"EURUSD\",\n      \"action\": \"HOLD\",\n      \"entry\": null,\n      \"stop_loss\": null,\n      \"take_profit\": null,\n      \"risk_reward\": null,\n      \"confidence\": 0.58,\n      \"risk_pct\": null,\n      \"trend_vs_vwap\": \"bullish - price consistently above ascending VWAP\",\n      \"volatility\": \"expanding\",\n      \"level_event\": \"rejection at Session High 1.11983\",\n      \"rationale\": \"EURUSD remains in a steady uptrend above VWAP (1.11731), but is consolidating directly beneath immediate Session High resistance (1.11983). Entering long before a clean breakout offers a sub-optimal risk-reward profile.\"\n    },\n    {\n      \"symbol\": \"GBPUSD\",\n      \"action\": \"HOLD\",\n      \"entry\": null,\n      \"stop_loss\": null,\n      \"take_profit\": null,\n      \"risk_reward\": null,\n      \"confidence\": 0.56,\n      \"risk_pct\": null,\n      \"trend_vs_vwap\": \"bullish - price tracking above EMA20 and VWAP\",\n      \"volatility\": \"expanding\",\n      \"level_event\": \"rejection at Session High 1.34260\",\n      \"rationale\": \"Cable bounced off the EMA20 baseline after pulling back from Session High (1.34260). Overhead resistance sits immediately above current close, preventing a minimum 1:2.5 risk-to-reward ratio without risking a false breakout.\"\n    },\n    {\n      \"symbol\": \"US100\",\n      \"action\": \"HOLD\",\n      \"entry\": null,\n      \"stop_loss\": null,\n      \"take_profit\": null,\n      \"risk_reward\": null,\n      \"confidence\": 0.52,\n      \"risk_pct\": null,\n      \"trend_vs_vwap\": \"bullish - strong expansion above VWAP\",\n      \"volatility\": \"expanding\",\n      \"level_event\": \"acceptance above S/R 27216.52\",\n      \"rationale\": \"US100 has staged an aggressive rally from 26720 back above VWAP (27011.61) and upper ATR channel. Price is now pressing against Session High (27274.70) and Previous High (27318.65), creating high downside pullback risk.\"\n    },\n    {\n      \"symbol\": \"BTCUSD\",\n      \"action\": \"BUY\",\n      \"entry\": 74920.2,\n      \"stop_loss\": 74640.0,\n      \"take_profit\": 75779.89,\n      \"risk_reward\": 3.07,\n      \"confidence\": 0.72,\n      \"risk_pct\": 0.5,\n      \"trend_vs_vwap\": \"bullish - price reclaimed VWAP and EMA20 with momentum\",\n      \"volatility\": \"normal\",\n      \"level_event\": \"acceptance above VWAP following Session Low sweep\",\n      \"rationale\": \"Bitcoin swept the Session Low (73750.0) before forming a bullish reversal structure that reclaimed both the EMA20 baseline and VWAP (74528.84). The latest M15 candle shows strong buying pressure pushing into the upper ATR envelope. Upside target is set at upper swing S/R (75779.89) with invalidation below the VWAP/EMA20 support block.\"\n    }\n  ],\n  \"market_summary\": \"FX and index markets (EURUSD, GBPUSD, US100, XAUUSD) display strong bullish intraday momentum relative to VWAP but are currently trading directly into key session high resistances, offering unpromising risk-reward ratios for new long positions. BTCUSD presents a clean setup following a liquidity sweep at session lows and a strong reclaim of VWAP, favoring a long continuation towards upper S/R levels.\"\n}",
+  "usage": {
+    "candidates_token_count": 1161,
+    "prompt_token_count": 8207,
+    "prompt_tokens_details": [
+      {
+        "modality": "IMAGE",
+        "token_count": 5500
+      },
+      {
+        "modality": "TEXT",
+        "token_count": 2707
+      }
+    ],
+    "thoughts_token_count": 3975,
+    "total_token_count": 13343
+  },
+  "attempts": [
+    {
+      "model": "gemini-3.8-flash",
+      "attempt": 1,
+      "ok": false,
+      "retryable": true,
+      "error": "ServerError: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}"
+    },
+    {
+      "model": "gemini-3.8-flash",
+      "attempt": 2,
+      "ok": false,
+      "retryable": true,
+      "error": "ServerError: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}"
+    },
+    {
+      "model": "gemini-3.8-flash",
+      "attempt": 3,
+      "ok": false,
+      "retryable": true,
+      "error": "ServerError: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}"
+    },
+    {
+      "model": "gemini-3.8-flash",
+      "attempt": 4,
+      "ok": false,
+      "retryable": true,
+      "error": "ServerError: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}"
+    },
+    {
+      "model": "gemini-3.6-flash",
+      "attempt": 1,
+      "ok": false,
+      "retryable": true,
+      "error": "ServerError: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}"
+    },
+    {
+      "model": "gemini-3.6-flash",
+      "attempt": 2,
+      "ok": true
+    }
+  ],
+  "parse_error": null
+}

@@ -1,30 +1,176 @@
 {
   "scope": "Post-reset account only (pre-reset trades listed separately); paper trades only; net P&L after round-trip commission",
   "summary": {
-    "count": 0,
+    "count": 1,
     "wins": 0,
-    "losses": 0,
+    "losses": 1,
     "breakeven": 0,
-    "win_rate": null,
-    "net_pnl": 0,
+    "win_rate": 0.0,
+    "net_pnl": -2353.5,
     "avg_win": null,
-    "avg_loss": null,
-    "expectancy": null,
+    "avg_loss": -2353.5,
+    "expectancy": -2353.5,
     "low_confidence": true
   },
   "groups": {
-    "session": {},
-    "value_area_position": {},
-    "cvd_agrees": {},
-    "rvol_spike": {},
-    "vwap_aligned": {},
-    "ema50_aligned": {},
-    "vwap_ema50_aligned": {},
-    "confidence_band": {},
-    "symbol": {},
-    "exit_reason": {}
+    "session": {
+      "NEW_YORK_SESSION": {
+        "count": 1,
+        "wins": 0,
+        "losses": 1,
+        "breakeven": 0,
+        "win_rate": 0.0,
+        "net_pnl": -2353.5,
+        "avg_win": null,
+        "avg_loss": -2353.5,
+        "expectancy": -2353.5,
+        "low_confidence": true
+      }
+    },
+    "value_area_position": {
+      "above_vah": {
+        "count": 1,
+        "wins": 0,
+        "losses": 1,
+        "breakeven": 0,
+        "win_rate": 0.0,
+        "net_pnl": -2353.5,
+        "avg_win": null,
+        "avg_loss": -2353.5,
+        "expectancy": -2353.5,
+        "low_confidence": true
+      }
+    },
+    "cvd_agrees": {
+      "yes": {
+        "count": 1,
+        "wins": 0,
+        "losses": 1,
+        "breakeven": 0,
+        "win_rate": 0.0,
+        "net_pnl": -2353.5,
+        "avg_win": null,
+        "avg_loss": -2353.5,
+        "expectancy": -2353.5,
+        "low_confidence": true
+      }
+    },
+    "rvol_spike": {
+      "no": {
+        "count": 1,
+        "wins": 0,
+        "losses": 1,
+        "breakeven": 0,
+        "win_rate": 0.0,
+        "net_pnl": -2353.5,
+        "avg_win": null,
+        "avg_loss": -2353.5,
+        "expectancy": -2353.5,
+        "low_confidence": true
+      }
+    },
+    "vwap_aligned": {
+      "yes": {
+        "count": 1,
+        "wins": 0,
+        "losses": 1,
+        "breakeven": 0,
+        "win_rate": 0.0,
+        "net_pnl": -2353.5,
+        "avg_win": null,
+        "avg_loss": -2353.5,
+        "expectancy": -2353.5,
+        "low_confidence": true
+      }
+    },
+    "ema50_aligned": {
+      "yes": {
+        "count": 1,
+        "wins": 0,
+        "losses": 1,
+        "breakeven": 0,
+        "win_rate": 0.0,
+        "net_pnl": -2353.5,
+        "avg_win": null,
+        "avg_loss": -2353.5,
+        "expectancy": -2353.5,
+        "low_confidence": true
+      }
+    },
+    "vwap_ema50_aligned": {
+      "yes": {
+        "count": 1,
+        "wins": 0,
+        "losses": 1,
+        "breakeven": 0,
+        "win_rate": 0.0,
+        "net_pnl": -2353.5,
+        "avg_win": null,
+        "avg_loss": -2353.5,
+        "expectancy": -2353.5,
+        "low_confidence": true
+      }
+    },
+    "confidence_band": {
+      ">=0.8": {
+        "count": 1,
+        "wins": 0,
+        "losses": 1,
+        "breakeven": 0,
+        "win_rate": 0.0,
+        "net_pnl": -2353.5,
+        "avg_win": null,
+        "avg_loss": -2353.5,
+        "expectancy": -2353.5,
+        "low_confidence": true
+      }
+    },
+    "symbol": {
+      "US100": {
+        "count": 1,
+        "wins": 0,
+        "losses": 1,
+        "breakeven": 0,
+        "win_rate": 0.0,
+        "net_pnl": -2353.5,
+        "avg_win": null,
+        "avg_loss": -2353.5,
+        "expectancy": -2353.5,
+        "low_confidence": true
+      }
+    },
+    "exit_reason": {
+      "gemini_close": {
+        "count": 1,
+        "wins": 0,
+        "losses": 1,
+        "breakeven": 0,
+        "win_rate": 0.0,
+        "net_pnl": -2353.5,
+        "avg_win": null,
+        "avg_loss": -2353.5,
+        "expectancy": -2353.5,
+        "low_confidence": true
+      }
+    }
   },
-  "top_combinations": [],
+  "top_combinations": [
+    {
+      "session": "NEW_YORK_SESSION",
+      "value_area_position": "above_vah",
+      "cvd_agrees": "yes",
+      "count": 1,
+      "wins": 0,
+      "losses": 1,
+      "breakeven": 0,
+      "win_rate": 0.0,
+      "net_pnl": -2353.5,
+      "avg_win": null,
+      "avg_loss": -2353.5,
+      "expectancy": -2353.5,
+      "low_confidence": true
+    }
+  ],
   "breaches": [
     {
       "t": "2026-11-11T20:49:00+00:00",
@@ -57,15 +203,15 @@
     "reset_at": "2026-11-11T19:08:31.906022+00:00",
     "reason": "gemini-only: no SL/TP",
     "post_reset": {
-      "count": 0,
+      "count": 1,
       "wins": 0,
-      "losses": 0,
+      "losses": 1,
       "breakeven": 0,
-      "win_rate": null,
-      "net_pnl": 0,
+      "win_rate": 0.0,
+      "net_pnl": -2353.5,
       "avg_win": null,
-      "avg_loss": null,
-      "expectancy": null,
+      "avg_loss": -2353.5,
+      "expectancy": -2353.5,
       "low_confidence": true
     },
     "pre_reset": {
@@ -81,15 +227,15 @@
       "low_confidence": true
     },
     "all": {
-      "count": 9,
+      "count": 10,
       "wins": 1,
-      "losses": 8,
+      "losses": 9,
       "breakeven": 0,
-      "win_rate": 0.111111,
-      "net_pnl": -3201.95,
+      "win_rate": 0.1,
+      "net_pnl": -5555.45,
       "avg_win": 757.25,
-      "avg_loss": -494.9,
-      "expectancy": -355.77,
+      "avg_loss": -701.41,
+      "expectancy": -555.54,
       "low_confidence": true
     },
     "pre_reset_by_symbol": {
@@ -144,7 +290,7 @@
     },
     "pre_reset_skips": 460
   },
-  "generated_at_utc": "2026-11-11T20:54:31.621589+00:00",
-  "generated_at_dubai": "2026-11-12 00:54:31",
+  "generated_at_utc": "2026-11-11T20:58:33.435005+00:00",
+  "generated_at_dubai": "2026-11-12 00:58:33",
   "malformed_lines": []
 }

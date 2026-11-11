@@ -2,7 +2,7 @@
 
 Post-reset account only (pre-reset trades listed separately); paper trades only; net P&L after round-trip commission
 
-Updated: 2026-11-12 00:54:31 (Dubai UTC+4)
+Updated: 2026-11-12 00:58:33 (Dubai UTC+4)
 
 **Every bucket with n < 20 is LOW CONFIDENCE. Descriptive only; no proven edge.**
 
@@ -10,9 +10,9 @@ Account reset at 2026-11-11T19:08:31.906022+00:00 (gemini-only: no SL/TP). Table
 
 | Group | n | Win rate | Net P&L | Avg win | Avg loss | Expectancy | Sample |
 |---|---:|---:|---:|---:|---:|---:|---|
-| Post-reset (since 2026-11-11T19:08Z) | 0 | n/a | $0.00 | n/a | n/a | n/a | LOW CONFIDENCE |
+| Post-reset (since 2026-11-11T19:08Z) | 1 | 0.0% | $-2,353.50 | n/a | $-2,353.50 | $-2,353.50 | LOW CONFIDENCE |
 | Pre-reset (archived account history) | 9 | 11.1% | $-3,201.95 | $757.25 | $-494.90 | $-355.77 | LOW CONFIDENCE |
-| All closed trades (both) | 9 | 11.1% | $-3,201.95 | $757.25 | $-494.90 | $-355.77 | LOW CONFIDENCE |
+| All closed trades (both) | 10 | 10.0% | $-5,555.45 | $757.25 | $-701.41 | $-555.54 | LOW CONFIDENCE |
 
 ## Pre-reset history by symbol
 
@@ -25,53 +25,73 @@ Account reset at 2026-11-11T19:08:31.906022+00:00 (gemini-only: no SL/TP). Table
 
 Pre-reset entry skips: 460
 
-No closed paper trades yet. Win rate/expectancy are unavailable, not zero.
-
 ## Session
 
-No observations yet.
+| Group | n | Win rate | Net P&L | Avg win | Avg loss | Expectancy | Sample |
+|---|---:|---:|---:|---:|---:|---:|---|
+| NEW_YORK_SESSION | 1 | 0.0% | $-2,353.50 | n/a | $-2,353.50 | $-2,353.50 | LOW CONFIDENCE |
 
 ## Value Area Position
 
-No observations yet.
+| Group | n | Win rate | Net P&L | Avg win | Avg loss | Expectancy | Sample |
+|---|---:|---:|---:|---:|---:|---:|---|
+| above_vah | 1 | 0.0% | $-2,353.50 | n/a | $-2,353.50 | $-2,353.50 | LOW CONFIDENCE |
 
 ## Cvd Agrees
 
-No observations yet.
+| Group | n | Win rate | Net P&L | Avg win | Avg loss | Expectancy | Sample |
+|---|---:|---:|---:|---:|---:|---:|---|
+| yes | 1 | 0.0% | $-2,353.50 | n/a | $-2,353.50 | $-2,353.50 | LOW CONFIDENCE |
 
 ## Rvol Spike
 
-No observations yet.
+| Group | n | Win rate | Net P&L | Avg win | Avg loss | Expectancy | Sample |
+|---|---:|---:|---:|---:|---:|---:|---|
+| no | 1 | 0.0% | $-2,353.50 | n/a | $-2,353.50 | $-2,353.50 | LOW CONFIDENCE |
 
 ## Vwap Aligned
 
-No observations yet.
+| Group | n | Win rate | Net P&L | Avg win | Avg loss | Expectancy | Sample |
+|---|---:|---:|---:|---:|---:|---:|---|
+| yes | 1 | 0.0% | $-2,353.50 | n/a | $-2,353.50 | $-2,353.50 | LOW CONFIDENCE |
 
 ## Ema50 Aligned
 
-No observations yet.
+| Group | n | Win rate | Net P&L | Avg win | Avg loss | Expectancy | Sample |
+|---|---:|---:|---:|---:|---:|---:|---|
+| yes | 1 | 0.0% | $-2,353.50 | n/a | $-2,353.50 | $-2,353.50 | LOW CONFIDENCE |
 
 ## Vwap Ema50 Aligned
 
-No observations yet.
+| Group | n | Win rate | Net P&L | Avg win | Avg loss | Expectancy | Sample |
+|---|---:|---:|---:|---:|---:|---:|---|
+| yes | 1 | 0.0% | $-2,353.50 | n/a | $-2,353.50 | $-2,353.50 | LOW CONFIDENCE |
 
 ## Confidence Band
 
-No observations yet.
+| Group | n | Win rate | Net P&L | Avg win | Avg loss | Expectancy | Sample |
+|---|---:|---:|---:|---:|---:|---:|---|
+| >=0.8 | 1 | 0.0% | $-2,353.50 | n/a | $-2,353.50 | $-2,353.50 | LOW CONFIDENCE |
 
 ## Symbol
 
-No observations yet.
+| Group | n | Win rate | Net P&L | Avg win | Avg loss | Expectancy | Sample |
+|---|---:|---:|---:|---:|---:|---:|---|
+| US100 | 1 | 0.0% | $-2,353.50 | n/a | $-2,353.50 | $-2,353.50 | LOW CONFIDENCE |
 
 ## Exit Reason
 
-No observations yet.
+| Group | n | Win rate | Net P&L | Avg win | Avg loss | Expectancy | Sample |
+|---|---:|---:|---:|---:|---:|---:|---|
+| gemini_close | 1 | 0.0% | $-2,353.50 | n/a | $-2,353.50 | $-2,353.50 | LOW CONFIDENCE |
 
 ## Top combinations: Session × Value area × CVD agreement
 
 Ranked by net P&L; small samples are not a strategy recommendation.
 
-No observations yet.
+| Group | n | Win rate | Net P&L | Avg win | Avg loss | Expectancy | Sample |
+|---|---:|---:|---:|---:|---:|---:|---|
+| NEW_YORK_SESSION × above_vah × CVD yes | 1 | 0.0% | $-2,353.50 | n/a | $-2,353.50 | $-2,353.50 | LOW CONFIDENCE |
 
 ## DLL / MLL / breaker breaches (log-only, 1)
 

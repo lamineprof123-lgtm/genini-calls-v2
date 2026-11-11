@@ -1,37 +1,183 @@
 {
   "scope": "All days and all accounts; paper trades only; net P&L after round-trip commission",
   "summary": {
-    "count": 0,
+    "count": 1,
     "wins": 0,
-    "losses": 0,
+    "losses": 1,
     "breakeven": 0,
-    "win_rate": null,
-    "net_pnl": 0,
+    "win_rate": 0.0,
+    "net_pnl": -738.6,
     "avg_win": null,
-    "avg_loss": null,
-    "expectancy": null,
+    "avg_loss": -738.6,
+    "expectancy": -738.6,
     "low_confidence": true
   },
   "groups": {
-    "session": {},
-    "value_area_position": {},
-    "cvd_agrees": {},
-    "rvol_spike": {},
-    "vwap_aligned": {},
-    "ema50_aligned": {},
-    "vwap_ema50_aligned": {},
-    "confidence_band": {},
-    "symbol": {},
-    "exit_reason": {}
+    "session": {
+      "LONDON_SESSION": {
+        "count": 1,
+        "wins": 0,
+        "losses": 1,
+        "breakeven": 0,
+        "win_rate": 0.0,
+        "net_pnl": -738.6,
+        "avg_win": null,
+        "avg_loss": -738.6,
+        "expectancy": -738.6,
+        "low_confidence": true
+      }
+    },
+    "value_area_position": {
+      "inside": {
+        "count": 1,
+        "wins": 0,
+        "losses": 1,
+        "breakeven": 0,
+        "win_rate": 0.0,
+        "net_pnl": -738.6,
+        "avg_win": null,
+        "avg_loss": -738.6,
+        "expectancy": -738.6,
+        "low_confidence": true
+      }
+    },
+    "cvd_agrees": {
+      "no": {
+        "count": 1,
+        "wins": 0,
+        "losses": 1,
+        "breakeven": 0,
+        "win_rate": 0.0,
+        "net_pnl": -738.6,
+        "avg_win": null,
+        "avg_loss": -738.6,
+        "expectancy": -738.6,
+        "low_confidence": true
+      }
+    },
+    "rvol_spike": {
+      "no": {
+        "count": 1,
+        "wins": 0,
+        "losses": 1,
+        "breakeven": 0,
+        "win_rate": 0.0,
+        "net_pnl": -738.6,
+        "avg_win": null,
+        "avg_loss": -738.6,
+        "expectancy": -738.6,
+        "low_confidence": true
+      }
+    },
+    "vwap_aligned": {
+      "yes": {
+        "count": 1,
+        "wins": 0,
+        "losses": 1,
+        "breakeven": 0,
+        "win_rate": 0.0,
+        "net_pnl": -738.6,
+        "avg_win": null,
+        "avg_loss": -738.6,
+        "expectancy": -738.6,
+        "low_confidence": true
+      }
+    },
+    "ema50_aligned": {
+      "yes": {
+        "count": 1,
+        "wins": 0,
+        "losses": 1,
+        "breakeven": 0,
+        "win_rate": 0.0,
+        "net_pnl": -738.6,
+        "avg_win": null,
+        "avg_loss": -738.6,
+        "expectancy": -738.6,
+        "low_confidence": true
+      }
+    },
+    "vwap_ema50_aligned": {
+      "yes": {
+        "count": 1,
+        "wins": 0,
+        "losses": 1,
+        "breakeven": 0,
+        "win_rate": 0.0,
+        "net_pnl": -738.6,
+        "avg_win": null,
+        "avg_loss": -738.6,
+        "expectancy": -738.6,
+        "low_confidence": true
+      }
+    },
+    "confidence_band": {
+      "0.6-0.7": {
+        "count": 1,
+        "wins": 0,
+        "losses": 1,
+        "breakeven": 0,
+        "win_rate": 0.0,
+        "net_pnl": -738.6,
+        "avg_win": null,
+        "avg_loss": -738.6,
+        "expectancy": -738.6,
+        "low_confidence": true
+      }
+    },
+    "symbol": {
+      "XAUUSD": {
+        "count": 1,
+        "wins": 0,
+        "losses": 1,
+        "breakeven": 0,
+        "win_rate": 0.0,
+        "net_pnl": -738.6,
+        "avg_win": null,
+        "avg_loss": -738.6,
+        "expectancy": -738.6,
+        "low_confidence": true
+      }
+    },
+    "exit_reason": {
+      "ema50_cross_15m": {
+        "count": 1,
+        "wins": 0,
+        "losses": 1,
+        "breakeven": 0,
+        "win_rate": 0.0,
+        "net_pnl": -738.6,
+        "avg_win": null,
+        "avg_loss": -738.6,
+        "expectancy": -738.6,
+        "low_confidence": true
+      }
+    }
   },
-  "top_combinations": [],
+  "top_combinations": [
+    {
+      "session": "LONDON_SESSION",
+      "value_area_position": "inside",
+      "cvd_agrees": "no",
+      "count": 1,
+      "wins": 0,
+      "losses": 1,
+      "breakeven": 0,
+      "win_rate": 0.0,
+      "net_pnl": -738.6,
+      "avg_win": null,
+      "avg_loss": -738.6,
+      "expectancy": -738.6,
+      "low_confidence": true
+    }
+  ],
   "skips": {
-    "count": 84,
+    "count": 86,
     "by_reason": {
       "sizing_unreachable": 6,
       "session_blocked": 2,
       "chase": 6,
-      "already_position_or_pending": 65,
+      "already_position_or_pending": 67,
       "stop 0.24 atr from entry (min 0.25)": 4,
       "stop 0.25 atr from entry (min 0.25)": 1
     },
@@ -40,7 +186,7 @@
       "session_blocked": 2,
       "price ran 0.00031 past Gemini entry (chase)": 1,
       "price ran 0.00047 past Gemini entry (chase)": 1,
-      "already in a position / pending on this symbol (one per symbol)": 65,
+      "already in a position / pending on this symbol (one per symbol)": 67,
       "price ran 0.00037 past Gemini entry (chase)": 1,
       "price ran 0.00077 past Gemini entry (chase)": 2,
       "price ran 0.00107 past Gemini entry (chase)": 1,
@@ -56,7 +202,7 @@
     "cvd_agrees": "bullish label for BUY, bearish for SELL; neutral label uses slope direction",
     "missing_telemetry": "unknown, never backfilled from later bars"
   },
-  "generated_at_utc": "2026-11-11T09:30:31.884286+00:00",
-  "generated_at_dubai": "2026-11-11 13:30:31",
+  "generated_at_utc": "2026-11-11T09:32:33.540737+00:00",
+  "generated_at_dubai": "2026-11-11 13:32:33",
   "malformed_lines": []
 }

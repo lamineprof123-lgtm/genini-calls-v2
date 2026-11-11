@@ -1,13 +1,13 @@
 {
   "version": 1,
   "created_at": "2026-11-09T13:59:39.073020+00:00",
-  "last_processed": "2026-11-11T09:29:00+00:00",
+  "last_processed": "2026-11-11T09:31:00+00:00",
   "account": {
     "no": 1,
     "phase": "eval",
     "started_at": "2026-11-09T13:59:39.073020+00:00",
     "start_balance": 100000.0,
-    "balance": 99950.2,
+    "balance": 99225.4,
     "highest_close": 100000.0,
     "mll_floor": 97000.0,
     "mll_locked": false,
@@ -18,8 +18,8 @@
     "cycle_day_pnl": {},
     "payouts": [],
     "trading_days": 0,
-    "realized_pnl": 0.0,
-    "trades": 0
+    "realized_pnl": -738.6,
+    "trades": 1
   },
   "positions": [
     {
@@ -270,137 +270,10 @@
         "run_at_utc": "2026-11-11T08:30:20.089334+00:00",
         "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/123020.json/GBPUSD.png"
       },
-      "mfe": 0.00045000000000006146,
+      "mfe": 0.0005300000000001415,
       "mae": 0.00046999999999997044,
       "mfe_min": 0.0001445,
       "time_cut_deadline": "2026-11-11T09:01:00+00:00",
-      "time_cut_candles": 2
-    },
-    {
-      "id": 3,
-      "symbol": "XAUUSD",
-      "contract": "GC",
-      "qty": 6,
-      "side": 1,
-      "entry": 4050.1,
-      "stop": 4048.6,
-      "target": 4051.4,
-      "entry_time": "2026-11-11T09:27:00+00:00",
-      "risk_usd": 900.0,
-      "target_usd": 752.4,
-      "target_usd_gross": 780.0,
-      "commission_rt": 27.6,
-      "atr": 5.749,
-      "gemini": {
-        "action": "BUY",
-        "entry": 4049.36,
-        "stop_loss": 4047.92,
-        "take_profit": 4050.61,
-        "confidence": 0.65,
-        "rr": 0.868,
-        "shown_on_site": true,
-        "basis": "site signal",
-        "run_at_utc": "2026-11-11T09:26:20.078180+00:00",
-        "session": "LONDON_SESSION",
-        "rationale": "Price is inside VA (VAL 4026.41..VAH 4057.10) and above POC 4044.58. CVD is NEUTRAL (-0.33). LONDON_SESSION context. Live price 4049.36 is testing VWAP 4048.51 and sitting above EMA50 4051.37. Mid ATR channel position. Low RVOL (0.888). Pullback into VWAP support holds strong.",
-        "model": "gemini-3.6-flash"
-      },
-      "scalp": {
-        "action": "BUY",
-        "side": 1,
-        "entry": 4049.97,
-        "stop_loss": 4048.53,
-        "take_profit": 4051.22,
-        "sdist": 1.43725,
-        "tdist": 1.25,
-        "stop_source": "structure+min_floor",
-        "target_source": "fixed",
-        "rr": 0.87,
-        "structure_stop": 4052.83255,
-        "atr_stop": 4045.3687999999997,
-        "fixed_tp": 4051.218,
-        "structure_tp": null,
-        "structure_label": null,
-        "candle": {
-          "high": 4059.51,
-          "low": 4053.12
-        }
-      },
-      "telemetry": {
-        "symbol": "XAUUSD",
-        "session": "LONDON_SESSION",
-        "last_close": 4053.49,
-        "atr": 5.749,
-        "vwap": 4048.51,
-        "ema20": 4055.36,
-        "ema50": 4051.37,
-        "price_vs_vwap": {
-          "side": "above",
-          "dist_atr": 0.8662
-        },
-        "price_vs_ema50": {
-          "side": "above",
-          "dist_atr": 0.3688
-        },
-        "vwap_aligned_with_side": true,
-        "ema50_aligned_with_side": true,
-        "poc": 4044.58,
-        "vah": 4057.1,
-        "val": 4026.41,
-        "price_vs_value_area": "inside",
-        "dist_to_poc_atr": 1.5498,
-        "cvd": -0.33,
-        "cvd_label": "NEUTRAL",
-        "cvd_slope": -0.45,
-        "cvd_agrees_with_side": false,
-        "rvol": 0.888,
-        "rvol_spike": false,
-        "rvol_bars_since_spike": 32,
-        "atr_band_z": -0.3253,
-        "atr_upper": 4066.85,
-        "atr_lower": 4043.86,
-        "nearest_sr": {
-          "above": {
-            "price": 4066.79,
-            "label": "Session High",
-            "dist_atr": 2.3134
-          },
-          "below": {
-            "price": 4052.38,
-            "label": "S/R",
-            "dist_atr": 0.1931
-          }
-        },
-        "gemini": {
-          "action": "BUY",
-          "confidence": 0.65,
-          "confidence_band": "0.6-0.7",
-          "rationale": "Price is inside VA (VAL 4026.41..VAH 4057.10) and above POC 4044.58. CVD is NEUTRAL (-0.33). LONDON_SESSION context. Live price 4049.36 is testing VWAP 4048.51 and sitting above EMA50 4051.37. Mid ATR channel position. Low RVOL (0.888). Pullback into VWAP support holds strong.",
-          "model": "gemini-3.6-flash",
-          "model_action": "BUY"
-        },
-        "scalp": {
-          "stop_basis": "structure+min_floor",
-          "target_basis": "fixed",
-          "tdist": 1.3,
-          "sdist": 1.5,
-          "structure_label": null
-        },
-        "planned": {
-          "tdist": 1.3,
-          "sdist": 1.5,
-          "qty": 6,
-          "contract": "GC",
-          "target_usd_net": 752.4,
-          "risk_usd": 900.0
-        },
-        "run_at_utc": "2026-11-11T09:26:20.078180+00:00",
-        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/132620.json/XAUUSD.png"
-      },
-      "mfe": 0.32700000000022555,
-      "mae": 1.3049999999998363,
-      "mfe_min": 1.43725,
-      "time_cut_deadline": "2026-11-11T09:57:00+00:00",
       "time_cut_candles": 2
     }
   ],
@@ -525,16 +398,16 @@
   "day": {
     "id": "2026-11-11",
     "start_balance": 100000.0,
-    "realized": 0.0,
+    "realized": -738.6,
     "locked": null,
     "eod_done": null,
     "traded": true
   },
   "last_price": {
-    "US100": 28197.219,
-    "GBPUSD": 1.33157,
+    "US100": 28185.187,
+    "GBPUSD": 1.33151,
     "EURUSD": 1.11379,
-    "XAUUSD": 4048.985
+    "XAUUSD": 4049.015
   },
   "history": [],
   "ledger": {
@@ -556,14 +429,14 @@
     "payouts_gross": 0.0,
     "payouts_received": 0.0,
     "payout_count": 0,
-    "trades": 0,
+    "trades": 1,
     "wins": 0,
-    "losses": 0,
+    "losses": 1,
     "gross_win": 0.0,
-    "gross_loss": 0.0,
-    "commissions": 49.8,
-    "net_trade_pnl": 0.0,
-    "skipped_signals": 84,
+    "gross_loss": -738.6,
+    "commissions": 63.6,
+    "net_trade_pnl": -738.6,
+    "skipped_signals": 86,
     "accepted_signals": 16
   }
 }

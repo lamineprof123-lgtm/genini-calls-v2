@@ -1,7 +1,7 @@
 {
   "version": 1,
   "created_at": "2026-11-11T17:32:34.420596+00:00",
-  "last_processed": "2026-11-11T17:59:00+00:00",
+  "last_processed": "2026-11-11T18:02:00+00:00",
   "account": {
     "no": 1,
     "phase": "eval",
@@ -182,13 +182,162 @@
         "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/213220.json/US100.png"
       },
       "mfe": 16.35900000000038,
-      "mae": 26.863000000001193,
+      "mae": 37.7400000000016,
       "mfe_min": 17.12175,
       "time_cut_deadline": "2026-11-11T18:03:00+00:00",
       "time_cut_candles": 2
     }
   ],
-  "pending": [],
+  "pending": [
+    {
+      "symbol": "XAUUSD",
+      "side": -1,
+      "created": "2026-11-11T18:02:31.688900+00:00",
+      "fill_after": "2026-11-11T18:03:00+00:00",
+      "expires": "2026-11-11T18:13:00+00:00",
+      "atr": 6.542,
+      "scalp": {
+        "action": "SELL",
+        "side": -1,
+        "entry": 3991.03,
+        "stop_loss": 4001.31,
+        "take_profit": 3984.53,
+        "sdist": 10.277099999999791,
+        "tdist": 6.5,
+        "stop_source": "structure",
+        "target_source": "extended:min_net",
+        "rr": 0.632,
+        "structure_stop": 4001.3071,
+        "atr_stop": 3996.2636,
+        "fixed_tp": 3989.78,
+        "structure_tp": null,
+        "structure_label": null,
+        "candle": {
+          "high": 4000.98,
+          "low": 3992.99
+        },
+        "levels": [
+          {
+            "price": 4013.36,
+            "label": "Prev Low"
+          },
+          {
+            "price": 4026.41,
+            "label": "S/R"
+          },
+          {
+            "price": 4052.38,
+            "label": "S/R"
+          },
+          {
+            "price": 3992.99,
+            "label": "Session Low"
+          }
+        ],
+        "vp": {
+          "poc": 4043.91,
+          "vah": 4062.36,
+          "val": 4028.41
+        },
+        "target_scalp": 3989.78,
+        "lucid_plan": {
+          "contract": "GC",
+          "qty": 1,
+          "tdist": 6.5,
+          "target_usd": 645.4,
+          "risk_usd": 1030.0,
+          "target_source": "extended:min_net",
+          "sizing": "fixed target 1.25 cannot reach $381 net within $1500 risk; extended:min_net: 1 GC (fewest that fit) target 6.5 -> $645 net, risk $1030"
+        }
+      },
+      "session": "NEW_YORK_SESSION",
+      "telemetry": {
+        "symbol": "XAUUSD",
+        "session": "NEW_YORK_SESSION",
+        "last_close": 3993.76,
+        "atr": 6.542,
+        "vwap": 4036.9,
+        "ema20": 4012.67,
+        "ema50": 4028.47,
+        "price_vs_vwap": {
+          "side": "below",
+          "dist_atr": -6.5943
+        },
+        "price_vs_ema50": {
+          "side": "below",
+          "dist_atr": -5.3057
+        },
+        "vwap_aligned_with_side": true,
+        "ema50_aligned_with_side": true,
+        "poc": 4043.91,
+        "vah": 4062.36,
+        "val": 4028.41,
+        "price_vs_value_area": "below_val",
+        "dist_to_poc_atr": -7.6659,
+        "cvd": -2.79,
+        "cvd_label": "BEARISH",
+        "cvd_slope": -0.37,
+        "cvd_agrees_with_side": true,
+        "rvol": 0.617,
+        "rvol_spike": false,
+        "rvol_bars_since_spike": 13,
+        "atr_band_z": -2.8906,
+        "atr_upper": 4025.75,
+        "atr_lower": 3999.58,
+        "nearest_sr": {
+          "above": {
+            "price": 4013.36,
+            "label": "Prev Low",
+            "dist_atr": 2.996
+          },
+          "below": {
+            "price": 3992.99,
+            "label": "Session Low",
+            "dist_atr": 0.1177
+          }
+        },
+        "gemini": {
+          "action": "SELL",
+          "confidence": 0.85,
+          "confidence_band": ">=0.8",
+          "rationale": "Price is below VAL (4028.41) and far below POC (4043.91). CVD is BEARISH (-2.79) with negative slope (-0.37), fully agreeing with aggressive sell-off. Session is NEW_YORK_SESSION. Price trades well below VWAP (4036.90) and EMA50 (4028.47), pushing down past lower ATR band (3999.58) breaking Session Low (3992.99) with recent RVOL expansion. Setup is clean momentum breakdown.",
+          "model": "gemini-3.6-flash",
+          "model_action": "SELL"
+        },
+        "scalp": {
+          "stop_basis": "structure",
+          "target_basis": "extended:min_net",
+          "tdist": 6.5,
+          "sdist": 10.277099999999791,
+          "structure_label": null
+        },
+        "planned": {
+          "tdist": 6.5,
+          "sdist": 10.277099999999791,
+          "qty": null,
+          "contract": null,
+          "target_usd_net": null,
+          "risk_usd": null
+        },
+        "run_at_utc": "2026-11-11T18:02:20.096605+00:00",
+        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/220220.json/XAUUSD.png"
+      },
+      "gemini": {
+        "action": "SELL",
+        "entry": 3991.03,
+        "stop_loss": 4001.31,
+        "take_profit": 3984.53,
+        "confidence": 0.85,
+        "rr": 0.632,
+        "shown_on_site": true,
+        "basis": "site signal",
+        "run_at_utc": "2026-11-11T18:02:20.096605+00:00",
+        "session": "NEW_YORK_SESSION",
+        "rationale": "Price is below VAL (4028.41) and far below POC (4043.91). CVD is BEARISH (-2.79) with negative slope (-0.37), fully agreeing with aggressive sell-off. Session is NEW_YORK_SESSION. Price trades well below VWAP (4036.90) and EMA50 (4028.47), pushing down past lower ATR band (3999.58) breaking Session Low (3992.99) with recent RVOL expansion. Setup is clean momentum breakdown.",
+        "model": "gemini-3.6-flash"
+      }
+    }
+  ],
   "next_pos_id": 2,
   "day": {
     "id": "2026-11-11",
@@ -199,7 +348,7 @@
     "traded": true
   },
   "last_price": {
-    "US100": 28540.042,
+    "US100": 28513.609,
     "XAUUSD": 3993.762
   },
   "history": [],
@@ -229,8 +378,8 @@
     "gross_loss": 0.0,
     "commissions": 1.75,
     "net_trade_pnl": 0.0,
-    "skipped_signals": 18,
-    "accepted_signals": 4
+    "skipped_signals": 19,
+    "accepted_signals": 5
   },
   "reset_token": "2026-11-11-target-sizing-fix"
 }

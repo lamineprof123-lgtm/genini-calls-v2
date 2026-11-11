@@ -480,7 +480,7 @@ def post_exit_metrics(item: dict, bars: pd.DataFrame, usd_per_point: float) -> d
             "window_bars": int(len(w))}
 
 
-def baseline_summary(logs_dir: str | Path, ids: set[int]) -> dict:
+def baseline_summary(logs_dir: str | Path, ids: set[int], since: str | None = None) -> dict:
     """Baseline Lucid sim results restricted to the same entries the books copied (fair comparison)."""
     trades = []
     for f in sorted(glob.glob(str(Path(logs_dir) / "*" / "lucid_trades.jsonl"))):
@@ -490,7 +490,7 @@ def baseline_summary(logs_dir: str | Path, ids: set[int]) -> dict:
                     r = json.loads(line)
                 except Exception:
                     continue
-                if r.get("id") in ids:
+                if r.get("id") in ids and not (since and r.get("entry_time") and str(r["entry_time"]) < since):
                     trades.append(r)
     n = len(trades)
     wins = [t for t in trades if t["net"] > 0]
@@ -641,10 +641,11 @@ class ExitManager:
         ids = set(self.books.s["seen_ids"])
         return {"updated_at_utc": datetime.now(UTC).isoformat(), "paper_only": True,
                 "note": "Same Lucid entries in all three; books exit via Gemini (hard stop, 16:45 ET flat, "
-                        f"3.5% breaker, {self.e['max_hold_minutes']} min max hold). Baseline = existing Lucid sim "
-                        "(fixed TP, 2-bar time cut, VWAP/EMA50 cross exits) on the same entry ids.",
+                        f"3.5% breaker, {self.e['max_hold_minutes']} min max hold). Baseline = the Lucid account "
+                        f"(exit_mode={(self.cfg.get('lucid') or {}).get('exit_mode', 'server')}: gemini = follows the "
+                        f"{(self.cfg.get('lucid') or {}).get('gemini_exit_book', BOOK_1)} book's CLOSE) on the same entry ids.",
                 "check_seconds": self.e["check_seconds"], "books": self.books.summary(),
-                "baseline": baseline_summary(self.logs_dir, ids)}
+                "baseline": baseline_summary(self.logs_dir, ids, self.books.s.get("created_at"))}
 
     async def tick(self, now: datetime | None = None) -> dict:
         """One exit check over every open book position. Never raises (errors -> HOLD, logged)."""
@@ -684,6 +685,9 @@ class ExitManager:
                 try:
                     r = json.loads(line)
                 except Exception:
+                    continue
+                # Lucid ids restart at 1 after an account reset: only trades entered after these books were created
+                if r.get("entry_time") and str(r["entry_time"]) < str(self.books.s.get("created_at") or ""):
                     continue
                 if r.get("id") in seen and r["id"] not in done:
                     done.add(r["id"])

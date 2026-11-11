@@ -1,35 +1,5 @@
 [
   {
-    "signal_at": "2026-11-11T17:12:20.072876+00:00",
-    "tz": "Asia/Dubai",
-    "model": "gemini-3.6-flash",
-    "dry_run": false,
-    "trades": [
-      {
-        "symbol": "US100",
-        "name": "NASDAQ",
-        "action": "BUY",
-        "entry": 28479.07,
-        "stop_loss": 28452.71,
-        "take_profit": 28484.07,
-        "rr": 0.19,
-        "confidence": 0.85,
-        "digits": 2,
-        "session": "NEW_YORK_SESSION",
-        "cvd_label": "BULLISH"
-      }
-    ],
-    "no_trade": [
-      "XAUUSD",
-      "EURUSD",
-      "GBPUSD",
-      "BTCUSD"
-    ],
-    "analysis_failed": false,
-    "breaker_halted": false,
-    "written_at": "2026-11-11T17:12:31.864068+00:00"
-  },
-  {
     "signal_at": "2026-11-11T17:14:20.057723+00:00",
     "tz": "Asia/Dubai",
     "model": "gemini-3.6-flash",
@@ -1637,5 +1607,36 @@
     "analysis_failed": false,
     "breaker_halted": false,
     "written_at": "2026-11-11T18:50:31.299855+00:00"
+  },
+  {
+    "signal_at": "2026-11-11T18:52:20.002950+00:00",
+    "tz": "Asia/Dubai",
+    "model": "gemini-3.6-flash",
+    "dry_run": false,
+    "trades": [
+      {
+        "symbol": "XAUUSD",
+        "name": "GOLD",
+        "action": "SELL",
+        "entry": 3986.94,
+        "stop_loss": 3995.22,
+        "take_profit": null,
+        "rr": null,
+        "confidence": 0.78,
+        "digits": 2,
+        "exit": "Gemini",
+        "session": "NEW_YORK_SESSION",
+        "cvd_label": "BEARISH"
+      }
+    ],
+    "no_trade": [
+      "EURUSD",
+      "GBPUSD",
+      "US100",
+      "BTCUSD"
+    ],
+    "analysis_failed": false,
+    "breaker_halted": false,
+    "written_at": "2026-11-11T18:52:31.654453+00:00"
   }
 ]

@@ -1,0 +1,187 @@
+{
+  "version": 1,
+  "created_at": "2026-11-09T13:59:39.073020+00:00",
+  "last_processed": "2026-11-11T17:30:00+00:00",
+  "account": {
+    "no": 1,
+    "phase": "eval",
+    "started_at": "2026-11-09T13:59:39.073020+00:00",
+    "start_balance": 100000.0,
+    "balance": 98588.15,
+    "highest_close": 100000.0,
+    "mll_floor": 97000.0,
+    "mll_locked": false,
+    "dll": 1800.0,
+    "lucidscale": false,
+    "peak_eod_profit": 0.0,
+    "cycle_start_balance": 100000.0,
+    "cycle_day_pnl": {},
+    "payouts": [],
+    "trading_days": 0,
+    "realized_pnl": -1411.85,
+    "trades": 7
+  },
+  "positions": [],
+  "pending": [
+    {
+      "symbol": "US100",
+      "side": 1,
+      "created": "2026-11-11T17:30:31.659091+00:00",
+      "fill_after": "2026-11-11T17:31:00+00:00",
+      "expires": "2026-11-11T17:41:00+00:00",
+      "atr": 68.487,
+      "scalp": {
+        "action": "BUY",
+        "side": 1,
+        "entry": 28535.06,
+        "stop_loss": 28489.67,
+        "take_profit": 28540.06,
+        "sdist": 45.394350000002305,
+        "tdist": 5.0,
+        "stop_source": "structure",
+        "target_source": "fixed",
+        "rr": 0.11,
+        "structure_stop": 28489.66565,
+        "atr_stop": 28480.2704,
+        "fixed_tp": 28540.06,
+        "structure_tp": 28557.16026,
+        "structure_label": "Session High",
+        "candle": {
+          "high": 28558.53,
+          "low": 28493.09
+        }
+      },
+      "session": "NEW_YORK_SESSION",
+      "telemetry": {
+        "symbol": "US100",
+        "session": "NEW_YORK_SESSION",
+        "last_close": 28532.35,
+        "atr": 68.487,
+        "vwap": 28174.86,
+        "ema20": 28363.47,
+        "ema50": 28244.34,
+        "price_vs_vwap": {
+          "side": "above",
+          "dist_atr": 5.2198
+        },
+        "price_vs_ema50": {
+          "side": "above",
+          "dist_atr": 4.2053
+        },
+        "vwap_aligned_with_side": true,
+        "ema50_aligned_with_side": true,
+        "poc": 28276.77,
+        "vah": 28381.43,
+        "val": 28059.42,
+        "price_vs_value_area": "above_vah",
+        "dist_to_poc_atr": 3.7318,
+        "cvd": 13.7,
+        "cvd_label": "BULLISH",
+        "cvd_slope": 1.97,
+        "cvd_agrees_with_side": true,
+        "rvol": 0.893,
+        "rvol_spike": false,
+        "rvol_bars_since_spike": 11,
+        "atr_band_z": 2.4659,
+        "atr_upper": 28500.44,
+        "atr_lower": 28226.49,
+        "nearest_sr": {
+          "above": {
+            "price": 28558.53,
+            "label": "Session High",
+            "dist_atr": 0.3823
+          },
+          "below": {
+            "price": 28083.64,
+            "label": "S/R",
+            "dist_atr": 6.5518
+          }
+        },
+        "gemini": {
+          "action": "BUY",
+          "confidence": 0.75,
+          "confidence_band": "0.7-0.8",
+          "rationale": "Price is above VAH (28381.43) and above POC (28276.77). CVD is BULLISH (+13.70) with positive slope (+1.97), agreeing with the upward expansion. Session is NEW_YORK_SESSION. Price is well above VWAP (28174.86) and EMA50 (28244.34), riding above the upper ATR band (28500.44). As per US100 tick volume rules, lack of yellow RVOL > 2.0 does not invalidate trend expansion. The strong directional momentum above VAH and EMA baseline confirms buyer control.",
+          "model": "gemini-3.6-flash",
+          "model_action": "BUY"
+        },
+        "scalp": {
+          "stop_basis": "structure",
+          "target_basis": "fixed",
+          "tdist": 5.0,
+          "sdist": 45.394350000002305,
+          "structure_label": "Session High"
+        },
+        "planned": {
+          "tdist": 5.0,
+          "sdist": 45.394350000002305,
+          "qty": null,
+          "contract": null,
+          "target_usd_net": null,
+          "risk_usd": null
+        },
+        "run_at_utc": "2026-11-11T17:30:20.020980+00:00",
+        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/213020.json/US100.png"
+      },
+      "gemini": {
+        "action": "BUY",
+        "entry": 28535.06,
+        "stop_loss": 28489.67,
+        "take_profit": 28540.06,
+        "confidence": 0.75,
+        "rr": 0.11,
+        "shown_on_site": true,
+        "basis": "site signal",
+        "run_at_utc": "2026-11-11T17:30:20.020980+00:00",
+        "session": "NEW_YORK_SESSION",
+        "rationale": "Price is above VAH (28381.43) and above POC (28276.77). CVD is BULLISH (+13.70) with positive slope (+1.97), agreeing with the upward expansion. Session is NEW_YORK_SESSION. Price is well above VWAP (28174.86) and EMA50 (28244.34), riding above the upper ATR band (28500.44). As per US100 tick volume rules, lack of yellow RVOL > 2.0 does not invalidate trend expansion. The strong directional momentum above VAH and EMA baseline confirms buyer control.",
+        "model": "gemini-3.6-flash"
+      }
+    }
+  ],
+  "next_pos_id": 8,
+  "day": {
+    "id": "2026-11-11",
+    "start_balance": 100000.0,
+    "realized": -1411.85,
+    "locked": null,
+    "eod_done": null,
+    "traded": true
+  },
+  "last_price": {
+    "US100": 28532.354,
+    "GBPUSD": 1.32812,
+    "EURUSD": 1.10933,
+    "XAUUSD": 3999.169
+  },
+  "history": [],
+  "ledger": {
+    "fees_total": 190.4,
+    "fees": [
+      {
+        "t": "2026-11-09T13:59:39.073020+00:00",
+        "kind": "eval",
+        "amount": 190.4,
+        "note": "first LucidPro 100K evaluation"
+      }
+    ],
+    "evals_bought": 1,
+    "resets": 0,
+    "passes": 0,
+    "funded_accounts": 0,
+    "blown_evals": 0,
+    "blown_funded": 0,
+    "payouts_gross": 0.0,
+    "payouts_received": 0.0,
+    "payout_count": 0,
+    "trades": 7,
+    "wins": 1,
+    "losses": 6,
+    "gross_win": 757.25,
+    "gross_loss": -2169.1,
+    "commissions": 219.6,
+    "net_trade_pnl": -1411.85,
+    "skipped_signals": 407,
+    "accepted_signals": 197
+  }
+}

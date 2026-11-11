@@ -1,13 +1,13 @@
 {
   "version": 1,
   "created_at": "2026-11-09T13:59:39.073020+00:00",
-  "last_processed": "2026-11-11T09:41:00+00:00",
+  "last_processed": "2026-11-11T09:43:00+00:00",
   "account": {
     "no": 1,
     "phase": "eval",
     "started_at": "2026-11-09T13:59:39.073020+00:00",
     "start_balance": 100000.0,
-    "balance": 99994.65,
+    "balance": 99982.65,
     "highest_close": 100000.0,
     "mll_floor": 97000.0,
     "mll_locked": false,
@@ -148,30 +148,50 @@
       "mfe_min": 0.0001445,
       "time_cut_deadline": "2026-11-11T09:01:00+00:00",
       "time_cut_candles": 2
-    }
-  ],
-  "pending": [
+    },
     {
+      "id": 4,
       "symbol": "EURUSD",
+      "contract": "6E",
+      "qty": 5,
       "side": -1,
-      "created": "2026-11-11T09:40:29.010235+00:00",
-      "fill_after": "2026-11-11T09:41:00+00:00",
-      "expires": "2026-11-11T09:51:00+00:00",
+      "entry": 1.11335,
+      "stop": 1.11415,
+      "target": 1.1121,
+      "entry_time": "2026-11-11T09:41:00+00:00",
+      "risk_usd": 500.0,
+      "target_usd": 757.25,
+      "target_usd_gross": 781.25,
+      "commission_rt": 24.0,
       "atr": 0.000515,
-      "scalp": {
+      "gemini": {
         "action": "SELL",
-        "side": -1,
         "entry": 1.11338,
         "stop_loss": 1.11418,
         "take_profit": 1.11213,
-        "sdist": 0.000795749999999984,
+        "confidence": 0.82,
+        "rr": 1.563,
+        "shown_on_site": true,
+        "basis": "site signal",
+        "run_at_utc": "2026-11-11T09:40:20.101004+00:00",
+        "session": "LONDON_SESSION",
+        "rationale": "Price is below VAL (1.11518) and far below POC (1.11651). CVD is strongly BEARISH (-8,517) with negative slope (-197.98), aligning with the downtrend. Session is LONDON_SESSION. Price is below VWAP (1.11568) and EMA50 (1.11605), riding near the lower ATR band (1.11418) and breaking below previous session low with yellow RVOL spike confirmation.",
+        "model": "gemini-3.6-flash"
+      },
+      "scalp": {
+        "action": "SELL",
+        "side": -1,
+        "entry": 1.11342,
+        "stop_loss": 1.11418,
+        "take_profit": 1.11217,
+        "sdist": 0.000755749999999944,
         "tdist": 0.0012499999999999734,
         "stop_source": "structure",
         "target_source": "fixed",
-        "rr": 1.571,
+        "rr": 1.654,
         "structure_stop": 1.11417575,
-        "atr_stop": 1.1137920000000001,
-        "fixed_tp": 1.11213,
+        "atr_stop": 1.1138320000000002,
+        "fixed_tp": 1.11217,
         "structure_tp": null,
         "structure_label": null,
         "candle": {
@@ -179,7 +199,6 @@
           "low": 1.11375
         }
       },
-      "session": "LONDON_SESSION",
       "telemetry": {
         "symbol": "EURUSD",
         "session": "LONDON_SESSION",
@@ -236,36 +255,29 @@
         "scalp": {
           "stop_basis": "structure",
           "target_basis": "fixed",
-          "tdist": 0.0012499999999999734,
-          "sdist": 0.000795749999999984,
+          "tdist": 0.00125,
+          "sdist": 0.0008,
           "structure_label": null
         },
         "planned": {
-          "tdist": 0.0012499999999999734,
-          "sdist": 0.000795749999999984,
-          "qty": null,
-          "contract": null,
-          "target_usd_net": null,
-          "risk_usd": null
+          "tdist": 0.00125,
+          "sdist": 0.0008,
+          "qty": 5,
+          "contract": "6E",
+          "target_usd_net": 757.25,
+          "risk_usd": 500.0
         },
         "run_at_utc": "2026-11-11T09:40:20.101004+00:00",
         "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/134020.json/EURUSD.png"
       },
-      "gemini": {
-        "action": "SELL",
-        "entry": 1.11338,
-        "stop_loss": 1.11418,
-        "take_profit": 1.11213,
-        "confidence": 0.82,
-        "rr": 1.563,
-        "shown_on_site": true,
-        "basis": "site signal",
-        "run_at_utc": "2026-11-11T09:40:20.101004+00:00",
-        "session": "LONDON_SESSION",
-        "rationale": "Price is below VAL (1.11518) and far below POC (1.11651). CVD is strongly BEARISH (-8,517) with negative slope (-197.98), aligning with the downtrend. Session is LONDON_SESSION. Price is below VWAP (1.11568) and EMA50 (1.11605), riding near the lower ATR band (1.11418) and breaking below previous session low with yellow RVOL spike confirmation.",
-        "model": "gemini-3.6-flash"
-      }
-    },
+      "mfe": 0.0,
+      "mae": 0.00010999999999983245,
+      "mfe_min": 0.00012875,
+      "time_cut_deadline": "2026-11-11T10:11:00+00:00",
+      "time_cut_candles": 2
+    }
+  ],
+  "pending": [
     {
       "symbol": "US100",
       "side": 1,
@@ -382,7 +394,7 @@
       }
     }
   ],
-  "next_pos_id": 4,
+  "next_pos_id": 5,
   "day": {
     "id": "2026-11-11",
     "start_balance": 100000.0,
@@ -392,9 +404,9 @@
     "traded": true
   },
   "last_price": {
-    "US100": 28179.676,
-    "GBPUSD": 1.33159,
-    "EURUSD": 1.11339,
+    "US100": 28176.676,
+    "GBPUSD": 1.33158,
+    "EURUSD": 1.1134,
     "XAUUSD": 4049.015
   },
   "history": [],
@@ -422,9 +434,9 @@
     "losses": 1,
     "gross_win": 757.25,
     "gross_loss": -738.6,
-    "commissions": 75.6,
+    "commissions": 87.6,
     "net_trade_pnl": 18.65,
-    "skipped_signals": 98,
+    "skipped_signals": 100,
     "accepted_signals": 19
   }
 }

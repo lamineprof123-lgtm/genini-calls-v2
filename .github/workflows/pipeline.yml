@@ -1,0 +1,82 @@
+name: Signal Pipeline
+
+# One job does everything: analyze -> write status -> commit -> deploy Pages.
+# Deploying here matters: pushes made with GITHUB_TOKEN never trigger other
+# workflows, so pages.yml never ran after bot commits and the live site kept
+# serving stale status.json (that's why the panel went Offline).
+#
+# GitHub's fastest cron is every 5 minutes (and runs are often late).
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: signal-pipeline
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install google-genai
+
+      - name: Mark cycle start
+        run: echo "CYCLE_START=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_ENV"
+
+      - name: Run Gemini analysis
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_MODEL: ${{ vars.GEMINI_MODEL }}
+        run: python gemini_vision_runner.py
+
+      - name: Write status heartbeat
+        run: |
+          now=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          next=$(date -u -d "+5 minutes" +%Y-%m-%dT%H:%M:%SZ)
+          cat > status.json <<EOF
+          {
+            "state": "running",
+            "interval_minutes": 5,
+            "align_offset_seconds": 0,
+            "tz": "Asia/Dubai",
+            "next_run_at": "$next",
+            "updated_at": "$now",
+            "last_cycle_started_at": "$CYCLE_START",
+            "last_cycle_finished_at": "$now"
+          }
+          EOF
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add status.json latest_signal.json history.json
+          git commit -m "Signal cycle $(date -u +%H:%M)" || exit 0
+          for i in 1 2 3; do
+            git pull --rebase -X theirs origin main && git push && break
+            sleep 5
+          done
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+      - id: deployment
+        uses: actions/deploy-pages@v4

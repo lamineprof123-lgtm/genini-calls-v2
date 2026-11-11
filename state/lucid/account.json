@@ -1,7 +1,7 @@
 {
   "version": 1,
   "created_at": "2026-11-09T13:59:39.073020+00:00",
-  "last_processed": "2026-11-11T10:54:00+00:00",
+  "last_processed": "2026-11-11T10:56:00+00:00",
   "account": {
     "no": 1,
     "phase": "eval",
@@ -26,24 +26,24 @@
     {
       "symbol": "US100",
       "side": 1,
-      "created": "2026-11-11T10:54:30.882205+00:00",
-      "fill_after": "2026-11-11T10:55:00+00:00",
-      "expires": "2026-11-11T11:05:00+00:00",
+      "created": "2026-11-11T10:56:29.297968+00:00",
+      "fill_after": "2026-11-11T10:57:00+00:00",
+      "expires": "2026-11-11T11:07:00+00:00",
       "atr": 44.075,
       "scalp": {
         "action": "BUY",
         "side": 1,
-        "entry": 28252.22,
+        "entry": 28252.49,
         "stop_loss": 28207.32,
-        "take_profit": 28257.22,
-        "sdist": 44.90375000000131,
+        "take_profit": 28257.49,
+        "sdist": 45.173750000001746,
         "tdist": 5.0,
         "stop_source": "structure",
         "target_source": "fixed",
         "rr": 0.111,
         "structure_stop": 28207.31625,
-        "atr_stop": 28216.960000000003,
-        "fixed_tp": 28257.22,
+        "atr_stop": 28217.230000000003,
+        "fixed_tp": 28257.49,
         "structure_tp": null,
         "structure_label": null,
         "candle": {
@@ -99,9 +99,9 @@
         },
         "gemini": {
           "action": "BUY",
-          "confidence": 0.8,
-          "confidence_band": ">=0.8",
-          "rationale": "US100 is expanding upward during LONDON_SESSION, breaking above VAH 28239.71 and previous Session High 28239.71. Price holds firmly above VWAP 28075.01 and EMA50 28059.75, touching the upper ATR band 28254.47. CVD is explicitly BULLISH (+9.14) with positive slope (+1.44). As per US100 visual rules, index tick volume rarely prints RVOL > 2.0 yellow spikes; strong structural breakout above session high with aligned CVD momentum confirms a BUY setup.",
+          "confidence": 0.78,
+          "confidence_band": "0.7-0.8",
+          "rationale": "Price is breaking above VAH 28239.71 and trading above POC 28118.16. CVD is +9.14 (BULLISH) with positive slope (+1.44). LONDON_SESSION momentum is strong with price holding well above VWAP 28075.01 and EMA50 28059.75. Testing upper ATR band (28254.47). Note US100 index tick volume rarely prints RVOL > 2.0; structural trend expansion and CVD support buying the live price momentum.",
           "model": "gemini-3.6-flash",
           "model_action": "BUY"
         },
@@ -109,32 +109,32 @@
           "stop_basis": "structure",
           "target_basis": "fixed",
           "tdist": 5.0,
-          "sdist": 44.90375000000131,
+          "sdist": 45.173750000001746,
           "structure_label": null
         },
         "planned": {
           "tdist": 5.0,
-          "sdist": 44.90375000000131,
+          "sdist": 45.173750000001746,
           "qty": null,
           "contract": null,
           "target_usd_net": null,
           "risk_usd": null
         },
-        "run_at_utc": "2026-11-11T10:54:20.084007+00:00",
-        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/145420.json/US100.png"
+        "run_at_utc": "2026-11-11T10:56:20.101049+00:00",
+        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/145620.json/US100.png"
       },
       "gemini": {
         "action": "BUY",
-        "entry": 28252.22,
+        "entry": 28252.49,
         "stop_loss": 28207.32,
-        "take_profit": 28257.22,
-        "confidence": 0.8,
+        "take_profit": 28257.49,
+        "confidence": 0.78,
         "rr": 0.111,
         "shown_on_site": true,
         "basis": "site signal",
-        "run_at_utc": "2026-11-11T10:54:20.084007+00:00",
+        "run_at_utc": "2026-11-11T10:56:20.101049+00:00",
         "session": "LONDON_SESSION",
-        "rationale": "US100 is expanding upward during LONDON_SESSION, breaking above VAH 28239.71 and previous Session High 28239.71. Price holds firmly above VWAP 28075.01 and EMA50 28059.75, touching the upper ATR band 28254.47. CVD is explicitly BULLISH (+9.14) with positive slope (+1.44). As per US100 visual rules, index tick volume rarely prints RVOL > 2.0 yellow spikes; strong structural breakout above session high with aligned CVD momentum confirms a BUY setup.",
+        "rationale": "Price is breaking above VAH 28239.71 and trading above POC 28118.16. CVD is +9.14 (BULLISH) with positive slope (+1.44). LONDON_SESSION momentum is strong with price holding well above VWAP 28075.01 and EMA50 28059.75. Testing upper ATR band (28254.47). Note US100 index tick volume rarely prints RVOL > 2.0; structural trend expansion and CVD support buying the live price momentum.",
         "model": "gemini-3.6-flash"
       }
     }
@@ -149,7 +149,7 @@
     "traded": true
   },
   "last_price": {
-    "US100": 28252.219,
+    "US100": 28252.487,
     "GBPUSD": 1.33279,
     "EURUSD": 1.11417,
     "XAUUSD": 4049.015
@@ -181,7 +181,7 @@
     "gross_loss": -2169.1,
     "commissions": 219.6,
     "net_trade_pnl": -1411.85,
-    "skipped_signals": 170,
-    "accepted_signals": 45
+    "skipped_signals": 171,
+    "accepted_signals": 46
   }
 }

@@ -1,7 +1,7 @@
 {
-  "updated_at_utc": "2026-11-11T18:48:35.446817+00:00",
+  "updated_at_utc": "2026-11-11T18:50:30.126275+00:00",
   "paper_only": true,
-  "note": "Same Lucid entries in all three; books exit via Gemini (hard stop, 16:45 ET flat, 3.5% breaker, 90 min max hold). Baseline = existing Lucid sim (fixed TP, 2-bar time cut, VWAP/EMA50 cross exits) on the same entry ids.",
+  "note": "Same Lucid entries in all three; books exit via Gemini (hard stop, 16:45 ET flat, 3.5% breaker, 90 min max hold). Baseline = the Lucid account (exit_mode=gemini: gemini = follows the 1-strike book's CLOSE) on the same entry ids.",
   "check_seconds": 18,
   "books": {
     "1-strike": {
@@ -46,15 +46,12 @@
     }
   },
   "baseline": {
-    "net_pnl": 64.15,
-    "trades": 2,
-    "wins": 1,
-    "losses": 1,
-    "win_rate": 0.5,
-    "avg_hold_min": 54.5,
-    "exit_reasons": {
-      "target": 1,
-      "time_cut_no_mfe": 1
-    }
+    "net_pnl": 0,
+    "trades": 0,
+    "wins": 0,
+    "losses": 0,
+    "win_rate": null,
+    "avg_hold_min": null,
+    "exit_reasons": {}
   }
 }

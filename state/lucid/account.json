@@ -1,7 +1,7 @@
 {
   "version": 1,
   "created_at": "2026-11-11T18:36:32.847032+00:00",
-  "last_processed": "2026-11-11T18:47:00+00:00",
+  "last_processed": "2026-11-11T18:49:00+00:00",
   "account": {
     "no": 1,
     "phase": "eval",
@@ -172,7 +172,7 @@
         "run_at_utc": "2026-11-11T18:38:20.002184+00:00",
         "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/223820.json/XAUUSD.png"
       },
-      "mfe": 2.4650000000001455,
+      "mfe": 3.075000000000273,
       "mae": 0.21499999999969077,
       "mfe_min": 0.0,
       "time_cut_deadline": null,
@@ -180,7 +180,154 @@
       "time_cut_rule": "none: exit = Gemini CLOSE (1-strike); safety = hard stop, DLL/MLL, 16:45 ET flat, 90 min max hold"
     }
   ],
-  "pending": [],
+  "pending": [
+    {
+      "symbol": "US100",
+      "side": 1,
+      "created": "2026-11-11T18:50:31.303080+00:00",
+      "fill_after": "2026-11-11T18:51:00+00:00",
+      "reserved_risk": 1120.0,
+      "planned": {
+        "contract": "NQ",
+        "qty": 2,
+        "risk_usd": 1120.0,
+        "tdist": null,
+        "target_source": "none (Gemini exit)"
+      },
+      "expires": "2026-11-11T19:01:00+00:00",
+      "atr": 59.466,
+      "scalp": {
+        "action": "BUY",
+        "side": 1,
+        "entry": 28586.02,
+        "stop_loss": 28558.11,
+        "take_profit": 28591.02,
+        "sdist": 27.913300000000163,
+        "tdist": 5.0,
+        "stop_source": "structure",
+        "target_source": "fixed",
+        "rr": 0.179,
+        "structure_stop": 28558.1067,
+        "atr_stop": 28538.4472,
+        "fixed_tp": 28591.02,
+        "structure_tp": 28592.22068,
+        "structure_label": "Session High",
+        "candle": {
+          "high": 28593.41,
+          "low": 28561.08
+        },
+        "levels": [
+          {
+            "price": 28593.41,
+            "label": "Session High"
+          },
+          {
+            "price": 28083.64,
+            "label": "S/R"
+          },
+          {
+            "price": 28001.29,
+            "label": "Prev High"
+          },
+          {
+            "price": 27945.11,
+            "label": "S/R"
+          }
+        ],
+        "vp": {
+          "poc": 28265.85,
+          "vah": 28341.44,
+          "val": 27988.68
+        }
+      },
+      "session": "NEW_YORK_SESSION",
+      "telemetry": {
+        "symbol": "US100",
+        "session": "NEW_YORK_SESSION",
+        "last_close": 28590.92,
+        "atr": 59.466,
+        "vwap": 28200.91,
+        "ema20": 28440.55,
+        "ema50": 28301.06,
+        "price_vs_vwap": {
+          "side": "above",
+          "dist_atr": 6.5585
+        },
+        "price_vs_ema50": {
+          "side": "above",
+          "dist_atr": 4.8744
+        },
+        "vwap_aligned_with_side": true,
+        "ema50_aligned_with_side": true,
+        "poc": 28265.85,
+        "vah": 28341.44,
+        "val": 27988.68,
+        "price_vs_value_area": "above_vah",
+        "dist_to_poc_atr": 5.4665,
+        "cvd": 15.02,
+        "cvd_label": "BULLISH",
+        "cvd_slope": 1.94,
+        "cvd_agrees_with_side": true,
+        "rvol": 0.792,
+        "rvol_spike": false,
+        "rvol_bars_since_spike": 16,
+        "atr_band_z": 2.5287,
+        "atr_upper": 28559.48,
+        "atr_lower": 28321.62,
+        "nearest_sr": {
+          "above": {
+            "price": 28593.41,
+            "label": "Session High",
+            "dist_atr": 0.0419
+          },
+          "below": {
+            "price": 28083.64,
+            "label": "S/R",
+            "dist_atr": 8.5306
+          }
+        },
+        "gemini": {
+          "action": "BUY",
+          "confidence": 0.78,
+          "confidence_band": "0.7-0.8",
+          "rationale": "Price is above VAH (28341.44) and above POC (28265.85) in NEW_YORK_SESSION. Bullish alignment well above VWAP and EMA50. CVD is +15.02 (BULLISH) with positive slope (+1.94). GEX regime is POSITIVE_DAMPENING above Gamma Flip (28345.52). Although Call Wall #1 is at 28556.10, price has accepted above it touching upper ATR bounds. US100 index CFD tick volume rarely prints RVOL > 2.0, but strong multi-factor momentum and VA breakout confirm upside continuity.",
+          "model": "gemini-3.6-flash",
+          "model_action": "BUY"
+        },
+        "scalp": {
+          "stop_basis": "structure",
+          "target_basis": "fixed",
+          "tdist": 5.0,
+          "sdist": 27.913300000000163,
+          "structure_label": "Session High"
+        },
+        "planned": {
+          "tdist": 5.0,
+          "sdist": 27.913300000000163,
+          "qty": null,
+          "contract": null,
+          "target_usd_net": null,
+          "risk_usd": null
+        },
+        "run_at_utc": "2026-11-11T18:50:20.007912+00:00",
+        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/225020.json/US100.png"
+      },
+      "gemini": {
+        "action": "BUY",
+        "entry": 28586.02,
+        "stop_loss": 28558.11,
+        "take_profit": 28591.02,
+        "confidence": 0.78,
+        "rr": 0.179,
+        "shown_on_site": true,
+        "basis": "site signal",
+        "run_at_utc": "2026-11-11T18:50:20.007912+00:00",
+        "session": "NEW_YORK_SESSION",
+        "rationale": "Price is above VAH (28341.44) and above POC (28265.85) in NEW_YORK_SESSION. Bullish alignment well above VWAP and EMA50. CVD is +15.02 (BULLISH) with positive slope (+1.94). GEX regime is POSITIVE_DAMPENING above Gamma Flip (28345.52). Although Call Wall #1 is at 28556.10, price has accepted above it touching upper ATR bounds. US100 index CFD tick volume rarely prints RVOL > 2.0, but strong multi-factor momentum and VA breakout confirm upside continuity.",
+        "model": "gemini-3.6-flash"
+      }
+    }
+  ],
   "next_pos_id": 2,
   "day": {
     "id": "2026-11-11",
@@ -191,7 +338,7 @@
     "traded": true
   },
   "last_price": {
-    "XAUUSD": 3989.178
+    "XAUUSD": 3988.57
   },
   "history": [],
   "ledger": {
@@ -220,8 +367,8 @@
     "gross_loss": 0.0,
     "commissions": 11.5,
     "net_trade_pnl": 0.0,
-    "skipped_signals": 6,
-    "accepted_signals": 1
+    "skipped_signals": 7,
+    "accepted_signals": 2
   },
   "reset_token": "2026-11-11-gemini-entry-exit",
   "reset_at": "2026-11-11T18:36:32.847032+00:00",

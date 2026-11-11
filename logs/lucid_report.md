@@ -2,7 +2,7 @@
 
 Post-reset account only (pre-reset trades listed separately); paper trades only; net P&L after round-trip commission
 
-Updated: 2026-11-12 00:34:31 (Dubai UTC+4)
+Updated: 2026-11-12 00:36:32 (Dubai UTC+4)
 
 **Every bucket with n < 20 is LOW CONFIDENCE. Descriptive only; no proven edge.**
 
@@ -77,11 +77,11 @@ No observations yet.
 
 None.
 
-## Entry skips (30)
+## Entry skips (31)
 
 | Reason | Count |
 |---|---:|
-| already_position_or_pending | 28 |
+| already_position_or_pending | 29 |
 | stop 0.25 atr from entry (min 0.25) | 2 |
 
 Legacy records without telemetry remain in the totals and are grouped as unknown.

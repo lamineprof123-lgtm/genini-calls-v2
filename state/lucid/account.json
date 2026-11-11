@@ -1,7 +1,7 @@
 {
   "version": 1,
   "created_at": "2026-11-09T13:59:39.073020+00:00",
-  "last_processed": "2026-11-11T12:45:00+00:00",
+  "last_processed": "2026-11-11T12:48:00+00:00",
   "account": {
     "no": 1,
     "phase": "eval",
@@ -26,82 +26,82 @@
     {
       "symbol": "US100",
       "side": 1,
-      "created": "2026-11-11T12:44:29.227306+00:00",
-      "fill_after": "2026-11-11T12:45:00+00:00",
-      "expires": "2026-11-11T12:55:00+00:00",
-      "atr": 40.806,
+      "created": "2026-11-11T12:48:29.482089+00:00",
+      "fill_after": "2026-11-11T12:49:00+00:00",
+      "expires": "2026-11-11T12:59:00+00:00",
+      "atr": 40.647,
       "scalp": {
         "action": "BUY",
         "side": 1,
-        "entry": 28291.36,
-        "stop_loss": 28257.44,
-        "take_profit": 28296.36,
-        "sdist": 33.92030000000159,
+        "entry": 28295.0,
+        "stop_loss": 28261.84,
+        "take_profit": 28300.0,
+        "sdist": 33.162350000002334,
         "tdist": 5.0,
         "stop_source": "structure",
         "target_source": "fixed",
-        "rr": 0.147,
-        "structure_stop": 28257.4397,
-        "atr_stop": 28258.715200000002,
-        "fixed_tp": 28296.36,
-        "structure_tp": 28297.84388,
+        "rr": 0.151,
+        "structure_stop": 28261.837649999998,
+        "atr_stop": 28262.4824,
+        "fixed_tp": 28300.0,
+        "structure_tp": 28301.63706,
         "structure_label": "Session High",
         "candle": {
-          "high": 28280.94,
-          "low": 28259.48
+          "high": 28302.45,
+          "low": 28263.87
         }
       },
       "session": "LONDON_SESSION",
       "telemetry": {
         "symbol": "US100",
         "session": "LONDON_SESSION",
-        "last_close": 28279.03,
-        "atr": 40.806,
-        "vwap": 28099.54,
-        "ema20": 28215.2,
-        "ema50": 28109.18,
+        "last_close": 28288.06,
+        "atr": 40.647,
+        "vwap": 28102.87,
+        "ema20": 28222.14,
+        "ema50": 28116.21,
         "price_vs_vwap": {
           "side": "above",
-          "dist_atr": 4.3986
+          "dist_atr": 4.5561
         },
         "price_vs_ema50": {
           "side": "above",
-          "dist_atr": 4.1624
+          "dist_atr": 4.2279
         },
         "vwap_aligned_with_side": true,
         "ema50_aligned_with_side": true,
-        "poc": 28118.76,
-        "vah": 28298.66,
-        "val": 28047.89,
+        "poc": 28121.3,
+        "vah": 28302.45,
+        "val": 28060.92,
         "price_vs_value_area": "inside",
-        "dist_to_poc_atr": 3.9276,
-        "cvd": 9.09,
+        "dist_to_poc_atr": 4.1026,
+        "cvd": 9.32,
         "cvd_label": "BULLISH",
-        "cvd_slope": -0.47,
+        "cvd_slope": 0.36,
         "cvd_agrees_with_side": true,
-        "rvol": 0.942,
+        "rvol": 0.94,
         "rvol_spike": false,
-        "rvol_bars_since_spike": 79,
-        "atr_band_z": 1.5642,
-        "atr_upper": 28296.81,
-        "atr_lower": 28133.59,
+        "rvol_bars_since_spike": 80,
+        "atr_band_z": 1.6218,
+        "atr_upper": 28303.43,
+        "atr_lower": 28140.84,
         "nearest_sr": {
           "above": {
-            "price": 28298.66,
+            "price": 28302.45,
             "label": "Session High",
-            "dist_atr": 0.4811
+            "dist_atr": 0.354
           },
           "below": {
             "price": 28083.64,
             "label": "S/R",
-            "dist_atr": 4.7883
+            "dist_atr": 5.0292
           }
         },
         "gemini": {
           "action": "BUY",
           "confidence": 0.72,
           "confidence_band": "0.7-0.8",
-          "rationale": "Price is inside the upper Value Area near VAH 28298.66 and above POC 28118.76. CVD is BULLISH (+9.09). Session is LONDON_SESSION. Strong uptrend above VWAP (28099.54) and EMA50 (28109.18). Price is testing the upper ATR band (28296.81) and Session High (28298.66). RVOL is 0.942 (US100 tick volume caveat considered), but live price is extended into upper band resistance without immediate consolidation.",
+          "rationale": "Price is inside Value Area (VAL 28060.92 to VAH 28302.45), trading near VAH and above POC 28121.3. CVD is +9.32 (BULLISH) with positive slope (+0.36), agreeing with price action during LONDON_SESSION. Price is strongly above VWAP (28102.87) and EMA50 (28116.21). Price is pushing into upper ATR band (28303.43) and testing Session High (28302.45). US100 tick volume rarely prints RVOL > 2.0; the strong trend baseline and CVD alignment justify a long momentum entry.",
           "model": "gemini-3.6-flash",
           "model_action": "BUY"
         },
@@ -109,32 +109,32 @@
           "stop_basis": "structure",
           "target_basis": "fixed",
           "tdist": 5.0,
-          "sdist": 33.92030000000159,
+          "sdist": 33.162350000002334,
           "structure_label": "Session High"
         },
         "planned": {
           "tdist": 5.0,
-          "sdist": 33.92030000000159,
+          "sdist": 33.162350000002334,
           "qty": null,
           "contract": null,
           "target_usd_net": null,
           "risk_usd": null
         },
-        "run_at_utc": "2026-11-11T12:44:20.094893+00:00",
-        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/164420.json/US100.png"
+        "run_at_utc": "2026-11-11T12:48:20.100455+00:00",
+        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/164820.json/US100.png"
       },
       "gemini": {
         "action": "BUY",
-        "entry": 28291.36,
-        "stop_loss": 28257.44,
-        "take_profit": 28296.36,
+        "entry": 28295.0,
+        "stop_loss": 28261.84,
+        "take_profit": 28300.0,
         "confidence": 0.72,
-        "rr": 0.147,
+        "rr": 0.151,
         "shown_on_site": true,
         "basis": "site signal",
-        "run_at_utc": "2026-11-11T12:44:20.094893+00:00",
+        "run_at_utc": "2026-11-11T12:48:20.100455+00:00",
         "session": "LONDON_SESSION",
-        "rationale": "Price is inside the upper Value Area near VAH 28298.66 and above POC 28118.76. CVD is BULLISH (+9.09). Session is LONDON_SESSION. Strong uptrend above VWAP (28099.54) and EMA50 (28109.18). Price is testing the upper ATR band (28296.81) and Session High (28298.66). RVOL is 0.942 (US100 tick volume caveat considered), but live price is extended into upper band resistance without immediate consolidation.",
+        "rationale": "Price is inside Value Area (VAL 28060.92 to VAH 28302.45), trading near VAH and above POC 28121.3. CVD is +9.32 (BULLISH) with positive slope (+0.36), agreeing with price action during LONDON_SESSION. Price is strongly above VWAP (28102.87) and EMA50 (28116.21). Price is pushing into upper ATR band (28303.43) and testing Session High (28302.45). US100 tick volume rarely prints RVOL > 2.0; the strong trend baseline and CVD alignment justify a long momentum entry.",
         "model": "gemini-3.6-flash"
       }
     }
@@ -149,7 +149,7 @@
     "traded": true
   },
   "last_price": {
-    "US100": 28288.064,
+    "US100": 28294.998,
     "GBPUSD": 1.33105,
     "EURUSD": 1.11364,
     "XAUUSD": 4045.035
@@ -181,7 +181,7 @@
     "gross_loss": -2169.1,
     "commissions": 219.6,
     "net_trade_pnl": -1411.85,
-    "skipped_signals": 232,
-    "accepted_signals": 92
+    "skipped_signals": 233,
+    "accepted_signals": 93
   }
 }

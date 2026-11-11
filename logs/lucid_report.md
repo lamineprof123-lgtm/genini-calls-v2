@@ -2,7 +2,7 @@
 
 Post-reset account only (pre-reset trades listed separately); paper trades only; net P&L after round-trip commission
 
-Updated: 2026-11-11 22:24:31 (Dubai UTC+4)
+Updated: 2026-11-11 22:26:31 (Dubai UTC+4)
 
 **Every bucket with n < 20 is LOW CONFIDENCE. Descriptive only; no proven edge.**
 
@@ -92,11 +92,11 @@ Ranked by net P&L; small samples are not a strategy recommendation.
 |---|---:|---:|---:|---:|---:|---:|---|
 | NEW_YORK_SESSION × above_vah × CVD yes | 1 | 0.0% | $-693.10 | n/a | $-693.10 | $-693.10 | LOW CONFIDENCE |
 
-## Entry skips (34)
+## Entry skips (35)
 
 | Reason | Count |
 |---|---:|
-| already_position_or_pending | 26 |
+| already_position_or_pending | 27 |
 | sizing_unreachable | 8 |
 
 Legacy records without telemetry remain in the totals and are grouped as unknown.

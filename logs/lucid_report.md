@@ -2,7 +2,7 @@
 
 All days and all accounts; paper trades only; net P&L after round-trip commission
 
-Updated: 2026-11-11 13:46:33 (Dubai UTC+4)
+Updated: 2026-11-11 13:48:29 (Dubai UTC+4)
 
 **Every bucket with n < 20 is LOW CONFIDENCE. Descriptive only; no proven edge.**
 
@@ -85,16 +85,16 @@ Ranked by net P&L; small samples are not a strategy recommendation.
 | LONDON_SESSION × below_val × CVD yes | 1 | 100.0% | $757.25 | $757.25 | n/a | $757.25 | LOW CONFIDENCE |
 | LONDON_SESSION × inside × CVD no | 1 | 0.0% | $-738.60 | n/a | $-738.60 | $-738.60 | LOW CONFIDENCE |
 
-## Entry skips (103)
+## Entry skips (106)
 
 | Reason | Count |
 |---|---:|
-| already_position_or_pending | 79 |
+| already_position_or_pending | 81 |
 | chase | 6 |
 | sell requires take_profit < entry < stop_loss | 1 |
 | session_blocked | 2 |
 | sizing_unreachable | 9 |
-| stop 0.24 atr from entry (min 0.25) | 5 |
+| stop 0.24 atr from entry (min 0.25) | 6 |
 | stop 0.25 atr from entry (min 0.25) | 1 |
 
 Legacy records without telemetry remain in the totals and are grouped as unknown.

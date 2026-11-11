@@ -105,14 +105,12 @@ jobs:
           key: playwright-chromium-${{ runner.os }}-${{ env.PW_VERSION }}
       - name: Install Chromium
         run: |
-          # Browser binary from cache or CDN (retried). System libs via apt are
-          # best-effort: ubuntu-latest already ships them, and apt DNS flakes
-          # must never stop the signal loop.
+          # Browser binary from cache or CDN (retried). On a cache hit with a working launch the step takes
+          # seconds: apt system libs (playwright install-deps) only run, best-effort, when the launch fails.
           if [ "${{ steps.pwcache.outputs.cache-hit }}" != "true" ]; then
             for i in 1 2 3; do python -m playwright install chromium && break; sleep 15; done
           fi
-          for i in 1 2; do timeout 300 python -m playwright install-deps chromium && break || { echo "::warning::playwright install-deps failed (attempt $i), continuing"; sleep 10; }; done
-          python - <<'PY'
+          cat > /tmp/pw_launch.py <<'PY'
           import asyncio
           from playwright.async_api import async_playwright
           async def main():
@@ -120,6 +118,13 @@ jobs:
                   b = await p.chromium.launch(); await b.close()
           asyncio.run(main()); print("chromium launch OK")
           PY
+          if timeout 90 python /tmp/pw_launch.py; then
+            echo "chromium launches: skipping playwright install-deps"
+          else
+            echo "::warning::chromium launch failed, trying playwright install-deps (best-effort)"
+            timeout 180 python -m playwright install-deps chromium || echo "::warning::playwright install-deps failed, continuing"
+            timeout 90 python /tmp/pw_launch.py
+          fi
 
       - name: Unit tests
         run: python -m pytest -q tests

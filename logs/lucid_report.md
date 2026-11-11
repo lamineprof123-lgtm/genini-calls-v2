@@ -2,7 +2,7 @@
 
 Post-reset account only (pre-reset trades listed separately); paper trades only; net P&L after round-trip commission
 
-Updated: 2026-11-12 01:06:31 (Dubai UTC+4)
+Updated: 2026-11-12 01:08:31 (Dubai UTC+4)
 
 **Every bucket with n < 20 is LOW CONFIDENCE. Descriptive only; no proven edge.**
 
@@ -97,11 +97,11 @@ Ranked by net P&L; small samples are not a strategy recommendation.
 
 - 2026-11-11T20:49:00+00:00 DLL: equity $98,002.13 vs level $98,200.00 (log-only (gemini_only): no block, no forced close)
 
-## Entry skips (36)
+## Entry skips (37)
 
 | Reason | Count |
 |---|---:|
-| already_position_or_pending | 34 |
+| already_position_or_pending | 35 |
 | stop 0.25 atr from entry (min 0.25) | 2 |
 
 Legacy records without telemetry remain in the totals and are grouped as unknown.

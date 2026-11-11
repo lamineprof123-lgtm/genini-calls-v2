@@ -1,7 +1,7 @@
 {
   "version": 1,
   "created_at": "2026-11-09T13:59:39.073020+00:00",
-  "last_processed": "2026-11-11T16:16:00+00:00",
+  "last_processed": "2026-11-11T16:18:00+00:00",
   "account": {
     "no": 1,
     "phase": "eval",
@@ -26,24 +26,24 @@
     {
       "symbol": "US100",
       "side": 1,
-      "created": "2026-11-11T16:16:31.914489+00:00",
-      "fill_after": "2026-11-11T16:17:00+00:00",
-      "expires": "2026-11-11T16:27:00+00:00",
+      "created": "2026-11-11T16:18:30.780556+00:00",
+      "fill_after": "2026-11-11T16:19:00+00:00",
+      "expires": "2026-11-11T16:29:00+00:00",
       "atr": 70.653,
       "scalp": {
         "action": "BUY",
         "side": 1,
-        "entry": 28387.97,
+        "entry": 28381.03,
         "stop_loss": 28358.13,
-        "take_profit": 28392.97,
-        "sdist": 29.842650000002322,
+        "take_profit": 28386.03,
+        "sdist": 22.902649999999994,
         "tdist": 5.0,
         "stop_source": "structure",
         "target_source": "fixed",
-        "rr": 0.168,
+        "rr": 0.218,
         "structure_stop": 28358.12735,
-        "atr_stop": 28331.4476,
-        "fixed_tp": 28392.97,
+        "atr_stop": 28324.507599999997,
+        "fixed_tp": 28386.03,
         "structure_tp": 28451.076940000003,
         "structure_label": "Session High",
         "candle": {
@@ -99,9 +99,9 @@
         },
         "gemini": {
           "action": "BUY",
-          "confidence": 0.75,
+          "confidence": 0.78,
           "confidence_band": "0.7-0.8",
-          "rationale": "Price is above VAH (28298.71) and above POC (28263.76). CVD is BULLISH (+10.56) with positive slope (+3.58), aligning with upside trend. Session is NEW_YORK_SESSION. Price is trending strongly above VWAP (28148.12) and EMA50 (28188.67). ATR channels are expanding and price hit upper ATR band (28417.46) before pulling back slightly. Dukascopy tick volume note applies regarding RVOL, but recent strong green bars show sustained buying pressure. A minor pullback inside the forming M15 bar near upper channel offers low-risk upside momentum entry.",
+          "rationale": "Price is above VAH (28298.71) and POC (28263.76). CVD is BULLISH (+10.56) with positive slope (+3.58), agreeing with the primary uptrend. Session is NEW_YORK_SESSION. Price is well above VWAP (28148.12) and EMA50 (28188.67), pulling back from upper ATR band (28417.46) toward EMA20 baseline (28276.16). While US100 volume rarely prints yellow RVOL spikes, the structural trend is strongly bullish. Live price at 28381.03 offers an intrabar pullback entry for momentum continuation.",
           "model": "gemini-3.6-flash",
           "model_action": "BUY"
         },
@@ -109,32 +109,32 @@
           "stop_basis": "structure",
           "target_basis": "fixed",
           "tdist": 5.0,
-          "sdist": 29.842650000002322,
+          "sdist": 22.902649999999994,
           "structure_label": "Session High"
         },
         "planned": {
           "tdist": 5.0,
-          "sdist": 29.842650000002322,
+          "sdist": 22.902649999999994,
           "qty": null,
           "contract": null,
           "target_usd_net": null,
           "risk_usd": null
         },
-        "run_at_utc": "2026-11-11T16:16:20.003755+00:00",
-        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/201620.json/US100.png"
+        "run_at_utc": "2026-11-11T16:18:20.067726+00:00",
+        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/201820.json/US100.png"
       },
       "gemini": {
         "action": "BUY",
-        "entry": 28387.97,
+        "entry": 28381.03,
         "stop_loss": 28358.13,
-        "take_profit": 28392.97,
-        "confidence": 0.75,
-        "rr": 0.168,
+        "take_profit": 28386.03,
+        "confidence": 0.78,
+        "rr": 0.218,
         "shown_on_site": true,
         "basis": "site signal",
-        "run_at_utc": "2026-11-11T16:16:20.003755+00:00",
+        "run_at_utc": "2026-11-11T16:18:20.067726+00:00",
         "session": "NEW_YORK_SESSION",
-        "rationale": "Price is above VAH (28298.71) and above POC (28263.76). CVD is BULLISH (+10.56) with positive slope (+3.58), aligning with upside trend. Session is NEW_YORK_SESSION. Price is trending strongly above VWAP (28148.12) and EMA50 (28188.67). ATR channels are expanding and price hit upper ATR band (28417.46) before pulling back slightly. Dukascopy tick volume note applies regarding RVOL, but recent strong green bars show sustained buying pressure. A minor pullback inside the forming M15 bar near upper channel offers low-risk upside momentum entry.",
+        "rationale": "Price is above VAH (28298.71) and POC (28263.76). CVD is BULLISH (+10.56) with positive slope (+3.58), agreeing with the primary uptrend. Session is NEW_YORK_SESSION. Price is well above VWAP (28148.12) and EMA50 (28188.67), pulling back from upper ATR band (28417.46) toward EMA20 baseline (28276.16). While US100 volume rarely prints yellow RVOL spikes, the structural trend is strongly bullish. Live price at 28381.03 offers an intrabar pullback entry for momentum continuation.",
         "model": "gemini-3.6-flash"
       }
     }
@@ -149,7 +149,7 @@
     "traded": true
   },
   "last_price": {
-    "US100": 28387.965,
+    "US100": 28381.032,
     "GBPUSD": 1.32812,
     "EURUSD": 1.10975,
     "XAUUSD": 4029.465
@@ -181,7 +181,7 @@
     "gross_loss": -2169.1,
     "commissions": 219.6,
     "net_trade_pnl": -1411.85,
-    "skipped_signals": 356,
-    "accepted_signals": 164
+    "skipped_signals": 357,
+    "accepted_signals": 165
   }
 }

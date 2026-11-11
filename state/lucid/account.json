@@ -1,13 +1,13 @@
 {
   "version": 1,
   "created_at": "2026-11-09T13:59:39.073020+00:00",
-  "last_processed": "2026-11-11T08:30:00+00:00",
+  "last_processed": "2026-11-11T08:32:00+00:00",
   "account": {
     "no": 1,
     "phase": "eval",
     "started_at": "2026-11-09T13:59:39.073020+00:00",
     "start_balance": 100000.0,
-    "balance": 99988.0,
+    "balance": 99964.0,
     "highest_close": 100000.0,
     "mll_floor": 97000.0,
     "mll_locked": false,
@@ -148,38 +148,57 @@
       "mfe_min": 0.000108,
       "time_cut_deadline": "2026-11-11T08:49:00+00:00",
       "time_cut_candles": 2
-    }
-  ],
-  "pending": [
+    },
     {
+      "id": 2,
       "symbol": "GBPUSD",
+      "contract": "6B",
+      "qty": 10,
       "side": -1,
-      "created": "2026-11-11T08:30:29.965408+00:00",
-      "fill_after": "2026-11-11T08:31:00+00:00",
-      "expires": "2026-11-11T08:41:00+00:00",
+      "entry": 1.332,
+      "stop": 1.3326,
+      "target": 1.3307,
+      "entry_time": "2026-11-11T08:31:00+00:00",
+      "risk_usd": 375.0,
+      "target_usd": 764.5,
+      "target_usd_gross": 812.5,
+      "commission_rt": 48.0,
       "atr": 0.000578,
-      "scalp": {
+      "gemini": {
         "action": "SELL",
-        "side": -1,
         "entry": 1.33173,
         "stop_loss": 1.33262,
         "take_profit": 1.33152,
-        "sdist": 0.0008888999999998592,
-        "tdist": 0.00021500000000007624,
+        "confidence": 0.82,
+        "rr": 0.236,
+        "shown_on_site": true,
+        "basis": "site signal",
+        "run_at_utc": "2026-11-11T08:30:20.089334+00:00",
+        "session": "LONDON_SESSION",
+        "rationale": "Strong bearish expansion in LONDON_SESSION. Price is below VAL (1.33344) and POC (1.33470), well below VWAP (1.33406) and EMA50 (1.33462). Confirmed by elevated RVOL (2.556, bright yellow bar) breaking S/R (1.33320) and testing Session Low (1.33149). CVD is strongly BEARISH (-2,410) with sharp negative slope (-2,890.83). ATR is expanding.",
+        "model": "gemini-3.6-flash"
+      },
+      "scalp": {
+        "action": "SELL",
+        "side": -1,
+        "entry": 1.33208,
+        "stop_loss": 1.33262,
+        "take_profit": 1.33083,
+        "sdist": 0.0005389000000000088,
+        "tdist": 0.0012499999999999734,
         "stop_source": "structure",
-        "target_source": "structure:Session Low",
-        "rr": 0.242,
+        "target_source": "fixed",
+        "rr": 2.32,
         "structure_stop": 1.3326189,
-        "atr_stop": 1.3321924,
-        "fixed_tp": 1.33048,
-        "structure_tp": 1.331515,
-        "structure_label": "Session Low",
+        "atr_stop": 1.3325424,
+        "fixed_tp": 1.33083,
+        "structure_tp": null,
+        "structure_label": null,
         "candle": {
           "high": 1.33259,
           "low": 1.33149
         }
       },
-      "session": "LONDON_SESSION",
       "telemetry": {
         "symbol": "GBPUSD",
         "session": "LONDON_SESSION",
@@ -235,39 +254,31 @@
         },
         "scalp": {
           "stop_basis": "structure",
-          "target_basis": "structure:Session Low",
-          "tdist": 0.00021500000000007624,
-          "sdist": 0.0008888999999998592,
-          "structure_label": "Session Low"
+          "target_basis": "fixed",
+          "tdist": 0.0013,
+          "sdist": 0.0006,
+          "structure_label": null
         },
         "planned": {
-          "tdist": 0.00021500000000007624,
-          "sdist": 0.0008888999999998592,
-          "qty": null,
-          "contract": null,
-          "target_usd_net": null,
-          "risk_usd": null
+          "tdist": 0.0013,
+          "sdist": 0.0006,
+          "qty": 10,
+          "contract": "6B",
+          "target_usd_net": 764.5,
+          "risk_usd": 375.0
         },
         "run_at_utc": "2026-11-11T08:30:20.089334+00:00",
         "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/123020.json/GBPUSD.png"
       },
-      "gemini": {
-        "action": "SELL",
-        "entry": 1.33173,
-        "stop_loss": 1.33262,
-        "take_profit": 1.33152,
-        "confidence": 0.82,
-        "rr": 0.236,
-        "shown_on_site": true,
-        "basis": "site signal",
-        "run_at_utc": "2026-11-11T08:30:20.089334+00:00",
-        "session": "LONDON_SESSION",
-        "rationale": "Strong bearish expansion in LONDON_SESSION. Price is below VAL (1.33344) and POC (1.33470), well below VWAP (1.33406) and EMA50 (1.33462). Confirmed by elevated RVOL (2.556, bright yellow bar) breaking S/R (1.33320) and testing Session Low (1.33149). CVD is strongly BEARISH (-2,410) with sharp negative slope (-2,890.83). ATR is expanding.",
-        "model": "gemini-3.6-flash"
-      }
+      "mfe": 0.0,
+      "mae": 0.00022999999999995246,
+      "mfe_min": 0.0001445,
+      "time_cut_deadline": "2026-11-11T09:01:00+00:00",
+      "time_cut_candles": 2
     }
   ],
-  "next_pos_id": 2,
+  "pending": [],
+  "next_pos_id": 3,
   "day": {
     "id": "2026-11-11",
     "start_balance": 100000.0,
@@ -278,8 +289,8 @@
   },
   "last_price": {
     "US100": 28180.92,
-    "GBPUSD": 1.33173,
-    "EURUSD": 1.1141
+    "GBPUSD": 1.33215,
+    "EURUSD": 1.11451
   },
   "history": [],
   "ledger": {
@@ -306,9 +317,9 @@
     "losses": 0,
     "gross_win": 0.0,
     "gross_loss": 0.0,
-    "commissions": 12.0,
+    "commissions": 36.0,
     "net_trade_pnl": 0.0,
-    "skipped_signals": 20,
+    "skipped_signals": 22,
     "accepted_signals": 11
   }
 }

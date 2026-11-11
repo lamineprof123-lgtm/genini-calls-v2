@@ -1,7 +1,7 @@
 {
   "version": 1,
   "created_at": "2026-11-09T13:59:39.073020+00:00",
-  "last_processed": "2026-11-11T16:28:00+00:00",
+  "last_processed": "2026-11-11T16:30:00+00:00",
   "account": {
     "no": 1,
     "phase": "eval",
@@ -26,115 +26,115 @@
     {
       "symbol": "US100",
       "side": 1,
-      "created": "2026-11-11T16:28:30.312045+00:00",
-      "fill_after": "2026-11-11T16:29:00+00:00",
-      "expires": "2026-11-11T16:39:00+00:00",
-      "atr": 70.653,
+      "created": "2026-11-11T16:30:33.049068+00:00",
+      "fill_after": "2026-11-11T16:31:00+00:00",
+      "expires": "2026-11-11T16:41:00+00:00",
+      "atr": 72.283,
       "scalp": {
         "action": "BUY",
         "side": 1,
-        "entry": 28453.47,
-        "stop_loss": 28358.13,
-        "take_profit": 28458.47,
-        "sdist": 95.34265000000232,
-        "tdist": 5.0,
+        "entry": 28467.43,
+        "stop_loss": 28374.8,
+        "take_profit": 28470.43,
+        "sdist": 92.63415000000168,
+        "tdist": 3.0043399999995017,
         "stop_source": "structure",
-        "target_source": "fixed",
-        "rr": 0.052,
-        "structure_stop": 28358.12735,
-        "atr_stop": 28396.9476,
-        "fixed_tp": 28458.47,
-        "structure_tp": null,
-        "structure_label": null,
+        "target_source": "structure:Session High",
+        "rr": 0.032,
+        "structure_stop": 28374.79585,
+        "atr_stop": 28409.6036,
+        "fixed_tp": 28472.43,
+        "structure_tp": 28470.43434,
+        "structure_label": "Session High",
         "candle": {
-          "high": 28452.49,
-          "low": 28361.66
+          "high": 28471.88,
+          "low": 28378.41
         }
       },
       "session": "NEW_YORK_SESSION",
       "telemetry": {
         "symbol": "US100",
         "session": "NEW_YORK_SESSION",
-        "last_close": 28399.52,
-        "atr": 70.653,
-        "vwap": 28148.12,
-        "ema20": 28276.16,
-        "ema50": 28188.67,
+        "last_close": 28467.43,
+        "atr": 72.283,
+        "vwap": 28153.31,
+        "ema20": 28294.37,
+        "ema50": 28199.53,
         "price_vs_vwap": {
           "side": "above",
-          "dist_atr": 3.5582
+          "dist_atr": 4.3457
         },
         "price_vs_ema50": {
           "side": "above",
-          "dist_atr": 2.9843
+          "dist_atr": 3.7063
         },
         "vwap_aligned_with_side": true,
         "ema50_aligned_with_side": true,
-        "poc": 28263.76,
-        "vah": 28298.71,
-        "val": 28075.04,
+        "poc": 28263.55,
+        "vah": 28299.47,
+        "val": 28069.59,
         "price_vs_value_area": "above_vah",
-        "dist_to_poc_atr": 1.9215,
-        "cvd": 10.56,
+        "dist_to_poc_atr": 2.8206,
+        "cvd": 11.73,
         "cvd_label": "BULLISH",
-        "cvd_slope": 3.58,
+        "cvd_slope": 3.42,
         "cvd_agrees_with_side": true,
-        "rvol": 1.092,
+        "rvol": 0.998,
         "rvol_spike": false,
-        "rvol_bars_since_spike": 6,
-        "atr_band_z": 1.746,
-        "atr_upper": 28417.46,
-        "atr_lower": 28134.85,
+        "rvol_bars_since_spike": 7,
+        "atr_band_z": 2.3942,
+        "atr_upper": 28438.94,
+        "atr_lower": 28149.81,
         "nearest_sr": {
           "above": {
-            "price": 28452.49,
+            "price": 28471.88,
             "label": "Session High",
-            "dist_atr": 0.7497
+            "dist_atr": 0.0616
           },
           "below": {
             "price": 28083.64,
             "label": "S/R",
-            "dist_atr": 4.4709
+            "dist_atr": 5.3095
           }
         },
         "gemini": {
           "action": "BUY",
-          "confidence": 0.82,
+          "confidence": 0.85,
           "confidence_band": ">=0.8",
-          "rationale": "Price is above VAH (28298.71) and above POC (28263.76). CVD is BULLISH (+10.56) with positive slope (+3.58), confirming upward pressure. Session is NEW_YORK_SESSION. Price is cleanly aligned above VWAP (28148.12) and EMA50 (28188.67), pushing outside the upper ATR band (28417.46) toward Session High (28452.49). Index Dukascopy volume caveat applies, but high volume candle breakout and strong bullish momentum support immediate continuation.",
+          "rationale": "1) VP: Price is operating above VAH (28299.47) and well above POC (28263.55), denoting strong bullish expansion. 2) CVD: +11.73 (BULLISH) with positive slope (+3.42), agreeing with price action. 3) SESSION: NEW_YORK_SESSION prime time. 4) Trend: Solid upward trend above VWAP (28153.31) and EMA50 (28199.53). 5) ATR: Pushing above upper ATR band (28438.94), reflecting strong momentum. 6) RVOL: 0.998 on Dukascopy index CFD tick volume (US100 caveat applies; yellow spikes rare). 7) S/R: Breaking directly toward Session High (28471.88). Trend alignment across VWAP, EMA, Value Area, and CVD supports a long scalp.",
           "model": "gemini-3.6-flash",
           "model_action": "BUY"
         },
         "scalp": {
           "stop_basis": "structure",
-          "target_basis": "fixed",
-          "tdist": 5.0,
-          "sdist": 95.34265000000232,
-          "structure_label": null
+          "target_basis": "structure:Session High",
+          "tdist": 3.0043399999995017,
+          "sdist": 92.63415000000168,
+          "structure_label": "Session High"
         },
         "planned": {
-          "tdist": 5.0,
-          "sdist": 95.34265000000232,
+          "tdist": 3.0043399999995017,
+          "sdist": 92.63415000000168,
           "qty": null,
           "contract": null,
           "target_usd_net": null,
           "risk_usd": null
         },
-        "run_at_utc": "2026-11-11T16:28:20.067761+00:00",
-        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/202820.json/US100.png"
+        "run_at_utc": "2026-11-11T16:30:20.100455+00:00",
+        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/203020.json/US100.png"
       },
       "gemini": {
         "action": "BUY",
-        "entry": 28453.47,
-        "stop_loss": 28358.13,
-        "take_profit": 28458.47,
-        "confidence": 0.82,
-        "rr": 0.052,
+        "entry": 28467.43,
+        "stop_loss": 28374.8,
+        "take_profit": 28470.43,
+        "confidence": 0.85,
+        "rr": 0.032,
         "shown_on_site": true,
         "basis": "site signal",
-        "run_at_utc": "2026-11-11T16:28:20.067761+00:00",
+        "run_at_utc": "2026-11-11T16:30:20.100455+00:00",
         "session": "NEW_YORK_SESSION",
-        "rationale": "Price is above VAH (28298.71) and above POC (28263.76). CVD is BULLISH (+10.56) with positive slope (+3.58), confirming upward pressure. Session is NEW_YORK_SESSION. Price is cleanly aligned above VWAP (28148.12) and EMA50 (28188.67), pushing outside the upper ATR band (28417.46) toward Session High (28452.49). Index Dukascopy volume caveat applies, but high volume candle breakout and strong bullish momentum support immediate continuation.",
+        "rationale": "1) VP: Price is operating above VAH (28299.47) and well above POC (28263.55), denoting strong bullish expansion. 2) CVD: +11.73 (BULLISH) with positive slope (+3.42), agreeing with price action. 3) SESSION: NEW_YORK_SESSION prime time. 4) Trend: Solid upward trend above VWAP (28153.31) and EMA50 (28199.53). 5) ATR: Pushing above upper ATR band (28438.94), reflecting strong momentum. 6) RVOL: 0.998 on Dukascopy index CFD tick volume (US100 caveat applies; yellow spikes rare). 7) S/R: Breaking directly toward Session High (28471.88). Trend alignment across VWAP, EMA, Value Area, and CVD supports a long scalp.",
         "model": "gemini-3.6-flash"
       }
     }
@@ -149,7 +149,7 @@
     "traded": true
   },
   "last_price": {
-    "US100": 28453.475,
+    "US100": 28467.432,
     "GBPUSD": 1.32812,
     "EURUSD": 1.10975,
     "XAUUSD": 4029.465
@@ -181,7 +181,7 @@
     "gross_loss": -2169.1,
     "commissions": 219.6,
     "net_trade_pnl": -1411.85,
-    "skipped_signals": 361,
-    "accepted_signals": 169
+    "skipped_signals": 362,
+    "accepted_signals": 170
   }
 }

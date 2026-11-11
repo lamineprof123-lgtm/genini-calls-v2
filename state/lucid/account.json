@@ -1,7 +1,7 @@
 {
   "version": 1,
   "created_at": "2026-11-11T19:08:31.906022+00:00",
-  "last_processed": "2026-11-11T19:29:00+00:00",
+  "last_processed": "2026-11-11T19:31:00+00:00",
   "account": {
     "no": 1,
     "phase": "eval",
@@ -184,14 +184,171 @@
         "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/230820.json/XAUUSD.png"
       },
       "mfe": 2.30199999999968,
-      "mae": 2.2950000000000728,
+      "mae": 4.025000000000091,
       "mfe_min": 0.0,
       "time_cut_deadline": null,
       "time_cut_candles": 0,
       "time_cut_rule": "none: exit = Gemini CLOSE (1-strike); safety = hard stop, DLL/MLL, 16:45 ET flat, 90 min max hold"
     }
   ],
-  "pending": [],
+  "pending": [
+    {
+      "symbol": "US100",
+      "side": 1,
+      "created": "2026-11-11T19:32:31.027558+00:00",
+      "fill_after": "2026-11-11T19:33:00+00:00",
+      "reserved_risk": 0.0,
+      "planned": {
+        "contract": "NQ",
+        "qty": 1,
+        "risk_usd": null,
+        "tdist": null,
+        "target_source": "none (gemini_only)"
+      },
+      "expires": "2026-11-11T19:43:00+00:00",
+      "atr": 60.356,
+      "scalp": {
+        "action": "BUY",
+        "side": 1,
+        "entry": 28466.48,
+        "stop_loss": 28428.51,
+        "take_profit": 28504.23,
+        "sdist": 37.96780000000217,
+        "tdist": 37.75,
+        "stop_source": "structure",
+        "target_source": "extended:aim_net",
+        "rr": 0.994,
+        "structure_stop": 28428.512199999997,
+        "atr_stop": 28418.1952,
+        "fixed_tp": 28471.48,
+        "structure_tp": 28595.29288,
+        "structure_label": "Session High",
+        "candle": {
+          "high": 28482.79,
+          "low": 28431.53
+        },
+        "levels": [
+          {
+            "price": 28596.5,
+            "label": "Session High"
+          },
+          {
+            "price": 28083.64,
+            "label": "S/R"
+          },
+          {
+            "price": 28001.29,
+            "label": "Prev High"
+          },
+          {
+            "price": 27945.11,
+            "label": "S/R"
+          }
+        ],
+        "vp": {
+          "poc": 28267.73,
+          "vah": 28343.6,
+          "val": 27955.83
+        },
+        "target_scalp": 28471.48,
+        "lucid_plan": {
+          "contract": "NQ",
+          "qty": 1,
+          "tdist": 37.75,
+          "target_usd": 751.5,
+          "risk_usd": 760.0,
+          "target_source": "extended:aim_net",
+          "sizing": "fixed target 5 cannot reach $381 net within $1500 risk; extended:aim_net: 1 NQ (fewest that fit) target 37.75 -> $752 net, risk $760"
+        }
+      },
+      "session": "NEW_YORK_SESSION",
+      "telemetry": {
+        "symbol": "US100",
+        "session": "NEW_YORK_SESSION",
+        "last_close": 28450.99,
+        "atr": 60.356,
+        "vwap": 28213.4,
+        "ema20": 28454.38,
+        "ema50": 28323.13,
+        "price_vs_vwap": {
+          "side": "above",
+          "dist_atr": 3.9365
+        },
+        "price_vs_ema50": {
+          "side": "above",
+          "dist_atr": 2.1184
+        },
+        "vwap_aligned_with_side": true,
+        "ema50_aligned_with_side": true,
+        "poc": 28267.73,
+        "vah": 28343.6,
+        "val": 27955.83,
+        "price_vs_value_area": "above_vah",
+        "dist_to_poc_atr": 3.0363,
+        "cvd": 12.89,
+        "cvd_label": "BULLISH",
+        "cvd_slope": -1.19,
+        "cvd_agrees_with_side": true,
+        "rvol": 0.873,
+        "rvol_spike": false,
+        "rvol_bars_since_spike": 19,
+        "atr_band_z": -0.0562,
+        "atr_upper": 28575.1,
+        "atr_lower": 28333.67,
+        "nearest_sr": {
+          "above": {
+            "price": 28596.5,
+            "label": "Session High",
+            "dist_atr": 2.4109
+          },
+          "below": {
+            "price": 28083.64,
+            "label": "S/R",
+            "dist_atr": 6.0864
+          }
+        },
+        "gemini": {
+          "action": "BUY",
+          "confidence": 0.82,
+          "confidence_band": ">=0.8",
+          "rationale": "Price is above VAH (28343.60) and well above POC (28267.73). CVD is BULLISH (+12.89) in NEW_YORK_SESSION. Structure is strongly bullish above ascending VWAP (28213.40) and EMA50 (28323.13). Signal candle pulled back to rest on the EMA20 baseline (28454.38) after testing Session High (28596.50). Dukascopy CFD tick volume caveat applies (low RVOL normal). Intrabar live quote at 28466.48 provides a high-probability pullback entry in alignment with strong trend.",
+          "model": "gemini-3.6-flash",
+          "model_action": "BUY"
+        },
+        "scalp": {
+          "stop_basis": "structure",
+          "target_basis": "extended:aim_net",
+          "tdist": 37.75,
+          "sdist": 37.96780000000217,
+          "structure_label": "Session High"
+        },
+        "planned": {
+          "tdist": 37.75,
+          "sdist": 37.96780000000217,
+          "qty": null,
+          "contract": null,
+          "target_usd_net": null,
+          "risk_usd": null
+        },
+        "run_at_utc": "2026-11-11T19:32:20.006181+00:00",
+        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/233220.json/US100.png"
+      },
+      "gemini": {
+        "action": "BUY",
+        "entry": 28466.48,
+        "stop_loss": 28428.51,
+        "take_profit": 28504.23,
+        "confidence": 0.82,
+        "rr": 0.994,
+        "shown_on_site": true,
+        "basis": "site signal",
+        "run_at_utc": "2026-11-11T19:32:20.006181+00:00",
+        "session": "NEW_YORK_SESSION",
+        "rationale": "Price is above VAH (28343.60) and well above POC (28267.73). CVD is BULLISH (+12.89) in NEW_YORK_SESSION. Structure is strongly bullish above ascending VWAP (28213.40) and EMA50 (28323.13). Signal candle pulled back to rest on the EMA20 baseline (28454.38) after testing Session High (28596.50). Dukascopy CFD tick volume caveat applies (low RVOL normal). Intrabar live quote at 28466.48 provides a high-probability pullback entry in alignment with strong trend.",
+        "model": "gemini-3.6-flash"
+      }
+    }
+  ],
   "next_pos_id": 2,
   "day": {
     "id": "2026-11-11",
@@ -202,7 +359,7 @@
     "traded": true
   },
   "last_price": {
-    "XAUUSD": 3986.707
+    "XAUUSD": 3988.435
   },
   "history": [],
   "ledger": {
@@ -232,7 +389,7 @@
     "commissions": 6.9,
     "net_trade_pnl": 0.0,
     "skipped_signals": 9,
-    "accepted_signals": 1
+    "accepted_signals": 2
   },
   "reset_token": "2026-11-11-gemini-only",
   "reset_at": "2026-11-11T19:08:31.906022+00:00",

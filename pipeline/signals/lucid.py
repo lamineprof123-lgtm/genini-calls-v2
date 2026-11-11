@@ -908,7 +908,11 @@ class LucidSim:
             return
         sp = self.spec(size["contract"])
         sc = self.cfg.get("scalp") or {}
-        if self.gemini_exit:
+        if self.gemini_only:
+            cut_bars, mfe_min = 0, 0.0
+            cut_rule = (f"none: exit = Gemini CLOSE only ({self.L.get('gemini_exit_book', '1-strike')}); no stop, no "
+                        "target, no max hold, no 16:45 flat; DLL/MLL/breaker log-only")
+        elif self.gemini_exit:
             cut_bars, mfe_min = 0, 0.0
             cut_rule = (f"none: exit = Gemini CLOSE ({self.L.get('gemini_exit_book', '1-strike')}); safety = hard stop, "
                         f"DLL/MLL, 16:45 ET flat, {self.L.get('max_hold_minutes', 90):g} min max hold")

@@ -333,7 +333,7 @@ class Books:
                 b["day"] = {"id": did, "start_balance": b["balance"], "realized": 0.0, "halted": None}
 
     # -- intake
-    def sync_feed(self, feed: list[dict], now: datetime) -> list[dict]:
+    def sync_feed(self, feed: list[dict], now: datetime, adopt_ids: set | None = None) -> list[dict]:
         """Open every not-yet-seen Lucid entry in each (non-halted) book. Entries older than max_feed_age_minutes
         when first seen are marked seen but not opened (e.g. the first tick after a deploy)."""
         self.roll_day(now)
@@ -344,7 +344,7 @@ class Books:
                 continue
             seen.add(f["id"])
             age = (now - datetime.fromisoformat(f["entry_time"])).total_seconds() / 60.0
-            if age > self.e["max_feed_age_minutes"]:
+            if age > self.e["max_feed_age_minutes"] and f["id"] not in (adopt_ids or set()):
                 log.info("exit books: entry #%s is %.0f min old -> not copied", f["id"], age)
                 continue
             for name, b in self.s["books"].items():
@@ -637,12 +637,35 @@ class ExitManager:
         out = await render_all([payload])
         return next(iter(out.values()))
 
-    def _feed(self) -> list[dict]:
-        p = self.state_dir / "lucid" / "account.json"
+    def _account(self) -> dict:
         try:
-            return json.loads(p.read_text()).get("book_feed") or []
+            return json.loads((self.state_dir / "lucid" / "account.json").read_text())
         except Exception:
-            return []
+            return {}
+
+    def _feed(self) -> list[dict]:
+        return self._account().get("book_feed") or []
+
+    def _sync_account(self, now: datetime) -> list[dict]:
+        """Copy new Lucid entries into the books, keyed to the Lucid account's own reset_token: the config token
+        changes at deploy, but the account only resets at its next minute replay and its ids restart at 1, so
+        (a) no entries are copied while the account still carries an older token, and (b) the first time the
+        account shows the new token the books start fresh and adopt the account's open positions (any age)."""
+        acct = self._account()
+        cfg_tok = (self.cfg.get("lucid") or {}).get("reset_token")
+        acct_tok = acct.get("reset_token")
+        if cfg_tok and acct_tok and acct_tok != cfg_tok:
+            return []                                   # account not reset yet: old ids, do not copy
+        adopt = set()
+        if acct and acct_tok and self.books.s.get("account_token") != acct_tok:
+            if self.books.s.get("account_token") is not None or self.books.s.get("seen_ids"):
+                _atomic_write(self.state_dir / f"exit_books_pre_acct_{acct_tok}.json", self.books.s)
+                self.books = Books(self.cfg, None)
+                self.books.s["reset_token"] = cfg_tok
+                log.info("exit books: fresh start for Lucid account token %s", acct_tok)
+            self.books.s["account_token"] = acct_tok
+            adopt = {p["id"] for p in acct.get("positions") or []}
+        return self.books.sync_feed(acct.get("book_feed") or [], now, adopt_ids=adopt)
 
     def _jsonl(self, name: str, t: datetime, obj: dict) -> None:
         d = self.logs_dir / t.astimezone(self.tz).strftime("%Y-%m-%d")
@@ -669,7 +692,7 @@ class ExitManager:
         self.busy = True
         try:
             now = now or datetime.now(UTC)
-            opened = self.books.sync_feed(self._feed(), now)
+            opened = self._sync_account(now)
             self._queue_baseline_closes(now)
             post = await self._process_post_exit(now)
             ids = sorted(self.books.open_ids())

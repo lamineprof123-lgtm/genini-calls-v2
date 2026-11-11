@@ -281,3 +281,24 @@ def test_reset3(gcfg, tmp_path):
     assert s2.s["account"]["balance"] == 100000.0 and s2.s["positions"] == []
     assert (st / "account_pre_reset3_2026-11-11.json").exists()
     assert [e for e in _events(s2) if e["event"] == "reset"][-1]["reason"] == "gemini-only: no SL/TP"
+
+
+def test_books_wait_for_account_reset_then_adopt_open_positions(gcfg, tmp_path):
+    """Config token changes at deploy, account resets later and ids restart: books must not copy old-account
+    ids, and must adopt the new account's open positions even if older than max_feed_age."""
+    import json as _j
+    cfg = gcfg
+    st = tmp_path / "state"; (st / "lucid").mkdir(parents=True, exist_ok=True)
+    t0 = datetime(2026, 11, 11, 19, 0, tzinfo=UTC)
+    pos = {"id": 1, "symbol": "XAUUSD", "contract": "GC", "qty": 3, "side": -1, "entry": 3985.2, "stop": None,
+           "target": None, "entry_time": t0.isoformat()}
+    acct = {"reset_token": "old", "positions": [pos], "book_feed": [pos]}
+    (st / "lucid" / "account.json").write_text(_j.dumps(acct))
+    mgr = ExitManager(cfg, state_dir=st, logs_dir=tmp_path / "logs", site_dir=tmp_path / "site",
+                         decide=lambda *a, **k: None)
+    assert mgr._sync_account(t0 + timedelta(minutes=1)) == [] and not mgr.books.open_ids()
+    acct["reset_token"] = cfg["lucid"]["reset_token"]
+    (st / "lucid" / "account.json").write_text(_j.dumps(acct))
+    opened = mgr._sync_account(t0 + timedelta(minutes=45))
+    assert mgr.books.open_ids() == {1} and len(opened) == 2
+    assert mgr._sync_account(t0 + timedelta(minutes=46)) == []

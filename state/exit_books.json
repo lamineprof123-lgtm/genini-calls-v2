@@ -6,7 +6,7 @@
     2
   ],
   "last_price": {
-    "XAUUSD": 3981.17,
+    "XAUUSD": 3980.32,
     "US100": 28123.76
   },
   "books": {
@@ -39,39 +39,12 @@
       }
     },
     "2-strike": {
-      "balance": 93224.6,
-      "positions": [
-        {
-          "id": 1,
-          "symbol": "XAUUSD",
-          "contract": "GC",
-          "qty": 3,
-          "side": -1,
-          "entry": 3985.2,
-          "stop": null,
-          "target": null,
-          "entry_time": "2026-11-11T19:09:00+00:00",
-          "risk_usd": null,
-          "atr": 6.065,
-          "candle": {
-            "high": 3990.24,
-            "low": 3986.49
-          },
-          "gemini_run_at_utc": "2026-11-11T19:08:20.007724+00:00",
-          "gemini_confidence": 0.85,
-          "book": "2-strike",
-          "strikes": 0,
-          "mfe": 4.355000000000018,
-          "mae": 9.408000000000357,
-          "scan_from": "2026-11-11T23:30:00+00:00",
-          "checks": 846,
-          "opened_at": "2026-11-11T19:18:40.936100+00:00"
-        }
-      ],
+      "balance": 94657.7,
+      "positions": [],
       "day": {
         "id": "2026-11-12",
         "start_balance": 99991.35,
-        "realized": -6768.5,
+        "realized": -5342.3,
         "halted": null,
         "breach_logged": {
           "t": "2026-11-11T23:00:04.950605+00:00",
@@ -80,16 +53,16 @@
         }
       },
       "stats": {
-        "trades": 1,
-        "wins": 0,
+        "trades": 2,
+        "wins": 1,
         "losses": 1,
-        "gross_win": 0.0,
+        "gross_win": 1426.2,
         "gross_loss": -6768.5,
-        "net_pnl": -6768.5,
-        "commissions": 10.4,
-        "hold_seconds": 12460,
+        "net_pnl": -5342.3,
+        "commissions": 17.3,
+        "hold_seconds": 28322,
         "exit_reasons": {
-          "gemini_close": 1
+          "gemini_close": 2
         }
       }
     }
@@ -99,5 +72,19 @@
   "baseline_tracked": [
     2
   ],
-  "post_exit": []
+  "post_exit": [
+    {
+      "book": "2-strike",
+      "id": 1,
+      "symbol": "XAUUSD",
+      "contract": "GC",
+      "qty": 3,
+      "side": "SHORT",
+      "exit": 3980.4,
+      "t_exit": "2026-11-11T23:33:22.949101+00:00",
+      "reason": "gemini_close",
+      "net": 1426.2,
+      "due": "2026-11-11T23:38:22.949101+00:00"
+    }
+  ]
 }

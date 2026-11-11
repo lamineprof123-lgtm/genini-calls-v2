@@ -16,7 +16,8 @@ import pandas as pd
 
 from .risk import _atomic_write
 from .validator import validate_signal
-from .scalp_levels import compute_scalp_levels, size_for_target, fixed_target_distance
+from .scalp_levels import (compute_scalp_levels, size_for_target, fixed_target_distance, plan_target_and_size,
+                           structure_distances)
 from .indicators import market_session, session_blocks_automation
 from .telemetry import build_entry_snapshot, enrich_close_metrics
 
@@ -80,17 +81,43 @@ class LucidSim:
                          "payouts_received": 0.0, "payout_count": 0, "trades": 0, "wins": 0, "losses": 0,
                          "gross_win": 0.0, "gross_loss": 0.0, "commissions": 0.0, "net_trade_pnl": 0.0,
                          "skipped_signals": 0, "accepted_signals": 0}}
+        if self.L.get("reset_token"):
+            st["reset_token"] = self.L["reset_token"]
         self.s = st
         self._fee("eval", self.L["eval_fee"], now, "first LucidPro 100K evaluation")
         st["ledger"]["evals_bought"] = 1
         return st
 
     def _load(self) -> dict:
+        token = self.L.get("reset_token")
         if self.path.exists():
-            return json.loads(self.path.read_text())
+            st = json.loads(self.path.read_text())
+            if not token or st.get("reset_token") == token:
+                return st
+            return self._reset(st, token, datetime.now(UTC))
         st = self._fresh_state(datetime.now(UTC))
         self.save()
         return st
+
+    def _reset(self, old: dict, token: str, now: datetime) -> dict:
+        """One-shot account reset requested by [lucid].reset_token (applied by whichever loop first loads the new
+        config, so a running old loop can never overwrite it). Archives the old state; trade/event logs are kept."""
+        day = now.astimezone(self.tz_local).strftime("%Y-%m-%d")
+        arch = self.state_dir / f"account_pre_reset_{day}.json"
+        n = 2
+        while arch.exists():
+            arch = self.state_dir / f"account_pre_reset_{day}_{n}.json"; n += 1
+        _atomic_write(arch, old)
+        self._fresh_state(now)
+        self.s["reset_token"] = token
+        oa = old.get("account") or {}
+        self._event(now, "reset", reason=self.L.get("reset_reason") or token, token=token, archived=arch.name,
+                    previous={"no": oa.get("no"), "balance": oa.get("balance"), "realized_pnl": oa.get("realized_pnl"),
+                              "trades": oa.get("trades"), "positions": len(old.get("positions") or []),
+                              "pending": len(old.get("pending") or [])},
+                    start_balance=self.s["account"]["balance"])
+        self.save()
+        return self.s
 
     def save(self) -> None:
         _atomic_write(self.path, self.s)
@@ -325,65 +352,57 @@ class LucidSim:
         return price - side * n * tick if adverse else price  # adverse for an exit of `side` position
 
     def size_trade(self, symbol: str, side: int, atr: float,
-                   tdist: float | None = None, sdist: float | None = None) -> dict | None:
-        """Pick (contract, qty) so NET of RT commission at ``tdist`` is >= target_usd_min.
+                   tdist: float | None = None, sdist: float | None = None, *,
+                   entry: float | None = None, scalp: dict | None = None) -> dict | None:
+        """Pick (contract, qty, target distance) so NET of RT commission is in [target_usd_min, target_usd_max].
 
-        Stop/target *distances* come from server-side scalp levels (structure / 0.8 ATR stop,
-        fixed-or-structural target). Qty = ceil to clear the NET $ floor, capped at max_minis
-        (USER RULE OVERRIDE may exceed Lucid's real 6-mini cap). If the floor is unreachable
-        within the cap / risk budget, return None so the caller SKIPS and logs why.
+        Stop distance = server scalp stop (structure / 0.8 ATR). Target: the scalp target if it clears the NET
+        floor at an allowed size; else the next structure level beyond it that does; else extended to ~$aim NET
+        with the fewest contracts that fit the risk cap (see scalp_levels.plan_target_and_size). Size respects
+        max_risk_usd, the remaining DLL budget and max_minis (USER RULE OVERRIDE). Returns None (SKIP) when no
+        size fits; the reason is in self.last_size_why. Result carries target_source + sizing rationale.
         """
         L = self.L
+        self.last_size_why = None
         if not atr or atr <= 0:
+            self.last_size_why = "no ATR"
             return None
-        # Fallback distances when caller has no scalp package (legacy / tests)
         if tdist is None or sdist is None:
             tdist = tdist or fixed_target_distance(symbol, self.cfg) or (L.get("target_atr_mult", 0.6) * atr)
             sdist = sdist or (float((self.cfg.get("scalp") or {}).get("atr_stop_mult", 0.8)) * atr)
         if tdist <= 0 or sdist <= 0:
+            self.last_size_why = "non-positive stop/target distance"
             return None
         budget = min(L["max_risk_usd"],
                      self.equity() - self.dll_level() - self.open_risk() - L.get("dll_safety_usd", 0))
         if L.get("respect_mll_room"):
             budget = min(budget, self.equity() - self.s["account"]["mll_floor"] - self.open_risk() - 50)
         if budget < L.get("min_risk_usd", 0):
+            self.last_size_why = (f"DLL room: risk budget ${budget:.0f} < min_risk_usd ${L.get('min_risk_usd', 0):g} "
+                                  f"(daily loss limit nearly used; no new entries until it resets)")
             return None
         used = sum(self.mini_eq(p["contract"], p["qty"]) for p in self.s["positions"])
         room_minis = L["max_minis"] - used
         if room_minis <= 0:
+            self.last_size_why = f"max_minis={L['max_minis']:g} already used by open positions"
             return None
-        best = None
-        for c in L["symbols"][symbol]["contracts"]:
-            sp = self.spec(c)
-            per = L.get("micros_per_mini", 10) if sp.get("micro") else 1
-            max_q = int(math.floor(room_minis * per + 1e-9))
-            # Round distances to this contract's tick
-            td = round(math.ceil(tdist / sp["tick"] - 1e-9) * sp["tick"], 10)
-            sd = round(math.ceil(sdist / sp["tick"] - 1e-9) * sp["tick"], 10)
-            if td <= 0 or sd <= 0:
-                continue
-            # Soft ATR sanity (do not silently break the $ floor rule)
-            if atr > 0:
-                if td < L.get("min_target_atr", 0) * atr or td > L.get("max_target_atr", 1e9) * atr:
-                    continue
-            sized = size_for_target(
-                point_value=sp["point_value"], tick=sp["tick"], commission=sp["commission"],
-                tdist=td, sdist=sd, max_qty=max_q,
-                net_min=float(L["target_usd_min"]), net_aim=float(L["target_usd_aim"]),
-                net_max=float(L["target_usd_max"]), max_risk_usd=float(L["max_risk_usd"]),
-                budget=float(budget), micro=bool(sp.get("micro")),
-                micros_per_mini=int(L.get("micros_per_mini", 10)),
-            )
-            if not sized:
-                continue
-            # Prefer full-size contracts when mini-equivalent count is similar and net is closer to aim
-            score = (abs(sized["target_usd"] - L["target_usd_aim"]) / L["target_usd_aim"]
-                     + 0.001 * sized["commission_rt"]
-                     + (0.0 if not sp.get("micro") else 0.05))
-            cand = dict(contract=c, **sized)
-            if best is None or score < best[0]:
-                best = (score, cand)
-        return best[1] if best else None
+        contracts = [(c, self.spec(c)) for c in L["symbols"][symbol]["contracts"]]
+        sc = self.cfg.get("scalp") or {}
+        struct = []
+        if scalp and entry is not None and (scalp.get("levels") or scalp.get("vp")):
+            before = float(sc.get("tp_before_level_ticks", 1)) * contracts[0][1]["tick"]
+            struct = structure_distances(side, entry, scalp.get("levels"), scalp.get("vp"), before)
+        plan, why = plan_target_and_size(
+            tdist0=float(tdist), sdist=float(sdist), atr=float(atr), contracts=contracts, struct_dists=struct,
+            net_min=float(L["target_usd_min"]), net_aim=float(L["target_usd_aim"]), net_max=float(L["target_usd_max"]),
+            max_risk_usd=float(L["max_risk_usd"]), budget=float(budget), room_minis=float(room_minis),
+            micros_per_mini=int(L.get("micros_per_mini", 10)), min_target_atr=float(L.get("min_target_atr", 0)),
+            max_target_atr=float(L.get("max_target_atr", 1e9)),
+            extend_max_target_atr=float(L.get("extend_max_target_atr", 1.0)),
+            target_source0=str((scalp or {}).get("target_source") or "scalp"))
+        if not plan:
+            self.last_size_why = why
+        return plan
 
     # ------------------------------------------------------------------ signal intake
     def _build_snapshot(self, v: dict, ctx: dict, record: dict, side, scalp=None, size=None) -> dict:
@@ -669,10 +688,10 @@ class LucidSim:
             if fresh:
                 tdist, sdist = fresh["tdist"], fresh["sdist"]
                 scalp = {**scalp, **fresh}
-        size = self.size_trade(sym, side, pe["atr"], tdist=tdist, sdist=sdist)
+        size = self.size_trade(sym, side, pe["atr"], tdist=tdist, sdist=sdist, entry=px, scalp=scalp)
         if not size:
             why = (f"cannot reach ${self.L['target_usd_min']:g} NET within max_minis={self.L['max_minis']:g} "
-                   f"at tdist={tdist} / risk budget (SKIP)")
+                   f"at tdist={tdist} / risk budget (SKIP): {self.last_size_why}")
             if snap is not None:
                 snap = {**snap, "scalp": {**(snap.get("scalp") or {}), "tdist": tdist, "sdist": sdist,
                                           "stop_basis": scalp.get("stop_source"),
@@ -698,14 +717,17 @@ class LucidSim:
                               "tdist": size["tdist"], "sdist": size["sdist"],
                               "stop_basis": scalp.get("stop_source") or (snap.get("scalp") or {}).get("stop_basis"),
                               "target_basis": scalp.get("target_source") or (snap.get("scalp") or {}).get("target_basis"),
-                              "structure_label": scalp.get("structure_label")},
+                              "structure_label": scalp.get("structure_label"),
+                              "target_source": size.get("target_source")},
                     "planned": {"tdist": size["tdist"], "sdist": size["sdist"], "qty": size["qty"],
                                 "contract": size["contract"], "target_usd_net": size["target_usd"],
-                                "risk_usd": size["risk_usd"]}}
+                                "risk_usd": size["risk_usd"], "target_source": size.get("target_source"),
+                                "sizing": size.get("sizing")}}
         p = {"id": self.s["next_pos_id"], "symbol": sym, "contract": size["contract"], "qty": size["qty"], "side": side,
              "entry": px, "stop": self._round_tick(px - side * size["sdist"], tick),
              "target": self._round_tick(px + side * size["tdist"], tick), "entry_time": _iso(t),
              "risk_usd": size["risk_usd"], "target_usd": size["target_usd"],  # NET of RT commission
+             "target_source": size.get("target_source"), "sizing": size.get("sizing"),
              "target_usd_gross": size.get("target_usd_gross", size["target_usd"]),
              "commission_rt": size.get("commission_rt", 0.0),
              "atr": pe["atr"], "gemini": g, "scalp": scalp, "telemetry": snap,
@@ -723,6 +745,7 @@ class LucidSim:
                     entry=px, stop=p["stop"], target=p["target"], risk_usd=p["risk_usd"],
                     target_usd_net=p["target_usd"], target_usd_gross=p["target_usd_gross"],
                     commission_rt=p["commission_rt"],
+                    target_source=size.get("target_source"), sizing=size.get("sizing"),
                     max_minis=self.L["max_minis"],
                     max_minis_note="USER RULE OVERRIDE (Lucid real = 6 minis)",
                     telemetry_keys=sorted((snap or {}).keys()))

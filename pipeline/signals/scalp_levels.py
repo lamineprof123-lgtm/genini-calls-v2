@@ -229,6 +229,10 @@ def compute_scalp_levels(
         "structure_tp": tgt.get("structure_tp"),
         "structure_label": tgt.get("structure_label"),
         "candle": {"high": hi, "low": lo},
+        # kept so the Lucid sim can re-plan / extend the target at fill time
+        "levels": [{"price": float(lv["price"]), "label": str(lv.get("label") or lv.get("type") or "S/R")}
+                   for lv in (levels or []) if lv.get("price") is not None],
+        "vp": dict(vp) if vp else None,
     }
 
 
@@ -263,6 +267,16 @@ def apply_server_levels(sig: dict, ctx: dict, cfg: dict, symbol: str) -> dict:
                                levels=levels, vp=vp or None, tick=tick, digits=digits)
     if not pkg:
         return sig
+    plan = lucid_panel_plan(pkg, symbol, cfg, atr)
+    if plan:
+        # Panel shows the same (possibly extended) target the Lucid sim plans at a full risk budget
+        pkg["target_scalp"] = pkg["take_profit"]
+        pkg["take_profit"] = _round(pkg["entry"] + side_of(action) * plan["tdist"], digits)
+        pkg["tdist"] = plan["tdist"]
+        pkg["target_source"] = plan["target_source"]
+        pkg["rr"] = round(plan["tdist"] / pkg["sdist"], 3) if pkg["sdist"] > 0 else None
+        pkg["lucid_plan"] = {k: plan.get(k) for k in ("contract", "qty", "tdist", "target_usd", "risk_usd",
+                                                         "target_source", "sizing")}
     sig["entry"] = pkg["entry"]
     sig["stop_loss"] = pkg["stop_loss"]
     sig["take_profit"] = pkg["take_profit"]
@@ -344,3 +358,174 @@ def size_for_target(
         "commission_rt": round(comm_rt, 2),
         "unit_net": round(unit_net, 4),
     }
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# Lucid target + size plan: when the scalp target (fixed / nearest structure) cannot deliver the NET $ floor at an
+# allowed size, extend it: next structure level beyond it, else the distance that yields ~net_aim.
+def ceil_tick(x: float, tick: float) -> float:
+    return round(math.ceil(float(x) / tick - 1e-9) * tick, 10)
+
+
+def floor_tick(x: float, tick: float) -> float:
+    return round(math.floor(float(x) / tick + 1e-9) * tick, 10)
+
+
+def structure_distances(side: int, entry: float, levels: list[dict] | None, vp: dict | None,
+                        before_buf: float = 0.0) -> list[tuple[float, str]]:
+    """(distance just before the level, label) for every structural target in the trade direction, nearest first."""
+    out = []
+    for px, label in _structural_targets(side, float(entry), levels, vp):
+        d = abs(px - float(entry)) - before_buf
+        if d > 0:
+            out.append((d, label))
+    return out
+
+
+def plan_target_and_size(
+    *,
+    tdist0: float,
+    sdist: float,
+    atr: float,
+    contracts: list[tuple[str, dict]],
+    struct_dists: list[tuple[float, str]] | None,
+    net_min: float,
+    net_aim: float,
+    net_max: float,
+    max_risk_usd: float,
+    budget: float,
+    room_minis: float,
+    micros_per_mini: int = 10,
+    min_target_atr: float = 0.0,
+    max_target_atr: float = 1e9,
+    extend_max_target_atr: float = 1.0,
+    target_source0: str = "scalp",
+) -> tuple[dict | None, str]:
+    """Return (plan, rationale). plan = size_for_target fields + contract + target_source + sizing.
+
+    1. the scalp target as is (target_source0);
+    2. else the next structure level beyond it that reaches net_min at an allowed size ("structure:next:<label>");
+    3. else extend: per contract the fewest contracts whose ~net_aim distance fits the extension cap
+       ("extended:aim_net"), else the max risk-fitting size at the cap if that clears net_min ("extended:min_net").
+    Size always respects max_risk_usd, budget (risk + RT commission) and room_minis; NET stays in [net_min, net_max].
+    """
+    if sdist <= 0 or not contracts:
+        return None, "no stop distance / contracts"
+    cap = (min(extend_max_target_atr, max_target_atr) * atr) if atr and atr > 0 else None
+
+    def per_of(sp):
+        return micros_per_mini if sp.get("micro") else 1
+
+    def size_at(td: float):
+        best = None
+        for name, sp in contracts:
+            t, s = ceil_tick(td, sp["tick"]), ceil_tick(sdist, sp["tick"])
+            if t <= 0 or s <= 0:
+                continue
+            if atr and atr > 0 and (t < min_target_atr * atr - 1e-12 or t > max_target_atr * atr + 1e-12):
+                continue
+            sized = size_for_target(point_value=sp["point_value"], tick=sp["tick"], commission=sp["commission"],
+                                    tdist=t, sdist=s, max_qty=int(math.floor(room_minis * per_of(sp) + 1e-9)),
+                                    net_min=net_min, net_aim=net_aim, net_max=net_max, max_risk_usd=max_risk_usd,
+                                    budget=budget, micro=bool(sp.get("micro")), micros_per_mini=micros_per_mini)
+            if not sized:
+                continue
+            score = (abs(sized["target_usd"] - net_aim) / net_aim + 0.001 * sized["commission_rt"]
+                     + (0.05 if sp.get("micro") else 0.0))
+            if best is None or score < best[0]:
+                best = (score, {"contract": name, **sized})
+        return best[1] if best else None
+
+    plan = size_at(tdist0)
+    if plan:
+        plan.update(target_source=target_source0,
+                    sizing=f"{target_source0} target {plan['tdist']:g} reaches ${plan['target_usd']:.0f} net "
+                           f"with {plan['qty']} {plan['contract']} (risk ${plan['risk_usd']:.0f})")
+        return plan, plan["sizing"]
+
+    for d, label in struct_dists or []:
+        if d <= tdist0 + 1e-12 or (cap is not None and d > cap + 1e-12):
+            continue
+        plan = size_at(d)
+        if plan:
+            plan.update(target_source=f"structure:next:{label}",
+                        sizing=f"{target_source0} target {tdist0:g} cannot reach ${net_min:g} net at an allowed size;"
+                               f" next structure {label} at {plan['tdist']:g} gives ${plan['target_usd']:.0f} net "
+                               f"with {plan['qty']} {plan['contract']} (risk ${plan['risk_usd']:.0f})")
+            return plan, plan["sizing"]
+
+    if cap is None:
+        return None, "no ATR for the extension cap"
+    cands = []
+    for name, sp in contracts:
+        pv, tick, c = float(sp["point_value"]), float(sp["tick"]), float(sp["commission"])
+        s = ceil_tick(sdist, tick)
+        unit_risk = s * pv
+        if unit_risk <= 0:
+            continue
+        q_risk = int(math.floor(min(max_risk_usd / unit_risk, budget / (unit_risk + 2 * c)) + 1e-9))
+        qmax = min(q_risk, int(math.floor(room_minis * per_of(sp) + 1e-9)))
+        if qmax < 1:
+            continue
+        floor_td = ceil_tick(tdist0, tick)
+        found = None
+        for q in range(1, qmax + 1):                       # fewest contracts first
+            td = max(ceil_tick((net_aim / q + 2 * c) / pv, tick), floor_td)
+            if td <= cap + 1e-12:
+                found = (q, td, "extended:aim_net"); break
+        if not found:
+            q = qmax
+            td_min = max(ceil_tick((net_min / q + 2 * c) / pv, tick), floor_td)
+            if td_min <= cap + 1e-12:
+                found = (q, max(td_min, floor_tick(cap, tick)), "extended:min_net")
+        if not found:
+            continue
+        q, td, src = found
+        net = td * q * pv - 2 * c * q
+        if net > net_max:                                   # keep NET <= net_max
+            td = max(floor_tick((net_max / q + 2 * c) / pv, tick), ceil_tick((net_min / q + 2 * c) / pv, tick))
+            net = td * q * pv - 2 * c * q
+        if net + 1e-9 < net_min:
+            continue
+        cands.append((td, q / per_of(sp), 2 * c * q, {
+            "contract": name, "qty": q, "tdist": td, "sdist": s, "target_usd": round(net, 2),
+            "target_usd_gross": round(td * q * pv, 2), "risk_usd": round(s * q * pv, 2),
+            "commission_rt": round(2 * c * q, 2), "unit_net": round(td * pv - 2 * c, 4), "target_source": src}))
+    if not cands:
+        return None, (f"cannot reach ${net_min:g} NET: no size 1..{room_minis:g} minis fits the ${max_risk_usd:g} risk cap"
+                      f" / ${budget:.0f} budget with sdist={sdist:g} and a target <= {cap:g}")
+    cands.sort(key=lambda x: (x[0], x[1], x[2]))           # nearest target, then fewest minis, then commission
+    plan = cands[0][3]
+    plan["sizing"] = (f"{target_source0} target {tdist0:g} cannot reach ${net_min:g} net within ${max_risk_usd:g} risk; "
+                      f"{plan['target_source']}: {plan['qty']} {plan['contract']} (fewest that fit) target {plan['tdist']:g}"
+                      f" -> ${plan['target_usd']:.0f} net, risk ${plan['risk_usd']:.0f}")
+    return plan, plan["sizing"]
+
+
+def side_of(action: str) -> int:
+    return 1 if str(action).upper() == "BUY" else -1
+
+
+def lucid_panel_plan(pkg: dict, symbol: str, cfg: dict, atr: float) -> dict | None:
+    """The Lucid sim's target plan for a fresh account (full $ risk budget, no open positions), so the panel's
+    take_profit matches the target the sim will use. None for non-Lucid symbols / when no size fits."""
+    L = cfg.get("lucid") or {}
+    if not L.get("enabled") or symbol not in (L.get("symbols") or {}):
+        return None
+    try:
+        contracts = [(c, L["contracts"][c]) for c in L["symbols"][symbol]["contracts"]]
+        before = float(_cfg(cfg).get("tp_before_level_ticks", 1)) * contracts[0][1]["tick"]
+        side = int(pkg["side"])
+        struct = structure_distances(side, pkg["entry"], pkg.get("levels"), pkg.get("vp"), before)
+        plan, _ = plan_target_and_size(
+            tdist0=float(pkg["tdist"]), sdist=float(pkg["sdist"]), atr=float(atr or 0), contracts=contracts,
+            struct_dists=struct, net_min=float(L["target_usd_min"]), net_aim=float(L["target_usd_aim"]),
+            net_max=float(L["target_usd_max"]), max_risk_usd=float(L["max_risk_usd"]),
+            budget=float(L["max_risk_usd"]), room_minis=float(L["max_minis"]),
+            micros_per_mini=int(L.get("micros_per_mini", 10)), min_target_atr=float(L.get("min_target_atr", 0)),
+            max_target_atr=float(L.get("max_target_atr", 1e9)),
+            extend_max_target_atr=float(L.get("extend_max_target_atr", 1.0)),
+            target_source0=str(pkg.get("target_source") or "scalp"))
+        return plan
+    except Exception:
+        return None

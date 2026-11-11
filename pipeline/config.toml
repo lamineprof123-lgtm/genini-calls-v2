@@ -240,6 +240,10 @@ BTCUSD = { ticks = 20, tick_size = 5.0 }        # public site only (not a Lucid 
 [lucid]
 enabled = true
 plan = "LucidPro 100K (DLL on)"
+# One-shot reset: when this token differs from the one stored in state/lucid/account.json, the sim archives the
+# state (account_pre_reset_<day>.json), starts a fresh account and logs a "reset" event. Logs are kept.
+reset_token = "2026-11-11-target-sizing-fix"
+reset_reason = "target sizing bug fix"
 start_balance = 100000.0
 eval_profit_target = 6000.0
 mll = 3000.0                    # EOD trailing on highest closing balance
@@ -276,6 +280,10 @@ stop_to_target_ratio = 2.0      # legacy fallback only; live path uses [scalp] s
 max_risk_usd = 1500.0           # hard cap on a single stop-out (always < DLL)
 min_risk_usd = 381.0            # skip if remaining DLL room cannot cover at least the net floor
 target_atr_mult = 0.6           # legacy; live path uses [scalp] fixed/structural target
+# If the scalp target (fixed / nearest structure) cannot clear target_usd_min at a size inside max_risk_usd and
+# max_minis, extend it: next structure level beyond it, else the distance giving ~target_usd_aim NET with the fewest
+# contracts that fit the risk cap (else the max fitting size at the cap, if >= target_usd_min). Never beyond this:
+extend_max_target_atr = 1.0
 min_target_atr = 0.10           # reject absurdly tight targets (noise)
 max_target_atr = 3.0            # reject absurdly wide targets
 min_stop_atr = 0.25             # floor used by [scalp] (was 0.6 loose-stop era)

@@ -1,0 +1,146 @@
+"""Lucid target extension: the three live skips of 2026-11-11 now enter with sensible size, target and NET;
+panel take_profit matches the sim plan; one-shot account reset."""
+import copy, json, sys
+from datetime import datetime, timedelta, timezone
+from pathlib import Path
+
+import pandas as pd
+import pytest
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from signals.config import load_config
+from signals.lucid import LucidSim
+from signals.scalp_levels import apply_server_levels, compute_scalp_levels
+
+UTC = timezone.utc
+T_NY = datetime(2026, 11, 11, 16, 0, tzinfo=UTC)      # Wed 11:00 New York (RTH)
+
+
+@pytest.fixture
+def cfg():
+    c = copy.deepcopy(load_config())
+    c["lucid"]["slippage_ticks"] = 0
+    return c
+
+
+@pytest.fixture
+def sim(cfg, tmp_path):
+    s = LucidSim(cfg, tmp_path / "state", tmp_path / "logs")
+    s.s["last_processed"] = T_NY.isoformat()
+    return s
+
+
+def _ok(sz, sim):
+    assert sz is not None, sim.last_size_why
+    assert 381 <= sz["target_usd"] <= 1000
+    assert sz["target_usd"] == pytest.approx(sz["target_usd_gross"] - sz["commission_rt"], abs=0.02)
+    assert sz["risk_usd"] <= 1500
+    assert sz["target_source"] and sz["sizing"]
+
+
+def test_us100_session_high_4p6_extends_to_next_structure(sim):
+    # Live skip: BUY, Session High 4.83 above (target 4.58 after the 1-tick buffer), stop 46 pts, ATR 44.
+    entry = 28533.25
+    scalp = {"target_source": "structure:Session High",
+             "levels": [{"price": entry + 4.83, "label": "Session High"}, {"price": entry + 30.0, "label": "Prev High"}]}
+    sz = sim.size_trade("US100", 1, 44.1, tdist=4.58, sdist=46.0, entry=entry, scalp=scalp)
+    _ok(sz, sim)
+    assert sz["target_source"] == "structure:next:Prev High"
+    # ~$750 aim at that distance inside the risk cap: 13 MNQ ($760 net, risk $1,196); 1 NQ would only net $591
+    assert (sz["contract"], sz["qty"]) == ("MNQ", 13) and sz["tdist"] == pytest.approx(29.75)
+
+
+def test_us100_no_structure_beyond_extends_to_aim(sim):
+    entry = 28533.25
+    scalp = {"target_source": "structure:Session High", "levels": [{"price": entry + 4.83, "label": "Session High"}]}
+    sz = sim.size_trade("US100", 1, 44.1, tdist=4.58, sdist=46.0, entry=entry, scalp=scalp)
+    _ok(sz, sim)
+    assert sz["target_source"] == "extended:aim_net"
+    assert (sz["contract"], sz["qty"]) == ("NQ", 1)          # fewest contracts: 1 NQ risks $920
+    assert sz["tdist"] == pytest.approx(37.75) and sz["target_usd"] == pytest.approx(751.5)
+
+
+def test_xauusd_fixed_1p25_extends(sim):
+    # Live skip 11:21Z: fixed 1.25 target, structure stop 4.8231, ATR 5.302
+    sz = sim.size_trade("XAUUSD", -1, 5.302, tdist=1.25, sdist=4.8231, entry=4040.0,
+                        scalp={"target_source": "fixed", "levels": []})
+    _ok(sz, sim)
+    assert sz["target_source"] == "extended:aim_net"
+    assert (sz["contract"], sz["qty"]) == ("GC", 2) and sz["tdist"] == pytest.approx(3.8)
+    assert sz["risk_usd"] == pytest.approx(980.0)
+
+
+def test_eurusd_fixed_0p00125_enters_and_dll_room_skip_is_explained(sim):
+    # Live skip 11:01Z: fixed 12.5 pips, stop 4.57 pips. With a full risk budget it sizes at the fixed target.
+    sz = sim.size_trade("EURUSD", 1, 0.000536, tdist=0.00125, sdist=0.0004568, entry=1.1100,
+                        scalp={"target_source": "fixed", "levels": []})
+    _ok(sz, sim)
+    assert sz["target_source"] == "fixed" and sz["contract"] == "6E" and sz["qty"] == 5
+    # The live account had already lost $1,411.85 of its $1,800 DLL that day -> budget < $381: explicit reason
+    sim._roll_day(T_NY)
+    sim.s["account"]["balance"] -= 1411.85
+    assert sim.size_trade("EURUSD", 1, 0.000536, tdist=0.00125, sdist=0.0004568) is None
+    assert sim.last_size_why.startswith("DLL room")
+
+
+def _rec(t, sym="US100", px=20000.0, atr=44.0, levels=None):
+    return {"run_at_utc": t.isoformat(), "signals": [{
+        "symbol": sym, "action": "BUY", "model_action": "BUY", "entry": px, "stop_loss": px - 46, "take_profit": px + 5,
+        "confidence": 0.8, "rr_local": 0.1, "last_close": px, "atr": atr, "model_risk_pct": None, "reasons": [],
+        "signal_candle": {"high": px + 2, "low": px - 43.8}, "levels": levels or [
+            {"type": "resistance", "label": "Session High", "price": px + 4.83}]}]}
+
+
+def test_end_to_end_fill_logs_target_source_and_sizing(sim):
+    t = T_NY
+    assert sim.on_record(_rec(t), t)[0]["taken"]
+    px = 20000.0
+    df = pd.DataFrame([[px, px + 1, px - 1, px]], columns=["open", "high", "low", "close"],
+                      index=pd.DatetimeIndex([t + timedelta(minutes=1)]))
+    sim.process({"US100": df}, t + timedelta(minutes=2))
+    assert sim.s["positions"], "should have entered"
+    p = sim.s["positions"][0]
+    assert p["target_source"].startswith("extended") and 381 <= p["target_usd"] <= 1000 and p["risk_usd"] <= 1500
+    assert p["target"] - p["entry"] == pytest.approx(p["telemetry"]["planned"]["tdist"])
+    day = t.astimezone(__import__("zoneinfo").ZoneInfo(sim.cfg["general"]["session_tz"])).strftime("%Y-%m-%d")
+    ev = [json.loads(x) for x in (sim.logs_dir / day / "lucid_events.jsonl").read_text().splitlines()]
+    entry = [e for e in ev if e["event"] == "entry"][0]
+    assert entry["target_source"] == p["target_source"] and "fewest" in entry["sizing"]
+
+
+def test_panel_take_profit_matches_sim_plan(cfg):
+    ctx = {"live_price": 20000.0, "atr": 44.0, "digits": 2, "signal_candle": {"high": 20002.0, "low": 19956.2},
+           "levels": [{"type": "resistance", "label": "Session High", "price": 20004.83}]}
+    sig = apply_server_levels({"action": "BUY", "entry": 20000.0}, ctx, cfg, "US100")
+    plan = sig["scalp"]["lucid_plan"]
+    assert sig["take_profit"] == pytest.approx(20000.0 + plan["tdist"])
+    assert sig["scalp"]["target_source"] == plan["target_source"] and plan["target_source"].startswith("extended")
+    # BTC is not a Lucid product: scalp target unchanged
+    b = apply_server_levels({"action": "BUY", "entry": 74000.0},
+                            {"live_price": 74000.0, "atr": 300.0, "digits": 2,
+                             "signal_candle": {"high": 74100, "low": 73800}}, cfg, "BTCUSD")
+    assert "lucid_plan" not in b["scalp"] and b["take_profit"] == pytest.approx(74100.0)
+
+
+def test_reset_token_archives_and_starts_fresh(cfg, tmp_path):
+    st = tmp_path / "state"
+    cfg["lucid"]["reset_token"] = None
+    s = LucidSim(cfg, st, tmp_path / "logs")
+    s.s["account"].update(balance=98588.15, realized_pnl=-1411.85, trades=7)
+    s.s["pending"] = [{"symbol": "US100"}]
+    s.save()
+    cfg["lucid"]["reset_token"] = "tok-1"
+    cfg["lucid"]["reset_reason"] = "target sizing bug fix"
+    s2 = LucidSim(cfg, st, tmp_path / "logs")
+    a = s2.s["account"]
+    assert (a["balance"], a["highest_close"], a["mll_floor"], a["realized_pnl"], a["trades"]) == \
+        (100000.0, 100000.0, 97000.0, 0.0, 0)
+    assert s2.s["positions"] == [] and s2.s["pending"] == [] and s2.s["reset_token"] == "tok-1"
+    arch = list(st.glob("account_pre_reset_*.json"))
+    assert len(arch) == 1 and json.loads(arch[0].read_text())["account"]["balance"] == 98588.15
+    # idempotent: loading again does not reset again
+    s2.s["account"]["balance"] = 100250.0; s2.save()
+    assert LucidSim(cfg, st, tmp_path / "logs").s["account"]["balance"] == 100250.0
+    evs = [json.loads(x) for f in (tmp_path / "logs").rglob("lucid_events.jsonl") for x in f.read_text().splitlines()]
+    r = [e for e in evs if e["event"] == "reset"]
+    assert len(r) == 1 and r[0]["reason"] == "target sizing bug fix" and r[0]["previous"]["balance"] == 98588.15

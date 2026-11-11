@@ -99,10 +99,17 @@ def test_sizing_net_of_commission_all_symbols(sim):
 
 
 def test_sizing_skips_when_381_unreachable_at_cap(sim):
-    """With max_minis=1, a 5-pt target cannot clear $381 on MNQ or NQ -> None (SKIP)."""
+    """A stop so wide that even 1 MNQ breaks the $1,500 risk cap -> None (SKIP) with the reason."""
+    sz = sim.size_trade("US100", 1, ATR, tdist=5.0, sdist=800.0)
+    assert sz is None and "cannot reach $381" in sim.last_size_why
+
+
+def test_sizing_extends_small_target_instead_of_skipping(sim):
+    """max_minis=1, 5-pt target: extended to ~$750 NET on 1 NQ instead of skipping."""
     sim.L["max_minis"] = 1
     sz = sim.size_trade("US100", 1, ATR, tdist=5.0, sdist=10.0)
-    assert sz is None
+    assert sz["contract"] == "NQ" and sz["qty"] == 1 and sz["target_source"] == "extended:aim_net"
+    assert 381 <= sz["target_usd"] <= 1000 and sz["tdist"] <= ATR
 
 
 def test_format_status_mentions_override(sim):

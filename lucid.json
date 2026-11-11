@@ -1,10 +1,19 @@
 {
-  "updated_at": "2026-11-11T20:50:32.233291+00:00",
+  "updated_at": "2026-11-11T20:52:31.427611+00:00",
   "paper_only": true,
   "plan": "LucidPro 100K (DLL on)",
   "exit_mode": "gemini_only",
   "card": "SL: none \u00b7 TP: none \u00b7 exit: Gemini",
-  "breaches": [],
+  "breaches": [
+    {
+      "t": "2026-11-11T20:49:00+00:00",
+      "day": "2026-11-11",
+      "kind": "DLL",
+      "level": 98200.0,
+      "equity": 98002.13,
+      "note": "log-only (gemini_only): no block, no forced close"
+    }
+  ],
   "breach_note": "DLL / MLL / 3.5% breaker are log-only (no block, no forced close)",
   "sizing_rule": "full-size futures only (NQ, GC, 6E, 6B), 1-40 contracts sized as if risk were 0.8 ATR at $1500 (notional reference only); no stop, no target, exit = Gemini CLOSE only",
   "reset": {
@@ -17,15 +26,15 @@
     "phase": "eval",
     "start_balance": 100000.0,
     "balance": 99991.35,
-    "equity": 98366.79,
+    "equity": 97805.57,
     "realized_pnl_since_reset": 0.0,
-    "open_pnl": -1624.56,
+    "open_pnl": -2185.78,
     "commission_on_open": 8.65,
     "trades_since_reset": 0,
     "wins": 0,
     "losses": 0,
     "mll_floor": 97000.0,
-    "mll_room": 1366.79,
+    "mll_room": 805.57,
     "dll": 1800.0,
     "day_realized": 0.0,
     "day_locked": null,
@@ -41,8 +50,8 @@
       "entry": 3985.2,
       "stop": null,
       "target": null,
-      "last": 3987.825,
-      "unrealized": -787.5,
+      "last": 3987.698,
+      "unrealized": -749.4,
       "risk_usd": null,
       "target_usd_net": null,
       "target_source": "none (gemini_only)"
@@ -56,8 +65,8 @@
       "entry": 28461.75,
       "stop": null,
       "target": null,
-      "last": 28419.897,
-      "unrealized": -837.06,
+      "last": 28389.931,
+      "unrealized": -1436.38,
       "risk_usd": null,
       "target_usd_net": null,
       "target_source": "none (gemini_only)"
@@ -65,5 +74,5 @@
   ],
   "pending": 0,
   "recent_trades": [],
-  "last_processed": "2026-11-11T20:49:00+00:00"
+  "last_processed": "2026-11-11T20:51:00+00:00"
 }

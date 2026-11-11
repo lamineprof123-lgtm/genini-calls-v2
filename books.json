@@ -1,5 +1,5 @@
 {
-  "updated_at_utc": "2026-11-11T19:02:30.060058+00:00",
+  "updated_at_utc": "2026-11-11T19:04:18.994935+00:00",
   "paper_only": true,
   "note": "Same Lucid entries in all three; books exit via Gemini (hard stop, 16:45 ET flat, 3.5% breaker, 90 min max hold). Baseline = the Lucid account (exit_mode=gemini: gemini = follows the 1-strike book's CLOSE) on the same entry ids.",
   "check_seconds": 18,
@@ -50,12 +50,14 @@
     }
   },
   "baseline": {
-    "net_pnl": 0,
-    "trades": 0,
+    "net_pnl": -1097.0,
+    "trades": 1,
     "wins": 0,
-    "losses": 0,
-    "win_rate": null,
-    "avg_hold_min": null,
-    "exit_reasons": {}
+    "losses": 1,
+    "win_rate": 0.0,
+    "avg_hold_min": 9.0,
+    "exit_reasons": {
+      "stop": 1
+    }
   }
 }

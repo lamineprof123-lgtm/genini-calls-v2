@@ -2,7 +2,7 @@
 
 Post-reset account only (pre-reset trades listed separately); paper trades only; net P&L after round-trip commission
 
-Updated: 2026-11-12 00:18:31 (Dubai UTC+4)
+Updated: 2026-11-12 00:22:30 (Dubai UTC+4)
 
 **Every bucket with n < 20 is LOW CONFIDENCE. Descriptive only; no proven edge.**
 
@@ -77,11 +77,12 @@ No observations yet.
 
 None.
 
-## Entry skips (25)
+## Entry skips (27)
 
 | Reason | Count |
 |---|---:|
 | already_position_or_pending | 25 |
+| stop 0.25 atr from entry (min 0.25) | 2 |
 
 Legacy records without telemetry remain in the totals and are grouped as unknown.
 MFE/MAE are gross price excursions, not hypothetical net realized P&L. Bar-data exit-bar extremes are ambiguous.

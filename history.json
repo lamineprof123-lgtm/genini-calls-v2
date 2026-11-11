@@ -1,47 +1,5 @@
 [
   {
-    "signal_at": "2026-11-11T16:58:20.020933+00:00",
-    "tz": "Asia/Dubai",
-    "model": "gemini-3.6-flash",
-    "dry_run": false,
-    "trades": [
-      {
-        "symbol": "EURUSD",
-        "name": "EURO",
-        "action": "SELL",
-        "entry": 1.10939,
-        "stop_loss": 1.10969,
-        "take_profit": 1.10826,
-        "rr": 3.767,
-        "confidence": 0.72,
-        "digits": 5,
-        "session": "NEW_YORK_SESSION",
-        "cvd_label": "BEARISH"
-      },
-      {
-        "symbol": "US100",
-        "name": "NASDAQ",
-        "action": "BUY",
-        "entry": 28509.99,
-        "stop_loss": 28416.68,
-        "take_profit": 28514.99,
-        "rr": 0.054,
-        "confidence": 0.82,
-        "digits": 2,
-        "session": "NEW_YORK_SESSION",
-        "cvd_label": "BULLISH"
-      }
-    ],
-    "no_trade": [
-      "XAUUSD",
-      "GBPUSD",
-      "BTCUSD"
-    ],
-    "analysis_failed": false,
-    "breaker_halted": false,
-    "written_at": "2026-11-11T16:58:31.043423+00:00"
-  },
-  {
     "signal_at": "2026-11-11T17:00:20.093445+00:00",
     "tz": "Asia/Dubai",
     "model": "gemini-3.6-flash",
@@ -1629,5 +1587,36 @@
     "analysis_failed": false,
     "breaker_halted": false,
     "written_at": "2026-11-11T18:36:32.843077+00:00"
+  },
+  {
+    "signal_at": "2026-11-11T18:38:20.002184+00:00",
+    "tz": "Asia/Dubai",
+    "model": "gemini-3.6-flash",
+    "dry_run": false,
+    "trades": [
+      {
+        "symbol": "XAUUSD",
+        "name": "GOLD",
+        "action": "SELL",
+        "entry": 3990.41,
+        "stop_loss": 3993.92,
+        "take_profit": null,
+        "rr": null,
+        "confidence": 0.85,
+        "digits": 2,
+        "exit": "Gemini",
+        "session": "NEW_YORK_SESSION",
+        "cvd_label": "BEARISH"
+      }
+    ],
+    "no_trade": [
+      "EURUSD",
+      "GBPUSD",
+      "US100",
+      "BTCUSD"
+    ],
+    "analysis_failed": false,
+    "breaker_halted": false,
+    "written_at": "2026-11-11T18:38:30.722592+00:00"
   }
 ]

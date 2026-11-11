@@ -2,7 +2,7 @@
 
 Post-reset account only (pre-reset trades listed separately); paper trades only; net P&L after round-trip commission
 
-Updated: 2026-11-11 22:32:31 (Dubai UTC+4)
+Updated: 2026-11-11 22:34:31 (Dubai UTC+4)
 
 **Every bucket with n < 20 is LOW CONFIDENCE. Descriptive only; no proven edge.**
 
@@ -92,11 +92,12 @@ Ranked by net P&L; small samples are not a strategy recommendation.
 |---|---:|---:|---:|---:|---:|---:|---|
 | NEW_YORK_SESSION × above_vah × CVD yes | 1 | 0.0% | $-693.10 | n/a | $-693.10 | $-693.10 | LOW CONFIDENCE |
 
-## Entry skips (40)
+## Entry skips (41)
 
 | Reason | Count |
 |---|---:|
 | already_position_or_pending | 28 |
+| dll room at queue: dll room: risk budget $-148 < min_risk_usd $381 (open risk $1010 + pending $0; daily loss limit nearly used; no new entries until it resets) | 1 |
 | dll room at queue: dll room: risk budget $-165 < min_risk_usd $381 (open risk $1010 + pending $0; daily loss limit nearly used; no new entries until it resets) | 1 |
 | pending cancelled at fill: dll room: risk budget $-93 < min_risk_usd $381 (open risk $1010 + pending $0; daily loss limit nearly used; no new entries until it resets) | 1 |
 | sizing_unreachable | 9 |

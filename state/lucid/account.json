@@ -1,7 +1,7 @@
 {
   "version": 1,
   "created_at": "2026-11-09T13:59:39.073020+00:00",
-  "last_processed": "2026-11-11T16:57:00+00:00",
+  "last_processed": "2026-11-11T16:59:00+00:00",
   "account": {
     "no": 1,
     "phase": "eval",
@@ -24,314 +24,84 @@
   "positions": [],
   "pending": [
     {
-      "symbol": "XAUUSD",
-      "side": -1,
-      "created": "2026-11-11T16:56:29.322425+00:00",
-      "fill_after": "2026-11-11T16:57:00+00:00",
-      "expires": "2026-11-11T17:07:00+00:00",
-      "atr": 6.962,
-      "scalp": {
-        "action": "SELL",
-        "side": -1,
-        "entry": 3999.32,
-        "stop_loss": 4005.94,
-        "take_profit": 3998.48,
-        "sdist": 6.61810000000014,
-        "tdist": 0.8407600000000457,
-        "stop_source": "structure",
-        "target_source": "structure:Session Low",
-        "rr": 0.127,
-        "structure_stop": 4005.9381000000003,
-        "atr_stop": 4004.8896,
-        "fixed_tp": 3998.07,
-        "structure_tp": 3998.47924,
-        "structure_label": "Session Low",
-        "candle": {
-          "high": 4005.59,
-          "low": 3998.34
-        }
-      },
-      "session": "NEW_YORK_SESSION",
-      "telemetry": {
-        "symbol": "XAUUSD",
-        "session": "NEW_YORK_SESSION",
-        "last_close": 3999.99,
-        "atr": 6.962,
-        "vwap": 4039.27,
-        "ema20": 4021.29,
-        "ema50": 4034.87,
-        "price_vs_vwap": {
-          "side": "below",
-          "dist_atr": -5.6421
-        },
-        "price_vs_ema50": {
-          "side": "below",
-          "dist_atr": -5.0101
-        },
-        "vwap_aligned_with_side": true,
-        "ema50_aligned_with_side": true,
-        "poc": 4044.2,
-        "vah": 4062.68,
-        "val": 4032.56,
-        "price_vs_value_area": "below_val",
-        "dist_to_poc_atr": -6.3502,
-        "cvd": -2.72,
-        "cvd_label": "BEARISH",
-        "cvd_slope": -0.96,
-        "cvd_agrees_with_side": true,
-        "rvol": 0.99,
-        "rvol_spike": false,
-        "rvol_bars_since_spike": 8,
-        "atr_band_z": -3.0595,
-        "atr_upper": 4035.21,
-        "atr_lower": 4007.36,
-        "nearest_sr": {
-          "above": {
-            "price": 4013.36,
-            "label": "Prev Low",
-            "dist_atr": 1.9204
-          },
-          "below": {
-            "price": 3998.34,
-            "label": "Session Low",
-            "dist_atr": 0.237
-          }
-        },
-        "gemini": {
-          "action": "SELL",
-          "confidence": 0.82,
-          "confidence_band": ">=0.8",
-          "rationale": "Price is below VAL 4032.56 and below POC 4044.20. CVD -2.72 is BEARISH with negative slope -0.96 confirming selling flow. SESSION is NEW_YORK_SESSION. Price is well below VWAP and EMA50, stretching near lower ATR band 4007.36 with RVOL high on the drop. Session Low at 3998.34 is under heavy pressure. SELL trade on downward expansion.",
-          "model": "gemini-3.6-flash",
-          "model_action": "SELL"
-        },
-        "scalp": {
-          "stop_basis": "structure",
-          "target_basis": "structure:Session Low",
-          "tdist": 0.8407600000000457,
-          "sdist": 6.61810000000014,
-          "structure_label": "Session Low"
-        },
-        "planned": {
-          "tdist": 0.8407600000000457,
-          "sdist": 6.61810000000014,
-          "qty": null,
-          "contract": null,
-          "target_usd_net": null,
-          "risk_usd": null
-        },
-        "run_at_utc": "2026-11-11T16:56:20.030202+00:00",
-        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/205620.json/XAUUSD.png"
-      },
-      "gemini": {
-        "action": "SELL",
-        "entry": 3999.32,
-        "stop_loss": 4005.94,
-        "take_profit": 3998.48,
-        "confidence": 0.82,
-        "rr": 0.127,
-        "shown_on_site": true,
-        "basis": "site signal",
-        "run_at_utc": "2026-11-11T16:56:20.030202+00:00",
-        "session": "NEW_YORK_SESSION",
-        "rationale": "Price is below VAL 4032.56 and below POC 4044.20. CVD -2.72 is BEARISH with negative slope -0.96 confirming selling flow. SESSION is NEW_YORK_SESSION. Price is well below VWAP and EMA50, stretching near lower ATR band 4007.36 with RVOL high on the drop. Session Low at 3998.34 is under heavy pressure. SELL trade on downward expansion.",
-        "model": "gemini-3.6-flash"
-      }
-    },
-    {
-      "symbol": "EURUSD",
-      "side": -1,
-      "created": "2026-11-11T16:56:29.322425+00:00",
-      "fill_after": "2026-11-11T16:57:00+00:00",
-      "expires": "2026-11-11T17:07:00+00:00",
-      "atr": 0.000648,
-      "scalp": {
-        "action": "SELL",
-        "side": -1,
-        "entry": 1.10926,
-        "stop_loss": 1.10969,
-        "take_profit": 1.10826,
-        "sdist": 0.0004324000000002215,
-        "tdist": 0.0009950000000000792,
-        "stop_source": "structure",
-        "target_source": "structure:Session Low",
-        "rr": 2.301,
-        "structure_stop": 1.1096924000000001,
-        "atr_stop": 1.1097784,
-        "fixed_tp": 1.10801,
-        "structure_tp": 1.1082649999999998,
-        "structure_label": "Session Low",
-        "candle": {
-          "high": 1.10966,
-          "low": 1.10921
-        }
-      },
-      "session": "NEW_YORK_SESSION",
-      "telemetry": {
-        "symbol": "EURUSD",
-        "session": "NEW_YORK_SESSION",
-        "last_close": 1.10923,
-        "atr": 0.000648,
-        "vwap": 1.11292,
-        "ema20": 1.11061,
-        "ema50": 1.11267,
-        "price_vs_vwap": {
-          "side": "below",
-          "dist_atr": -5.6944
-        },
-        "price_vs_ema50": {
-          "side": "below",
-          "dist_atr": -5.3086
-        },
-        "vwap_aligned_with_side": true,
-        "ema50_aligned_with_side": true,
-        "poc": 1.11376,
-        "vah": 1.117,
-        "val": 1.10982,
-        "price_vs_value_area": "below_val",
-        "dist_to_poc_atr": -6.9907,
-        "cvd": -17271.56,
-        "cvd_label": "BEARISH",
-        "cvd_slope": -1216.71,
-        "cvd_agrees_with_side": true,
-        "rvol": 0.722,
-        "rvol_spike": false,
-        "rvol_bars_since_spike": 8,
-        "atr_band_z": -2.1296,
-        "atr_upper": 1.11191,
-        "atr_lower": 1.10931,
-        "nearest_sr": {
-          "above": {
-            "price": 1.11456,
-            "label": "Prev Low",
-            "dist_atr": 8.2253
-          },
-          "below": {
-            "price": 1.10824,
-            "label": "Session Low",
-            "dist_atr": 1.5278
-          }
-        },
-        "gemini": {
-          "action": "SELL",
-          "confidence": 0.85,
-          "confidence_band": ">=0.8",
-          "rationale": "Price trades below VAL 1.10982 and below POC 1.11376. CVD is heavy BEARISH -17272 with negative slope -1216.71. SESSION is NEW_YORK_SESSION. Price is cleanly below VWAP and EMA50 baseline, penetrating the lower ATR band 1.10931. Confirmed by RVOL spikes earlier. SELL momentum aligns across all indicators.",
-          "model": "gemini-3.6-flash",
-          "model_action": "SELL"
-        },
-        "scalp": {
-          "stop_basis": "structure",
-          "target_basis": "structure:Session Low",
-          "tdist": 0.0009950000000000792,
-          "sdist": 0.0004324000000002215,
-          "structure_label": "Session Low"
-        },
-        "planned": {
-          "tdist": 0.0009950000000000792,
-          "sdist": 0.0004324000000002215,
-          "qty": null,
-          "contract": null,
-          "target_usd_net": null,
-          "risk_usd": null
-        },
-        "run_at_utc": "2026-11-11T16:56:20.030202+00:00",
-        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/205620.json/EURUSD.png"
-      },
-      "gemini": {
-        "action": "SELL",
-        "entry": 1.10926,
-        "stop_loss": 1.10969,
-        "take_profit": 1.10826,
-        "confidence": 0.85,
-        "rr": 2.326,
-        "shown_on_site": true,
-        "basis": "site signal",
-        "run_at_utc": "2026-11-11T16:56:20.030202+00:00",
-        "session": "NEW_YORK_SESSION",
-        "rationale": "Price trades below VAL 1.10982 and below POC 1.11376. CVD is heavy BEARISH -17272 with negative slope -1216.71. SESSION is NEW_YORK_SESSION. Price is cleanly below VWAP and EMA50 baseline, penetrating the lower ATR band 1.10931. Confirmed by RVOL spikes earlier. SELL momentum aligns across all indicators.",
-        "model": "gemini-3.6-flash"
-      }
-    },
-    {
       "symbol": "US100",
       "side": 1,
-      "created": "2026-11-11T16:56:29.322425+00:00",
-      "fill_after": "2026-11-11T16:57:00+00:00",
-      "expires": "2026-11-11T17:07:00+00:00",
-      "atr": 70.865,
+      "created": "2026-11-11T17:00:31.296734+00:00",
+      "fill_after": "2026-11-11T17:01:00+00:00",
+      "expires": "2026-11-11T17:11:00+00:00",
+      "atr": 69.98,
       "scalp": {
         "action": "BUY",
         "side": 1,
-        "entry": 28488.74,
-        "stop_loss": 28416.68,
-        "take_profit": 28493.74,
-        "sdist": 72.06324999999924,
+        "entry": 28506.9,
+        "stop_loss": 28452.71,
+        "take_profit": 28511.9,
+        "sdist": 54.189000000002125,
         "tdist": 5.0,
         "stop_source": "structure",
         "target_source": "fixed",
-        "rr": 0.069,
-        "structure_stop": 28416.676750000002,
-        "atr_stop": 28432.048000000003,
-        "fixed_tp": 28493.74,
-        "structure_tp": null,
-        "structure_label": null,
+        "rr": 0.092,
+        "structure_stop": 28452.711,
+        "atr_stop": 28450.916,
+        "fixed_tp": 28511.9,
+        "structure_tp": 28513.290399999998,
+        "structure_label": "Session High",
         "candle": {
-          "high": 28472.65,
-          "low": 28420.22
+          "high": 28514.69,
+          "low": 28456.21
         }
       },
       "session": "NEW_YORK_SESSION",
       "telemetry": {
         "symbol": "US100",
         "session": "NEW_YORK_SESSION",
-        "last_close": 28459.46,
-        "atr": 70.865,
-        "vwap": 28158.44,
-        "ema20": 28310.1,
-        "ema50": 28209.69,
+        "last_close": 28514.06,
+        "atr": 69.98,
+        "vwap": 28163.5,
+        "ema20": 28329.52,
+        "ema50": 28221.65,
         "price_vs_vwap": {
           "side": "above",
-          "dist_atr": 4.2478
+          "dist_atr": 5.0094
         },
         "price_vs_ema50": {
           "side": "above",
-          "dist_atr": 3.5246
+          "dist_atr": 4.1785
         },
         "vwap_aligned_with_side": true,
         "ema50_aligned_with_side": true,
-        "poc": 28264.1,
-        "vah": 28300.06,
-        "val": 28055.55,
+        "poc": 28263.5,
+        "vah": 28316.78,
+        "val": 28057.98,
         "price_vs_value_area": "above_vah",
-        "dist_to_poc_atr": 2.7568,
-        "cvd": 12.37,
+        "dist_to_poc_atr": 3.5805,
+        "cvd": 13.48,
         "cvd_label": "BULLISH",
-        "cvd_slope": 2.95,
+        "cvd_slope": 2.69,
         "cvd_agrees_with_side": true,
-        "rvol": 0.969,
+        "rvol": 0.853,
         "rvol_spike": false,
-        "rvol_bars_since_spike": 8,
-        "atr_band_z": 2.1077,
-        "atr_upper": 28451.83,
-        "atr_lower": 28168.37,
+        "rvol_bars_since_spike": 9,
+        "atr_band_z": 2.637,
+        "atr_upper": 28469.48,
+        "atr_lower": 28189.56,
         "nearest_sr": {
           "above": {
-            "price": 28472.65,
+            "price": 28514.69,
             "label": "Session High",
-            "dist_atr": 0.1861
+            "dist_atr": 0.009
           },
           "below": {
             "price": 28083.64,
             "label": "S/R",
-            "dist_atr": 5.3033
+            "dist_atr": 6.1506
           }
         },
         "gemini": {
           "action": "BUY",
-          "confidence": 0.88,
+          "confidence": 0.82,
           "confidence_band": ">=0.8",
-          "rationale": "Price is well above VAH 28300.06 and POC 28264.10. CVD is +12.37 BULLISH with positive slope +2.95. SESSION is NEW_YORK_SESSION. Price is surging above VWAP, EMA50, and upper ATR band 28451.83. Dukascopy tick volume note applies (lack of yellow RVOL bar is expected on US100), structure and orderflow strongly support BUY trend continuation.",
+          "rationale": "Price is well above VAH (28316.78) and far above POC (28263.50), signaling clear trend expansion. CVD +13.48 is strongly BULLISH with positive slope (+2.69). NEW_YORK_SESSION active. Price holds firm well above VWAP (28163.50) and EMA50 (28221.65), pushing above the upper ATR band (28469.48). Dukascopy index tick volume rarely prints RVOL > 2.0 (caveat applies), but the price action and CVD demonstrate clean bullish continuation into session highs. Small dip to 28506.9 on forming bar presents an entry setup.",
           "model": "gemini-3.6-flash",
           "model_action": "BUY"
         },
@@ -339,32 +109,32 @@
           "stop_basis": "structure",
           "target_basis": "fixed",
           "tdist": 5.0,
-          "sdist": 72.06324999999924,
-          "structure_label": null
+          "sdist": 54.189000000002125,
+          "structure_label": "Session High"
         },
         "planned": {
           "tdist": 5.0,
-          "sdist": 72.06324999999924,
+          "sdist": 54.189000000002125,
           "qty": null,
           "contract": null,
           "target_usd_net": null,
           "risk_usd": null
         },
-        "run_at_utc": "2026-11-11T16:56:20.030202+00:00",
-        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/205620.json/US100.png"
+        "run_at_utc": "2026-11-11T17:00:20.093445+00:00",
+        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/210020.json/US100.png"
       },
       "gemini": {
         "action": "BUY",
-        "entry": 28488.74,
-        "stop_loss": 28416.68,
-        "take_profit": 28493.74,
-        "confidence": 0.88,
-        "rr": 0.069,
+        "entry": 28506.9,
+        "stop_loss": 28452.71,
+        "take_profit": 28511.9,
+        "confidence": 0.82,
+        "rr": 0.092,
         "shown_on_site": true,
         "basis": "site signal",
-        "run_at_utc": "2026-11-11T16:56:20.030202+00:00",
+        "run_at_utc": "2026-11-11T17:00:20.093445+00:00",
         "session": "NEW_YORK_SESSION",
-        "rationale": "Price is well above VAH 28300.06 and POC 28264.10. CVD is +12.37 BULLISH with positive slope +2.95. SESSION is NEW_YORK_SESSION. Price is surging above VWAP, EMA50, and upper ATR band 28451.83. Dukascopy tick volume note applies (lack of yellow RVOL bar is expected on US100), structure and orderflow strongly support BUY trend continuation.",
+        "rationale": "Price is well above VAH (28316.78) and far above POC (28263.50), signaling clear trend expansion. CVD +13.48 is strongly BULLISH with positive slope (+2.69). NEW_YORK_SESSION active. Price holds firm well above VWAP (28163.50) and EMA50 (28221.65), pushing above the upper ATR band (28469.48). Dukascopy index tick volume rarely prints RVOL > 2.0 (caveat applies), but the price action and CVD demonstrate clean bullish continuation into session highs. Small dip to 28506.9 on forming bar presents an entry setup.",
         "model": "gemini-3.6-flash"
       }
     }
@@ -379,10 +149,10 @@
     "traded": true
   },
   "last_price": {
-    "US100": 28483.054,
+    "US100": 28514.064,
     "GBPUSD": 1.32812,
-    "EURUSD": 1.10922,
-    "XAUUSD": 3999.45
+    "EURUSD": 1.10933,
+    "XAUUSD": 4000.015
   },
   "history": [],
   "ledger": {
@@ -411,7 +181,7 @@
     "gross_loss": -2169.1,
     "commissions": 219.6,
     "net_trade_pnl": -1411.85,
-    "skipped_signals": 388,
-    "accepted_signals": 185
+    "skipped_signals": 391,
+    "accepted_signals": 186
   }
 }

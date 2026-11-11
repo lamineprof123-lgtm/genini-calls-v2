@@ -1,7 +1,7 @@
 {
-  "run_dir": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/122620.json",
-  "run_at_utc": "2026-11-11T08:26:20.083925+00:00",
-  "run_at_local": "2026-11-11T12:26:20.083925+04:00",
+  "run_dir": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/122820.json",
+  "run_at_utc": "2026-11-11T08:28:20.080022+00:00",
+  "run_at_local": "2026-11-11T12:28:20.080022+04:00",
   "dry_run": false,
   "model": "gemini-3.6-flash",
   "model_version": "gemini-3.6-flash",
@@ -433,7 +433,7 @@
   "data_errors": {},
   "parse_error": null,
   "ai_error": null,
-  "market_summary": "European session shows high-conviction bearish breakouts on USD pairs (EURUSD and GBPUSD) confirmed by high RVOL (>2.0) and strong negative CVD acceleration below Value Area Lows. US100 maintains strong bullish structural momentum above VWAP/EMA50. XAUUSD and BTCUSD are consolidating near session highs without volume confirmation or CVD agreement, warranting HOLD stances until clearer catalysts emerge.",
+  "market_summary": "FX pairs (EURUSD, GBPUSD) are demonstrating strong high-volume downward breakouts below session Value Areas and VWAP baselines during the London session, supported by expanding ATR and strong bearish CVD momentum. XAUUSD, US100, and BTCUSD are holding above VWAP/EMA50 trends but are currently testing structural session highs/ATR upper bounds with low volume or divergent CVD, signaling low-conviction conditions and favoring HOLDs until clear acceptance or rejection occurs.",
   "signals": [
     {
       "symbol": "XAUUSD",
@@ -444,7 +444,7 @@
       "take_profit": null,
       "model_risk_reward": null,
       "rr_local": null,
-      "confidence": 0.45,
+      "confidence": 0.55,
       "model_risk_pct": null,
       "risk_pct": null,
       "risk_amount": 0.0,
@@ -452,10 +452,10 @@
       "position_lots": 0.0,
       "last_close": 4058.84,
       "atr": 5.73,
-      "rationale": "Price is above VAH (4055.48) and above POC (4044.58) in LONDON_SESSION, holding above VWAP (4047.79) and EMA50 (4050.38). However, CVD is NEUTRAL (+0.12) with a negative slope (-0.5), volume is low (RVOL 0.879 without yellow spikes), and price is consolidating near Session High (4066.79) mid-ATR channel without an actionable momentum catalyst. Recommended HOLD.",
+      "rationale": "Price is above VAH (4055.48) and above POC (4044.58). CVD header reads CVD +0.12 (NEUTRAL) with a negative slope (-0.5). Session is LONDON_SESSION. Price is holding above VWAP (4047.79) and EMA50 (4050.38), but is currently retreating from a upper ATR band test/Session High rejection (4066.79) with below-average RVOL (0.879, no yellow spike). Due to neutral CVD, lack of volume confirmation on the high test, and mid-range pullback, high-probability entry is lacking.",
       "trend_vs_vwap": "bullish context above VWAP and EMA50",
       "volatility": "normal",
-      "level_event": "rejection near Session High 4066.79",
+      "level_event": "rejection at Session High 4066.79",
       "downgraded": false,
       "reasons": [],
       "session": "LONDON_SESSION",
@@ -485,10 +485,10 @@
       "position_lots": 5.05,
       "last_close": 1.11476,
       "atr": 0.000432,
-      "rationale": "Price broke below VAL (1.11567) and is testing/breaking Session Low (1.11470) in LONDON_SESSION. Confirmed by strong BEARISH CVD (-6,436 with accelerating slope -5,276.5) and a bright yellow RVOL spike > 2.0 (2.002). Price is below VWAP (1.11610) and EMA50 (1.11644) and touching the lower ATR band (1.11494), confirming a strong downside expansion sequence.",
+      "rationale": "Price has broken below VAL (1.11567) and POC (1.11652). CVD is strongly aligned (CVD -6,436 BEARISH, slope -5276.5). Session is LONDON_SESSION. Price is below VWAP (1.11610) and EMA50 (1.11644) with downward slope. The signal bar pushes the lower ATR band (1.11494) and breaks the Session Low level (1.11470) with a yellow RVOL spike confirmation (RVOL 2.002 > 2.0).",
       "trend_vs_vwap": "bearish breaking below VWAP and EMA50",
       "volatility": "expanding",
-      "level_event": "breakout below Session Low 1.11470 and VAL 1.11567",
+      "level_event": "breakout below Session Low 1.11470",
       "downgraded": false,
       "reasons": [],
       "scalp": {
@@ -532,18 +532,18 @@
       "take_profit": 1.33251,
       "model_risk_reward": 0.068,
       "rr_local": 0.062,
-      "confidence": 0.8,
-      "model_risk_pct": 0.5,
-      "risk_pct": 0.5,
-      "risk_amount": 500.0,
-      "position_units": 520833.333333,
-      "position_lots": 5.2,
+      "confidence": 0.82,
+      "model_risk_pct": 0.6,
+      "risk_pct": 0.6,
+      "risk_amount": 600.0,
+      "position_units": 625000.0,
+      "position_lots": 6.24,
       "last_close": 1.33257,
       "atr": 0.000538,
-      "rationale": "Price is trading below VAL (1.33365) and POC (1.33478) during LONDON_SESSION, breaking key intraday support S/R 1.33320 and pushing down to lower ATR band. Backed by high RVOL spike of 2.582 (bright yellow volume bar) and BEARISH CVD (-1,421 with steep negative slope -3,166.85). Price is well below VWAP (1.33425) and EMA50 (1.33474), signaling strong short-term bearish trend continuation.",
+      "rationale": "Price is trading below VAL (1.33365) and POC (1.33478). CVD confirms strong selling pressure (CVD -1,421 BEARISH, negative slope -3166.85). Session is LONDON_SESSION. Price is cleanly below VWAP (1.33425) and EMA50 (1.33474). The candle is piercing the lower ATR band (1.33283) and breaking past local S/R 1.33320 down to Session Low (1.33248) backed by high volume (RVOL 2.582 > 2.0).",
       "trend_vs_vwap": "bearish below VWAP and EMA50",
       "volatility": "expanding",
-      "level_event": "breakout below VAL 1.33365 and testing Session Low 1.33248",
+      "level_event": "breakout testing Session Low 1.33248",
       "downgraded": false,
       "reasons": [],
       "scalp": {
@@ -580,49 +580,27 @@
     },
     {
       "symbol": "US100",
-      "model_action": "BUY",
-      "action": "BUY",
+      "model_action": "HOLD",
+      "action": "HOLD",
       "entry": 28173.99,
-      "stop_loss": 28125.11,
-      "take_profit": 28178.99,
-      "model_risk_reward": 0.102,
-      "rr_local": 0.102,
-      "confidence": 0.72,
-      "model_risk_pct": 0.5,
-      "risk_pct": 0.5,
-      "risk_amount": 500.0,
-      "position_units": 10.229133,
-      "position_lots": 10.22,
+      "stop_loss": null,
+      "take_profit": null,
+      "model_risk_reward": null,
+      "rr_local": null,
+      "confidence": 0.5,
+      "model_risk_pct": null,
+      "risk_pct": null,
+      "risk_amount": 0.0,
+      "position_units": 0.0,
+      "position_lots": 0.0,
       "last_close": 28173.99,
       "atr": 44.107,
-      "rationale": "Price is inside upper VA near VAH (28187.63) and well above POC (28113.83) in LONDON_SESSION. Trend is strongly bullish above VWAP (28038.86) and EMA50 (27989.73). CVD is BULLISH (+6.60, positive slope +1.37). Dukascopy US100 index volume rarely produces RVOL > 2.0 (caveat applied), but structural higher-low price action along the upper ATR band confirms momentum.",
-      "trend_vs_vwap": "bullish firmly above VWAP and EMA50",
-      "volatility": "expanding",
-      "level_event": "acceptance above S/R 28022.72 approaching Session High 28187.63",
+      "rationale": "Price is inside the Value Area (VAL 27987.93 .. VAH 28187.63) and above POC (28113.83). CVD is CVD +6.60 (BULLISH). Session is LONDON_SESSION. Price remains above VWAP (28038.86) and EMA50 (27989.73). However, the signal candle is hugging the upper ATR band (28189.65) right at the Session High resistance wall (28187.63). Dukascopy tick volume caveat applies (RVOL 1.206, no yellow bar), but being at upper structural resistance inside the value area warrants holding for a breakout confirmation or pull-back.",
+      "trend_vs_vwap": "bullish above VWAP and EMA50",
+      "volatility": "contracting",
+      "level_event": "rejection near Session High 28187.63",
       "downgraded": false,
       "reasons": [],
-      "scalp": {
-        "action": "BUY",
-        "side": 1,
-        "entry": 28173.99,
-        "stop_loss": 28125.11,
-        "take_profit": 28178.99,
-        "sdist": 48.87535000000207,
-        "tdist": 5.0,
-        "stop_source": "structure",
-        "target_source": "fixed",
-        "rr": 0.102,
-        "structure_stop": 28125.11465,
-        "atr_stop": 28138.704400000002,
-        "fixed_tp": 28178.99,
-        "structure_tp": 28186.74786,
-        "structure_label": "Session High",
-        "candle": {
-          "high": 28187.63,
-          "low": 28127.32
-        }
-      },
-      "levels_source": "server_scalp",
       "session": "LONDON_SESSION",
       "cvd": 6.6,
       "cvd_label": "BULLISH",
@@ -642,7 +620,7 @@
       "take_profit": null,
       "model_risk_reward": null,
       "rr_local": null,
-      "confidence": 0.4,
+      "confidence": 0.45,
       "model_risk_pct": null,
       "risk_pct": null,
       "risk_amount": 0.0,
@@ -650,9 +628,9 @@
       "position_lots": 0.0,
       "last_close": 74035.9,
       "atr": 219.496,
-      "rationale": "Price is currently above VAH (73808.59) and POC (73699.92) near Session High (74085.2) in LONDON_SESSION. However, CVD is slightly BEARISH (-0.03), RVOL is very low (0.45 without spikes), and the market is stalling near resistance at the upper ATR band (74150.55). Lack of volume and order-flow confluence makes this a high-risk breakout trap; recommend HOLD.",
-      "trend_vs_vwap": "neutral / bullish chop above VWAP",
-      "volatility": "normal",
+      "rationale": "Price is above VAH (73808.59) and POC (73699.92). However, CVD shows a divergence (CVD -0.03 BEARISH). Session is LONDON_SESSION. Price is above VWAP (73616.71) and EMA50 (73674.64), but recent momentum stalled near upper ATR band (74150.55) leaving a long upper wick at Session High (74085.20). Volume is extremely low (RVOL 0.45, no volume spikes), showing a lack of institutional participation behind the move.",
+      "trend_vs_vwap": "bullish above VWAP and EMA50",
+      "volatility": "contracting",
       "level_event": "rejection at Session High 74085.2",
       "downgraded": false,
       "reasons": [],
@@ -667,31 +645,20 @@
       "val": 73472.7
     }
   ],
-  "gemini_raw_text": "{\n  \"signals\": [\n    {\n      \"symbol\": \"XAUUSD\",\n      \"action\": \"HOLD\",\n      \"entry\": null,\n      \"stop_loss\": null,\n      \"take_profit\": null,\n      \"risk_reward\": null,\n      \"confidence\": 0.45,\n      \"risk_pct\": null,\n      \"trend_vs_vwap\": \"bullish context above VWAP and EMA50\",\n      \"volatility\": \"normal\",\n      \"level_event\": \"rejection near Session High 4066.79\",\n      \"rationale\": \"Price is above VAH (4055.48) and above POC (4044.58) in LONDON_SESSION, holding above VWAP (4047.79) and EMA50 (4050.38). However, CVD is NEUTRAL (+0.12) with a negative slope (-0.5), volume is low (RVOL 0.879 without yellow spikes), and price is consolidating near Session High (4066.79) mid-ATR channel without an actionable momentum catalyst. Recommended HOLD.\"\n    },\n    {\n      \"symbol\": \"EURUSD\",\n      \"action\": \"SELL\",\n      \"entry\": 1.11476,\n      \"stop_loss\": 1.11549,\n      \"take_profit\": 1.1132,\n      \"risk_reward\": 2.14,\n      \"confidence\": 0.78,\n      \"risk_pct\": 0.5,\n      \"trend_vs_vwap\": \"bearish breaking below VWAP and EMA50\",\n      \"volatility\": \"expanding\",\n      \"level_event\": \"breakout below Session Low 1.11470 and VAL 1.11567\",\n      \"rationale\": \"Price broke below VAL (1.11567) and is testing/breaking Session Low (1.11470) in LONDON_SESSION. Confirmed by strong BEARISH CVD (-6,436 with accelerating slope -5,276.5) and a bright yellow RVOL spike > 2.0 (2.002). Price is below VWAP (1.11610) and EMA50 (1.11644) and touching the lower ATR band (1.11494), confirming a strong downside expansion sequence.\"\n    },\n    {\n      \"symbol\": \"GBPUSD\",\n      \"action\": \"SELL\",\n      \"entry\": 1.33257,\n      \"stop_loss\": 1.3335,\n      \"take_profit\": 1.3305,\n      \"risk_reward\": 2.23,\n      \"confidence\": 0.8,\n      \"risk_pct\": 0.5,\n      \"trend_vs_vwap\": \"bearish below VWAP and EMA50\",\n      \"volatility\": \"expanding\",\n      \"level_event\": \"breakout below VAL 1.33365 and testing Session Low 1.33248\",\n      \"rationale\": \"Price is trading below VAL (1.33365) and POC (1.33478) during LONDON_SESSION, breaking key intraday support S/R 1.33320 and pushing down to lower ATR band. Backed by high RVOL spike of 2.582 (bright yellow volume bar) and BEARISH CVD (-1,421 with steep negative slope -3,166.85). Price is well below VWAP (1.33425) and EMA50 (1.33474), signaling strong short-term bearish trend continuation.\"\n    },\n    {\n      \"symbol\": \"US100\",\n      \"action\": \"BUY\",\n      \"entry\": 28173.99,\n      \"stop_loss\": 28127.32,\n      \"take_profit\": 28260.0,\n      \"risk_reward\": 1.84,\n      \"confidence\": 0.72,\n      \"risk_pct\": 0.5,\n      \"trend_vs_vwap\": \"bullish firmly above VWAP and EMA50\",\n      \"volatility\": \"expanding\",\n      \"level_event\": \"acceptance above S/R 28022.72 approaching Session High 28187.63\",\n      \"rationale\": \"Price is inside upper VA near VAH (28187.63) and well above POC (28113.83) in LONDON_SESSION. Trend is strongly bullish above VWAP (28038.86) and EMA50 (27989.73). CVD is BULLISH (+6.60, positive slope +1.37). Dukascopy US100 index volume rarely produces RVOL > 2.0 (caveat applied), but structural higher-low price action along the upper ATR band confirms momentum.\"\n    },\n    {\n      \"symbol\": \"BTCUSD\",\n      \"action\": \"HOLD\",\n      \"entry\": null,\n      \"stop_loss\": null,\n      \"take_profit\": null,\n      \"risk_reward\": null,\n      \"confidence\": 0.4,\n      \"risk_pct\": null,\n      \"trend_vs_vwap\": \"neutral / bullish chop above VWAP\",\n      \"volatility\": \"normal\",\n      \"level_event\": \"rejection at Session High 74085.2\",\n      \"rationale\": \"Price is currently above VAH (73808.59) and POC (73699.92) near Session High (74085.2) in LONDON_SESSION. However, CVD is slightly BEARISH (-0.03), RVOL is very low (0.45 without spikes), and the market is stalling near resistance at the upper ATR band (74150.55). Lack of volume and order-flow confluence makes this a high-risk breakout trap; recommend HOLD.\"\n    }\n  ],\n  \"market_summary\": \"European session shows high-conviction bearish breakouts on USD pairs (EURUSD and GBPUSD) confirmed by high RVOL (>2.0) and strong negative CVD acceleration below Value Area Lows. US100 maintains strong bullish structural momentum above VWAP/EMA50. XAUUSD and BTCUSD are consolidating near session highs without volume confirmation or CVD agreement, warranting HOLD stances until clearer catalysts emerge.\"\n}",
+  "gemini_raw_text": "{\n  \"signals\": [\n    {\n      \"symbol\": \"XAUUSD\",\n      \"action\": \"HOLD\",\n      \"entry\": null,\n      \"stop_loss\": null,\n      \"take_profit\": null,\n      \"risk_reward\": null,\n      \"confidence\": 0.55,\n      \"risk_pct\": null,\n      \"trend_vs_vwap\": \"bullish context above VWAP and EMA50\",\n      \"volatility\": \"normal\",\n      \"level_event\": \"rejection at Session High 4066.79\",\n      \"rationale\": \"Price is above VAH (4055.48) and above POC (4044.58). CVD header reads CVD +0.12 (NEUTRAL) with a negative slope (-0.5). Session is LONDON_SESSION. Price is holding above VWAP (4047.79) and EMA50 (4050.38), but is currently retreating from a upper ATR band test/Session High rejection (4066.79) with below-average RVOL (0.879, no yellow spike). Due to neutral CVD, lack of volume confirmation on the high test, and mid-range pullback, high-probability entry is lacking.\"\n    },\n    {\n      \"symbol\": \"EURUSD\",\n      \"action\": \"SELL\",\n      \"entry\": 1.11476,\n      \"stop_loss\": 1.11549,\n      \"take_profit\": 1.1132,\n      \"risk_reward\": 2.14,\n      \"confidence\": 0.78,\n      \"risk_pct\": 0.5,\n      \"trend_vs_vwap\": \"bearish breaking below VWAP and EMA50\",\n      \"volatility\": \"expanding\",\n      \"level_event\": \"breakout below Session Low 1.11470\",\n      \"rationale\": \"Price has broken below VAL (1.11567) and POC (1.11652). CVD is strongly aligned (CVD -6,436 BEARISH, slope -5276.5). Session is LONDON_SESSION. Price is below VWAP (1.11610) and EMA50 (1.11644) with downward slope. The signal bar pushes the lower ATR band (1.11494) and breaks the Session Low level (1.11470) with a yellow RVOL spike confirmation (RVOL 2.002 > 2.0).\"\n    },\n    {\n      \"symbol\": \"GBPUSD\",\n      \"action\": \"SELL\",\n      \"entry\": 1.33257,\n      \"stop_loss\": 1.3335,\n      \"take_profit\": 1.3305,\n      \"risk_reward\": 2.23,\n      \"confidence\": 0.82,\n      \"risk_pct\": 0.6,\n      \"trend_vs_vwap\": \"bearish below VWAP and EMA50\",\n      \"volatility\": \"expanding\",\n      \"level_event\": \"breakout testing Session Low 1.33248\",\n      \"rationale\": \"Price is trading below VAL (1.33365) and POC (1.33478). CVD confirms strong selling pressure (CVD -1,421 BEARISH, negative slope -3166.85). Session is LONDON_SESSION. Price is cleanly below VWAP (1.33425) and EMA50 (1.33474). The candle is piercing the lower ATR band (1.33283) and breaking past local S/R 1.33320 down to Session Low (1.33248) backed by high volume (RVOL 2.582 > 2.0).\"\n    },\n    {\n      \"symbol\": \"US100\",\n      \"action\": \"HOLD\",\n      \"entry\": null,\n      \"stop_loss\": null,\n      \"take_profit\": null,\n      \"risk_reward\": null,\n      \"confidence\": 0.5,\n      \"risk_pct\": null,\n      \"trend_vs_vwap\": \"bullish above VWAP and EMA50\",\n      \"volatility\": \"contracting\",\n      \"level_event\": \"rejection near Session High 28187.63\",\n      \"rationale\": \"Price is inside the Value Area (VAL 27987.93 .. VAH 28187.63) and above POC (28113.83). CVD is CVD +6.60 (BULLISH). Session is LONDON_SESSION. Price remains above VWAP (28038.86) and EMA50 (27989.73). However, the signal candle is hugging the upper ATR band (28189.65) right at the Session High resistance wall (28187.63). Dukascopy tick volume caveat applies (RVOL 1.206, no yellow bar), but being at upper structural resistance inside the value area warrants holding for a breakout confirmation or pull-back.\"\n    },\n    {\n      \"symbol\": \"BTCUSD\",\n      \"action\": \"HOLD\",\n      \"entry\": null,\n      \"stop_loss\": null,\n      \"take_profit\": null,\n      \"risk_reward\": null,\n      \"confidence\": 0.45,\n      \"risk_pct\": null,\n      \"trend_vs_vwap\": \"bullish above VWAP and EMA50\",\n      \"volatility\": \"contracting\",\n      \"level_event\": \"rejection at Session High 74085.2\",\n      \"rationale\": \"Price is above VAH (73808.59) and POC (73699.92). However, CVD shows a divergence (CVD -0.03 BEARISH). Session is LONDON_SESSION. Price is above VWAP (73616.71) and EMA50 (73674.64), but recent momentum stalled near upper ATR band (74150.55) leaving a long upper wick at Session High (74085.20). Volume is extremely low (RVOL 0.45, no volume spikes), showing a lack of institutional participation behind the move.\"\n    }\n  ],\n  \"market_summary\": \"FX pairs (EURUSD, GBPUSD) are demonstrating strong high-volume downward breakouts below session Value Areas and VWAP baselines during the London session, supported by expanding ATR and strong bearish CVD momentum. XAUUSD, US100, and BTCUSD are holding above VWAP/EMA50 trends but are currently testing structural session highs/ATR upper bounds with low volume or divergent CVD, signaling low-conviction conditions and favoring HOLDs until clear acceptance or rejection occurs.\"\n}",
   "gemini_usage": {
-    "cache_tokens_details": [
-      {
-        "modality": "TEXT",
-        "token_count": 5404
-      },
-      {
-        "modality": "IMAGE",
-        "token_count": 4600
-      }
-    ],
-    "cached_content_token_count": 10004,
-    "candidates_token_count": 1525,
+    "candidates_token_count": 1612,
     "prompt_token_count": 11961,
     "prompt_tokens_details": [
       {
-        "modality": "IMAGE",
-        "token_count": 5500
-      },
-      {
         "modality": "TEXT",
         "token_count": 6461
+      },
+      {
+        "modality": "IMAGE",
+        "token_count": 5500
       }
     ],
-    "total_token_count": 13486
+    "total_token_count": 13573
   }
 }

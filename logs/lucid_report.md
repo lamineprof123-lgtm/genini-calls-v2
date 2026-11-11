@@ -2,7 +2,7 @@
 
 All days and all accounts; paper trades only; net P&L after round-trip commission
 
-Updated: 2026-11-11 12:46:31 (Dubai UTC+4)
+Updated: 2026-11-11 12:48:30 (Dubai UTC+4)
 
 **Every bucket with n < 20 is LOW CONFIDENCE. Descriptive only; no proven edge.**
 
@@ -58,15 +58,15 @@ Ranked by net P&L; small samples are not a strategy recommendation.
 
 No observations yet.
 
-## Entry skips (36)
+## Entry skips (38)
 
 | Reason | Count |
 |---|---:|
-| already_position_or_pending | 24 |
+| already_position_or_pending | 25 |
 | chase | 6 |
 | session_blocked | 2 |
 | sizing_unreachable | 3 |
-| stop 0.24 atr from entry (min 0.25) | 1 |
+| stop 0.24 atr from entry (min 0.25) | 2 |
 
 Legacy records without telemetry remain in the totals and are grouped as unknown.
 MFE/MAE are gross price excursions, not hypothetical net realized P&L. Bar-data exit-bar extremes are ambiguous.

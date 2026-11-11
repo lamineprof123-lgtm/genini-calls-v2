@@ -1,7 +1,7 @@
 {
   "version": 1,
   "created_at": "2026-11-09T13:59:39.073020+00:00",
-  "last_processed": "2026-11-11T08:46:00+00:00",
+  "last_processed": "2026-11-11T08:47:00+00:00",
   "account": {
     "no": 1,
     "phase": "eval",
@@ -270,14 +270,130 @@
         "run_at_utc": "2026-11-11T08:30:20.089334+00:00",
         "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/123020.json/GBPUSD.png"
       },
-      "mfe": 2.0000000000131024e-05,
+      "mfe": 4.0000000000040004e-05,
       "mae": 0.00046999999999997044,
       "mfe_min": 0.0001445,
       "time_cut_deadline": "2026-11-11T09:01:00+00:00",
       "time_cut_candles": 2
     }
   ],
-  "pending": [],
+  "pending": [
+    {
+      "symbol": "US100",
+      "side": 1,
+      "created": "2026-11-11T08:48:30.486712+00:00",
+      "fill_after": "2026-11-11T08:49:00+00:00",
+      "expires": "2026-11-11T08:59:00+00:00",
+      "atr": 44.165,
+      "scalp": {
+        "action": "BUY",
+        "side": 1,
+        "entry": 28209.62,
+        "stop_loss": 28171.97,
+        "take_profit": 28214.62,
+        "sdist": 37.64824999999837,
+        "tdist": 5.0,
+        "stop_source": "structure",
+        "target_source": "fixed",
+        "rr": 0.133,
+        "structure_stop": 28171.97175,
+        "atr_stop": 28174.288,
+        "fixed_tp": 28214.62,
+        "structure_tp": 28229.966699999997,
+        "structure_label": "Session High",
+        "candle": {
+          "high": 28230.85,
+          "low": 28174.18
+        }
+      },
+      "session": "LONDON_SESSION",
+      "telemetry": {
+        "symbol": "US100",
+        "session": "LONDON_SESSION",
+        "last_close": 28209.62,
+        "atr": 44.165,
+        "vwap": 28047.58,
+        "ema20": 28118.12,
+        "ema50": 28005.49,
+        "price_vs_vwap": {
+          "side": "above",
+          "dist_atr": 3.669
+        },
+        "price_vs_ema50": {
+          "side": "above",
+          "dist_atr": 4.622
+        },
+        "vwap_aligned_with_side": true,
+        "ema50_aligned_with_side": true,
+        "poc": 28111.52,
+        "vah": 28230.85,
+        "val": 27992.18,
+        "price_vs_value_area": "inside",
+        "dist_to_poc_atr": 2.2212,
+        "cvd": 6.84,
+        "cvd_label": "BULLISH",
+        "cvd_slope": 1.65,
+        "cvd_agrees_with_side": true,
+        "rvol": 1.111,
+        "rvol_spike": false,
+        "rvol_bars_since_spike": 64,
+        "atr_band_z": 2.0718,
+        "atr_upper": 28206.45,
+        "atr_lower": 28029.79,
+        "nearest_sr": {
+          "above": {
+            "price": 28230.85,
+            "label": "Session High",
+            "dist_atr": 0.4807
+          },
+          "below": {
+            "price": 28022.72,
+            "label": "S/R",
+            "dist_atr": 4.2319
+          }
+        },
+        "gemini": {
+          "action": "BUY",
+          "confidence": 0.72,
+          "confidence_band": "0.7-0.8",
+          "rationale": "Price is inside Value Area (VAL 27992.18 to VAH 28230.85) but cleanly above POC (28111.52), riding strong upward slope above VWAP (28047.58) and EMA50 (28005.49) during LONDON_SESSION. CVD is BULLISH (+6.84, slope +1.65). While RVOL is 1.111 without yellow spikes (expected per US100 index tick volume caveat), structural momentum is cleanly holding upper ATR band (28206.45) attempting a Session High breakout.",
+          "model": "gemini-3.6-flash",
+          "model_action": "BUY"
+        },
+        "scalp": {
+          "stop_basis": "structure",
+          "target_basis": "fixed",
+          "tdist": 5.0,
+          "sdist": 37.64824999999837,
+          "structure_label": "Session High"
+        },
+        "planned": {
+          "tdist": 5.0,
+          "sdist": 37.64824999999837,
+          "qty": null,
+          "contract": null,
+          "target_usd_net": null,
+          "risk_usd": null
+        },
+        "run_at_utc": "2026-11-11T08:48:20.012000+00:00",
+        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/124820.json/US100.png"
+      },
+      "gemini": {
+        "action": "BUY",
+        "entry": 28209.62,
+        "stop_loss": 28171.97,
+        "take_profit": 28214.62,
+        "confidence": 0.72,
+        "rr": 0.133,
+        "shown_on_site": true,
+        "basis": "site signal",
+        "run_at_utc": "2026-11-11T08:48:20.012000+00:00",
+        "session": "LONDON_SESSION",
+        "rationale": "Price is inside Value Area (VAL 27992.18 to VAH 28230.85) but cleanly above POC (28111.52), riding strong upward slope above VWAP (28047.58) and EMA50 (28005.49) during LONDON_SESSION. CVD is BULLISH (+6.84, slope +1.65). While RVOL is 1.111 without yellow spikes (expected per US100 index tick volume caveat), structural momentum is cleanly holding upper ATR band (28206.45) attempting a Session High breakout.",
+        "model": "gemini-3.6-flash"
+      }
+    }
+  ],
   "next_pos_id": 3,
   "day": {
     "id": "2026-11-11",
@@ -289,8 +405,8 @@
   },
   "last_price": {
     "US100": 28180.92,
-    "GBPUSD": 1.33215,
-    "EURUSD": 1.11484
+    "GBPUSD": 1.332,
+    "EURUSD": 1.11472
   },
   "history": [],
   "ledger": {
@@ -319,7 +435,7 @@
     "gross_loss": 0.0,
     "commissions": 36.0,
     "net_trade_pnl": 0.0,
-    "skipped_signals": 36,
-    "accepted_signals": 11
+    "skipped_signals": 38,
+    "accepted_signals": 12
   }
 }

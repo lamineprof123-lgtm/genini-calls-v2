@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0E1117">
+<title>Project Blue Bird</title>
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+  :root {
+    --bg: #0E1117; --fg: #E6EDF3; --muted: #7D8590; --faint: #3B424C; --line: #1C2129;
+    --buy: #26A69A; --sell: #EF5350; --amber: #F5A524;
+    --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+    --sans: Inter, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; background: var(--bg); color: var(--fg); font-family: var(--sans);
+               -webkit-font-smoothing: antialiased; }
+  body { display: flex; flex-direction: column; min-height: 100dvh; padding: 28px 24px 20px; }
+  header { display: flex; justify-content: space-between; align-items: center; font-size: 12px;
+           letter-spacing: .22em; text-transform: uppercase; color: var(--muted); }
+  .brand { display: inline-flex; align-items: center; line-height: 0; text-decoration: none;
+           flex-shrink: 0; }
+  .brand img { height: 56px; width: auto; display: block; }
+  @media (min-width: 900px) {
+    .brand img { height: 68px; }
+  }
+  .state { display: inline-flex; align-items: center; gap: 8px; letter-spacing: .16em; }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--buy); }
+  .state.paused .dot { background: var(--amber); }
+  .state.paused { color: var(--amber); }
+  .state.live .dot { animation: pulse 2.4s ease-in-out infinite; }
+  @keyframes pulse { 50% { opacity: .25; } }
+  main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+         width: 100%; max-width: 520px; margin: 0 auto; padding: 40px 0; }
+  .view { width: 100%; display: none; flex-direction: column; align-items: center; text-align: center;
+          animation: fade .5s ease; }
+  .view.on { display: flex; }
+  @keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  .eyebrow { font-size: 13px; letter-spacing: .24em; text-transform: uppercase; color: var(--muted); }
+  .count { font-family: var(--mono); font-variant-numeric: tabular-nums; font-weight: 300;
+           font-size: clamp(88px, 27vw, 176px); line-height: 1; letter-spacing: -.04em; margin: 22px 0 18px;
+           background: linear-gradient(100deg,
+             #7DD3FC 0%, #00B4FF 18%, #22D3EE 36%, #00E676 55%, #00B4FF 72%, #7DD3FC 88%, #00E676 100%);
+           background-size: 220% 100%;
+           -webkit-background-clip: text; background-clip: text;
+           color: transparent; -webkit-text-fill-color: transparent;
+           filter: drop-shadow(0 0 10px rgba(0, 180, 255, 0.28))
+                   drop-shadow(0 0 22px rgba(0, 230, 118, 0.16));
+           animation: countGlow 7.5s ease-in-out infinite; }
+  @keyframes countGlow {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .count { animation: none; background-position: 40% 50%; }
+  }
+  .sub { font-size: 15px; color: var(--muted); }
+  .sub-meta { margin-top: 14px; font-size: 12px; color: var(--faint); letter-spacing: .06em; }
+  .sub-meta.warn { color: var(--amber); }
+  .analyzing { font-size: clamp(34px, 9vw, 52px); font-weight: 300; letter-spacing: -.01em; margin: 6px 0 18px; }
+  .analyzing i { font-style: normal; animation: blink 1.4s infinite; }
+  .analyzing i:nth-child(2) { animation-delay: .2s; } .analyzing i:nth-child(3) { animation-delay: .4s; }
+  @keyframes blink { 0%, 80%, 100% { opacity: .15; } 40% { opacity: 1; } }
+  #trades { width: 100%; display: grid; gap: 20px; grid-template-columns: 1fr; }
+  .trade { width: 100%; padding: 8px 0 4px; display: flex; flex-direction: column; align-items: center; }
+  #trades.multi .trade { background: #121722; border: 1px solid var(--line); border-radius: 18px;
+                         padding: 30px 26px 24px; }
+  .sym { font-size: clamp(22px, 6.2vw, 28px); font-weight: 700; letter-spacing: .12em; color: var(--fg); }
+  .sym em { font-style: normal; font-weight: 500; color: var(--muted); }
+  .act { font-size: clamp(76px, 22vw, 128px); font-weight: 800; letter-spacing: -.035em; line-height: 1;
+         margin: 12px 0 30px; }
+  #trades.multi .act { font-size: clamp(68px, 19vw, 96px); margin: 10px 0 24px; }
+  .act.BUY { color: var(--buy); } .act.SELL { color: var(--sell); }
+  .levels { width: 100%; }
+  .row { display: flex; justify-content: space-between; align-items: baseline; padding: 15px 2px;
+         border-top: 1px solid var(--line); }
+  .row:last-child { border-bottom: 1px solid var(--line); }
+  #trades.multi .row:last-child { border-bottom: 0; }
+  .row span { font-size: 13px; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); }
+  .row b { font-family: var(--mono); font-variant-numeric: tabular-nums; font-weight: 500;
+           font-size: clamp(24px, 7vw, 32px); letter-spacing: -.01em; }
+  .row.stop b { color: #F28B87; } .row.target b { color: #5CC8BC; }
+  @media (min-width: 900px) {
+    main.wide { max-width: 1180px; }
+    #trades.n2 { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }
+    #trades.n3, #trades.n4, #trades.n5 { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; }
+    #trades.multi .row b { font-size: 28px; }
+    #trades.n1 .trade { background: #121722; border: 1px solid var(--line); border-radius: 22px;
+                        padding: 40px 44px 30px; }
+    #trades.n1 .row:last-child { border-bottom: 0; }
+    #trades.n1 .act { font-size: 140px; }
+    #trades.n1 .sym { font-size: 30px; }
+  }
+  .rr { margin-top: 16px; font-size: 13px; color: var(--muted); letter-spacing: .06em; }
+  .quiet { margin-top: 40px; font-size: 13px; color: var(--faint); letter-spacing: .04em; line-height: 1.6; }
+  .view.out { opacity: 0; transition: opacity .6s ease; }
+  .pausedBig { font-size: clamp(44px, 12vw, 72px); font-weight: 300; letter-spacing: -.02em; color: var(--amber);
+               margin-bottom: 18px; }
+  .notrade { font-size: clamp(44px, 12vw, 72px); font-weight: 300; letter-spacing: -.02em; color: var(--muted); }
+
+  .hdr-right { display: inline-flex; align-items: center; gap: 14px; }
+  .sound-btn {
+    appearance: none; border: 0; background: transparent; color: var(--muted);
+    width: 34px; height: 34px; border-radius: 10px; display: inline-flex;
+    align-items: center; justify-content: center; cursor: pointer;
+    transition: color .2s ease, background .2s ease;
+  }
+  .sound-btn:hover { color: var(--fg); background: rgba(255,255,255,.04); }
+  .sound-btn.on { color: #7DD3FC; }
+  .sound-btn svg { width: 18px; height: 18px; display: block; }
+  .sound-btn .ico-off { display: none; }
+  .sound-btn:not(.on) .ico-on { display: none; }
+  .sound-btn:not(.on) .ico-off { display: block; }
+
+  #fx-lights {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
+    opacity: 0; transition: opacity .7s ease;
+  }
+  body.fx-on #fx-lights { opacity: 1; }
+  body.fx-out #fx-lights { opacity: 0; transition: opacity .6s ease; }
+  header, main { position: relative; z-index: 1; }
+  .fx-blob {
+    position: absolute; width: 52vmax; height: 52vmax; border-radius: 50%;
+    filter: blur(82px); opacity: .72; will-change: transform;
+    mix-blend-mode: screen;
+  }
+  .fx-blob.b1 {
+    background: radial-gradient(circle, rgba(0,196,255,.98) 0%, rgba(0,180,255,.55) 38%, rgba(0,180,255,0) 70%);
+    top: -16%; left: -20%; animation: fxDrift1 16s ease-in-out infinite;
+  }
+  .fx-blob.b2 {
+    background: radial-gradient(circle, rgba(0,255,140,.95) 0%, rgba(0,230,118,.55) 40%, rgba(0,230,118,0) 70%);
+    bottom: -18%; right: -16%; animation: fxDrift2 18s ease-in-out infinite;
+  }
+  .fx-blob.b3 {
+    background: radial-gradient(circle, rgba(56,224,255,.92) 0%, rgba(34,211,238,.5) 42%, rgba(34,211,238,0) 72%);
+    top: 26%; right: -24%; width: 44vmax; height: 44vmax;
+    animation: fxDrift3 14s ease-in-out infinite; opacity: .62;
+  }
+  .fx-blob.b4 {
+    background: radial-gradient(circle, rgba(0,196,255,.75) 0%, rgba(0,230,118,.55) 42%, transparent 72%);
+    bottom: 6%; left: -18%; width: 46vmax; height: 46vmax;
+    animation: fxDrift4 20s ease-in-out infinite; opacity: .58;
+  }
+  @keyframes fxDrift1 { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(12vw, 10vh) scale(1.12); } }
+  @keyframes fxDrift2 { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-10vw, -12vh) scale(1.1); } }
+  @keyframes fxDrift3 { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-14vw, 8vh) scale(1.15); } }
+  @keyframes fxDrift4 { 0%,100% { transform: translate(0,0) scale(1.05); } 50% { transform: translate(10vw, -8vh) scale(1); } }
+
+  #v-signal.fx-trade { animation: none; }
+  #v-signal.fx-trade.on.pop { animation: sigPop .72s cubic-bezier(.2,1.15,.35,1) both; }
+  #v-signal.fx-trade.on.pop #trades {
+    filter: drop-shadow(0 0 0 rgba(0,180,255,0));
+    animation: sigGlowPulse .72s ease-out both;
+  }
+  @keyframes sigPop {
+    0%   { opacity: 0; transform: scale(.9); }
+    55%  { opacity: 1; transform: scale(1.04); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+  @keyframes sigGlowPulse {
+    0%   { filter: drop-shadow(0 0 0 rgba(0,180,255,0)); }
+    40%  { filter: drop-shadow(0 0 28px rgba(0,180,255,.35)) drop-shadow(0 0 48px rgba(0,230,118,.22)); }
+    100% { filter: drop-shadow(0 0 12px rgba(0,180,255,.12)); }
+  }
+  #v-signal.fx-trade #trades.n1 .trade,
+  #v-signal.fx-trade #trades.multi .trade {
+    background: rgba(14, 17, 23, 0.90);
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(28, 33, 41, 0.95);
+  }
+</style>
+</head>
+<body>
+<div id="fx-lights" aria-hidden="true">
+  <div class="fx-blob b1"></div>
+  <div class="fx-blob b2"></div>
+  <div class="fx-blob b3"></div>
+  <div class="fx-blob b4"></div>
+</div>
+<header>
+  <a class="brand" href="./" aria-label="Project Blue Bird">
+    <img src="logo-bluebird.png" alt="Project Blue Bird" width="82" height="68">
+  </a>
+  <div class="hdr-right">
+    <button type="button" class="sound-btn" id="soundBtn" aria-label="Enable signal sound" aria-pressed="false" title="Sound off">
+      <svg class="ico-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M11 5 6 9H3v6h3l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/>
+      </svg>
+      <svg class="ico-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M11 5 6 9H3v6h3l5 4V5z"/><path d="m22 9-6 6"/><path d="m16 9 6 6"/>
+      </svg>
+    </button>
+    <div class="state" id="state"><span class="dot"></span><span id="stateText">—</span></div>
+  </div>
+</header>
+
+<main>
+  <section class="view" id="v-countdown">
+    <div class="eyebrow">Next signal in</div>
+    <div class="count" id="count">--:--</div>
+    <div class="sub" id="countAt"></div>
+    <div class="sub-meta" id="lastMeta"></div>
+  </section>
+
+  <section class="view" id="v-analyzing">
+    <div class="eyebrow">Signal time</div>
+    <div class="analyzing">Reading The Market<i>.</i><i>.</i><i>.</i></div>
+  </section>
+
+  <section class="view" id="v-signal">
+    <div id="trades"></div>
+    <div class="quiet" id="sigQuiet"></div>
+  </section>
+
+  <section class="view" id="v-paused">
+    <div class="pausedBig">Paused</div>
+    <div class="sub" id="pausedLast"></div>
+  </section>
+</main>
+
+<script>
+(() => {
+  const SIGNAL_VISIBLE_MS = 18000;
+  const POLL_MS = 3000;
+  const ANALYZE_MAX_S = 45;      // Cap "Reading The Market" at 45s max instead of 4.5 mins
+  const OFFLINE_AFTER_S = 1800;  // GitHub cron runs every 5 min and can lag; 30 min without a heartbeat = offline
+  let status = null, sig = null, seenKey = null, showUntil = 0;
+  const previewForce = new URLSearchParams(location.search).get('preview');
+  const $ = id => document.getElementById(id);
+  const SOUND_KEY = 'bb_sound';
+  let soundOn = localStorage.getItem(SOUND_KEY) === '1';
+  let audioCtx = null, lastChimeKey = null, popArmed = false;
+
+  function syncSoundBtn() {
+    const btn = $('soundBtn');
+    if (!btn) return;
+    btn.classList.toggle('on', soundOn);
+    btn.setAttribute('aria-pressed', soundOn ? 'true' : 'false');
+    btn.setAttribute('aria-label', soundOn ? 'Mute signal sound' : 'Enable signal sound');
+    btn.title = soundOn ? 'Sound on' : 'Sound off';
+  }
+  function ensureAudio() {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    return audioCtx;
+  }
+  function playChime() {
+    if (!soundOn) return;
+    try {
+      const ctx = ensureAudio();
+      const now = ctx.currentTime;
+      const notes = [[1046.5, 0.0, 0.42], [1318.5, 0.08, 0.36]];
+      const chimeLen = 0.55, gap = 0.20, reps = 4;
+      for (let r = 0; r < reps; r++) {
+        const t0 = now + r * (chimeLen + gap);
+        const master = ctx.createGain();
+        master.gain.setValueAtTime(0.0001, t0);
+        master.gain.exponentialRampToValueAtTime(0.22, t0 + 0.02);
+        master.gain.exponentialRampToValueAtTime(0.0001, t0 + chimeLen);
+        master.connect(ctx.destination);
+        notes.forEach(([freq, delay, dur]) => {
+          const o = ctx.createOscillator();
+          const g = ctx.createGain();
+          o.type = 'sine';
+          o.frequency.setValueAtTime(freq, t0 + delay);
+          g.gain.setValueAtTime(0.0001, t0 + delay);
+          g.gain.exponentialRampToValueAtTime(0.9, t0 + delay + 0.015);
+          g.gain.exponentialRampToValueAtTime(0.0001, t0 + delay + dur);
+          o.connect(g); g.connect(master);
+          o.start(t0 + delay); o.stop(t0 + delay + dur + 0.02);
+        });
+      }
+    } catch (e) {}
+  }
+  $('soundBtn').addEventListener('click', () => {
+    soundOn = !soundOn;
+    localStorage.setItem(SOUND_KEY, soundOn ? '1' : '0');
+    syncSoundBtn();
+    if (soundOn) { ensureAudio(); playChime(); }
+  });
+  syncSoundBtn();
+
+  function setFx(active, fadingOut) {
+    document.body.classList.toggle('fx-on', !!active && !fadingOut);
+    document.body.classList.toggle('fx-out', !!fadingOut);
+    $('v-signal').classList.toggle('fx-trade', !!active || !!fadingOut);
+  }
+
+  async function getJSON(path) {
+    try {
+      const r = await fetch(path + '?t=' + Date.now(), { cache: 'no-store' });
+      return r.ok ? await r.json() : null;
+    } catch { return null; }
+  }
+  async function poll() {
+    const [s, l] = await Promise.all([getJSON('status.json'), getJSON('latest_signal.json')]);
+    if (s) status = s;
+    if (l) onSignal(l);
+    render();
+  }
+  function onSignal(l) {
+    const key = l.signal_at + '|' + (l.written_at || '');
+    if (key === seenKey) return;
+    const first = seenKey === null;
+    seenKey = key; sig = l;
+    if (first) {
+      const age = Date.now() - Date.parse(l.written_at || l.signal_at); // NaN -> no replay
+      showUntil = age >= 0 && age < SIGNAL_VISIBLE_MS ? Date.now() + (SIGNAL_VISIBLE_MS - age) : 0;
+    } else {
+      showUntil = Date.now() + SIGNAL_VISIBLE_MS;
+    }
+    const n = l.trades ? l.trades.length : 0;
+    $('trades').innerHTML = n ? tradesHTML(l) : '<div class="notrade">No trade</div>';
+    $('trades').className = 'n' + n + (n > 1 ? ' multi' : '');
+    $('sigQuiet').textContent = n && l.no_trade && l.no_trade.length ? 'No trade · ' + l.no_trade.join(', ') : '';
+    if (n && !first) {
+      popArmed = true;
+      if (key !== lastChimeKey) { lastChimeKey = key; playChime(); }
+    } else if (n && first && showUntil > Date.now()) {
+      popArmed = true;
+    }
+  }
+
+  const tz = () => (sig && sig.tz) || (status && status.tz) || undefined;
+  const city = () => (tz() || '').split('/').pop().replace(/_/g, ' ');
+  const fmt = (iso, o) => { const d = new Date(iso); if (isNaN(d)) return '—';
+    try { return new Intl.DateTimeFormat('en-GB', { timeZone: tz(), ...o }).format(d); } catch { return '—'; } };
+  const hm = iso => fmt(iso, { hour: '2-digit', minute: '2-digit' });
+  const dayhm = iso => fmt(iso, { weekday: 'short', hour: '2-digit', minute: '2-digit' });
+  const mmss = s => { s = Math.max(0, Math.ceil(s)); const m = Math.floor(s / 60); return String(m).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0'); };
+  const px = (v, d) => v == null ? '—' : Number(v).toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d });
+
+  function schedule(now) {
+    const step = (status.interval_minutes || 5) * 60000, off = (status.align_offset_seconds || 0) * 1000;
+    const prev = Math.floor((now - off) / step) * step + off;
+    return { prev, next: prev + step };
+  }
+  function signalForCycle(prev) { return sig && Date.parse(sig.signal_at) >= prev - 10000; }
+  function cycleFinished(prev) {
+    if (!status || !status.last_cycle_finished_at) return false;
+    return Date.parse(status.last_cycle_finished_at) >= prev;
+  }
+
+  function mode() {
+    const now = Date.now();
+    if (!status || status.state === 'paused' || status.state === 'stopped') return 'paused';
+    const upd = Date.parse(status.updated_at);
+    if (isNaN(upd) || now - upd > OFFLINE_AFTER_S * 1000) return 'offline';
+    const { prev } = schedule(now);
+    if (status.state === 'analyzing') return 'analyzing';
+    // Only show "Reading The Market" if the current cycle hasn't finished yet AND we are within 45s of the boundary
+    if (now - prev < ANALYZE_MAX_S * 1000 && !signalForCycle(prev) && !cycleFinished(prev)) {
+      return 'analyzing';
+    }
+    return 'waiting';
+  }
+
+  function show(id) {
+    for (const v of ['v-countdown', 'v-analyzing', 'v-signal', 'v-paused']) {
+      const el = $(v), on = v === id;
+      if (on && !el.classList.contains('on')) el.classList.remove('out');
+      el.classList.toggle('on', on);
+    }
+  }
+
+  function tradesHTML(l) {
+    return l.trades.map(t => `
+      <div class="trade">
+        <div class="sym">${t.symbol}${t.name ? ` <em>· ${t.name}</em>` : ''}</div>
+        <div class="act ${t.action}">${t.action}</div>
+        <div class="levels">
+          <div class="row"><span>Entry</span><b>${px(t.entry, t.digits)}</b></div>
+          <div class="row stop"><span>Stop</span><b>${px(t.stop_loss, t.digits)}</b></div>
+          <div class="row target"><span>Target</span><b>${px(t.take_profit, t.digits)}</b></div>
+        </div>
+        <div class="rr">R:R 1 : ${t.rr != null ? Number(t.rr).toFixed(2) : '—'}</div>
+      </div>`).join('');
+  }
+
+  function render() {
+    const m = mode(), live = m === 'waiting' || m === 'analyzing', now = Date.now();
+    $('state').className = 'state ' + (live ? 'live' : 'paused');
+    $('stateText').textContent = live ? 'Live' : (m === 'offline' ? 'Offline' : 'Paused');
+    let view;
+    if (!live) {
+      view = 'v-paused';
+      $('pausedLast').textContent = sig ? `Last signal · ${dayhm(sig.signal_at)} ${city()}` : '';
+      document.querySelector('#v-paused .pausedBig').textContent = m === 'offline' ? 'Offline' : 'Paused';
+    } else if (now < showUntil) {
+      view = 'v-signal';
+      $('v-signal').classList.toggle('out', showUntil - now < 600);
+    } else if (m === 'analyzing') {
+      view = 'v-analyzing';
+    } else {
+      view = 'v-countdown';
+      const nxt = schedule(now).next;
+      $('count').textContent = mmss((nxt - now) / 1000);
+      $('countAt').textContent = `at ${hm(new Date(nxt).toISOString())} ${city()}`;
+      if (sig && sig.analysis_failed) {
+        $('lastMeta').className = 'sub-meta warn';
+        $('lastMeta').textContent = `Last scan failed (${dayhm(sig.signal_at)}): ${sig.error || 'analysis_failed'}`;
+      } else if (status && status.last_cycle_finished_at) {
+        $('lastMeta').className = 'sub-meta';
+        $('lastMeta').textContent = `Last scan completed · ${hm(status.last_cycle_finished_at)} ${city()} (No trade)`;
+      }
+    }
+    if (previewForce === 'countdown') view = 'v-countdown';
+    else if (previewForce === 'signal') view = 'v-signal';
+    else if (previewForce === 'analyzing') view = 'v-analyzing';
+    else if (previewForce === 'paused') view = 'v-paused';
+    show(view);
+    const n = sig && sig.trades ? sig.trades.length : 0;
+    document.querySelector('main').classList.toggle('wide', view === 'v-signal' && n > 1);
+
+    const tradeSignal = view === 'v-signal' && n > 0;
+    const fading = tradeSignal && $('v-signal').classList.contains('out');
+    setFx(tradeSignal, fading);
+    const vs = $('v-signal');
+    if (tradeSignal && popArmed) {
+      vs.classList.remove('pop');
+      void vs.offsetWidth;
+      vs.classList.add('pop');
+      popArmed = false;
+    }
+    if (view !== 'v-signal') vs.classList.remove('pop');
+  }
+
+  poll();
+  setInterval(poll, POLL_MS);
+  setInterval(render, 100);
+})();
+</script>
+</body>
+</html>

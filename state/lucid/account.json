@@ -1,7 +1,7 @@
 {
   "version": 1,
   "created_at": "2026-11-11T17:32:34.420596+00:00",
-  "last_processed": "2026-11-11T17:45:00+00:00",
+  "last_processed": "2026-11-11T17:47:00+00:00",
   "account": {
     "no": 1,
     "phase": "eval",
@@ -182,13 +182,162 @@
         "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/213220.json/US100.png"
       },
       "mfe": 16.35900000000038,
-      "mae": 12.342000000000553,
+      "mae": 15.18500000000131,
       "mfe_min": 17.12175,
       "time_cut_deadline": "2026-11-11T18:03:00+00:00",
       "time_cut_candles": 2
     }
   ],
-  "pending": [],
+  "pending": [
+    {
+      "symbol": "XAUUSD",
+      "side": -1,
+      "created": "2026-11-11T17:48:33.040555+00:00",
+      "fill_after": "2026-11-11T17:49:00+00:00",
+      "expires": "2026-11-11T17:59:00+00:00",
+      "atr": 6.431,
+      "scalp": {
+        "action": "SELL",
+        "side": -1,
+        "entry": 4000.33,
+        "stop_loss": 4004.81,
+        "take_profit": 3998.23,
+        "sdist": 4.48154999999997,
+        "tdist": 2.1,
+        "stop_source": "structure",
+        "target_source": "structure:next:Session Low",
+        "rr": 0.469,
+        "structure_stop": 4004.81155,
+        "atr_stop": 4005.4748,
+        "fixed_tp": 3999.08,
+        "structure_tp": 3998.3486199999998,
+        "structure_label": "Session Low",
+        "candle": {
+          "high": 4004.49,
+          "low": 3999.63
+        },
+        "levels": [
+          {
+            "price": 4013.36,
+            "label": "Prev Low"
+          },
+          {
+            "price": 4026.41,
+            "label": "S/R"
+          },
+          {
+            "price": 4052.38,
+            "label": "S/R"
+          },
+          {
+            "price": 3998.22,
+            "label": "Session Low"
+          }
+        ],
+        "vp": {
+          "poc": 4044.16,
+          "vah": 4062.67,
+          "val": 4029.76
+        },
+        "target_scalp": 3999.08,
+        "lucid_plan": {
+          "contract": "GC",
+          "qty": 3,
+          "tdist": 2.1,
+          "target_usd": 616.2,
+          "risk_usd": 1350.0,
+          "target_source": "structure:next:Session Low",
+          "sizing": "fixed target 1.25 cannot reach $381 net at an allowed size; next structure Session Low at 2.1 gives $616 net with 3 GC (risk $1350)"
+        }
+      },
+      "session": "NEW_YORK_SESSION",
+      "telemetry": {
+        "symbol": "XAUUSD",
+        "session": "NEW_YORK_SESSION",
+        "last_close": 4000.15,
+        "atr": 6.431,
+        "vwap": 4037.35,
+        "ema20": 4014.66,
+        "ema50": 4029.89,
+        "price_vs_vwap": {
+          "side": "below",
+          "dist_atr": -5.7845
+        },
+        "price_vs_ema50": {
+          "side": "below",
+          "dist_atr": -4.6245
+        },
+        "vwap_aligned_with_side": true,
+        "ema50_aligned_with_side": true,
+        "poc": 4044.16,
+        "vah": 4062.67,
+        "val": 4029.76,
+        "price_vs_value_area": "below_val",
+        "dist_to_poc_atr": -6.8434,
+        "cvd": -2.4,
+        "cvd_label": "BEARISH",
+        "cvd_slope": 0.33,
+        "cvd_agrees_with_side": true,
+        "rvol": 0.635,
+        "rvol_spike": false,
+        "rvol_bars_since_spike": 12,
+        "atr_band_z": -2.2563,
+        "atr_upper": 4027.52,
+        "atr_lower": 4001.8,
+        "nearest_sr": {
+          "above": {
+            "price": 4013.36,
+            "label": "Prev Low",
+            "dist_atr": 2.0541
+          },
+          "below": {
+            "price": 3998.22,
+            "label": "Session Low",
+            "dist_atr": 0.3001
+          }
+        },
+        "gemini": {
+          "action": "SELL",
+          "confidence": 0.82,
+          "confidence_band": ">=0.8",
+          "rationale": "Price is below VAL (4029.76) and well below POC (4044.16). CVD is -2.40 (BEARISH), agreeing with the strong downside momentum. Session is NEW_YORK_SESSION. Price remains below both VWAP (4037.35) and EMA50 (4029.89) with a steep bearish slope. Candles are pushing along the lower ATR band (4001.80) while testing Session Low (3998.22). RVOL spiked earlier at 15:00 on the initial breakdown but is currently lower (0.635). Given the strong bearish trend and break below VAL, high probability continuation sell setup.",
+          "model": "gemini-3.6-flash",
+          "model_action": "SELL"
+        },
+        "scalp": {
+          "stop_basis": "structure",
+          "target_basis": "structure:next:Session Low",
+          "tdist": 2.1,
+          "sdist": 4.48154999999997,
+          "structure_label": "Session Low"
+        },
+        "planned": {
+          "tdist": 2.1,
+          "sdist": 4.48154999999997,
+          "qty": null,
+          "contract": null,
+          "target_usd_net": null,
+          "risk_usd": null
+        },
+        "run_at_utc": "2026-11-11T17:48:20.100444+00:00",
+        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/214820.json/XAUUSD.png"
+      },
+      "gemini": {
+        "action": "SELL",
+        "entry": 4000.33,
+        "stop_loss": 4004.81,
+        "take_profit": 3998.23,
+        "confidence": 0.82,
+        "rr": 0.469,
+        "shown_on_site": true,
+        "basis": "site signal",
+        "run_at_utc": "2026-11-11T17:48:20.100444+00:00",
+        "session": "NEW_YORK_SESSION",
+        "rationale": "Price is below VAL (4029.76) and well below POC (4044.16). CVD is -2.40 (BEARISH), agreeing with the strong downside momentum. Session is NEW_YORK_SESSION. Price remains below both VWAP (4037.35) and EMA50 (4029.89) with a steep bearish slope. Candles are pushing along the lower ATR band (4001.80) while testing Session Low (3998.22). RVOL spiked earlier at 15:00 on the initial breakdown but is currently lower (0.635). Given the strong bearish trend and break below VAL, high probability continuation sell setup.",
+        "model": "gemini-3.6-flash"
+      }
+    }
+  ],
   "next_pos_id": 2,
   "day": {
     "id": "2026-11-11",
@@ -199,7 +348,7 @@
     "traded": true
   },
   "last_price": {
-    "US100": 28537.709
+    "US100": 28540.876
   },
   "history": [],
   "ledger": {
@@ -228,8 +377,8 @@
     "gross_loss": 0.0,
     "commissions": 1.75,
     "net_trade_pnl": 0.0,
-    "skipped_signals": 7,
-    "accepted_signals": 1
+    "skipped_signals": 8,
+    "accepted_signals": 2
   },
   "reset_token": "2026-11-11-target-sizing-fix"
 }

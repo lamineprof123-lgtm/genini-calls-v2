@@ -26,17 +26,19 @@
   },
   "top_combinations": [],
   "skips": {
-    "count": 5,
+    "count": 7,
     "by_reason": {
       "sizing_unreachable": 1,
       "session_blocked": 2,
-      "chase": 2
+      "chase": 2,
+      "already_position_or_pending": 2
     },
     "exact_reasons": {
       "cannot reach $381 NET within max_minis=40 at tdist=5.0 / risk budget (SKIP)": 1,
       "session_blocked": 2,
       "price ran 0.00031 past Gemini entry (chase)": 1,
-      "price ran 0.00047 past Gemini entry (chase)": 1
+      "price ran 0.00047 past Gemini entry (chase)": 1,
+      "already in a position / pending on this symbol (one per symbol)": 2
     }
   },
   "definitions": {
@@ -47,7 +49,7 @@
     "cvd_agrees": "bullish label for BUY, bearish for SELL; neutral label uses slope direction",
     "missing_telemetry": "unknown, never backfilled from later bars"
   },
-  "generated_at_utc": "2026-11-11T08:18:29.696812+00:00",
-  "generated_at_dubai": "2026-11-11 12:18:29",
+  "generated_at_utc": "2026-11-11T08:20:29.795428+00:00",
+  "generated_at_dubai": "2026-11-11 12:20:29",
   "malformed_lines": []
 }

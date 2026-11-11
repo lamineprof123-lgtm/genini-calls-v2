@@ -2,7 +2,7 @@
 
 All days and all accounts; paper trades only; net P&L after round-trip commission
 
-Updated: 2026-11-11 12:18:29 (Dubai UTC+4)
+Updated: 2026-11-11 12:20:29 (Dubai UTC+4)
 
 **Every bucket with n < 20 is LOW CONFIDENCE. Descriptive only; no proven edge.**
 
@@ -58,10 +58,11 @@ Ranked by net P&L; small samples are not a strategy recommendation.
 
 No observations yet.
 
-## Entry skips (5)
+## Entry skips (7)
 
 | Reason | Count |
 |---|---:|
+| already_position_or_pending | 2 |
 | chase | 2 |
 | session_blocked | 2 |
 | sizing_unreachable | 1 |

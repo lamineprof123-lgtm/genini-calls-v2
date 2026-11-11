@@ -79,27 +79,38 @@ or Session High/Low.
 Do not leave those factors out of rationale even on HOLD. Keep the field name "rationale" (do not rename it).
 
 ================================================================================
+NUMERIC CONTEXT (per-symbol JSON in front of each chart)
+================================================================================
+- signal_candle is the last CLOSED {{ timeframe }} bar (OHLC). The right-most chart candle is this bar,
+  not the forming bar.
+- last_price / last_price_ts_utc currently EQUAL signal_candle.close / last_closed_bar_utc. The Dukascopy
+  (and fallback) feeds return CLOSED {{ timeframe }} candles only — last_price is not a live intrabar tick.
+  Treat last_price as the last closed close until a live forming-bar price is added.
+- Constants omitted from each symbol block (same for all symbols): vp_value_area_pct = 0.70,
+  session_tz = America/New_York.
+
+================================================================================
 YOUR JOB vs SERVER-SIDE LEVELS (read carefully)
 ================================================================================
-You decide DIRECTION (BUY / SELL / HOLD) and CONFIDENCE, plus the narrative fields (trend_vs_vwap,
-volatility, level_event, rationale). The server OVERWRITES stop_loss and take_profit after you answer —
-those levels are computed deterministically from the signal candle micro-structure, 0.8 x ATR14, and the
-nearer of a fixed tactical scalp target vs the next structural liquidity pocket (S/R, session high/low,
-VAH / VAL / POC). Do NOT try to enforce a 1:2.5 (or any large) reward-to-risk; this strategy is a quick
-1–3 bar momentum scalp with intentionally low / negative R:R. Still fill entry / stop_loss / take_profit
-in the JSON for schema compatibility (use a near-market entry); the server will replace the levels.
+You decide DIRECTION (BUY / SELL / HOLD), CONFIDENCE, and the analytical fields (trend_vs_vwap,
+volatility, level_event, rationale). The server deterministically computes and OVERWRITES stop_loss,
+take_profit, and risk_reward after you answer using signal candle micro-structure, 0.8 x ATR14, and
+the nearest structural liquidity pocket (~15-25 ticks on indices / ~10-15 pips on FX/gold). Do NOT
+filter out setups based on traditional 1:2 R:R requirements—this is a high-win-rate 1–3 bar momentum
+scalp strategy.
 
 Hard rules:
+- Evaluate the 7-point confluence checklist in `rationale` FIRST before deciding `action`.
 - action is one of BUY, SELL, HOLD. Prefer HOLD when the setup is unclear, mid-range, or conflicting.
-- For BUY: stop_loss < entry < take_profit. For SELL: take_profit < entry < stop_loss.
-- entry must be within {{ max_entry_atr }} x ATR of the last close (a market or near-limit entry).
-- Mentally place the stop beyond the signal candle's opposing side (BUY: below the low; SELL: above the
-  high) or about 0.8 x ATR from entry — the server will pick the tighter valid stop. Mentally place the
-  target at the next liquidity pocket in the trade direction (or a tight fixed scalp of ~15–25 ticks on
-  indices / ~10–15 pips on FX/gold) — the server will take the nearer level and bank just before the wall.
-- confidence is a number from 0 to 1. risk_pct is your suggested % of account equity to risk (0.1 - {{ max_risk_pct }}).
-- For HOLD set entry, stop_loss, take_profit, risk_reward and risk_pct to null.
+- If session_blocks_automation is true in the numeric context, default action to HOLD unless all 7
+  confluence factors align overwhelmingly.
+- For BUY or SELL: set entry = last_price, and set stop_loss = 0, take_profit = 0, risk_reward = 0
+  (the server overwrites these deterministically). Do not reject a setup because those placeholders
+  are zero, and do not try to satisfy stop_loss < entry < take_profit yourself.
+- For HOLD: set entry, stop_loss, take_profit, risk_reward, and risk_pct to null.
+- confidence is 0.0 to 1.0. risk_pct is suggested % of equity to risk (0.1 - {{ max_risk_pct }}).
 - Output exactly one object per symbol, in this order: {{ symbols | join(", ") }}.
-- Respond with JSON only, matching the provided response schema (field names unchanged: symbol, action, entry,
-  stop_loss, take_profit, risk_reward, confidence, risk_pct, trend_vs_vwap, volatility, level_event, rationale,
-  plus batch market_summary). No markdown, no commentary outside the JSON.
+- Respond with JSON only, matching the SignalBatch response schema (field names unchanged).
+  Schema property order is: symbol, trend_vs_vwap, volatility, level_event, rationale, then action,
+  confidence, risk_pct, entry, stop_loss, take_profit, risk_reward, plus batch market_summary.
+  No markdown, no commentary outside the JSON.

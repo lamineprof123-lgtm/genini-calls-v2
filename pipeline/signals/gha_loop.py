@@ -35,6 +35,7 @@ class GhaLoop:
         self.cfg, self.data, self.run_id, self.role = cfg, data, run_id, role
         self.dry_run, self.deploy_enabled, self.max_cycles, self.model = dry_run, deploy, max_cycles, model
         self.interval = int(cfg["scheduler"]["interval_minutes"])
+        self.scan_interval = self.interval  # published to status.json (2 active / 15 blocked)
         self.offset = int(cfg["scheduler"]["align_offset_seconds"])
         self.t_start = datetime.now(timezone.utc)
         self.ends_at = self.t_start + timedelta(minutes=max_runtime_min)
@@ -167,8 +168,9 @@ class GhaLoop:
         self.dispatched = r.returncode == 0
         log.info("dispatched successor run: %s %s", "ok" if self.dispatched else "FAILED", r.stderr.strip()[-200:])
 
-    def status(self, state: str, nxt: datetime | None) -> None:
-        write_status(self.cfg, state, self.interval, next_run_at=nxt.isoformat() if nxt else None,
+    def status(self, state: str, nxt: datetime | None, interval: int | None = None) -> None:
+        write_status(self.cfg, state, interval if interval is not None else self.scan_interval,
+                     next_run_at=nxt.isoformat() if nxt else None,
                      runner="github-actions", run_id=self.run_id, **self.last)
 
     # ---------- main loop ----------
@@ -180,11 +182,14 @@ class GhaLoop:
         # data checkout may have been reset during acquire: make sure we start from the newest state
         reason = "max-runtime"
         while True:
-            nxt = next_boundary(datetime.now(timezone.utc), self.interval, self.offset)
+            # The job still wakes every `self.interval` (2 min). The site countdown uses
+            # scan_interval (2 active / 15 during ASIAN / DEADZONE) so it matches the next Gemini call.
+            wake = next_boundary(datetime.now(timezone.utc), self.interval, self.offset)
+            nxt = next_boundary(datetime.now(timezone.utc), self.scan_interval, self.offset)
             self.status("running", nxt)
-            await asyncio.sleep(max(0.0, (nxt - datetime.now(timezone.utc)).total_seconds()))
+            await asyncio.sleep(max(0.0, (wake - datetime.now(timezone.utc)).total_seconds()))
             started = datetime.now(timezone.utc)
-            self.stats["late_s"].append(round((started - nxt).total_seconds(), 1))
+            self.stats["late_s"].append(round((started - wake).total_seconds(), 1))
             t0 = time.monotonic()
             res = {}
             try:
@@ -192,9 +197,12 @@ class GhaLoop:
             except Exception:
                 log.exception("cycle failed")
             self.cycles += 1
-            self.last = {"last_cycle_started_at": started.isoformat(),
-                         "last_cycle_finished_at": datetime.now(timezone.utc).isoformat()}
-            nxt2 = next_boundary(datetime.now(timezone.utc), self.interval, self.offset)
+            if (res or {}).get("scan_interval_minutes"):
+                self.scan_interval = int(res["scan_interval_minutes"])
+            if not (res or {}).get("skipped"):
+                self.last = {"last_cycle_started_at": started.isoformat(),
+                             "last_cycle_finished_at": datetime.now(timezone.utc).isoformat()}
+            nxt2 = next_boundary(datetime.now(timezone.utc), self.scan_interval, self.offset)
             self.status("running", nxt2)
             deploy_task = asyncio.create_task(self.deploy())
             if not self.dry_run:

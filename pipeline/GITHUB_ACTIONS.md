@@ -3,8 +3,14 @@
 `.github/workflows/pipeline.yml` runs the whole pipeline (charts -> Gemini -> server-side scalp SL/TP ->
 Lucid 100K paper sim -> site JSON -> Pages) inside one long job:
 
-- **Cadence:** a cycle every `interval_minutes` (default 2), aligned to the clock (+20 s). `status.json`
-  carries the same interval so the panel countdown matches.
+- **Cadence:** the job still wakes every `interval_minutes` (default 2), aligned to the clock (+20 s).
+  During `ASIAN_SESSION_CHOP` and `LOW_LIQUIDITY_DEADZONE` (decided from the four Lucid symbols, not BTC)
+  Gemini is called only on the first cycle after an M15 close; other cycles log
+  `skipped_reason=blocked_session_throttle` and leave `latest_signal.json` unchanged.
+  `status.json` `interval_minutes` is 2 while sessions are active and 15 during blocked windows,
+  so the panel countdown matches the next Gemini scan. `index.html` already reads those fields
+  (it computes the next clock-aligned boundary from `interval_minutes` + `align_offset_seconds`;
+  no frontend change).
 - **Loop length:** ~5h30m per run, then a queued successor run takes over (handoff gap ~1 cycle).
   The successor is started by the `*/5` cron or by the loop's own `workflow_dispatch` 20 min before its end.
 - **One loop at a time:** lock files on the `pipeline-data` branch (`state/loop_holder.json`,

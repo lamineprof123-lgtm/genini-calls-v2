@@ -11,19 +11,29 @@ from .config import ROOT
 log = logging.getLogger("signals.gemini")
 
 
+# Field order is the Gemini response_schema / propertyOrdering. Analytical fields
+# come first so the model writes rationale before it commits to action/confidence.
+# google-genai process_schema copies properties.keys() into propertyOrdering when
+# that field is unset, so declaration order here is what the API enforces.
+SIGNAL_FIELD_ORDER = (
+    "symbol", "trend_vs_vwap", "volatility", "level_event", "rationale",
+    "action", "confidence", "risk_pct", "entry", "stop_loss", "take_profit", "risk_reward",
+)
+
+
 class Signal(BaseModel):
     symbol: str
-    action: Literal["BUY", "SELL", "HOLD"]
-    entry: Optional[float] = None
-    stop_loss: Optional[float] = None
-    take_profit: Optional[float] = None
-    risk_reward: Optional[float] = None
-    confidence: float = Field(description="0..1")
-    risk_pct: Optional[float] = Field(default=None, description="suggested % of equity to risk")
     trend_vs_vwap: str = Field(description="bullish / bearish / neutral + one short reason")
     volatility: str = Field(description="expanding / contracting / normal")
     level_event: str = Field(description="sweep / rejection / acceptance / none, with the level")
     rationale: str
+    action: Literal["BUY", "SELL", "HOLD"]
+    confidence: float = Field(description="0..1")
+    risk_pct: Optional[float] = Field(default=None, description="suggested % of equity to risk")
+    entry: Optional[float] = None
+    stop_loss: Optional[float] = None
+    take_profit: Optional[float] = None
+    risk_reward: Optional[float] = None
 
 
 class SignalBatch(BaseModel):
@@ -52,18 +62,35 @@ def _image_mime(blob: bytes) -> str:
     return "image/png"
 
 
+# Dropped from the per-symbol JSON sent to Gemini (still present on the internal
+# payload context used by scalp_levels / Lucid / the validator):
+#   last_candle          — identical to signal_candle (closed M15 only)
+#   last_close           — duplicate of signal_candle.close (and of last_price today)
+#   vp_value_area_pct    — constant 0.70; stated once in the system prompt
+#   session_tz           — constant America/New_York; stated once in the system prompt
+_GEMINI_CTX_DROP = ("last_candle", "last_close", "vp_value_area_pct", "session_tz")
+
+
+def slim_gemini_context(ctx: dict) -> dict:
+    """Per-symbol numeric context for the Gemini user message (deduped)."""
+    return {k: v for k, v in ctx.items() if k not in _GEMINI_CTX_DROP}
+
+
+def chart_user_text(payload: dict, index: int, total: int) -> str:
+    ctx = {"symbol": payload["symbol"], "source": f"{payload['source']}:{payload['ticker']}",
+           "timeframe": payload["timeframe"], **slim_gemini_context(payload["context"])}
+    price = ctx.get("last_price", (payload["context"] or {}).get("last_close"))
+    ts = ctx.get("last_price_ts_utc", ctx.get("last_closed_bar_utc"))
+    return (f"Chart {index}/{total} - {payload['symbol']}\n"
+            f"LAST PRICE SENT TO GEMINI: {price} @ {ts}\n"
+            f"Numeric context: {json.dumps(ctx)}")
+
+
 def build_contents(payloads: list[dict], pngs: dict[str, bytes]):
     from google.genai import types
     parts = []
     for i, p in enumerate(payloads, 1):
-        ctx = {"symbol": p["symbol"], "source": f"{p['source']}:{p['ticker']}", "timeframe": p["timeframe"],
-               **p["context"]}
-        price = ctx.get("last_price", ctx.get("last_close"))
-        ts = ctx.get("last_price_ts_utc", ctx.get("last_closed_bar_utc"))
-        parts.append(types.Part.from_text(
-            text=f"Chart {i}/{len(payloads)} - {p['symbol']}\n"
-                 f"LAST PRICE SENT TO GEMINI: {price} @ {ts}\n"
-                 f"Numeric context: {json.dumps(ctx)}"))
+        parts.append(types.Part.from_text(text=chart_user_text(p, i, len(payloads))))
         blob = pngs[p["symbol"]]
         parts.append(types.Part.from_bytes(data=blob, mime_type=_image_mime(blob)))
     parts.append(types.Part.from_text(text="Return the JSON signal batch for all symbols now."))

@@ -18,8 +18,59 @@ from .lucid import lucid_step
 
 log = logging.getLogger("signals")
 
+# Lucid paper-sim symbols (BTCUSD is site-only). Session throttle is decided from these four;
+# they share the same America/New_York session clock.
+_DEFAULT_LUCID_SYMBOLS = ("XAUUSD", "EURUSD", "GBPUSD", "US100")
+THROTTLE_SKIP = "blocked_session_throttle"
 
-async def run_once(cfg: dict, dry_run: bool = False, force: bool = True, model: str | None = None) -> dict:
+
+def lucid_symbols(cfg: dict) -> list[str]:
+    lu = (cfg.get("lucid") or {}).get("symbols") or {}
+    return list(lu) if lu else list(_DEFAULT_LUCID_SYMBOLS)
+
+
+def session_blocked_for_scan(payloads: list[dict], cfg: dict) -> bool:
+    """True when every available Lucid (non-BTC) symbol is in a blocked session."""
+    want = set(lucid_symbols(cfg))
+    rows = [p for p in payloads if p.get("symbol") in want]
+    if not rows:
+        return False
+    return all(bool((p.get("context") or {}).get("session_blocks_automation")) for p in rows)
+
+
+def gemini_bar_changed(payloads: list[dict], seen: dict, cfg: dict | None = None) -> bool:
+    """True if any Lucid symbol's last_closed_bar_utc differs from the last Gemini-called cycle."""
+    want = set(lucid_symbols(cfg)) if cfg is not None else None
+    rows = [p for p in payloads if want is None or p.get("symbol") in want] or list(payloads)
+    for p in rows:
+        if seen.get(p["symbol"]) != (p.get("context") or {}).get("last_closed_bar_utc"):
+            return True
+    return False
+
+
+def should_throttle_gemini(payloads: list[dict], seen: dict, cfg: dict) -> bool:
+    """Skip Gemini mid-bar during ASIAN_SESSION_CHOP / LOW_LIQUIDITY_DEADZONE (Lucid symbols)."""
+    return session_blocked_for_scan(payloads, cfg) and not gemini_bar_changed(payloads, seen, cfg)
+
+
+def scan_interval_minutes(blocked: bool, cfg: dict) -> int:
+    """2 (or scheduler default) while sessions are active; 15 during blocked windows (M15 close)."""
+    active = int(cfg["scheduler"]["interval_minutes"])
+    tf = int(cfg["general"]["timeframe_minutes"])
+    return tf if blocked else active
+
+
+def _load_json(path: Path, default):
+    if path.exists():
+        try:
+            return json.loads(path.read_text())
+        except Exception:
+            return default
+    return default
+
+
+async def run_once(cfg: dict, dry_run: bool = False, force: bool = True, model: str | None = None,
+                   no_throttle: bool = False) -> dict:
     g = cfg["general"]
     now = datetime.now(timezone.utc)
     tz = ZoneInfo(g["session_tz"])
@@ -50,7 +101,21 @@ async def run_once(cfg: dict, dry_run: bool = False, force: bool = True, model: 
     seen = json.loads(seen_path.read_text()) if seen_path.exists() else {}
     if not force and cfg["scheduler"]["skip_if_no_new_candle"] and all(seen.get(k) == v for k, v in last_bars.items()):
         log.info("no new closed candle since last cycle - skipping")
-        return {"skipped": True, "last_bars": last_bars}
+        blocked = session_blocked_for_scan(payloads, cfg)
+        return {"skipped": True, "last_bars": last_bars,
+                "scan_interval_minutes": scan_interval_minutes(blocked, cfg),
+                "session_blocked": blocked}
+
+    gemini_seen_path = state_dir / "last_gemini_bars.json"
+    gemini_seen = _load_json(gemini_seen_path, {})
+    blocked = session_blocked_for_scan(payloads, cfg)
+    interval = scan_interval_minutes(blocked, cfg)
+    if not no_throttle and should_throttle_gemini(payloads, gemini_seen, cfg):
+        log.info("blocked session throttle - skipping Gemini (keep last site signals); next scan on M%s close",
+                 cfg["general"]["timeframe_minutes"])
+        record = _throttle_skip_record(cfg, payloads, data_errors, last_bars, now, tz, equity=None)
+        return {"skipped": True, "skipped_reason": THROTTLE_SKIP, "last_bars": last_bars,
+                "scan_interval_minutes": interval, "session_blocked": True, "record": record}
 
     # 3. render all charts in parallel (v2: warm Playwright pool + JPEG)
     t_render0 = time.monotonic()
@@ -152,11 +217,48 @@ async def run_once(cfg: dict, dry_run: bool = False, force: bool = True, model: 
     _atomic_write(state_dir / "latest_signals.json", record)
     write_latest_signal(record, cfg)  # site/latest_signal.json for the one-page site
     _atomic_write(seen_path, last_bars)
+    _atomic_write(gemini_seen_path, last_bars)
     log.info("run complete -> %s", run_dir)
     for v in validated:
         log.info("  %-7s %-4s conf=%s rr=%s %s", v["symbol"], v["action"], v["confidence"], v["rr_local"],
                  "; ".join(v["reasons"]))
-    return {"skipped": False, "run_dir": record["run_dir"], "record": record}
+    return {"skipped": False, "run_dir": record["run_dir"], "record": record,
+            "scan_interval_minutes": interval, "session_blocked": blocked}
+
+
+def _throttle_skip_record(cfg: dict, payloads: list[dict], data_errors: dict,
+                          last_bars: dict, now: datetime, tz, equity=None) -> dict:
+    """Compact cycle log when Gemini is skipped during a blocked session. Does not touch latest_signal.json."""
+    g = cfg["general"]
+    local = now.astimezone(tz)
+    compact = g.get("log_mode") == "compact"
+    if compact:
+        run_dir = Path(g["logs_dir"]) / local.strftime("%Y-%m-%d") / "cycles"
+    else:
+        run_dir = Path(g["logs_dir"]) / local.strftime("%Y-%m-%d") / local.strftime("%H%M%S")
+    run_dir.mkdir(parents=True, exist_ok=True)
+    record = {
+        "run_dir": str(run_dir),
+        "run_at_utc": now.isoformat(), "run_at_local": local.isoformat(), "dry_run": False,
+        "model": None, "model_version": None, "gemini_attempts": None, "signals_only": True,
+        "equity": equity, "circuit_breaker": None,
+        "data": {p["symbol"]: {"source": p["source"], "ticker": p["ticker"], **p["context"]} for p in payloads},
+        "data_errors": data_errors, "parse_error": None, "ai_error": None,
+        "market_summary": None, "signals": [],
+        "skipped_reason": THROTTLE_SKIP,
+        "scan_interval_minutes": scan_interval_minutes(True, cfg),
+    }
+    if compact:
+        record["run_dir"] = str(run_dir / f"{local.strftime('%H%M%S')}.json")
+        record["gemini_raw_text"] = None
+        record["gemini_usage"] = None
+        Path(record["run_dir"]).write_text(json.dumps(record, separators=(",", ":"), default=str))
+    else:
+        (run_dir / "validated.json").write_text(json.dumps(record, indent=2, default=str))
+        with open(run_dir.parent / "signals.jsonl", "a") as f:
+            f.write(json.dumps({"run_dir": str(run_dir), **record}, default=str) + "\n")
+    log.info("throttle skip logged -> %s", record["run_dir"])
+    return record
 
 
 def next_boundary(now: datetime, minutes: int, offset_s: int) -> datetime:
@@ -172,6 +274,7 @@ async def run_loop(cfg: dict, dry_run: bool = False, model: str | None = None,
     writes 'paused' on exit (Ctrl-C / SIGTERM / pkill / max_cycles)."""
     sc = cfg["scheduler"]
     interval = interval or sc["interval_minutes"]
+    scan_interval = interval
     cycles = 0
     last = {}
     pub = Publisher(cfg)
@@ -180,13 +283,15 @@ async def run_loop(cfg: dict, dry_run: bool = False, model: str | None = None,
              " [DRY RUN]" if dry_run else "")
     try:
         while max_cycles is None or cycles < max_cycles:
-            nxt = next_boundary(datetime.now(timezone.utc), interval, sc["align_offset_seconds"])
-            write_status(cfg, "running", interval, next_run_at=nxt.isoformat(), **last)
+            wake = next_boundary(datetime.now(timezone.utc), interval, sc["align_offset_seconds"])
+            nxt = next_boundary(datetime.now(timezone.utc), scan_interval, sc["align_offset_seconds"])
+            write_status(cfg, "running", scan_interval, next_run_at=nxt.isoformat(), **last)
             pub.publish(f"running, next {nxt.strftime('%H:%M')}Z" + (" (signal)" if cycles else ""))
-            log.info("next cycle at %s UTC", nxt.strftime("%Y-%m-%d %H:%M:%S"))
-            await asyncio.sleep(max(0, (nxt - datetime.now(timezone.utc)).total_seconds()))
+            log.info("next cycle at %s UTC (countdown interval %d min, next scan %s)",
+                     wake.strftime("%Y-%m-%d %H:%M:%S"), scan_interval, nxt.strftime("%H:%M:%S"))
+            await asyncio.sleep(max(0, (wake - datetime.now(timezone.utc)).total_seconds()))
             started = datetime.now(timezone.utc).isoformat()
-            write_status(cfg, "analyzing", interval, cycle_started_at=started, **last)
+            write_status(cfg, "analyzing", scan_interval, cycle_started_at=started, **last)
             # (no push here: the page derives "Reading The Market" from the clock; saves a Pages deploy per cycle)
             t0 = time.monotonic()
             res = {}
@@ -194,13 +299,15 @@ async def run_loop(cfg: dict, dry_run: bool = False, model: str | None = None,
                 res = await run_once(cfg, dry_run=dry_run, force=False, model=model)
             except Exception:
                 log.exception("cycle failed")
+            scan_interval = int((res or {}).get("scan_interval_minutes") or scan_interval)
             # Lucid paper sim runs in the background so the site publish is never delayed (no extra Gemini call)
             if lucid_task is not None and not lucid_task.done():
                 await lucid_task
             if not dry_run:
                 lucid_task = asyncio.create_task(lucid_step(cfg, (res or {}).get("record")))
-            last = {"last_cycle_started_at": started,
-                    "last_cycle_finished_at": datetime.now(timezone.utc).isoformat()}
+            if not (res or {}).get("skipped"):
+                last = {"last_cycle_started_at": started,
+                        "last_cycle_finished_at": datetime.now(timezone.utc).isoformat()}
             cycles += 1
             log.info("cycle took %.1fs", time.monotonic() - t0)
     finally:

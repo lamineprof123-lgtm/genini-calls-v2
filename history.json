@@ -1,35 +1,5 @@
 [
   {
-    "signal_at": "2026-11-11T12:26:20.035496+00:00",
-    "tz": "Asia/Dubai",
-    "model": "gemini-3.6-flash",
-    "dry_run": false,
-    "trades": [
-      {
-        "symbol": "US100",
-        "name": "NASDAQ",
-        "action": "BUY",
-        "entry": 28270.69,
-        "stop_loss": 28256.39,
-        "take_profit": 28275.69,
-        "rr": 0.35,
-        "confidence": 0.72,
-        "digits": 2,
-        "session": "LONDON_SESSION",
-        "cvd_label": "BULLISH"
-      }
-    ],
-    "no_trade": [
-      "XAUUSD",
-      "EURUSD",
-      "GBPUSD",
-      "BTCUSD"
-    ],
-    "analysis_failed": false,
-    "breaker_halted": false,
-    "written_at": "2026-11-11T12:26:29.510334+00:00"
-  },
-  {
     "signal_at": "2026-11-11T12:28:20.004349+00:00",
     "tz": "Asia/Dubai",
     "model": "gemini-3.6-flash",
@@ -1746,5 +1716,59 @@
     "analysis_failed": false,
     "breaker_halted": false,
     "written_at": "2026-11-11T14:04:30.952809+00:00"
+  },
+  {
+    "signal_at": "2026-11-11T14:06:20.062177+00:00",
+    "tz": "Asia/Dubai",
+    "model": "gemini-3.6-flash",
+    "dry_run": false,
+    "trades": [
+      {
+        "symbol": "XAUUSD",
+        "name": "GOLD",
+        "action": "SELL",
+        "entry": 4032.16,
+        "stop_loss": 4038.0,
+        "take_profit": 4030.91,
+        "rr": 0.214,
+        "confidence": 0.75,
+        "digits": 2,
+        "session": "LONDON_NY_OVERLAP",
+        "cvd_label": "NEUTRAL"
+      },
+      {
+        "symbol": "EURUSD",
+        "name": "EURO",
+        "action": "SELL",
+        "entry": 1.10991,
+        "stop_loss": 1.11171,
+        "take_profit": 1.10866,
+        "rr": 0.694,
+        "confidence": 0.85,
+        "digits": 5,
+        "session": "LONDON_NY_OVERLAP",
+        "cvd_label": "BEARISH"
+      },
+      {
+        "symbol": "GBPUSD",
+        "name": "POUND",
+        "action": "SELL",
+        "entry": 1.32786,
+        "stop_loss": 1.32981,
+        "take_profit": 1.32661,
+        "rr": 0.641,
+        "confidence": 0.85,
+        "digits": 5,
+        "session": "LONDON_NY_OVERLAP",
+        "cvd_label": "BEARISH"
+      }
+    ],
+    "no_trade": [
+      "US100",
+      "BTCUSD"
+    ],
+    "analysis_failed": false,
+    "breaker_halted": false,
+    "written_at": "2026-11-11T14:06:29.024281+00:00"
   }
 ]

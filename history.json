@@ -1,22 +1,5 @@
 [
   {
-    "signal_at": "2026-11-11T11:50:20.004044+00:00",
-    "tz": "Asia/Dubai",
-    "model": "gemini-3.6-flash",
-    "dry_run": false,
-    "trades": [],
-    "no_trade": [
-      "XAUUSD",
-      "EURUSD",
-      "GBPUSD",
-      "US100",
-      "BTCUSD"
-    ],
-    "analysis_failed": false,
-    "breaker_halted": false,
-    "written_at": "2026-11-11T11:50:30.373359+00:00"
-  },
-  {
     "signal_at": "2026-11-11T11:52:20.004050+00:00",
     "tz": "Asia/Dubai",
     "model": "gemini-3.6-flash",
@@ -1415,5 +1398,47 @@
     "analysis_failed": false,
     "breaker_halted": false,
     "written_at": "2026-11-11T13:28:30.684522+00:00"
+  },
+  {
+    "signal_at": "2026-11-11T13:30:20.092889+00:00",
+    "tz": "Asia/Dubai",
+    "model": "gemini-3.6-flash",
+    "dry_run": false,
+    "trades": [
+      {
+        "symbol": "EURUSD",
+        "name": "EURO",
+        "action": "SELL",
+        "entry": 1.11177,
+        "stop_loss": 1.11278,
+        "take_profit": 1.11172,
+        "rr": 0.05,
+        "confidence": 0.85,
+        "digits": 5,
+        "session": "LONDON_NY_OVERLAP",
+        "cvd_label": "BEARISH"
+      },
+      {
+        "symbol": "GBPUSD",
+        "name": "POUND",
+        "action": "SELL",
+        "entry": 1.3297,
+        "stop_loss": 1.33072,
+        "take_profit": 1.32969,
+        "rr": 0.01,
+        "confidence": 0.85,
+        "digits": 5,
+        "session": "LONDON_NY_OVERLAP",
+        "cvd_label": "BEARISH"
+      }
+    ],
+    "no_trade": [
+      "XAUUSD",
+      "US100",
+      "BTCUSD"
+    ],
+    "analysis_failed": false,
+    "breaker_halted": false,
+    "written_at": "2026-11-11T13:30:32.588888+00:00"
   }
 ]

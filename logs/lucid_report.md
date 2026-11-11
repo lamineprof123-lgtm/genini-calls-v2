@@ -2,16 +2,16 @@
 
 Post-reset account only (pre-reset trades listed separately); paper trades only; net P&L after round-trip commission
 
-Updated: 2026-11-11 22:34:31 (Dubai UTC+4)
+Updated: 2026-11-11 22:36:32 (Dubai UTC+4)
 
 **Every bucket with n < 20 is LOW CONFIDENCE. Descriptive only; no proven edge.**
 
-Account reset at 2026-11-11T17:32:34.420596+00:00 (target sizing bug fix). Tables below are POST-RESET only; pre-reset trades are kept as history and listed separately.
+Account reset at 2026-11-11T18:36:32.847032+00:00 (switch to Gemini entry+exit, removed server target). Tables below are POST-RESET only; pre-reset trades are kept as history and listed separately.
 
 | Group | n | Win rate | Net P&L | Avg win | Avg loss | Expectancy | Sample |
 |---|---:|---:|---:|---:|---:|---:|---|
-| Post-reset (since 2026-11-11T17:32Z) | 1 | 0.0% | $-693.10 | n/a | $-693.10 | $-693.10 | LOW CONFIDENCE |
-| Pre-reset (archived account history) | 7 | 14.3% | $-1,411.85 | $757.25 | $-361.52 | $-201.69 | LOW CONFIDENCE |
+| Post-reset (since 2026-11-11T18:36Z) | 0 | n/a | $0.00 | n/a | n/a | n/a | LOW CONFIDENCE |
+| Pre-reset (archived account history) | 8 | 12.5% | $-2,104.95 | $757.25 | $-408.89 | $-263.12 | LOW CONFIDENCE |
 | All closed trades (both) | 8 | 12.5% | $-2,104.95 | $757.25 | $-408.89 | $-263.12 | LOW CONFIDENCE |
 
 ## Pre-reset history by symbol
@@ -20,88 +20,64 @@ Account reset at 2026-11-11T17:32:34.420596+00:00 (target sizing bug fix). Table
 |---|---:|---:|---:|---:|---:|---:|---|
 | EURUSD | 4 | 25.0% | $235.25 | $757.25 | $-174.00 | $58.81 | LOW CONFIDENCE |
 | GBPUSD | 2 | 0.0% | $-908.50 | n/a | $-454.25 | $-454.25 | LOW CONFIDENCE |
+| US100 | 1 | 0.0% | $-693.10 | n/a | $-693.10 | $-693.10 | LOW CONFIDENCE |
 | XAUUSD | 1 | 0.0% | $-738.60 | n/a | $-738.60 | $-738.60 | LOW CONFIDENCE |
 
-Pre-reset entry skips: 407
+Pre-reset entry skips: 448
+
+No closed paper trades yet. Win rate/expectancy are unavailable, not zero.
 
 ## Session
 
-| Group | n | Win rate | Net P&L | Avg win | Avg loss | Expectancy | Sample |
-|---|---:|---:|---:|---:|---:|---:|---|
-| NEW_YORK_SESSION | 1 | 0.0% | $-693.10 | n/a | $-693.10 | $-693.10 | LOW CONFIDENCE |
+No observations yet.
 
 ## Value Area Position
 
-| Group | n | Win rate | Net P&L | Avg win | Avg loss | Expectancy | Sample |
-|---|---:|---:|---:|---:|---:|---:|---|
-| above_vah | 1 | 0.0% | $-693.10 | n/a | $-693.10 | $-693.10 | LOW CONFIDENCE |
+No observations yet.
 
 ## Cvd Agrees
 
-| Group | n | Win rate | Net P&L | Avg win | Avg loss | Expectancy | Sample |
-|---|---:|---:|---:|---:|---:|---:|---|
-| yes | 1 | 0.0% | $-693.10 | n/a | $-693.10 | $-693.10 | LOW CONFIDENCE |
+No observations yet.
 
 ## Rvol Spike
 
-| Group | n | Win rate | Net P&L | Avg win | Avg loss | Expectancy | Sample |
-|---|---:|---:|---:|---:|---:|---:|---|
-| no | 1 | 0.0% | $-693.10 | n/a | $-693.10 | $-693.10 | LOW CONFIDENCE |
+No observations yet.
 
 ## Vwap Aligned
 
-| Group | n | Win rate | Net P&L | Avg win | Avg loss | Expectancy | Sample |
-|---|---:|---:|---:|---:|---:|---:|---|
-| yes | 1 | 0.0% | $-693.10 | n/a | $-693.10 | $-693.10 | LOW CONFIDENCE |
+No observations yet.
 
 ## Ema50 Aligned
 
-| Group | n | Win rate | Net P&L | Avg win | Avg loss | Expectancy | Sample |
-|---|---:|---:|---:|---:|---:|---:|---|
-| yes | 1 | 0.0% | $-693.10 | n/a | $-693.10 | $-693.10 | LOW CONFIDENCE |
+No observations yet.
 
 ## Vwap Ema50 Aligned
 
-| Group | n | Win rate | Net P&L | Avg win | Avg loss | Expectancy | Sample |
-|---|---:|---:|---:|---:|---:|---:|---|
-| yes | 1 | 0.0% | $-693.10 | n/a | $-693.10 | $-693.10 | LOW CONFIDENCE |
+No observations yet.
 
 ## Confidence Band
 
-| Group | n | Win rate | Net P&L | Avg win | Avg loss | Expectancy | Sample |
-|---|---:|---:|---:|---:|---:|---:|---|
-| 0.7-0.8 | 1 | 0.0% | $-693.10 | n/a | $-693.10 | $-693.10 | LOW CONFIDENCE |
+No observations yet.
 
 ## Symbol
 
-| Group | n | Win rate | Net P&L | Avg win | Avg loss | Expectancy | Sample |
-|---|---:|---:|---:|---:|---:|---:|---|
-| US100 | 1 | 0.0% | $-693.10 | n/a | $-693.10 | $-693.10 | LOW CONFIDENCE |
+No observations yet.
 
 ## Exit Reason
 
-| Group | n | Win rate | Net P&L | Avg win | Avg loss | Expectancy | Sample |
-|---|---:|---:|---:|---:|---:|---:|---|
-| time_cut_no_mfe | 1 | 0.0% | $-693.10 | n/a | $-693.10 | $-693.10 | LOW CONFIDENCE |
+No observations yet.
 
 ## Top combinations: Session × Value area × CVD agreement
 
 Ranked by net P&L; small samples are not a strategy recommendation.
 
-| Group | n | Win rate | Net P&L | Avg win | Avg loss | Expectancy | Sample |
-|---|---:|---:|---:|---:|---:|---:|---|
-| NEW_YORK_SESSION × above_vah × CVD yes | 1 | 0.0% | $-693.10 | n/a | $-693.10 | $-693.10 | LOW CONFIDENCE |
+No observations yet.
 
-## Entry skips (41)
+## Entry skips (0)
 
 | Reason | Count |
 |---|---:|
-| already_position_or_pending | 28 |
-| dll room at queue: dll room: risk budget $-148 < min_risk_usd $381 (open risk $1010 + pending $0; daily loss limit nearly used; no new entries until it resets) | 1 |
-| dll room at queue: dll room: risk budget $-165 < min_risk_usd $381 (open risk $1010 + pending $0; daily loss limit nearly used; no new entries until it resets) | 1 |
-| pending cancelled at fill: dll room: risk budget $-93 < min_risk_usd $381 (open risk $1010 + pending $0; daily loss limit nearly used; no new entries until it resets) | 1 |
-| sizing_unreachable | 9 |
-| stop 0.25 atr from entry (min 0.25) | 1 |
+| None yet | 0 |
 
 Legacy records without telemetry remain in the totals and are grouped as unknown.
 MFE/MAE are gross price excursions, not hypothetical net realized P&L. Bar-data exit-bar extremes are ambiguous.

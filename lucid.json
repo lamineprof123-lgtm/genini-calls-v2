@@ -1,64 +1,34 @@
 {
-  "updated_at": "2026-11-11T18:34:31.093640+00:00",
+  "updated_at": "2026-11-11T18:36:32.867424+00:00",
   "paper_only": true,
   "plan": "LucidPro 100K (DLL on)",
   "sizing_rule": "full-size futures only (NQ, GC, 6E, 6B), 1-40 contracts; $381-$1000 NET target (aim $750), max risk $1500",
   "reset": {
-    "at": "2026-11-11T17:32:34.420596+00:00",
-    "reason": "target sizing bug fix",
-    "token": "2026-11-11-target-sizing-fix"
+    "at": "2026-11-11T18:36:32.847032+00:00",
+    "reason": "switch to Gemini entry+exit, removed server target",
+    "token": "2026-11-11-gemini-entry-exit"
   },
   "account": {
     "no": 1,
     "phase": "eval",
     "start_balance": 100000.0,
-    "balance": 99304.6,
-    "equity": 99111.6,
-    "realized_pnl_since_reset": -693.1,
-    "open_pnl": -193.0,
-    "commission_on_open": 2.3,
-    "trades_since_reset": 1,
+    "balance": 100000.0,
+    "equity": 100000.0,
+    "realized_pnl_since_reset": 0.0,
+    "open_pnl": 0.0,
+    "commission_on_open": 0.0,
+    "trades_since_reset": 0,
     "wins": 0,
-    "losses": 1,
+    "losses": 0,
     "mll_floor": 97000.0,
-    "mll_room": 2111.6,
+    "mll_room": 3000.0,
     "dll": 1800.0,
-    "day_realized": -693.1,
+    "day_realized": 0.0,
     "day_locked": null,
-    "to_target": 6695.4
+    "to_target": 6000.0
   },
-  "open_positions": [
-    {
-      "symbol": "XAUUSD",
-      "contract": "GC",
-      "qty": 1,
-      "side": "SHORT",
-      "entry_time": "2026-11-11T18:07:00+00:00",
-      "entry": 3991.2,
-      "stop": 4001.3,
-      "target": 3984.7,
-      "last": 3993.13,
-      "unrealized": -193.0,
-      "risk_usd": 1010.0,
-      "target_usd_net": 645.4,
-      "target_source": "extended:min_net"
-    }
-  ],
+  "open_positions": [],
   "pending": 0,
-  "recent_trades": [
-    {
-      "t_exit": "2026-11-11T18:03:00+00:00",
-      "symbol": "US100",
-      "contract": "NQ",
-      "qty": 1,
-      "side": "LONG",
-      "entry_time": "2026-11-11T17:33:00+00:00",
-      "entry": 28548.75,
-      "exit": 28514.27,
-      "reason": "time_cut_no_mfe",
-      "net": -693.1,
-      "balance_after": 99306.9
-    }
-  ],
-  "last_processed": "2026-11-11T18:33:00+00:00"
+  "recent_trades": [],
+  "last_processed": "2026-11-11T18:36:00+00:00"
 }

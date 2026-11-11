@@ -195,7 +195,7 @@ def build_exit_prompt(cfg: dict, pos: dict, ctx: dict, m: dict, walls: dict, now
         cvd_slope=ctx.get("cvd_slope", "n/a"), atr=fmt(pos.get("atr")),
         runner_mfe_atr=e["runner_mfe_atr"], wall_reject_atr=f"{e['wall_reject_atr']:.2f}",
         giveback_min_mfe_atr=e["giveback_min_mfe_atr"], giveback_threshold=f"{e['giveback_pct']:.0f}",
-        early_minutes=e["early_minutes"])
+        early_minutes=e["early_minutes"], no_stop=pos.get("stop") is None)
 
 
 def _gex_fmt(gex: dict | None, fmt) -> dict:

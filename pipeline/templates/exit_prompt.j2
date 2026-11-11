@@ -66,8 +66,9 @@ CHART VISUALS (the same M15 chart the entry model saw, plus an ENTRY line):
      {{ "d" if pin_wall else "c" }}) CLIMAX EXHAUSTION: After a strong impulse, an opposing bright yellow volume bar (RVOL > 2.0) whose candle
         engulfs the prior M15 candle body.
 
-Do not consider the hard emergency stop-loss; the server manages it separately. You can only HOLD or CLOSE;
-you cannot move or widen the stop.
+{% if no_stop %}There is NO stop-loss and NO take-profit on this position: your CLOSE is the ONLY exit. Nothing else will
+close it (no max hold, no session flat). You can only HOLD or CLOSE.{% else %}Do not consider the hard emergency stop-loss; the server manages it separately. You can only HOLD or CLOSE;
+you cannot move or widen the stop.{% endif %}
 
 === RESPONSE FORMAT ===
 Reply with valid JSON only. Evaluate "structure" and "reason" FIRST before choosing "decision":

@@ -87,8 +87,9 @@ def validate_signal(sig: dict | None, symbol: str, ctx: dict, cfg: dict, equity:
     risk, reward = abs(e - sl), abs(tp - e)
     out["rr_local"] = round(reward / risk, 3)
     atr = ctx["atr"] or 0
-    if atr > 0 and abs(e - ctx["last_close"]) > r["max_entry_distance_atr"] * atr:
-        return _hold(out, f"entry {abs(e - ctx['last_close']) / atr:.2f} ATR from last close "
+    market = ctx.get("live_price") if ctx.get("live_price") is not None else ctx["last_close"]
+    if atr > 0 and abs(e - market) > r["max_entry_distance_atr"] * atr:
+        return _hold(out, f"entry {abs(e - market) / atr:.2f} ATR from market "
                           f"(max {r['max_entry_distance_atr']})")
     if atr > 0 and risk < r["min_stop_distance_atr"] * atr:
         return _hold(out, f"stop {risk / atr:.2f} ATR from entry (min {r['min_stop_distance_atr']})")

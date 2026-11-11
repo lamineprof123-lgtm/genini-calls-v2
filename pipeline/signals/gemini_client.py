@@ -79,10 +79,14 @@ def slim_gemini_context(ctx: dict) -> dict:
 def chart_user_text(payload: dict, index: int, total: int) -> str:
     ctx = {"symbol": payload["symbol"], "source": f"{payload['source']}:{payload['ticker']}",
            "timeframe": payload["timeframe"], **slim_gemini_context(payload["context"])}
-    price = ctx.get("last_price", (payload["context"] or {}).get("last_close"))
-    ts = ctx.get("last_price_ts_utc", ctx.get("last_closed_bar_utc"))
+    raw = payload.get("context") or {}
+    price = ctx.get("live_price", ctx.get("last_price", raw.get("last_close")))
+    ts = ctx.get("live_price_ts_utc", ctx.get("last_price_ts_utc", ctx.get("last_closed_bar_utc")))
+    stale = ctx.get("live_price_stale")
+    tag = "LIVE PRICE SENT TO GEMINI"
+    extra = " (STALE — last closed M15 close)" if stale else ""
     return (f"Chart {index}/{total} - {payload['symbol']}\n"
-            f"LAST PRICE SENT TO GEMINI: {price} @ {ts}\n"
+            f"{tag}: {price} @ {ts}{extra}\n"
             f"Numeric context: {json.dumps(ctx)}")
 
 

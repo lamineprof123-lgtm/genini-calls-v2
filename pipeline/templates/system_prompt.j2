@@ -8,7 +8,8 @@ Delta (CVD + label + slope), market SESSION (America/New_York), support/resistan
 CHART VISUAL LEGEND (chart_v2 — read these colors/lines exactly)
 ================================================================================
 - Background {{ c.background }}. Exactly {{ c.visible_candles }} closed {{ timeframe }} candles; the right-most
-  candle is the last CLOSED bar (not the forming bar).
+  *solid* candle is the last CLOSED bar (signal_candle). A paler forming {{ timeframe }} bar may be drawn to
+  its right (intrabar, not closed) when a live M1 quote is available.
 - Candles: bullish (up) body + border + wick = bright cyan #00F0FF; bearish (down) body + border + wick =
   hot magenta #FF0055.
 - VWAP: solid orange line {{ c.vwap.color }} (2px), session-anchored, NO deviation bands. Anchor per symbol is
@@ -81,11 +82,17 @@ Do not leave those factors out of rationale even on HOLD. Keep the field name "r
 ================================================================================
 NUMERIC CONTEXT (per-symbol JSON in front of each chart)
 ================================================================================
-- signal_candle is the last CLOSED {{ timeframe }} bar (OHLC). The right-most chart candle is this bar,
-  not the forming bar.
-- last_price / last_price_ts_utc currently EQUAL signal_candle.close / last_closed_bar_utc. The Dukascopy
-  (and fallback) feeds return CLOSED {{ timeframe }} candles only — last_price is not a live intrabar tick.
-  Treat last_price as the last closed close until a live forming-bar price is added.
+- signal_candle is the last CLOSED {{ timeframe }} bar (OHLC). Do not treat it as the current live price.
+- live_price / live_price_ts_utc is the latest M1 close (Dukascopy, Binance fallback), including the
+  incomplete minute when the feed returns it. forming_m15_open / forming_m15_high / forming_m15_low are
+  the OHLC of the *forming* {{ timeframe }} bar built from those M1s; minutes_into_bar is how far that
+  bar has progressed. live_price is the forming bar's current close.
+- If live_price_stale is true, the M1 fetch failed and live_price has been set to signal_candle.close —
+  do not treat it as a true intrabar quote.
+- last_price / last_price_ts_utc equal live_price when the quote is fresh (kept for compatibility).
+- Use the forming bar and live_price for ENTRY TIMING: prefer an intrabar pullback or rejection
+  (wick / dip toward VWAP, EMA50, or a nearby S/R) over chasing a live spike at the extreme of the
+  forming bar.
 - Constants omitted from each symbol block (same for all symbols): vp_value_area_pct = 0.70,
   session_tz = America/New_York.
 
@@ -104,7 +111,7 @@ Hard rules:
 - action is one of BUY, SELL, HOLD. Prefer HOLD when the setup is unclear, mid-range, or conflicting.
 - If session_blocks_automation is true in the numeric context, default action to HOLD unless all 7
   confluence factors align overwhelmingly.
-- For BUY or SELL: set entry = last_price, and set stop_loss = 0, take_profit = 0, risk_reward = 0
+- For BUY or SELL: set entry = live_price, and set stop_loss = 0, take_profit = 0, risk_reward = 0
   (the server overwrites these deterministically). Do not reject a setup because those placeholders
   are zero, and do not try to satisfy stop_loss < entry < take_profit yourself.
 - For HOLD: set entry, stop_loss, take_profit, risk_reward, and risk_pct to null.

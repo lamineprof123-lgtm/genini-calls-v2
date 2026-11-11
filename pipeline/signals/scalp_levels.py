@@ -248,9 +248,12 @@ def apply_server_levels(sig: dict, ctx: dict, cfg: dict, symbol: str) -> dict:
         lc = float(ctx.get("last_close") or sig.get("entry") or 0)
         candle = {"high": lc, "low": lc, "close": lc, "open": lc}
     entry = sig.get("entry")
-    if entry is None:
+    live = ctx.get("live_price")
+    if live is not None and not ctx.get("live_price_stale"):
+        entry = live
+    elif entry is None:
         entry = ctx.get("last_close")
-    # Prefer last_close as market entry when Gemini entry is missing/far — caller may already clamp
+    # Prefer live_price as market entry (fallback: last closed M15 close)
     atr = float(ctx.get("atr") or 0)
     levels = ctx.get("levels") or []
     vp = {k: ctx.get(k) for k in ("poc", "vah", "val") if ctx.get(k) is not None}

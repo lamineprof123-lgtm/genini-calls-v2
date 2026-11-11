@@ -208,7 +208,7 @@ def test_slim_gemini_context_drops_redundant_keys():
     assert "signal_candle" in slim and "last_price" in slim and "last_closed_bar_utc" in slim
     text = chart_user_text(_payload("EURUSD", "LONDON_SESSION", False), 1, 5)
     assert "last_candle" not in text and "vp_value_area_pct" not in text
-    assert "LAST PRICE SENT TO GEMINI" in text
+    assert "LIVE PRICE SENT TO GEMINI" in text or "LAST PRICE SENT TO GEMINI" in text
     assert '"session_tz"' not in text
 
 
@@ -233,6 +233,6 @@ def test_system_prompt_has_v3_rules():
     assert "rationale` FIRST" in text or "rationale FIRST" in text or "in `rationale` FIRST" in text
     assert "session_blocks_automation is true" in text
     assert "high-win-rate 1–3 bar" in text or "high-win-rate 1-3 bar" in text
-    assert "last_price is not a live intrabar tick" in text
+    assert ("live_price / live_price_ts_utc" in text) or ("last_price is not a live intrabar tick" in text)
     assert "vp_value_area_pct = 0.70" in text
     assert "trend_vs_vwap, volatility, level_event, rationale, then action" in text

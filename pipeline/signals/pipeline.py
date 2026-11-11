@@ -15,6 +15,7 @@ from .publisher import Publisher
 from .validator import parse_raw, validate_batch
 from .scalp_levels import apply_server_levels
 from .lucid import lucid_step
+from .live_price import enrich_live_prices
 
 log = logging.getLogger("signals")
 
@@ -95,7 +96,18 @@ async def run_once(cfg: dict, dry_run: bool = False, force: bool = True, model: 
                    for p in payloads}
     log.info("timing fetch_total=%.1fms fetch_per_ms=%s prices=%s", fetch_ms, fetch_per, price_stamp)
 
-    # 2. new-closed-candle gate (10-min polling on 15-min candles => some cycles see nothing new)
+    # 1b. live M1 / forming M15 (does not change signal_candle). Failure -> last close + live_price_stale.
+    t_live0 = time.monotonic()
+    live_info = await enrich_live_prices(payloads, cfg, now)
+    log.info("timing live_m1=%.1fms (fetch_total was %.1fms)", live_info.get("ms"), fetch_ms)
+    price_stamp = {p["symbol"]: {"last_price": p["context"].get("live_price", p["context"].get("last_close")),
+                                 "last_price_ts_utc": p["context"].get("live_price_ts_utc",
+                                                                       p["context"].get("last_closed_bar_utc")),
+                                 "live_price_stale": p["context"].get("live_price_stale"),
+                                 "minutes_into_bar": p["context"].get("minutes_into_bar")}
+                   for p in payloads}
+
+    # 2. new-closed-candle gate
     last_bars = {p["symbol"]: p["context"]["last_closed_bar_utc"] for p in payloads}
     seen_path = state_dir / "last_bars.json"
     seen = json.loads(seen_path.read_text()) if seen_path.exists() else {}
@@ -158,8 +170,10 @@ async def run_once(cfg: dict, dry_run: bool = False, force: bool = True, model: 
             ctx = contexts.get(sym)
             if not ctx:
                 continue
-            # Prefer a near-market entry; keep Gemini entry if present and sane.
-            if s.get("entry") is None:
+            # Server entry is the live quote when fresh; otherwise last M15 close.
+            if not ctx.get("live_price_stale") and ctx.get("live_price") is not None:
+                s["entry"] = ctx["live_price"]
+            elif s.get("entry") is None:
                 s["entry"] = ctx.get("last_close")
             apply_server_levels(s, ctx, cfg, sym)
     validated = validate_batch(obj, contexts, cfg, equity, bstat.halted, bstat.reason)
@@ -176,7 +190,10 @@ async def run_once(cfg: dict, dry_run: bool = False, force: bool = True, model: 
     for v in validated:
         ctx = contexts.get(v["symbol"]) or {}
         for k in ("session", "cvd", "cvd_label", "cvd_slope",
-                  "last_closed_bar_utc", "last_price_ts_utc", "poc", "vah", "val"):
+                  "last_closed_bar_utc", "last_price_ts_utc", "poc", "vah", "val",
+                  "live_price", "live_price_ts_utc", "live_price_stale", "live_price_source",
+                  "live_price_fetched_at_utc", "forming_m15_open", "forming_m15_high",
+                  "forming_m15_low", "forming_m15_open_utc", "minutes_into_bar"):
             if v.get(k) is None and ctx.get(k) is not None:
                 v[k] = ctx[k]
     if ai_error:

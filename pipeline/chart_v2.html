@@ -78,7 +78,11 @@ function _applyMeta(p) {
   const line1 = `src ${p.source}:${p.ticker}  |  close ${last.close.toFixed(prec)}  |  VWAP ${(c.vwap ?? NaN).toFixed(prec)} (${c.vwap_anchor})`
     + `  |  EMA50 ${(c.ema50 ?? NaN).toFixed(prec)}  |  ATR14 ${(c.atr ?? NaN).toFixed(prec)}`
     + `  |  POC ${(c.poc ?? NaN).toFixed(prec)}  |  VAH ${(c.vah ?? NaN).toFixed(prec)}  |  VAL ${(c.val ?? NaN).toFixed(prec)}`;
-  const line2 = [cvdTxt, sessTxt,
+  const live = (typeof c.live_price === 'number')
+    ? `live ${Number(c.live_price).toFixed(prec)}${c.live_price_stale ? ' STALE' : ''}`
+      + (c.minutes_into_bar != null ? `  +${Number(c.minutes_into_bar).toFixed(1)}m` : '')
+    : null;
+  const line2 = [cvdTxt, sessTxt, live,
     `last bar ${new Date(last.time * 1000).toISOString().slice(0,16).replace('T',' ')} UTC`]
     .filter(Boolean).join('  |  ');
   document.getElementById('meta').textContent = line1 + '\n' + line2;
@@ -91,7 +95,8 @@ function _applyMeta(p) {
     + sw(A.lower_color, 'solid', 1) + '-2 ATR'
     + sw(R.resistance_color, 'dashed', 2) + 'Resistance'
     + sw(R.support_color, 'dashed', 2) + 'Support'
-    + sw('#FACC15', 'solid', 3) + 'RVOL&gt;2';
+    + sw('#FACC15', 'solid', 3) + 'RVOL&gt;2'
+    + (p.forming_candle ? sw('#7AF7FF', 'solid', 3) + 'Forming' : '');
 }
 
 function _setAllData(st, p) {
@@ -106,6 +111,9 @@ function _setAllData(st, p) {
   if (st.e50 && p.ema50) st.e50.setData(p.ema50);
   st.vw.setData(p.vwap);
   st.cs.setData(p.candles);
+  if (st.form) {
+    st.form.setData(p.forming_candle ? [p.forming_candle] : []);
+  }
   // refresh S/R price lines
   (st.priceLines || []).forEach(pl => { try { st.cs.removePriceLine(pl); } catch (e) {} });
   st.priceLines = [];
@@ -118,7 +126,8 @@ function _setAllData(st, p) {
     }));
   });
   const n = p.candles.length, vis = Math.max(80, Math.min(120, p.visible || 100));
-  st.chart.timeScale().setVisibleLogicalRange({ from: n - vis - 0.5, to: n - 0.5 });
+  const extra = p.forming_candle ? 1 : 0;
+  st.chart.timeScale().setVisibleLogicalRange({ from: n - vis - 0.5, to: n - 0.5 + extra });
 }
 
 window.renderChart = function (p) {
@@ -173,7 +182,13 @@ window.renderChart = function (p) {
   const cs = chart.addSeries(LC.CandlestickSeries, {
     upColor: bull, downColor: bear, borderUpColor: bull, borderDownColor: bear,
     wickUpColor: bull, wickDownColor: bear, priceFormat: fmt });
-  window.__chartState = { chart, vol, base, up, lo, fill, e50, vw, cs, priceLines: [], digits: p.digits };
+  // Paler second series for the incomplete forming M15 bar (drawn to the right of the last closed candle).
+  const form = chart.addSeries(LC.CandlestickSeries, {
+    upColor: '#00F0FF55', downColor: '#FF005555',
+    borderUpColor: '#7AF7FF', borderDownColor: '#FF7AA8',
+    wickUpColor: '#7AF7FF', wickDownColor: '#FF7AA8', priceFormat: fmt,
+    lastValueVisible: false, priceLineVisible: false });
+  window.__chartState = { chart, vol, base, up, lo, fill, e50, vw, cs, form, priceLines: [], digits: p.digits };
   _setAllData(window.__chartState, p);
   _applyMeta(p);
   _markRendered(false);

@@ -1,7 +1,7 @@
 {
   "version": 1,
   "created_at": "2026-11-09T13:59:39.073020+00:00",
-  "last_processed": "2026-11-11T08:47:00+00:00",
+  "last_processed": "2026-11-11T08:50:00+00:00",
   "account": {
     "no": 1,
     "phase": "eval",
@@ -270,7 +270,7 @@
         "run_at_utc": "2026-11-11T08:30:20.089334+00:00",
         "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/123020.json/GBPUSD.png"
       },
-      "mfe": 4.0000000000040004e-05,
+      "mfe": 9.000000000014552e-05,
       "mae": 0.00046999999999997044,
       "mfe_min": 0.0001445,
       "time_cut_deadline": "2026-11-11T09:01:00+00:00",
@@ -281,9 +281,9 @@
     {
       "symbol": "US100",
       "side": 1,
-      "created": "2026-11-11T08:48:30.486712+00:00",
-      "fill_after": "2026-11-11T08:49:00+00:00",
-      "expires": "2026-11-11T08:59:00+00:00",
+      "created": "2026-11-11T08:50:30.639296+00:00",
+      "fill_after": "2026-11-11T08:51:00+00:00",
+      "expires": "2026-11-11T09:01:00+00:00",
       "atr": 44.165,
       "scalp": {
         "action": "BUY",
@@ -354,9 +354,9 @@
         },
         "gemini": {
           "action": "BUY",
-          "confidence": 0.72,
+          "confidence": 0.7,
           "confidence_band": "0.7-0.8",
-          "rationale": "Price is inside Value Area (VAL 27992.18 to VAH 28230.85) but cleanly above POC (28111.52), riding strong upward slope above VWAP (28047.58) and EMA50 (28005.49) during LONDON_SESSION. CVD is BULLISH (+6.84, slope +1.65). While RVOL is 1.111 without yellow spikes (expected per US100 index tick volume caveat), structural momentum is cleanly holding upper ATR band (28206.45) attempting a Session High breakout.",
+          "rationale": "Price is inside VA approaching VAH (28230.85) and well above POC (28111.52). CVD is BULLISH (+6.84) with positive slope (+1.65). LONDON_SESSION momentum continues strong above VWAP (28047.58) and EMA50 (28005.49). RVOL is 1.11 (US100 index tick volume caveat applies, no yellow bar needed given steady trend). Price is breaking above EMA20 baseline (28118.12) towards upper ATR band (28206.45) testing Session High.",
           "model": "gemini-3.6-flash",
           "model_action": "BUY"
         },
@@ -375,21 +375,21 @@
           "target_usd_net": null,
           "risk_usd": null
         },
-        "run_at_utc": "2026-11-11T08:48:20.012000+00:00",
-        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/124820.json/US100.png"
+        "run_at_utc": "2026-11-11T08:50:20.087359+00:00",
+        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/125020.json/US100.png"
       },
       "gemini": {
         "action": "BUY",
         "entry": 28209.62,
         "stop_loss": 28171.97,
         "take_profit": 28214.62,
-        "confidence": 0.72,
+        "confidence": 0.7,
         "rr": 0.133,
         "shown_on_site": true,
         "basis": "site signal",
-        "run_at_utc": "2026-11-11T08:48:20.012000+00:00",
+        "run_at_utc": "2026-11-11T08:50:20.087359+00:00",
         "session": "LONDON_SESSION",
-        "rationale": "Price is inside Value Area (VAL 27992.18 to VAH 28230.85) but cleanly above POC (28111.52), riding strong upward slope above VWAP (28047.58) and EMA50 (28005.49) during LONDON_SESSION. CVD is BULLISH (+6.84, slope +1.65). While RVOL is 1.111 without yellow spikes (expected per US100 index tick volume caveat), structural momentum is cleanly holding upper ATR band (28206.45) attempting a Session High breakout.",
+        "rationale": "Price is inside VA approaching VAH (28230.85) and well above POC (28111.52). CVD is BULLISH (+6.84) with positive slope (+1.65). LONDON_SESSION momentum continues strong above VWAP (28047.58) and EMA50 (28005.49). RVOL is 1.11 (US100 index tick volume caveat applies, no yellow bar needed given steady trend). Price is breaking above EMA20 baseline (28118.12) towards upper ATR band (28206.45) testing Session High.",
         "model": "gemini-3.6-flash"
       }
     }
@@ -404,9 +404,9 @@
     "traded": true
   },
   "last_price": {
-    "US100": 28180.92,
-    "GBPUSD": 1.332,
-    "EURUSD": 1.11472
+    "US100": 28158.476,
+    "GBPUSD": 1.33193,
+    "EURUSD": 1.11466
   },
   "history": [],
   "ledger": {
@@ -435,7 +435,7 @@
     "gross_loss": 0.0,
     "commissions": 36.0,
     "net_trade_pnl": 0.0,
-    "skipped_signals": 38,
-    "accepted_signals": 12
+    "skipped_signals": 41,
+    "accepted_signals": 13
   }
 }

@@ -181,15 +181,31 @@ class LucidSim:
                                   for p in self.s["positions"])
 
     def open_risk(self) -> float:
-        return sum(max(0.0, -self.pnl(p, p["stop"])) for p in self.s["positions"])
+        return sum(max(0.0, -self.pnl(p, p["stop"])) for p in self.s["positions"] if p.get("stop") is not None)
 
     @property
     def gemini_exit(self) -> bool:
         """exit_mode = "gemini": Gemini's entry opens, the exit manager's Gemini CLOSE exits. No server target,
         no 2-bar time cut, no VWAP/EMA50 cross exits. Safety rails kept: hard stop, DLL/MLL, 16:45 ET flat,
         max hold. Sizing by stop distance only (no $381 NET-target floor: there is no target)."""
-        return str(self.L.get("exit_mode", "server")) == "gemini"
+        return str(self.L.get("exit_mode", "server")) in ("gemini", "gemini_only")
 
+    @property
+    def gemini_only(self) -> bool:
+        """USER RULE (2026-11-11 23:00 Dubai): 100% Gemini. No stop loss, no take profit, no max hold, no 16:45 flat,
+        no server-forced exit of any kind. DLL / MLL / 3.5% breaker are LOG-ONLY (breach events, panel, report)."""
+        return str(self.L.get("exit_mode", "server")) == "gemini_only"
+
+    def _log_breach(self, t: datetime, kind: str, level: float, equity: float, note: str = "") -> None:
+        day = self.s["day"].get("id")
+        seen = self.s.setdefault("breaches", [])
+        if any(b["kind"] == kind and b["day"] == day for b in seen):
+            return
+        b = {"t": _iso(t), "day": day, "kind": kind, "level": round(level, 2), "equity": round(equity, 2),
+             "note": note or "log-only (gemini_only): no block, no forced close"}
+        seen.append(b)
+        del seen[:-100]
+        self._event(t, "breach_logged", **{k: v for k, v in b.items() if k != "t"}, breach_t=b["t"])
     def size_by_stop(self, symbol: str, sdist: float) -> dict | None:
         """Full-size contracts only. qty = most contracts whose hard-stop risk fits min($max_risk, DLL room)
         and the remaining max_minis. Skip (None + reason) only when 1 contract does not fit."""
@@ -224,6 +240,32 @@ class LucidSim:
                            f"${unit * q:,.0f} risk <= min(${L['max_risk_usd']:g} cap, ${budget:,.0f} DLL room); "
                            f"no target / no $381 floor (exit = Gemini CLOSE)")}
 
+    def size_notional(self, symbol: str, atr: float) -> dict | None:
+        """gemini_only sizing: full-size, 1..40, qty = floor($max_risk / (0.8 ATR x point value)), at least 1.
+        0.8 ATR is a NOTIONAL reference only - there is no stop and it never triggers an exit. Never blocked by
+        DLL/MLL (log-only); only the 40-contract aggregate cap applies."""
+        from .scalp_levels import ceil_tick, full_size_contracts
+        L = self.L
+        cs = full_size_contracts([(c, self.spec(c)) for c in L["symbols"][symbol]["contracts"]])
+        if not cs or not atr or atr <= 0:
+            self.last_size_why = "no full-size contract / ATR"; return None
+        name, sp = cs[0]
+        mult = float((self.cfg.get("scalp") or {}).get("atr_stop_mult", 0.8))
+        ref = ceil_tick(mult * atr, sp["tick"])
+        unit = ref * sp["point_value"]
+        used = sum(self.mini_eq(p["contract"], p["qty"]) for p in self.s["positions"])
+        room = int(math.floor(L["max_minis"] - used + 1e-9))
+        if room < 1:
+            self.last_size_why = f"max_minis={L['max_minis']:g} already used by open positions"; return None
+        q = max(1, min(room, int(math.floor(L["max_risk_usd"] / unit + 1e-9))))
+        return {"contract": name, "qty": q, "sdist": None, "tdist": None, "risk_usd": None,
+                "notional_risk_usd": round(unit * q, 2), "notional_ref_dist": ref,
+                "target_usd": None, "target_usd_gross": None, "commission_rt": round(2 * sp["commission"] * q, 2),
+                "target_source": "none (gemini_only)",
+                "sizing": (f"gemini_only: notional {mult:g} ATR = {ref:g} x {sp['point_value']:g}/pt = ${unit:,.0f} per "
+                           f"{name}; {q} {name} ~ ${unit * q:,.0f} notional <= ${L['max_risk_usd']:g} "
+                           f"(reference only; NO stop, NO target, exit = Gemini CLOSE)")}
+
     def pending_reserved_risk(self) -> float:
         """Risk reserved by queued (not yet filled) entries; counts against DLL room for any other entry."""
         return sum(float(pe.get("reserved_risk") or 0.0) for pe in self.s["pending"])
@@ -234,7 +276,8 @@ class LucidSim:
         # Worst case = every open position stopped out: balance + sum(P&L at each stop). Open (unrealized) profit
         # is NOT room - it can vanish before the stop (equity - open_risk used to count it, letting a 2nd entry
         # stack past the DLL while the first was in profit).
-        at_stops = self.s["account"]["balance"] + sum(self.pnl(p, p["stop"]) for p in self.s["positions"])
+        at_stops = self.s["account"]["balance"] + sum(self.pnl(p, p["stop"]) for p in self.s["positions"]
+                                                      if p.get("stop") is not None)
         room = at_stops - self.dll_level() - self.pending_reserved_risk()
         budget = min(L["max_risk_usd"], room - L.get("dll_safety_usd", 0))
         if L.get("respect_mll_room"):
@@ -339,6 +382,9 @@ class LucidSim:
 
     def _blow(self, t: datetime, why: str) -> None:
         a, lg = self.s["account"], self.s["ledger"]
+        if self.gemini_only:
+            self._log_breach(t, "MLL", a["mll_floor"], self.equity(), f"would blow: {why} (log-only)")
+            return
         self._event(t, "blown", reason=why, balance=round(a["balance"], 2))
         if a["phase"] == "eval":
             lg["blown_evals"] += 1; lg["resets"] += 1
@@ -425,6 +471,8 @@ class LucidSim:
         """
         L = self.L
         self.last_size_why = None
+        if self.gemini_only:
+            return self.size_notional(symbol, float(atr or 0))
         if self.gemini_exit:
             return self.size_by_stop(symbol, sdist if sdist is not None else
                                      float((self.cfg.get("scalp") or {}).get("atr_stop_mult", 0.8)) * float(atr or 0))
@@ -570,7 +618,8 @@ class LucidSim:
                 out.append({"symbol": sym, "taken": False, "why": why_dll, "session": sess, "telemetry": True})
                 continue
             pend = {"symbol": sym, "side": side, "created": _iso(now), "fill_after": _iso(ceil_min(now)),
-                    "reserved_risk": float(plan["risk_usd"]) if plan else float(self.L.get("min_risk_usd", 0)),
+                    "reserved_risk": (float(plan.get("risk_usd") or 0.0) if plan else
+                                      (0.0 if self.gemini_only else float(self.L.get("min_risk_usd", 0)))),
                     "planned": ({k: plan.get(k) for k in ("contract", "qty", "risk_usd", "tdist", "target_source")}
                                 if plan else None),
                     "expires": _iso(ceil_min(now) + timedelta(minutes=self.L["pending_expiry_minutes"])),
@@ -663,8 +712,51 @@ class LucidSim:
         return {r["id"]: r for r in rows if r.get("id") in open_ids and r["id"] not in done
                 and r.get("account_token") in (None, self.s.get("reset_token"))}
 
+    def _minute_gemini_only(self, t: datetime, bar: dict) -> None:
+        """Entry = Gemini signal (pending fills in session); exit = Gemini CLOSE requests only (any time)."""
+        d = self.s["day"]
+        sess = self.in_session(t)
+        et = t.astimezone(ET)
+        if not sess:
+            self.s["pending"] = []
+            if (d["eod_done"] != d["id"] and date.fromisoformat(d["id"]).weekday() < 5
+                    and et.date().isoformat() == d["id"] and et.time() >= self.flat_t):
+                self._eod(t)
+        else:
+            for pe in list(self.s["pending"]):
+                if t > _dt(pe["expires"]):
+                    self.s["pending"].remove(pe); self._event(t, "pending_expired", symbol=pe["symbol"]); continue
+                if t < _dt(pe["fill_after"]) or bar.get(pe["symbol"]) is None:
+                    continue
+                self._try_fill(pe, bar[pe["symbol"]], t)
+        for p in list(self.s["positions"]):
+            b = bar.get(p["symbol"])
+            if b is not None:
+                o, h, l, c = b
+                fav, adv = (h, l) if p["side"] > 0 else (l, h)
+                p["mfe"] = max(float(p.get("mfe") or 0.0), max(0.0, p["side"] * (fav - p["entry"])))
+                p["mae"] = max(float(p.get("mae") or 0.0), max(0.0, -p["side"] * (adv - p["entry"])))
+            req = self._close_requests.get(p["id"])
+            if req and floor_min(_dt(req["t"])) <= t:
+                self._close(p, float(req["price"]), t, "gemini_close")
+                self.s.setdefault("close_done", []).append(p["id"])
+                self._event(t, "gemini_close", symbol=p["symbol"], id=p["id"], price=req["price"],
+                            request_t=req["t"], book=req.get("book"), rule=req.get("rule"),
+                            reason_text=req.get("reason_text"))
+        for s, b in bar.items():
+            if b is not None:
+                self.s["last_price"][s] = float(b[3])
+        self._check_pass(t)
+        eq, a = self.equity(), self.s["account"]
+        if eq <= self.dll_level() + 1e-9:
+            self._log_breach(t, "DLL", self.dll_level(), eq)
+        if eq <= a["mll_floor"] + 1e-9:
+            self._log_breach(t, "MLL", a["mll_floor"], eq)
+
     def _minute(self, t: datetime, bar: dict) -> None:
         self._roll_day(t)
+        if self.gemini_only:
+            return self._minute_gemini_only(t, bar)
         d, a = self.s["day"], self.s["account"]
         sess = self.in_session(t)
         et = t.astimezone(ET)
@@ -837,9 +929,10 @@ class LucidSim:
                                 "risk_usd": size["risk_usd"], "target_source": size.get("target_source"),
                                 "sizing": size.get("sizing")}}
         p = {"id": self.s["next_pos_id"], "symbol": sym, "contract": size["contract"], "qty": size["qty"], "side": side,
-             "entry": px, "stop": self._round_tick(px - side * size["sdist"], tick),
+             "entry": px, "stop": (None if size.get("sdist") is None else self._round_tick(px - side * size["sdist"], tick)),
+             "notional_risk_usd": size.get("notional_risk_usd"),
              "target": (None if size.get("tdist") is None else self._round_tick(px + side * size["tdist"], tick)),
-             "entry_time": _iso(t), "exit_mode": "gemini" if self.gemini_exit else "server",
+             "entry_time": _iso(t), "exit_mode": ("gemini_only" if self.gemini_only else "gemini" if self.gemini_exit else "server"),
              "risk_usd": size["risk_usd"], "target_usd": size["target_usd"],  # NET of RT commission
              "target_source": size.get("target_source"), "sizing": size.get("sizing"),
              "target_usd_gross": size.get("target_usd_gross", size["target_usd"]),
@@ -939,7 +1032,15 @@ class LucidSim:
                 "balance_after")
         return {
             "updated_at": datetime.now(UTC).isoformat(), "paper_only": True, "plan": self.L.get("plan"),
-            "sizing_rule": (f"full-size futures only (NQ, GC, 6E, 6B), 1-{self.L['max_minis']:g} contracts sized by "
+            "exit_mode": ("gemini_only" if self.gemini_only else "gemini" if self.gemini_exit else "server"),
+            "card": "SL: none · TP: none · exit: Gemini" if self.gemini_only else None,
+            "breaches": [b for b in (self.s.get("breaches") or [])][-20:],
+            "breach_note": "DLL / MLL / 3.5% breaker are log-only (no block, no forced close)" if self.gemini_only else None,
+            "sizing_rule": (f"full-size futures only (NQ, GC, 6E, 6B), 1-{self.L['max_minis']:g} contracts sized as "
+                            f"if risk were {(self.cfg.get('scalp') or {}).get('atr_stop_mult', 0.8):g} ATR at "
+                            f"${self.L['max_risk_usd']:g} (notional reference only); no stop, no target, "
+                            f"exit = Gemini CLOSE only") if self.gemini_only else
+                           (f"full-size futures only (NQ, GC, 6E, 6B), 1-{self.L['max_minis']:g} contracts sized by "
                             f"the hard stop, max risk ${self.L['max_risk_usd']:g}; exit = Gemini CLOSE (no target), "
                             f"{self.L.get('max_hold_minutes', 90):g} min max hold") if self.gemini_exit else
                            (f"full-size futures only (NQ, GC, 6E, 6B), 1-{self.L['max_minis']:g} contracts; "
@@ -1154,8 +1255,9 @@ def format_status(sm: dict, cfg: dict) -> str:
     L.append(f"Open positions: {len(sm['positions'])}  pending: {len(sm['pending'])}")
     for p in sm["positions"]:
         L.append(f"  {p['symbol']}->{p['contract']} x{p['qty']} {'LONG' if p['side'] > 0 else 'SHORT'} @ {p['entry']} "
-                 f"stop {p['stop']} (-${p['risk_usd']:,.0f}) target {p['target'] if p.get('target') is not None else 'Gemini exit'} "
-                 f"(+${p['target_usd']:,.0f} net)")
+                 + (f"stop {p['stop']} (-${p['risk_usd']:,.0f}) " if p.get('stop') is not None else "SL: none ")
+                 + (f"target {p['target']} (+${p['target_usd']:,.0f} net)" if p.get('target') is not None
+                    else "TP: none, exit: Gemini"))
     L.append("Strategy ledger (all accounts):")
     wr = f"{lg['win_rate']:.0%}" if lg["win_rate"] is not None else "n/a"
     L.append(f"  trades {lg['trades']}  wins {lg['wins']}  losses {lg['losses']}  win rate {wr}  "

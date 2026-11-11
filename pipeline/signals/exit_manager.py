@@ -59,6 +59,11 @@ _env = Environment(loader=FileSystemLoader(ROOT / "templates"), undefined=Strict
                    keep_trailing_newline=False)
 
 
+def gemini_only(cfg: dict) -> bool:
+    """USER RULE: 100% Gemini - no hard stop, no max hold, no 16:45 flat, breaker log-only."""
+    return str((cfg.get("lucid") or {}).get("exit_mode", "")) == "gemini_only"
+
+
 def em_cfg(cfg: dict) -> dict:
     d = {"enabled": False, "check_seconds": 18, "runner_mfe_atr": 0.8, "wall_reject_atr": 0.10,
          "giveback_pct": 35.0, "giveback_min_mfe_atr": 1.0, "early_minutes": 12, "max_hold_minutes": 90,
@@ -370,6 +375,8 @@ class Books:
             p["mfe"] = max(float(p.get("mfe") or 0.0), max(0.0, sd * (fav - p["entry"])))
             p["mae"] = max(float(p.get("mae") or 0.0), max(0.0, -sd * (adv - p["entry"])))
             last_ts = ts
+            if p.get("stop") is None:          # gemini_only: no hard stop, MFE/MAE tracking only
+                continue
             hit = (l <= p["stop"]) if sd > 0 else (h >= p["stop"])
             if hit:
                 gap = (o <= p["stop"]) if sd > 0 else (o >= p["stop"])
@@ -432,6 +439,12 @@ class Books:
                 continue
             eq = b["balance"] + sum(p["side"] * (self.s["last_price"].get(p["symbol"], p["entry"]) - p["entry"])
                                     * self.usd_per_point(p) for p in b["positions"])
+            if eq <= b["day"]["start_balance"] * (1 - lim) + 1e-9 and gemini_only(self.cfg):
+                if not b["day"].get("breach_logged"):
+                    b["day"]["breach_logged"] = {"t": t.isoformat(), "equity": round(eq, 2),
+                                                 "note": f"{self.e['max_daily_loss_pct']}% breaker breached (log-only)"}
+                    out.append({"event": "breaker_breach_logged", "book": name, **b["day"]["breach_logged"]})
+                continue
             if eq <= b["day"]["start_balance"] * (1 - lim) + 1e-9:
                 for p in list(b["positions"]):
                     px = self.slip_exit(p, self.s["last_price"].get(p["symbol"], p["entry"]))
@@ -640,8 +653,10 @@ class ExitManager:
     def summary(self) -> dict:
         ids = set(self.books.s["seen_ids"])
         return {"updated_at_utc": datetime.now(UTC).isoformat(), "paper_only": True,
-                "note": "Same Lucid entries in all three; books exit via Gemini (hard stop, 16:45 ET flat, "
-                        f"3.5% breaker, {self.e['max_hold_minutes']} min max hold). Baseline = the Lucid account "
+                "note": ("GEMINI ONLY: same Lucid entries; books A (1-strike) / B (2-strike) exit on Gemini CLOSE only - no "
+                         "stop, no target, no max hold, no 16:45 flat; 3.5% breaker log-only. " if gemini_only(self.cfg)
+                         else "Same Lucid entries in all three; books exit via Gemini (hard stop, 16:45 ET flat, "
+                         f"3.5% breaker, {self.e['max_hold_minutes']} min max hold). ") + "BASELINE = the main Lucid account "
                         f"(exit_mode={(self.cfg.get('lucid') or {}).get('exit_mode', 'server')}: gemini = follows the "
                         f"{(self.cfg.get('lucid') or {}).get('gemini_exit_book', BOOK_1)} book's CLOSE) on the same entry ids.",
                 "check_seconds": self.e["check_seconds"], "books": self.books.summary(),
@@ -790,7 +805,9 @@ class ExitManager:
         rec["minutes_in_trade"] = round(minutes, 2)
         # 2. server-side forced exits (no Gemini call needed)
         forced = None
-        if held and not lucid_in_session(now, self.cfg):
+        if gemini_only(self.cfg):
+            pass                                # no server-forced exits at all
+        elif held and not lucid_in_session(now, self.cfg):
             forced = "flat_by_16:45_ET"
         elif held and minutes >= float(self.e["max_hold_minutes"]):
             forced = f"max_hold_{int(self.e['max_hold_minutes'])}m"

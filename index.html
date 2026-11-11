@@ -412,11 +412,11 @@
         <div class="act ${t.action}">${t.action}</div>
         <div class="levels">
           <div class="row"><span>Entry</span><b>${px(t.entry, t.digits)}</b></div>
-          <div class="row stop"><span>Stop</span><b>${px(t.stop_loss, t.digits)}</b></div>
-          ${t.exit ? `<div class="row target"><span>Exit</span><b>${t.exit}</b></div>`
+          <div class="row stop"><span>Stop</span><b>${t.stop_loss == null && t.exit ? 'none' : px(t.stop_loss, t.digits)}</b></div>
+          ${t.exit ? (t.card ? `<div class="row target"><span>Target</span><b>none</b></div>` : '') + `<div class="row target"><span>Exit</span><b>${t.exit}</b></div>`
                    : `<div class="row target"><span>Target</span><b>${px(t.take_profit, t.digits)}</b></div>`}
         </div>
-        <div class="rr">${t.exit ? 'Hard stop · exit on Gemini CLOSE' : `R:R 1 : ${t.rr != null ? Number(t.rr).toFixed(2) : '—'}`}</div>
+        <div class="rr">${t.card ? t.card : t.exit ? 'Hard stop · exit on Gemini CLOSE' : `R:R 1 : ${t.rr != null ? Number(t.rr).toFixed(2) : '—'}`}</div>
       </div>`).join('');
   }
 
@@ -488,7 +488,7 @@
     const P = L.open_positions || [];
     $('luPos').innerHTML = P.length ? `<table class="lu-t"><tr><th>Symbol</th><th>Size</th><th>Side</th><th>Entry</th>
       <th>Stop</th><th>Exit</th><th>Open P&amp;L</th></tr>${P.map(p => `<tr><td>${esc(p.symbol)}</td>
-      <td>${p.qty} ${esc(p.contract)}</td><td>${esc(p.side)}</td><td>${px(p.entry, 2)}</td><td>${px(p.stop, 2)}</td>
+      <td>${p.qty} ${esc(p.contract)}</td><td>${esc(p.side)}</td><td>${px(p.entry, 2)}</td><td>${p.stop != null ? px(p.stop, 2) : 'none'}</td>
       <td>${p.target != null ? px(p.target, 2) : 'Gemini'}</td><td class="${cls(p.unrealized)}">${usd(p.unrealized, true)}</td></tr>`).join('')}</table>`
       : `<div class="lu-note">None${L.pending ? ` · ${L.pending} pending entry` : ''}</div>`;
     const T = L.recent_trades || [];
@@ -497,9 +497,11 @@
       <td>${t.qty} ${esc(t.contract)}</td><td>${esc(t.side)}</td><td>${esc(t.reason)}</td>
       <td class="${cls(t.net)}">${usd(t.net, true)}</td></tr>`).join('')}</table>`
       : '<div class="lu-note">No closed trades since the reset yet.</div>';
+    const B = L.breaches || [];
+    const brk = B.length ? ` · BREACHES (log-only): ` + B.map(b => `${b.kind} ${dayhm(b.t)} eq ${usd(b.equity)} vs ${usd(b.level)}`).join('; ') : '';
     const r = L.reset || {};
     $('luUpd').textContent = L.updated_at ? `updated ${hm(L.updated_at)} ${city()}` : '';
-    $('luNote').textContent = `Paper trading only · ${L.sizing_rule || ''}` +
+    $('luNote').textContent = `Paper trading only · ${L.card ? L.card + ' · ' : ''}${L.sizing_rule || ''}${brk}` +
       (r.at ? ` · fresh $${Number(a.start_balance).toLocaleString('en-US')} account since ${dayhm(r.at)} ${city()}` +
        (r.reason ? ` (${r.reason})` : '') : '');
     $('lucid').hidden = false;

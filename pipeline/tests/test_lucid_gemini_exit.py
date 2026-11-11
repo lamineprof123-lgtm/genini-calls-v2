@@ -21,7 +21,7 @@ T = datetime(2026, 11, 11, 16, 0, 30, tzinfo=UTC)      # Wed 11:00 New York
 def cfg():
     c = copy.deepcopy(load_config())
     c["lucid"]["slippage_ticks"] = 0
-    assert c["lucid"]["exit_mode"] == "gemini"
+    c["lucid"]["exit_mode"] = "gemini"          # hard-stop + Gemini-exit mode (superseded by gemini_only)
     return c
 
 
@@ -139,7 +139,7 @@ def test_close_request_from_exit_manager_closes_lucid(sim, cfg, tmp_path):
 
 def test_reset2_archive_discards_positions(cfg, tmp_path):
     st = tmp_path / "state" / "lucid"
-    c0 = copy.deepcopy(cfg); c0["lucid"]["reset_token"] = "2026-11-11-target-sizing-fix"
+    c0 = copy.deepcopy(cfg); c0["lucid"]["reset_token"] = "2026-11-11-gemini-entry-exit"
     s = LucidSim(c0, st, tmp_path / "logs")
     s.s["account"].update(balance=99304.6, realized_pnl=-693.1, trades=1)
     s.s["positions"] = [{"id": 2, "symbol": "XAUUSD", "contract": "GC", "qty": 1, "side": -1, "entry": 3991.2,
@@ -150,10 +150,10 @@ def test_reset2_archive_discards_positions(cfg, tmp_path):
     a = s2.s["account"]
     assert (a["balance"], a["mll_floor"], a["trades"]) == (100000.0, 97000.0, 0)
     assert s2.s["positions"] == [] and s2.s["pending"] == []
-    arch = st / "account_pre_reset2_2026-11-11.json"
+    arch = st / "account_pre_reset3_2026-11-11.json"
     assert arch.exists() and json.loads(arch.read_text())["positions"][0]["contract"] == "GC"
     ev = [e for e in _events(s2) if e["event"] == "reset"]
-    assert ev[-1]["reason"] == "switch to Gemini entry+exit, removed server target"
+    assert ev[-1]["reason"] == "gemini-only: no SL/TP"
 
 
 def test_site_row_shows_stop_and_gemini_exit(cfg):
@@ -180,3 +180,104 @@ def test_open_profit_is_not_dll_room(sim):
     assert sim.risk_budget() == pytest.approx(99985.0 - 1500.0 - 98200.0 - 50.0)   # $235
     out = sim.on_record(_rec(T, stop_dist=27.0), T)
     assert not out[0]["taken"] and "DLL room" in out[0]["why"]
+
+
+# ------------------------------------------------------------------ gemini_only (100% Gemini: no SL / TP / forced exit)
+@pytest.fixture
+def gcfg():
+    c = copy.deepcopy(load_config())
+    c["lucid"]["slippage_ticks"] = 0
+    assert c["lucid"]["exit_mode"] == "gemini_only"
+    return c
+
+
+@pytest.fixture
+def gsim(gcfg, tmp_path):
+    s = LucidSim(gcfg, tmp_path / "state" / "lucid", tmp_path / "logs")
+    s.s["last_processed"] = T.replace(second=0).isoformat()
+    s._roll_day(T)
+    return s
+
+
+def test_gemini_only_sizing_notional_08atr(gsim):
+    us = gsim.size_trade("US100", 1, 60.0, tdist=5.0, sdist=46.0)      # 0.8 ATR = 48 pts x 20 = $960 -> 1 NQ
+    assert (us["contract"], us["qty"]) == ("NQ", 1) and us["sdist"] is None and us["risk_usd"] is None
+    assert us["notional_risk_usd"] == 960.0 and "NO stop" in us["sizing"]
+    gc = gsim.size_trade("XAUUSD", -1, 6.3, sdist=3.0)                  # 5.1 x 100 = $510 -> 2 GC
+    assert (gc["contract"], gc["qty"]) == ("GC", 2)
+    assert gsim.size_trade("US100", 1, 200.0)["qty"] == 1               # notional > $1,500 still 1 (never blocked)
+
+
+def test_gemini_only_no_stop_no_forced_exits_dll_log_only(gsim):
+    gsim.s["account"]["balance"] = 98000.0                               # already past the DLL: not blocked
+    assert gsim.on_record(_rec(T), T)[0]["taken"]
+    t1 = T.replace(second=0) + timedelta(minutes=1)
+    gsim.process(_bars("US100", [(t1, 28500, 28501, 28499, 28500)]), t1 + timedelta(minutes=1))
+    p = gsim.s["positions"][0]
+    assert p["stop"] is None and p["target"] is None and p["exit_mode"] == "gemini_only"
+    # crash 600 pts (-$12,000 on 1 NQ, far past DLL and MLL) and run past 16:45 ET + 3 h: nothing closes it
+    rows = [(t1 + timedelta(minutes=i), 28000, 28010, 27900, 27900) for i in range(1, 420)]
+    gsim.process(_bars("US100", rows), t1 + timedelta(minutes=420))
+    assert gsim.s["positions"] and gsim.s["account"]["no"] == 1
+    kinds = {b["kind"] for b in gsim.s["breaches"]}
+    assert {"DLL", "MLL"} <= kinds
+    ev = _events(gsim)
+    assert not any(e["event"] in ("blown", "dll_hit") for e in ev)
+    assert any(e["event"] == "breach_logged" for e in ev)
+    j = gsim.site_payload()
+    assert j["card"] == "SL: none · TP: none · exit: Gemini" and j["breaches"] and j["exit_mode"] == "gemini_only"
+
+
+def test_gemini_only_books_no_stop_no_max_hold_breaker_log_only(gcfg, tmp_path):
+    st = tmp_path / "state"; (st / "lucid").mkdir(parents=True)
+    t0 = T.replace(second=0)
+    feed = [{"id": 1, "symbol": "US100", "contract": "NQ", "qty": 10, "side": 1, "entry": 28500.0, "stop": None,
+             "target": None, "entry_time": t0.isoformat(), "risk_usd": None, "atr": 60.0, "candle": None}]
+    (st / "lucid" / "account.json").write_text(json.dumps({"book_feed": feed}))
+    rows = [[28500, 28501, 27000, 27000]] * 3                 # -1500 pts x 10 NQ = -$300k: > 3.5%
+
+    async def snapshot(sym, c, now):
+        idx = pd.date_range(t0, periods=3, freq="1min", tz="UTC")
+        df = pd.DataFrame(rows, columns=["open", "high", "low", "close"], index=idx).assign(volume=1.0)
+        return {"symbol": sym, "context": {"digits": 2, "live_price": 27000.0, "live_price_stale": False,
+                                           "levels": [], "atr_upper": 28600, "atr_lower": 28400}}, df
+
+    async def render(payload):
+        return b"\x89PNG"
+
+    calls = {"n": 0}
+
+    async def decide(prompt, png, pos, m):
+        calls["n"] += 1
+        return {"model": None, "raw_text": None, "error": "TimeoutError"}  # error -> keep holding
+    mgr = ExitManager(gcfg, state_dir=st, logs_dir=tmp_path / "logs", site_dir=tmp_path,
+                      snapshot=snapshot, render=render, decide=decide)
+    asyncio.run(mgr.tick(t0 + timedelta(minutes=2)))           # copies the entry
+    r = asyncio.run(mgr.tick(t0 + timedelta(minutes=200)))   # way past the old 90 min max hold
+    assert calls["n"] == 2 and mgr.books.open_ids() == {1}
+    rec = r["records"][0]
+    assert rec["decision"] == "HOLD" and rec["decision_source"] == "error_default_hold"
+    assert all(b["day"].get("breach_logged") for b in mgr.books.s["books"].values())
+    assert not any(b["day"]["halted"] for b in mgr.books.s["books"].values())
+    assert "GEMINI ONLY" in mgr.summary()["note"] and "BASELINE" in mgr.summary()["note"]
+
+
+def test_gemini_only_site_card(gcfg):
+    rec = {"run_at_utc": T.isoformat(), "signals": [
+        {"symbol": "US100", "action": "BUY", "entry": 28500.0, "stop_loss": 28454.0, "take_profit": 28505.0,
+         "rr_local": 0.1, "confidence": 0.8}]}
+    us = latest_signal_from_record(rec, gcfg)["trades"][0]
+    assert us["stop_loss"] is None and us["take_profit"] is None and us["card"] == "SL: none · TP: none · exit: Gemini"
+
+
+def test_reset3(gcfg, tmp_path):
+    st = tmp_path / "state" / "lucid"
+    c0 = copy.deepcopy(gcfg); c0["lucid"]["reset_token"] = "2026-11-11-gemini-entry-exit"; c0["lucid"]["exit_mode"] = "gemini"
+    s = LucidSim(c0, st, tmp_path / "logs")
+    s.s["positions"] = [{"id": 1, "symbol": "XAUUSD", "contract": "GC", "qty": 5, "side": -1, "entry": 3990.9,
+                         "stop": 3993.9, "target": None, "entry_time": T.isoformat(), "risk_usd": 1500.0}]
+    s.save()
+    s2 = LucidSim(gcfg, st, tmp_path / "logs")
+    assert s2.s["account"]["balance"] == 100000.0 and s2.s["positions"] == []
+    assert (st / "account_pre_reset3_2026-11-11.json").exists()
+    assert [e for e in _events(s2) if e["event"] == "reset"][-1]["reason"] == "gemini-only: no SL/TP"

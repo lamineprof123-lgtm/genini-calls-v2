@@ -30,7 +30,14 @@ def latest_signal_from_record(record: dict, cfg: dict) -> dict:
                    "take_profit": s["take_profit"], "rr": s["rr_local"], "confidence": s["confidence"],
                    "digits": cfg.get("symbols", {}).get(sym, {}).get("digits", 5)}
             L = cfg.get("lucid") or {}
-            if L.get("enabled") and sym in (L.get("symbols") or {}) and L.get("exit_mode") == "gemini":
+            if L.get("enabled") and sym in (L.get("symbols") or {}) and L.get("exit_mode") == "gemini_only":
+                # USER RULE: 100% Gemini - no stop loss, no take profit; exit on Gemini CLOSE only.
+                row["stop_loss"] = None
+                row["take_profit"] = None
+                row["rr"] = None
+                row["exit"] = "Gemini"
+                row["card"] = "SL: none · TP: none · exit: Gemini"
+            elif L.get("enabled") and sym in (L.get("symbols") or {}) and L.get("exit_mode") == "gemini":
                 # USER RULE: Gemini entry + Gemini exit. No take-profit on the panel: hard stop + "exit: Gemini".
                 row["take_profit"] = None
                 row["rr"] = None

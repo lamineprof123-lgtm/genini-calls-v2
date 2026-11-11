@@ -82,6 +82,8 @@ def _build_core(trades, events):
                 summary=stats(trades),
                 groups={kind: {k: stats(rs) for k, rs in sorted(bucket.items())} for kind, bucket in groups.items()},
                 top_combinations=combinations,
+                breaches=[{k: e.get(k) for k in ('t', 'kind', 'level', 'equity', 'note')}
+                          for e in events if e.get('event') == 'breach_logged'],
                 skips=dict(count=len(skips), by_reason=dict(Counter(skip_category(r.get('why')) for r in skips)),
                            exact_reasons=dict(Counter(r.get('why') or 'unknown' for r in skips))),
                 definitions=dict(win='net > 0; breakeven is not a win or a loss',
@@ -150,6 +152,9 @@ def format_report(r):
               'Ranked by net P&L; small samples are not a strategy recommendation.', '']
     lines += table([(f"{s['session']} × {s['value_area_position']} × CVD {s['cvd_agrees']}", s)
                     for s in r['top_combinations'][:30]]) if r['top_combinations'] else ['No observations yet.']
+    lines += ['', f"## DLL / MLL / breaker breaches (log-only, {len(r.get('breaches') or [])})", '']
+    lines += [f"- {b['t']} {b['kind']}: equity ${b['equity']:,.2f} vs level ${b['level']:,.2f} ({b.get('note')})"
+              for b in r.get('breaches') or []] or ['None.']
     lines += ['', f"## Entry skips ({r['skips']['count']})", '', '| Reason | Count |', '|---|---:|']
     lines += [f'| {k} | {v} |' for k, v in sorted(r['skips']['by_reason'].items())] or ['| None yet | 0 |']
     lines += ['', 'Legacy records without telemetry remain in the totals and are grouped as unknown.',

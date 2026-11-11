@@ -21,6 +21,7 @@ def cfg():
     c = copy.deepcopy(load_config())
     c["lucid"]["slippage_ticks"] = 0
     c["exit_manager"]["enabled"] = True
+    c["lucid"]["exit_mode"] = "gemini"          # legacy books with hard stop / max hold / breaker
     return c
 
 

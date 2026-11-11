@@ -172,6 +172,29 @@ mt5 = "BTCUSD"
 contract_size = 1
 digits = 2
 
+[live_price]
+# Intrabar live price + forming M15 candle (signals/live_price.py). Indicators stay on CLOSED M15 bars only.
+# Order: US100 in NY RTH -> FirmTape NQ + basis; else Dukascopy ticks (bid, seconds old); else Dukascopy/Binance
+# last finished M1 (1-2 min old); else last M15 close (stale).
+ticks = true
+tick_lookback_minutes = 20
+tick_timeout_seconds = 15
+
+[live_price.firmtape]
+# US100 live price = FirmTape 1-second NQ + rolling median basis to the Dukascopy CFD scale.
+# Key: env FIRMTAPE_API_KEY only. Gate: NY regular hours, session "open", age_s <= max_age_s, no error,
+# NQ price_as_of <= live_max_age_s old, at least one aligned basis sample. Otherwise Dukascopy ticks.
+enabled = true
+url = "https://firmtape.com/api/v1/levels"
+timeout_seconds = 4
+symbols = { US100 = "NQ" }
+rth_et = ["09:30", "16:00"]
+max_age_s = 300
+live_max_age_s = 10
+basis_align_s = 20              # a basis sample needs the Dukascopy tick ts and NQ price_as_of within N s
+basis_window = 7                # rolling median of the last N aligned samples ...
+basis_max_age_minutes = 30      # ... no older than this
+
 [site]
 # Static one-page signal site (index.html + JSON). The loop writes status.json and latest_signal.json here.
 # Pure static: publish this folder as-is (e.g. GitHub Pages). Contains no secrets.

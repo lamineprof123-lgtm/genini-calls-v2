@@ -13,6 +13,7 @@ name: Signal Pipeline
 #
 # State, logs and site JSON live on the `pipeline-data` branch so `main` stays clean.
 # Stop: run this workflow with action=stop (writes STOP on pipeline-data). Start: action=start.
+# Restart onto new code from main without a missed cycle: action=restart (see gha_lock.py). Cron never clears a STOP.
 
 on:
   schedule:
@@ -20,9 +21,9 @@ on:
   workflow_dispatch:
     inputs:
       action:
-        description: 'start (default) or stop'
+        description: 'start (default), stop, or restart (load new main code, no missed cycle)'
         type: choice
-        options: [start, stop]
+        options: [start, stop, restart]
         default: start
       interval_minutes:
         description: 'cycle interval in minutes (status.json + UI countdown follow it)'
@@ -59,7 +60,7 @@ jobs:
           ref: ${{ env.DATA_BRANCH }}
           path: data
       - id: gate
-        run: python3 pipeline/signals/gha_lock.py gate --data data --action "${{ inputs.action || 'start' }}"
+        run: python3 pipeline/signals/gha_lock.py gate --data data --action "${{ inputs.action || 'cron' }}"
 
   loop:
     needs: gate
@@ -133,6 +134,7 @@ jobs:
       - name: Signal loop
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          FIRMTAPE_API_KEY: ${{ secrets.FIRMTAPE_API_KEY }}
           GEMINI_MODEL: ${{ vars.GEMINI_MODEL }}
           GITHUB_TOKEN: ${{ github.token }}
           GH_TOKEN: ${{ github.token }}

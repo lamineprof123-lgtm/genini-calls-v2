@@ -117,6 +117,15 @@ function _setAllData(st, p) {
   // refresh S/R price lines
   (st.priceLines || []).forEach(pl => { try { st.cs.removePriceLine(pl); } catch (e) {} });
   st.priceLines = [];
+  // Live price line (tick / FirmTape quote = the forming candle's close). Hides the last-closed-bar price line.
+  const lc = p.context || {}, liveOk = typeof lc.live_price === 'number' && !lc.live_price_stale;
+  st.cs.applyOptions({ priceLineVisible: !liveOk, lastValueVisible: !liveOk });
+  if (liveOk) {
+    st.priceLines.push(st.cs.createPriceLine({
+      price: lc.live_price, color: '#7AF7FF', lineWidth: 1, lineStyle: LightweightCharts.LineStyle.Solid,
+      axisLabelVisible: true, title: ''   // axis label only: a pane title would cover the forming candle
+    }));
+  }
   const R = p.style.sr;
   const ls = R.line_style === 'dotted' ? LightweightCharts.LineStyle.Dotted : LightweightCharts.LineStyle.Dashed;
   (p.levels || []).forEach(lv => {

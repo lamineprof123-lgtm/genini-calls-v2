@@ -73,7 +73,8 @@ _GEMINI_CTX_DROP = ("last_candle", "last_close", "vp_value_area_pct", "session_t
 
 def slim_gemini_context(ctx: dict) -> dict:
     """Per-symbol numeric context for the Gemini user message (deduped)."""
-    return {k: v for k, v in ctx.items() if k not in _GEMINI_CTX_DROP}
+    from .live_price import LIVE_LOG_ONLY_KEYS   # live-feed diagnostics: cycle log only
+    return {k: v for k, v in ctx.items() if k not in _GEMINI_CTX_DROP and k not in LIVE_LOG_ONLY_KEYS}
 
 
 def chart_user_text(payload: dict, index: int, total: int) -> str:

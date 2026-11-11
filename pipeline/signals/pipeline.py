@@ -193,7 +193,7 @@ async def run_once(cfg: dict, dry_run: bool = False, force: bool = True, model: 
                   "last_closed_bar_utc", "last_price_ts_utc", "poc", "vah", "val",
                   "live_price", "live_price_ts_utc", "live_price_stale", "live_price_source",
                   "live_price_fetched_at_utc", "forming_m15_open", "forming_m15_high",
-                  "forming_m15_low", "forming_m15_open_utc", "minutes_into_bar"):
+                  "forming_m15_low", "forming_m15_open_utc", "minutes_into_bar", "live_price_age_s"):
             if v.get(k) is None and ctx.get(k) is not None:
                 v[k] = ctx[k]
     if ai_error:

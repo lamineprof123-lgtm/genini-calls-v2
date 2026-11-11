@@ -8,7 +8,14 @@ pushes never conflict:
 A file named STOP at the data-branch root stops everything (holder exits after its cycle, new runs exit).
 Pushes are fast-forward only, so a rejected push means someone else moved first: re-read and decide again.
 
-  python signals/gha_lock.py gate --data DIR --run-id ID [--action start|stop]   -> prints role=holder|successor|exit
+Actions: start (manual dispatch: clears STOP), cron (schedule watchdog: like start but never clears a user STOP),
+stop, restart. restart = load new code from main with no missed cycle: the new run queues as successor at once
+(ignoring the ends_at window), finishes its setup, then writes a restart STOP ("restart requested by run ID");
+the old holder exits after its current cycle and releases, the new run acquires and deletes that STOP.
+A restart STOP whose successor stopped heartbeating is cleared by the next gate.
+
+  python signals/gha_lock.py gate --data DIR --run-id ID [--action start|cron|stop|restart]
+      -> prints role=holder|successor|exit
 """
 from __future__ import annotations
 import argparse, json, os, subprocess, sys, time
@@ -81,6 +88,33 @@ def stop_requested(data: Path) -> bool:
     return (data / "STOP").exists()
 
 
+RESTART_PREFIX = "restart requested by run "
+
+
+def restart_stop_owner(data: Path) -> str | None:
+    """run_id of the restart successor that wrote STOP, or None for a user STOP / no STOP."""
+    try:
+        txt = (data / "STOP").read_text().strip()
+    except Exception:
+        return None
+    if not txt.startswith(RESTART_PREFIX):
+        return None
+    return txt[len(RESTART_PREFIX):].split(" ")[0] or None
+
+
+def write_restart_stop(data: Path, run_id: str) -> None:
+    (data / "STOP").write_text(f"{RESTART_PREFIX}{run_id} at {iso(now())}\n")
+
+
+def restart_stop_orphaned(data: Path, t: datetime | None = None) -> bool:
+    """A restart STOP whose successor is no longer heartbeating (cancelled / crashed run)."""
+    owner = restart_stop_owner(data)
+    if owner is None:
+        return False
+    s = read(data, SUCC)
+    return not (s and s.get("run_id") == owner and succ_fresh(s, t))
+
+
 def holder_alive(h: dict | None, t: datetime | None = None) -> bool:
     if not h or h.get("released"):
         return False
@@ -107,6 +141,9 @@ def try_acquire(data: Path, run_id: str, ends_at: datetime, interval_min: float)
     if s and s.get("run_id") == run_id:
         write(data, SUCC, None)
         paths.append(SUCC)
+    if restart_stop_owner(data) == run_id:      # our own restart STOP: the old holder has released
+        (data / "STOP").unlink()
+        paths.append("STOP")
     return push_paths(data, f"loop: {run_id} acquired", paths)
 
 
@@ -121,9 +158,9 @@ def gate(data: Path, run_id: str, action: str = "start", runtime_min: float = 33
                 if not push_paths(data, f"loop: STOP requested by {run_id}", ["STOP"]):
                     continue
             return "exit"
-        if action == "start" and stop_requested(data):
+        if stop_requested(data) and (action in ("start", "restart") or restart_stop_orphaned(data)):
             (data / "STOP").unlink()
-            if not push_paths(data, f"loop: STOP cleared by {run_id}", ["STOP"]):
+            if not push_paths(data, f"loop: STOP cleared by {run_id} ({action})", ["STOP"]):
                 continue
         if stop_requested(data):
             print("STOP file present on data branch -> exit", file=sys.stderr)
@@ -137,7 +174,7 @@ def gate(data: Path, run_id: str, action: str = "start", runtime_min: float = 33
                 return "holder"
             continue
         ends = parse(h.get("ends_at")) or t
-        if (ends - t).total_seconds() > SUCC_WINDOW_MIN * 60:
+        if action != "restart" and (ends - t).total_seconds() > SUCC_WINDOW_MIN * 60:
             print(f"loop alive ({h.get('run_id')}, ends {h.get('ends_at')}) -> exit", file=sys.stderr)
             return "exit"
         s = read(data, SUCC)
@@ -145,8 +182,9 @@ def gate(data: Path, run_id: str, action: str = "start", runtime_min: float = 33
             print(f"successor already queued ({s.get('run_id')}) -> exit", file=sys.stderr)
             return "exit"
         write(data, SUCC, {"run_id": run_id, "registered_at": iso(t), "heartbeat_at": iso(t),
-                           "run_url": os.environ.get("RUN_URL")})
-        if push_paths(data, f"loop: {run_id} queued as successor", [SUCC]):
+                           "run_url": os.environ.get("RUN_URL"), "restart": action == "restart"})
+        if push_paths(data, f"loop: {run_id} queued as successor" + (" (restart)" if action == "restart" else ""),
+                      [SUCC]):
             return "successor"
     return "exit"
 
@@ -161,7 +199,7 @@ def wait_for_handoff(data: Path, run_id: str, runtime_min: float, interval_min: 
             sync_hard(data)
         except Exception as e:
             print(f"sync failed: {e}", file=sys.stderr); time.sleep(10); continue
-        if stop_requested(data):
+        if stop_requested(data) and restart_stop_owner(data) != run_id:
             write(data, SUCC, None); push_paths(data, f"loop: {run_id} leaves queue (STOP)", [SUCC])
             return False
         t = now()
@@ -173,6 +211,14 @@ def wait_for_handoff(data: Path, run_id: str, runtime_min: float, interval_min: 
             if try_acquire(data, run_id, t + timedelta(minutes=runtime_min), interval_min):
                 print(f"handoff complete: {run_id} now holds the loop (from {(h or {}).get('run_id')})", file=sys.stderr)
                 return True
+            continue
+        if (s or {}).get("run_id") == run_id and s.get("restart") and not stop_requested(data):
+            # setup is done: ask the old holder to exit after its current cycle (it releases the lock)
+            write_restart_stop(data, run_id)
+            write(data, SUCC, {**s, "heartbeat_at": iso(t)})
+            if push_paths(data, f"loop: restart STOP by successor {run_id}", ["STOP", SUCC]):
+                print(f"restart: STOP written, waiting for {(h or {}).get('run_id')} to release", file=sys.stderr)
+                last_hb = time.monotonic()
             continue
         if time.monotonic() - last_hb > 60:
             write(data, SUCC, {**(s or {}), "run_id": run_id, "heartbeat_at": iso(t),

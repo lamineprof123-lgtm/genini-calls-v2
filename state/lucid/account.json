@@ -1,7 +1,7 @@
 {
   "version": 1,
   "created_at": "2026-11-09T13:59:39.073020+00:00",
-  "last_processed": "2026-11-11T11:44:00+00:00",
+  "last_processed": "2026-11-11T11:46:00+00:00",
   "account": {
     "no": 1,
     "phase": "eval",
@@ -22,123 +22,7 @@
     "trades": 7
   },
   "positions": [],
-  "pending": [
-    {
-      "symbol": "GBPUSD",
-      "side": -1,
-      "created": "2026-11-11T11:44:33.121006+00:00",
-      "fill_after": "2026-11-11T11:45:00+00:00",
-      "expires": "2026-11-11T11:55:00+00:00",
-      "atr": 0.000619,
-      "scalp": {
-        "action": "SELL",
-        "side": -1,
-        "entry": 1.3313,
-        "stop_loss": 1.33173,
-        "take_profit": 1.33126,
-        "sdist": 0.00043095000000015204,
-        "tdist": 3.500000000000725e-05,
-        "stop_source": "structure",
-        "target_source": "structure:Session Low",
-        "rr": 0.081,
-        "structure_stop": 1.33173095,
-        "atr_stop": 1.3317952,
-        "fixed_tp": 1.33005,
-        "structure_tp": 1.331265,
-        "structure_label": "Session Low",
-        "candle": {
-          "high": 1.3317,
-          "low": 1.33124
-        }
-      },
-      "session": "LONDON_SESSION",
-      "telemetry": {
-        "symbol": "GBPUSD",
-        "session": "LONDON_SESSION",
-        "last_close": 1.3313,
-        "atr": 0.000619,
-        "vwap": 1.33333,
-        "ema20": 1.33251,
-        "ema50": 1.33363,
-        "price_vs_vwap": {
-          "side": "below",
-          "dist_atr": -3.2795
-        },
-        "price_vs_ema50": {
-          "side": "below",
-          "dist_atr": -3.7641
-        },
-        "vwap_aligned_with_side": true,
-        "ema50_aligned_with_side": true,
-        "poc": 1.33473,
-        "vah": 1.33538,
-        "val": 1.33219,
-        "price_vs_value_area": "below_val",
-        "dist_to_poc_atr": -5.5412,
-        "cvd": -1896.2,
-        "cvd_label": "BEARISH",
-        "cvd_slope": -1337.61,
-        "cvd_agrees_with_side": true,
-        "rvol": 0.705,
-        "rvol_spike": false,
-        "rvol_bars_since_spike": 11,
-        "atr_band_z": -1.9548,
-        "atr_upper": 1.33375,
-        "atr_lower": 1.33127,
-        "nearest_sr": {
-          "above": {
-            "price": 1.3332,
-            "label": "S/R",
-            "dist_atr": 3.0695
-          },
-          "below": {
-            "price": 1.33124,
-            "label": "Session Low",
-            "dist_atr": 0.0969
-          }
-        },
-        "gemini": {
-          "action": "SELL",
-          "confidence": 0.78,
-          "confidence_band": "0.7-0.8",
-          "rationale": "1) VP: Price is below VAL (1.33219) and well below POC (1.33473), establishing bearish value. 2) CVD: -1,896 (BEARISH) with strong negative cvd_slope (-1337.61), confirming selling pressure. 3) SESSION: LONDON_SESSION. 4) Trend: Price is below downwards sloping VWAP (1.33333) and EMA50 (1.33363). 5) ATR: Reaching lower ATR band (1.33127). 6) RVOL: RVOL is 0.705, volume moderated following earlier spikes. 7) S/R: Pressing multi-touch Session Low at 1.33124. High probability short setup on continuation, live_price 1.3313 at the breakdown edge.",
-          "model": "gemini-3.6-flash",
-          "model_action": "SELL"
-        },
-        "scalp": {
-          "stop_basis": "structure",
-          "target_basis": "structure:Session Low",
-          "tdist": 3.500000000000725e-05,
-          "sdist": 0.00043095000000015204,
-          "structure_label": "Session Low"
-        },
-        "planned": {
-          "tdist": 3.500000000000725e-05,
-          "sdist": 0.00043095000000015204,
-          "qty": null,
-          "contract": null,
-          "target_usd_net": null,
-          "risk_usd": null
-        },
-        "run_at_utc": "2026-11-11T11:44:20.078155+00:00",
-        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/154420.json/GBPUSD.png"
-      },
-      "gemini": {
-        "action": "SELL",
-        "entry": 1.3313,
-        "stop_loss": 1.33173,
-        "take_profit": 1.33126,
-        "confidence": 0.78,
-        "rr": 0.093,
-        "shown_on_site": true,
-        "basis": "site signal",
-        "run_at_utc": "2026-11-11T11:44:20.078155+00:00",
-        "session": "LONDON_SESSION",
-        "rationale": "1) VP: Price is below VAL (1.33219) and well below POC (1.33473), establishing bearish value. 2) CVD: -1,896 (BEARISH) with strong negative cvd_slope (-1337.61), confirming selling pressure. 3) SESSION: LONDON_SESSION. 4) Trend: Price is below downwards sloping VWAP (1.33333) and EMA50 (1.33363). 5) ATR: Reaching lower ATR band (1.33127). 6) RVOL: RVOL is 0.705, volume moderated following earlier spikes. 7) S/R: Pressing multi-touch Session Low at 1.33124. High probability short setup on continuation, live_price 1.3313 at the breakdown edge.",
-        "model": "gemini-3.6-flash"
-      }
-    }
-  ],
+  "pending": [],
   "next_pos_id": 8,
   "day": {
     "id": "2026-11-11",
@@ -181,7 +65,7 @@
     "gross_loss": -2169.1,
     "commissions": 219.6,
     "net_trade_pnl": -1411.85,
-    "skipped_signals": 204,
+    "skipped_signals": 206,
     "accepted_signals": 70
   }
 }

@@ -1,7 +1,7 @@
 {
   "version": 1,
   "created_at": "2026-11-09T13:59:39.073020+00:00",
-  "last_processed": "2026-11-11T17:25:00+00:00",
+  "last_processed": "2026-11-11T17:28:00+00:00",
   "account": {
     "no": 1,
     "phase": "eval",
@@ -26,24 +26,24 @@
     {
       "symbol": "US100",
       "side": 1,
-      "created": "2026-11-11T17:24:30.988763+00:00",
-      "fill_after": "2026-11-11T17:25:00+00:00",
-      "expires": "2026-11-11T17:35:00+00:00",
+      "created": "2026-11-11T17:28:31.540574+00:00",
+      "fill_after": "2026-11-11T17:29:00+00:00",
+      "expires": "2026-11-11T17:39:00+00:00",
       "atr": 68.721,
       "scalp": {
         "action": "BUY",
         "side": 1,
-        "entry": 28551.79,
+        "entry": 28529.87,
         "stop_loss": 28471.08,
-        "take_profit": 28556.79,
-        "sdist": 80.70605000000069,
+        "take_profit": 28534.87,
+        "sdist": 58.786049999998795,
         "tdist": 5.0,
         "stop_source": "structure",
         "target_source": "fixed",
-        "rr": 0.062,
+        "rr": 0.085,
         "structure_stop": 28471.08395,
-        "atr_stop": 28496.8132,
-        "fixed_tp": 28556.79,
+        "atr_stop": 28474.8932,
+        "fixed_tp": 28534.87,
         "structure_tp": null,
         "structure_label": null,
         "candle": {
@@ -99,9 +99,9 @@
         },
         "gemini": {
           "action": "BUY",
-          "confidence": 0.8,
+          "confidence": 0.85,
           "confidence_band": ">=0.8",
-          "rationale": "Price is trading well above VAH (28338.63) and POC (28269.34). CVD is BULLISH (+13.46) with positive slope in NEW_YORK_SESSION. Strong structural alignment with price above upward-sloping VWAP (28169.29) and EMA50 (28232.56). The forming bar cleanly broke and accepted above Session High (28523.41), breaking outside the upper ATR band. Index tick volume caveat applies, but order-flow and momentum strongly support trend continuation.",
+          "rationale": "Price is above VAH (28338.63) and well above POC (28269.34). CVD is BULLISH (+13.46) with positive slope (+2.9). Session is NEW_YORK_SESSION. Price is in strong uptrend above rising VWAP (28169.29) and EMA50 (28232.56), pushing above upper ATR band (28483.13) and breaking out above Session High (28523.41). Dukascopy tick RVOL is 0.923 (US100 index CFD tick volume rule applies). Strong trend expansion with order flow alignment.",
           "model": "gemini-3.6-flash",
           "model_action": "BUY"
         },
@@ -109,32 +109,32 @@
           "stop_basis": "structure",
           "target_basis": "fixed",
           "tdist": 5.0,
-          "sdist": 80.70605000000069,
+          "sdist": 58.786049999998795,
           "structure_label": null
         },
         "planned": {
           "tdist": 5.0,
-          "sdist": 80.70605000000069,
+          "sdist": 58.786049999998795,
           "qty": null,
           "contract": null,
           "target_usd_net": null,
           "risk_usd": null
         },
-        "run_at_utc": "2026-11-11T17:24:20.055904+00:00",
-        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/212420.json/US100.png"
+        "run_at_utc": "2026-11-11T17:28:20.020892+00:00",
+        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/212820.json/US100.png"
       },
       "gemini": {
         "action": "BUY",
-        "entry": 28551.79,
+        "entry": 28529.87,
         "stop_loss": 28471.08,
-        "take_profit": 28556.79,
-        "confidence": 0.8,
-        "rr": 0.062,
+        "take_profit": 28534.87,
+        "confidence": 0.85,
+        "rr": 0.085,
         "shown_on_site": true,
         "basis": "site signal",
-        "run_at_utc": "2026-11-11T17:24:20.055904+00:00",
+        "run_at_utc": "2026-11-11T17:28:20.020892+00:00",
         "session": "NEW_YORK_SESSION",
-        "rationale": "Price is trading well above VAH (28338.63) and POC (28269.34). CVD is BULLISH (+13.46) with positive slope in NEW_YORK_SESSION. Strong structural alignment with price above upward-sloping VWAP (28169.29) and EMA50 (28232.56). The forming bar cleanly broke and accepted above Session High (28523.41), breaking outside the upper ATR band. Index tick volume caveat applies, but order-flow and momentum strongly support trend continuation.",
+        "rationale": "Price is above VAH (28338.63) and well above POC (28269.34). CVD is BULLISH (+13.46) with positive slope (+2.9). Session is NEW_YORK_SESSION. Price is in strong uptrend above rising VWAP (28169.29) and EMA50 (28232.56), pushing above upper ATR band (28483.13) and breaking out above Session High (28523.41). Dukascopy tick RVOL is 0.923 (US100 index CFD tick volume rule applies). Strong trend expansion with order flow alignment.",
         "model": "gemini-3.6-flash"
       }
     }
@@ -149,7 +149,7 @@
     "traded": true
   },
   "last_price": {
-    "US100": 28546.908,
+    "US100": 28532.031,
     "GBPUSD": 1.32812,
     "EURUSD": 1.10933,
     "XAUUSD": 3999.169
@@ -181,7 +181,7 @@
     "gross_loss": -2169.1,
     "commissions": 219.6,
     "net_trade_pnl": -1411.85,
-    "skipped_signals": 405,
-    "accepted_signals": 195
+    "skipped_signals": 406,
+    "accepted_signals": 196
   }
 }

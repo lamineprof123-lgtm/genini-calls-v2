@@ -1,7 +1,7 @@
 {
   "version": 1,
   "created_at": "2026-11-09T13:59:39.073020+00:00",
-  "last_processed": "2026-11-11T08:16:00+00:00",
+  "last_processed": "2026-11-11T08:18:00+00:00",
   "account": {
     "no": 1,
     "phase": "eval",
@@ -26,9 +26,9 @@
     {
       "symbol": "EURUSD",
       "side": -1,
-      "created": "2026-11-11T08:16:30.506109+00:00",
-      "fill_after": "2026-11-11T08:17:00+00:00",
-      "expires": "2026-11-11T08:27:00+00:00",
+      "created": "2026-11-11T08:18:29.133797+00:00",
+      "fill_after": "2026-11-11T08:19:00+00:00",
+      "expires": "2026-11-11T08:29:00+00:00",
       "atr": 0.000432,
       "scalp": {
         "action": "SELL",
@@ -99,9 +99,9 @@
         },
         "gemini": {
           "action": "SELL",
-          "confidence": 0.78,
-          "confidence_band": "0.7-0.8",
-          "rationale": "In LONDON_SESSION, EURUSD is breaking below_val (VAL 1.11567, POC 1.11652) and trading well below VWAP 1.11610 and EMA50 1.11644. The move down is backed by high volume with a strong RVOL spike of 2.002 (yellow bar) and expanding ATR volatility. CVD is strongly BEARISH (-6,436) with sharp negative slope (-5,276.5), showing heavy aggressive selling pressure driving price to test and break Session Low 1.1147.",
+          "confidence": 0.82,
+          "confidence_band": ">=0.8",
+          "rationale": "Price broke below VAL (1.11567) and POC (1.11652) during LONDON_SESSION, trading below VWAP (1.11610) and EMA50 (1.11644). RVOL confirmed the breakdown with a yellow bar spike at 2.002. CVD is strongly BEARISH (-6,436) with negative slope (-5,276.5). Price is pushing lower band ATR expansion.",
           "model": "gemini-3.6-flash",
           "model_action": "SELL"
         },
@@ -120,30 +120,30 @@
           "target_usd_net": null,
           "risk_usd": null
         },
-        "run_at_utc": "2026-11-11T08:16:20.093099+00:00",
-        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/121620.json/EURUSD.png"
+        "run_at_utc": "2026-11-11T08:18:20.019971+00:00",
+        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/121820.json/EURUSD.png"
       },
       "gemini": {
         "action": "SELL",
         "entry": 1.11476,
         "stop_loss": 1.11575,
         "take_profit": 1.11472,
-        "confidence": 0.78,
+        "confidence": 0.82,
         "rr": 0.04,
         "shown_on_site": true,
         "basis": "site signal",
-        "run_at_utc": "2026-11-11T08:16:20.093099+00:00",
+        "run_at_utc": "2026-11-11T08:18:20.019971+00:00",
         "session": "LONDON_SESSION",
-        "rationale": "In LONDON_SESSION, EURUSD is breaking below_val (VAL 1.11567, POC 1.11652) and trading well below VWAP 1.11610 and EMA50 1.11644. The move down is backed by high volume with a strong RVOL spike of 2.002 (yellow bar) and expanding ATR volatility. CVD is strongly BEARISH (-6,436) with sharp negative slope (-5,276.5), showing heavy aggressive selling pressure driving price to test and break Session Low 1.1147.",
+        "rationale": "Price broke below VAL (1.11567) and POC (1.11652) during LONDON_SESSION, trading below VWAP (1.11610) and EMA50 (1.11644). RVOL confirmed the breakdown with a yellow bar spike at 2.002. CVD is strongly BEARISH (-6,436) with negative slope (-5,276.5). Price is pushing lower band ATR expansion.",
         "model": "gemini-3.6-flash"
       }
     },
     {
       "symbol": "GBPUSD",
       "side": -1,
-      "created": "2026-11-11T08:16:30.506109+00:00",
-      "fill_after": "2026-11-11T08:17:00+00:00",
-      "expires": "2026-11-11T08:27:00+00:00",
+      "created": "2026-11-11T08:18:29.133797+00:00",
+      "fill_after": "2026-11-11T08:19:00+00:00",
+      "expires": "2026-11-11T08:29:00+00:00",
       "atr": 0.000538,
       "scalp": {
         "action": "SELL",
@@ -214,9 +214,9 @@
         },
         "gemini": {
           "action": "SELL",
-          "confidence": 0.8,
+          "confidence": 0.84,
           "confidence_band": ">=0.8",
-          "rationale": "GBPUSD is strongly bearish during LONDON_SESSION, trading below_val (VAL 1.33365, POC 1.33478) and well beneath VWAP 1.33425 / EMA50 1.33474. The breakdown lost intermediate support at 1.33320 and is pressing into Session Low 1.33248. Volatility is expanding with a high RVOL spike of 2.582 (bright yellow volume bar). CVD is BEARISH (-1,421) with steep negative acceleration (-3,166.85), providing clear order-flow alignment for further downside toward Prev Low 1.33119.",
+          "rationale": "Strong breakdown below VAL (1.33365) and POC (1.33478) during LONDON_SESSION. Price is well below VWAP (1.33425) and EMA50 (1.33474). Confirmed by a massive RVOL spike of 2.582 (yellow volume bar) and strongly BEARISH CVD (-1,421 with negative slope -3,166.85). Lower ATR band expanding with room to target Prev Low (1.33119).",
           "model": "gemini-3.6-flash",
           "model_action": "SELL"
         },
@@ -235,21 +235,21 @@
           "target_usd_net": null,
           "risk_usd": null
         },
-        "run_at_utc": "2026-11-11T08:16:20.093099+00:00",
-        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/121620.json/GBPUSD.png"
+        "run_at_utc": "2026-11-11T08:18:20.019971+00:00",
+        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/121820.json/GBPUSD.png"
       },
       "gemini": {
         "action": "SELL",
         "entry": 1.33257,
         "stop_loss": 1.33353,
         "take_profit": 1.33251,
-        "confidence": 0.8,
+        "confidence": 0.84,
         "rr": 0.062,
         "shown_on_site": true,
         "basis": "site signal",
-        "run_at_utc": "2026-11-11T08:16:20.093099+00:00",
+        "run_at_utc": "2026-11-11T08:18:20.019971+00:00",
         "session": "LONDON_SESSION",
-        "rationale": "GBPUSD is strongly bearish during LONDON_SESSION, trading below_val (VAL 1.33365, POC 1.33478) and well beneath VWAP 1.33425 / EMA50 1.33474. The breakdown lost intermediate support at 1.33320 and is pressing into Session Low 1.33248. Volatility is expanding with a high RVOL spike of 2.582 (bright yellow volume bar). CVD is BEARISH (-1,421) with steep negative acceleration (-3,166.85), providing clear order-flow alignment for further downside toward Prev Low 1.33119.",
+        "rationale": "Strong breakdown below VAL (1.33365) and POC (1.33478) during LONDON_SESSION. Price is well below VWAP (1.33425) and EMA50 (1.33474). Confirmed by a massive RVOL spike of 2.582 (yellow volume bar) and strongly BEARISH CVD (-1,421 with negative slope -3,166.85). Lower ATR band expanding with room to target Prev Low (1.33119).",
         "model": "gemini-3.6-flash"
       }
     }
@@ -264,7 +264,9 @@
     "traded": false
   },
   "last_price": {
-    "US100": 27862.875
+    "US100": 27862.875,
+    "GBPUSD": 1.33221,
+    "EURUSD": 1.11455
   },
   "history": [],
   "ledger": {
@@ -293,7 +295,7 @@
     "gross_loss": 0.0,
     "commissions": 0.0,
     "net_trade_pnl": 0.0,
-    "skipped_signals": 3,
-    "accepted_signals": 3
+    "skipped_signals": 5,
+    "accepted_signals": 5
   }
 }

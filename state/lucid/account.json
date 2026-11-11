@@ -1,7 +1,7 @@
 {
   "version": 1,
   "created_at": "2026-11-09T13:59:39.073020+00:00",
-  "last_processed": "2026-11-11T13:18:00+00:00",
+  "last_processed": "2026-11-11T13:19:00+00:00",
   "account": {
     "no": 1,
     "phase": "eval",
@@ -252,6 +252,121 @@
         "rationale": "1) VP: Price 1.33028 is trading below VAL 1.33167 and below POC 1.33471. 2) CVD: NEUTRAL (-1904.19) with accelerating negative slope (-778.38). 3) Session: LONDON_NY_OVERLAP. 4) VWAP/EMA50: Price riding below downward sloping VWAP (1.33288) and EMA50 (1.33302). 5) ATR: Breaking through lower ATR band (1.33064). 6) RVOL: 1.30, moderate volume. 7) Levels: Lost Prev Low (1.33119) and Session Low (1.33058) in continuation.",
         "model": "gemini-3.6-flash"
       }
+    },
+    {
+      "symbol": "US100",
+      "side": 1,
+      "created": "2026-11-11T13:20:30.916211+00:00",
+      "fill_after": "2026-11-11T13:21:00+00:00",
+      "expires": "2026-11-11T13:31:00+00:00",
+      "atr": 42.516,
+      "scalp": {
+        "action": "BUY",
+        "side": 1,
+        "entry": 28291.21,
+        "stop_loss": 28223.99,
+        "take_profit": 28296.21,
+        "sdist": 67.21580000000176,
+        "tdist": 5.0,
+        "stop_source": "structure",
+        "target_source": "fixed",
+        "rr": 0.074,
+        "structure_stop": 28223.994199999997,
+        "atr_stop": 28257.1972,
+        "fixed_tp": 28296.21,
+        "structure_tp": 28290.62968,
+        "structure_label": "VAH",
+        "candle": {
+          "high": 28293.49,
+          "low": 28226.12
+        }
+      },
+      "session": "LONDON_NY_OVERLAP",
+      "telemetry": {
+        "symbol": "US100",
+        "session": "LONDON_NY_OVERLAP",
+        "last_close": 28279.6,
+        "atr": 42.516,
+        "vwap": 28109.15,
+        "ema20": 28230.95,
+        "ema50": 28128.15,
+        "price_vs_vwap": {
+          "side": "above",
+          "dist_atr": 4.0091
+        },
+        "price_vs_ema50": {
+          "side": "above",
+          "dist_atr": 3.5622
+        },
+        "vwap_aligned_with_side": true,
+        "ema50_aligned_with_side": true,
+        "poc": 28121.3,
+        "vah": 28291.48,
+        "val": 28060.92,
+        "price_vs_value_area": "inside",
+        "dist_to_poc_atr": 3.7233,
+        "cvd": 9.2,
+        "cvd_label": "BULLISH",
+        "cvd_slope": 0.88,
+        "cvd_agrees_with_side": true,
+        "rvol": 1.094,
+        "rvol_spike": false,
+        "rvol_bars_since_spike": 82,
+        "atr_band_z": 1.1443,
+        "atr_upper": 28315.98,
+        "atr_lower": 28145.92,
+        "nearest_sr": {
+          "above": {
+            "price": 28302.45,
+            "label": "Session High",
+            "dist_atr": 0.5374
+          },
+          "below": {
+            "price": 28083.64,
+            "label": "S/R",
+            "dist_atr": 4.6091
+          }
+        },
+        "gemini": {
+          "action": "BUY",
+          "confidence": 0.72,
+          "confidence_band": "0.7-0.8",
+          "rationale": "Price is near VAH (28291.48) and POC (28121.30) inside/top of Value Area. CVD is BULLISH (+9.20) with positive slope (+0.88). Session is LONDON_NY_OVERLAP. Price is holding strongly above VWAP (28109.15) and EMA50 (28128.15), riding along the upper ATR band (28315.98). Although RVOL yellow bars are absent (US100 Dukascopy tick volume caveat applies), structural momentum and market structure remain clearly bullish above EMA20 baseline (28230.95).",
+          "model": "gemini-3.6-flash",
+          "model_action": "BUY"
+        },
+        "scalp": {
+          "stop_basis": "structure",
+          "target_basis": "fixed",
+          "tdist": 5.0,
+          "sdist": 67.21580000000176,
+          "structure_label": "VAH"
+        },
+        "planned": {
+          "tdist": 5.0,
+          "sdist": 67.21580000000176,
+          "qty": null,
+          "contract": null,
+          "target_usd_net": null,
+          "risk_usd": null
+        },
+        "run_at_utc": "2026-11-11T13:20:20.089961+00:00",
+        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/172020.json/US100.png"
+      },
+      "gemini": {
+        "action": "BUY",
+        "entry": 28291.21,
+        "stop_loss": 28223.99,
+        "take_profit": 28296.21,
+        "confidence": 0.72,
+        "rr": 0.074,
+        "shown_on_site": true,
+        "basis": "site signal",
+        "run_at_utc": "2026-11-11T13:20:20.089961+00:00",
+        "session": "LONDON_NY_OVERLAP",
+        "rationale": "Price is near VAH (28291.48) and POC (28121.30) inside/top of Value Area. CVD is BULLISH (+9.20) with positive slope (+0.88). Session is LONDON_NY_OVERLAP. Price is holding strongly above VWAP (28109.15) and EMA50 (28128.15), riding along the upper ATR band (28315.98). Although RVOL yellow bars are absent (US100 Dukascopy tick volume caveat applies), structural momentum and market structure remain clearly bullish above EMA20 baseline (28230.95).",
+        "model": "gemini-3.6-flash"
+      }
     }
   ],
   "next_pos_id": 8,
@@ -265,8 +380,8 @@
   },
   "last_price": {
     "US100": 28279.51,
-    "GBPUSD": 1.33105,
-    "EURUSD": 1.11364,
+    "GBPUSD": 1.33028,
+    "EURUSD": 1.11229,
     "XAUUSD": 4042.438
   },
   "history": [],
@@ -296,7 +411,7 @@
     "gross_loss": -2169.1,
     "commissions": 219.6,
     "net_trade_pnl": -1411.85,
-    "skipped_signals": 243,
-    "accepted_signals": 100
+    "skipped_signals": 245,
+    "accepted_signals": 101
   }
 }

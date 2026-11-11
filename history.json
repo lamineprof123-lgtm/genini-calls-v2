@@ -1,59 +1,5 @@
 [
   {
-    "signal_at": "2026-11-11T14:20:20.059588+00:00",
-    "tz": "Asia/Dubai",
-    "model": "gemini-3.6-flash",
-    "dry_run": false,
-    "trades": [
-      {
-        "symbol": "XAUUSD",
-        "name": "GOLD",
-        "action": "SELL",
-        "entry": 4029.33,
-        "stop_loss": 4038.4,
-        "take_profit": 4028.08,
-        "rr": 0.138,
-        "confidence": 0.82,
-        "digits": 2,
-        "session": "LONDON_NY_OVERLAP",
-        "cvd_label": "BEARISH"
-      },
-      {
-        "symbol": "EURUSD",
-        "name": "EURO",
-        "action": "SELL",
-        "entry": 1.10928,
-        "stop_loss": 1.11049,
-        "take_profit": 1.10803,
-        "rr": 1.033,
-        "confidence": 0.88,
-        "digits": 5,
-        "session": "LONDON_NY_OVERLAP",
-        "cvd_label": "BEARISH"
-      },
-      {
-        "symbol": "GBPUSD",
-        "name": "POUND",
-        "action": "SELL",
-        "entry": 1.32757,
-        "stop_loss": 1.32847,
-        "take_profit": 1.32732,
-        "rr": 0.278,
-        "confidence": 0.85,
-        "digits": 5,
-        "session": "LONDON_NY_OVERLAP",
-        "cvd_label": "BEARISH"
-      }
-    ],
-    "no_trade": [
-      "US100",
-      "BTCUSD"
-    ],
-    "analysis_failed": false,
-    "breaker_halted": false,
-    "written_at": "2026-11-11T14:20:29.564697+00:00"
-  },
-  {
     "signal_at": "2026-11-11T14:22:20.078158+00:00",
     "tz": "Asia/Dubai",
     "model": "gemini-3.6-flash",
@@ -1856,5 +1802,35 @@
     "analysis_failed": false,
     "breaker_halted": false,
     "written_at": "2026-11-11T17:20:30.735515+00:00"
+  },
+  {
+    "signal_at": "2026-11-11T17:22:20.029081+00:00",
+    "tz": "Asia/Dubai",
+    "model": "gemini-3.6-flash",
+    "dry_run": false,
+    "trades": [
+      {
+        "symbol": "US100",
+        "name": "NASDAQ",
+        "action": "BUY",
+        "entry": 28533.23,
+        "stop_loss": 28471.08,
+        "take_profit": 28538.23,
+        "rr": 0.08,
+        "confidence": 0.85,
+        "digits": 2,
+        "session": "NEW_YORK_SESSION",
+        "cvd_label": "BULLISH"
+      }
+    ],
+    "no_trade": [
+      "XAUUSD",
+      "EURUSD",
+      "GBPUSD",
+      "BTCUSD"
+    ],
+    "analysis_failed": false,
+    "breaker_halted": false,
+    "written_at": "2026-11-11T17:22:32.665031+00:00"
   }
 ]

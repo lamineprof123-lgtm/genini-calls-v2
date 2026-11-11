@@ -597,13 +597,23 @@ class ExitManager:
         self.path = self.state_dir / "exit_books.json"
         self.tz = ZoneInfo(cfg["general"]["session_tz"])
         st = json.loads(self.path.read_text()) if self.path.exists() else None
+        tok = (cfg.get("lucid") or {}).get("reset_token")
+        if st is not None and tok and st.get("reset_token") != tok:
+            # Lucid account reset: position ids restart at 1, so the books start fresh too (old state archived).
+            day = datetime.now(UTC).astimezone(ZoneInfo(cfg["general"]["session_tz"])).strftime("%Y-%m-%d")
+            _atomic_write(self.state_dir / f"exit_books_pre_{tok}.json", st)
+            log.info("exit books: reset for Lucid reset_token %s (archived)", tok)
+            st = None
         self.books = Books(cfg, st)
+        if tok:
+            self.books.s["reset_token"] = tok
         # injectable for tests / dry runs
         self._snapshot = snapshot or market_snapshot
         self._render = render or self._render_default
         self._decide = decide
         self._m1_fetch = m1_fetch
         self.busy = False
+        self.lucid_close_requests: list[dict] = []   # Gemini CLOSEs for the Lucid account (written in _persist)
 
     @property
     def period(self) -> float:
@@ -720,6 +730,19 @@ class ExitManager:
                 log.info("exit book %s close #%s %s %s net=%.2f", c["book"], c["id"], c["symbol"], c["reason"],
                          c["net"])
             self.books.closed = []
+            if self.lucid_close_requests:
+                # The Lucid account (exit_mode = "gemini") exits on these at its next minute replay.
+                f = self.state_dir / "lucid" / "close_requests.json"
+                try:
+                    rows = json.loads(f.read_text()) if f.exists() else []
+                except Exception:
+                    rows = []
+                rows = (rows + self.lucid_close_requests)[-200:]
+                f.parent.mkdir(parents=True, exist_ok=True)
+                _atomic_write(f, rows)
+                for r in self.lucid_close_requests:
+                    log.info("exit -> lucid close request #%s %s @ %s (%s)", r["id"], r["symbol"], r["price"], r["rule"])
+                self.lucid_close_requests = []
             _atomic_write(self.path, self.books.s)
             try:
                 _atomic_write(self.site_dir / "books.json", self.summary())
@@ -828,6 +851,11 @@ class ExitManager:
                                             "exit_structure": rec.get("structure"),
                                             "exit_confidence": rec.get("confidence")})
                 out.update({"action": "close", "exit": px, "net": c["net"]})
+                if name == (self.cfg.get("lucid") or {}).get("gemini_exit_book", BOOK_1):
+                    self.lucid_close_requests.append(
+                        {"id": pid, "symbol": sym, "t": now.isoformat(), "price": px, "book": name,
+                         "rule": st["rule"], "reason_text": rec.get("reason"),
+                         "account_token": (self.cfg.get("lucid") or {}).get("reset_token")})
             book_out[name] = out
         rec["books"] = book_out
         rec["prompt_chars"] = len(prompt)

@@ -509,7 +509,7 @@ def lucid_panel_plan(pkg: dict, symbol: str, cfg: dict, atr: float) -> dict | No
     """The Lucid sim's target plan for a fresh account (full $ risk budget, no open positions), so the panel's
     take_profit matches the target the sim will use. None for non-Lucid symbols / when no size fits."""
     L = cfg.get("lucid") or {}
-    if not L.get("enabled") or symbol not in (L.get("symbols") or {}):
+    if not L.get("enabled") or symbol not in (L.get("symbols") or {}) or L.get("exit_mode") == "gemini":
         return None
     try:
         contracts = full_size_contracts([(c, L["contracts"][c]) for c in L["symbols"][symbol]["contracts"]])

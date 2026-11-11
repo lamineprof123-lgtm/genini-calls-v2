@@ -29,6 +29,12 @@ def latest_signal_from_record(record: dict, cfg: dict) -> dict:
                    "action": s["action"], "entry": s["entry"], "stop_loss": s["stop_loss"],
                    "take_profit": s["take_profit"], "rr": s["rr_local"], "confidence": s["confidence"],
                    "digits": cfg.get("symbols", {}).get(sym, {}).get("digits", 5)}
+            L = cfg.get("lucid") or {}
+            if L.get("enabled") and sym in (L.get("symbols") or {}) and L.get("exit_mode") == "gemini":
+                # USER RULE: Gemini entry + Gemini exit. No take-profit on the panel: hard stop + "exit: Gemini".
+                row["take_profit"] = None
+                row["rr"] = None
+                row["exit"] = "Gemini"
             if s.get("session"):
                 row["session"] = s["session"]
             if s.get("cvd_label"):

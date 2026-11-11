@@ -245,8 +245,17 @@ enabled = true
 plan = "LucidPro 100K (DLL on)"
 # One-shot reset: when this token differs from the one stored in state/lucid/account.json, the sim archives the
 # state (account_pre_reset_<day>.json), starts a fresh account and logs a "reset" event. Logs are kept.
-reset_token = "2026-11-11-target-sizing-fix"
-reset_reason = "target sizing bug fix"
+reset_token = "2026-11-11-gemini-entry-exit"
+reset_reason = "switch to Gemini entry+exit, removed server target"
+reset_archive = "account_pre_reset2_{day}.json"
+# USER RULE (2026-11-11): "take the entry signal and the exit signal". exit_mode = "gemini": Gemini's entry opens,
+# the exit manager's Gemini CLOSE (book gemini_exit_book, checks every [exit_manager].check_seconds) closes.
+# No server target, no 2-bar time cut, no VWAP/EMA50 cross exits, no $381 NET-target floor (there is no target).
+# Safety rails kept: hard stop (structure / 0.8 ATR, sized so risk <= max_risk_usd), DLL/MLL, 3.5% breaker
+# (exit books), 16:45 ET flat, max_hold_minutes. exit_mode = "server" restores the old target/time-cut sim.
+exit_mode = "gemini"
+gemini_exit_book = "1-strike"
+max_hold_minutes = 90
 start_balance = 100000.0
 eval_profit_target = 6000.0
 mll = 3000.0                    # EOD trailing on highest closing balance

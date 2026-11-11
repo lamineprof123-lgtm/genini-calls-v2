@@ -60,6 +60,7 @@ class LucidSim:
         self.open_t = _hm(self.L.get("session_open_et", "18:00"))
         self.path = self.state_dir / "account.json"
         self.s = self._load()
+        self._close_requests = {}
 
     # ------------------------------------------------------------------ state
     def _new_account(self, phase: str, now: datetime, no: int) -> dict:
@@ -103,7 +104,7 @@ class LucidSim:
         """One-shot account reset requested by [lucid].reset_token (applied by whichever loop first loads the new
         config, so a running old loop can never overwrite it). Archives the old state; trade/event logs are kept."""
         day = now.astimezone(self.tz_local).strftime("%Y-%m-%d")
-        arch = self.state_dir / f"account_pre_reset_{day}.json"
+        arch = self.state_dir / (self.L.get("reset_archive") or "account_pre_reset_{day}.json").format(day=day)
         n = 2
         while arch.exists():
             arch = self.state_dir / f"account_pre_reset_{day}_{n}.json"; n += 1
@@ -181,6 +182,47 @@ class LucidSim:
 
     def open_risk(self) -> float:
         return sum(max(0.0, -self.pnl(p, p["stop"])) for p in self.s["positions"])
+
+    @property
+    def gemini_exit(self) -> bool:
+        """exit_mode = "gemini": Gemini's entry opens, the exit manager's Gemini CLOSE exits. No server target,
+        no 2-bar time cut, no VWAP/EMA50 cross exits. Safety rails kept: hard stop, DLL/MLL, 16:45 ET flat,
+        max hold. Sizing by stop distance only (no $381 NET-target floor: there is no target)."""
+        return str(self.L.get("exit_mode", "server")) == "gemini"
+
+    def size_by_stop(self, symbol: str, sdist: float) -> dict | None:
+        """Full-size contracts only. qty = most contracts whose hard-stop risk fits min($max_risk, DLL room)
+        and the remaining max_minis. Skip (None + reason) only when 1 contract does not fit."""
+        from .scalp_levels import ceil_tick, full_size_contracts
+        L = self.L
+        cs = full_size_contracts([(c, self.spec(c)) for c in L["symbols"][symbol]["contracts"]])
+        if not cs or not sdist or sdist <= 0:
+            self.last_size_why = "no full-size contract / stop distance"; return None
+        name, sp = cs[0]
+        s = ceil_tick(float(sdist), sp["tick"])
+        unit = s * sp["point_value"]
+        budget = self.risk_budget()
+        used = sum(self.mini_eq(p["contract"], p["qty"]) for p in self.s["positions"])
+        room = int(math.floor(L["max_minis"] - used + 1e-9))
+        if room < 1:
+            self.last_size_why = f"max_minis={L['max_minis']:g} already used by open positions"; return None
+        if unit > L["max_risk_usd"] + 1e-9:
+            self.last_size_why = (f"risk cap: 1 {name} with a {s:g} stop risks ${unit:,.0f} > max_risk_usd "
+                                  f"${L['max_risk_usd']:g} (no micros; skip)")
+            return None
+        if unit > budget + 1e-9:
+            self.last_size_why = (f"DLL room: risk budget ${budget:.0f} < 1 {name} stop risk ${unit:,.0f} "
+                                  f"(open risk ${self.open_risk():.0f} + pending ${self.pending_reserved_risk():.0f};"
+                                  f" no new entries until it resets)")
+            return None
+        q = max(1, min(room, int(math.floor(min(L["max_risk_usd"], budget) / unit + 1e-9))))
+        comm = 2 * sp["commission"] * q
+        return {"contract": name, "qty": q, "sdist": s, "tdist": None, "risk_usd": round(unit * q, 2),
+                "target_usd": None, "target_usd_gross": None, "commission_rt": round(comm, 2),
+                "target_source": "none (Gemini exit)",
+                "sizing": (f"stop {s:g} x {sp['point_value']:g}/pt = ${unit:,.0f} per {name}; {q} {name} = "
+                           f"${unit * q:,.0f} risk <= min(${L['max_risk_usd']:g} cap, ${budget:,.0f} DLL room); "
+                           f"no target / no $381 floor (exit = Gemini CLOSE)")}
 
     def pending_reserved_risk(self) -> float:
         """Risk reserved by queued (not yet filled) entries; counts against DLL room for any other entry."""
@@ -380,6 +422,9 @@ class LucidSim:
         """
         L = self.L
         self.last_size_why = None
+        if self.gemini_exit:
+            return self.size_by_stop(symbol, sdist if sdist is not None else
+                                     float((self.cfg.get("scalp") or {}).get("atr_stop_mult", 0.8)) * float(atr or 0))
         if not atr or atr <= 0:
             self.last_size_why = "no ATR"
             return None
@@ -596,11 +641,24 @@ class LucidSim:
             m15_idx[s] = {int(ts.timestamp()): {c: float(row[c]) for c in cols if pd.notna(row[c])}
                           for ts, row in df[cols].iterrows()}
         self._m15_idx = m15_idx
+        self._close_requests = self._load_close_requests()
         while t < until:
             self._minute(t, {s: m.get(int(t.timestamp())) for s, m in idx.items()})
             t += timedelta(minutes=1)
         self.s["last_processed"] = _iso(t)
         self._roll_day(t - timedelta(minutes=1))
+
+    def _load_close_requests(self) -> dict:
+        """Gemini CLOSE requests written by the exit manager (state/lucid/close_requests.json), keyed by position id."""
+        f = self.state_dir / "close_requests.json"
+        done = set(self.s.get("close_done") or [])
+        try:
+            rows = json.loads(f.read_text()) if f.exists() else []
+        except Exception:
+            rows = []
+        open_ids = {p["id"] for p in self.s["positions"]}
+        return {r["id"]: r for r in rows if r.get("id") in open_ids and r["id"] not in done
+                and r.get("account_token") in (None, self.s.get("reset_token"))}
 
     def _minute(self, t: datetime, bar: dict) -> None:
         self._roll_day(t)
@@ -645,7 +703,8 @@ class LucidSim:
             p["mfe"] = mfe
             p["mae"] = mae
             stop_hit = (l <= p["stop"]) if sd > 0 else (h >= p["stop"])
-            tgt_hit = ((h >= p["target"]) if sd > 0 else (l <= p["target"])) and p["entry_time"] != _iso(t)
+            tgt_hit = (p.get("target") is not None and ((h >= p["target"]) if sd > 0 else (l <= p["target"]))
+                       and p["entry_time"] != _iso(t))
             if stop_hit:
                 gap = (o <= p["stop"]) if sd > 0 else (o >= p["stop"])
                 self._close(p, self._slip(p, sd, o if gap else p["stop"]), t, "stop")
@@ -653,6 +712,20 @@ class LucidSim:
             if tgt_hit:
                 self._close(p, p["target"], t, "target")
                 continue
+            if p.get("exit_mode") == "gemini":
+                req = self._close_requests.get(p["id"])
+                if req and floor_min(_dt(req["t"])) <= t:
+                    self._close(p, float(req["price"]), t, "gemini_close")
+                    self.s.setdefault("close_done", []).append(p["id"])
+                    self._event(t, "gemini_close", symbol=p["symbol"], id=p["id"], price=req["price"],
+                                request_t=req["t"], book=req.get("book"), rule=req.get("rule"),
+                                reason_text=req.get("reason_text"))
+                    continue
+                mh = float(self.L.get("max_hold_minutes", 90))
+                if t >= _dt(p["entry_time"]) + timedelta(minutes=mh):
+                    self._close(p, self._slip(p, sd, c), t, f"max_hold_{int(mh)}m")
+                    continue
+                continue   # no time cut / VWAP-EMA50 cross exits: Gemini owns the exit
             # Time / momentum cut: no meaningful MFE within N x 15m candles
             deadline = _dt(p.get("time_cut_deadline"))
             if deadline and t >= deadline and mfe < float(p.get("mfe_min") or 0.0):
@@ -740,8 +813,13 @@ class LucidSim:
             return
         sp = self.spec(size["contract"])
         sc = self.cfg.get("scalp") or {}
-        cut_bars, mfe_min, cut_rule = time_cut_rule(sc, float(pe["atr"] or 0), float(size["tdist"]),
-                                                    size.get("target_source"))
+        if self.gemini_exit:
+            cut_bars, mfe_min = 0, 0.0
+            cut_rule = (f"none: exit = Gemini CLOSE ({self.L.get('gemini_exit_book', '1-strike')}); safety = hard stop, "
+                        f"DLL/MLL, 16:45 ET flat, {self.L.get('max_hold_minutes', 90):g} min max hold")
+        else:
+            cut_bars, mfe_min, cut_rule = time_cut_rule(sc, float(pe["atr"] or 0), float(size["tdist"]),
+                                                        size.get("target_source"))
         # Stamp final plan into the carried snapshot
         if snap is not None:
             snap = {**snap,
@@ -757,14 +835,15 @@ class LucidSim:
                                 "sizing": size.get("sizing")}}
         p = {"id": self.s["next_pos_id"], "symbol": sym, "contract": size["contract"], "qty": size["qty"], "side": side,
              "entry": px, "stop": self._round_tick(px - side * size["sdist"], tick),
-             "target": self._round_tick(px + side * size["tdist"], tick), "entry_time": _iso(t),
+             "target": (None if size.get("tdist") is None else self._round_tick(px + side * size["tdist"], tick)),
+             "entry_time": _iso(t), "exit_mode": "gemini" if self.gemini_exit else "server",
              "risk_usd": size["risk_usd"], "target_usd": size["target_usd"],  # NET of RT commission
              "target_source": size.get("target_source"), "sizing": size.get("sizing"),
              "target_usd_gross": size.get("target_usd_gross", size["target_usd"]),
              "commission_rt": size.get("commission_rt", 0.0),
              "atr": pe["atr"], "gemini": g, "scalp": scalp, "telemetry": snap,
              "mfe": 0.0, "mae": 0.0, "mfe_min": mfe_min,
-             "time_cut_deadline": _iso(t + timedelta(minutes=15 * cut_bars)),
+             "time_cut_deadline": _iso(t + timedelta(minutes=15 * cut_bars)) if cut_bars else None,
              "time_cut_candles": cut_bars, "time_cut_rule": cut_rule}
         self.s["next_pos_id"] += 1
         comm = round(sp["commission"] * p["qty"], 2)
@@ -1069,7 +1148,7 @@ def format_status(sm: dict, cfg: dict) -> str:
     L.append(f"Open positions: {len(sm['positions'])}  pending: {len(sm['pending'])}")
     for p in sm["positions"]:
         L.append(f"  {p['symbol']}->{p['contract']} x{p['qty']} {'LONG' if p['side'] > 0 else 'SHORT'} @ {p['entry']} "
-                 f"stop {p['stop']} (-${p['risk_usd']:,.0f}) target {p['target']} "
+                 f"stop {p['stop']} (-${p['risk_usd']:,.0f}) target {p['target'] if p.get('target') is not None else 'Gemini exit'} "
                  f"(+${p['target_usd']:,.0f} net)")
     L.append("Strategy ledger (all accounts):")
     wr = f"{lg['win_rate']:.0%}" if lg["win_rate"] is not None else "n/a"

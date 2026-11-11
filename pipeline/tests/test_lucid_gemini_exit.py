@@ -166,3 +166,17 @@ def test_site_row_shows_stop_and_gemini_exit(cfg):
     us, btc = out["trades"]
     assert us["take_profit"] is None and us["exit"] == "Gemini" and us["stop_loss"] == 28454.0
     assert btc["take_profit"] == 74100.0 and "exit" not in btc
+
+
+def test_open_profit_is_not_dll_room(sim):
+    """Live 18:51 case: GC short 5 @3990.9 stop 3993.9 ($1,500 risk) deep in profit; a 2nd entry must not use the
+    open profit as DLL room (worst case = both stops: -$1,500 - next stop must stay inside the $1,800 DLL)."""
+    sim.s["account"]["balance"] = 99985.0; sim.s["day"]["start_balance"] = 100000.0
+    sim.s["positions"].append({"id": 1, "symbol": "XAUUSD", "contract": "GC", "qty": 5, "side": -1, "entry": 3990.9,
+                               "stop": 3993.9, "target": None, "entry_time": T.isoformat(), "risk_usd": 1500.0,
+                               "exit_mode": "gemini"})
+    sim.s["last_price"]["XAUUSD"] = 3987.1                     # +$1,900 open profit
+    assert sim.equity() > 101800
+    assert sim.risk_budget() == pytest.approx(99985.0 - 1500.0 - 98200.0 - 50.0)   # $235
+    out = sim.on_record(_rec(T, stop_dist=27.0), T)
+    assert not out[0]["taken"] and "DLL room" in out[0]["why"]

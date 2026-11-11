@@ -231,11 +231,14 @@ class LucidSim:
     def risk_budget(self) -> float:
         """$ a NEW entry may risk: max_risk_usd capped by DLL room after open risk + pending reservations."""
         L = self.L
-        room = self.equity() - self.dll_level() - self.open_risk() - self.pending_reserved_risk()
+        # Worst case = every open position stopped out: balance + sum(P&L at each stop). Open (unrealized) profit
+        # is NOT room - it can vanish before the stop (equity - open_risk used to count it, letting a 2nd entry
+        # stack past the DLL while the first was in profit).
+        at_stops = self.s["account"]["balance"] + sum(self.pnl(p, p["stop"]) for p in self.s["positions"])
+        room = at_stops - self.dll_level() - self.pending_reserved_risk()
         budget = min(L["max_risk_usd"], room - L.get("dll_safety_usd", 0))
         if L.get("respect_mll_room"):
-            budget = min(budget, self.equity() - self.s["account"]["mll_floor"] - self.open_risk()
-                         - self.pending_reserved_risk() - 50)
+            budget = min(budget, at_stops - self.s["account"]["mll_floor"] - self.pending_reserved_risk() - 50)
         return budget
 
     def dll_level(self) -> float:

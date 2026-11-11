@@ -936,9 +936,12 @@ class LucidSim:
                 "balance_after")
         return {
             "updated_at": datetime.now(UTC).isoformat(), "paper_only": True, "plan": self.L.get("plan"),
-            "sizing_rule": f"full-size futures only (NQ, GC, 6E, 6B), 1-{self.L['max_minis']:g} contracts; "
-                           f"${self.L['target_usd_min']:g}-${self.L['target_usd_max']:g} NET target "
-                           f"(aim ${self.L['target_usd_aim']:g}), max risk ${self.L['max_risk_usd']:g}",
+            "sizing_rule": (f"full-size futures only (NQ, GC, 6E, 6B), 1-{self.L['max_minis']:g} contracts sized by "
+                            f"the hard stop, max risk ${self.L['max_risk_usd']:g}; exit = Gemini CLOSE (no target), "
+                            f"{self.L.get('max_hold_minutes', 90):g} min max hold") if self.gemini_exit else
+                           (f"full-size futures only (NQ, GC, 6E, 6B), 1-{self.L['max_minis']:g} contracts; "
+                            f"${self.L['target_usd_min']:g}-${self.L['target_usd_max']:g} NET target "
+                            f"(aim ${self.L['target_usd_aim']:g}), max risk ${self.L['max_risk_usd']:g}"),
             "reset": {"at": self.reset_at(), "reason": self.s.get("reset_reason") or self.L.get("reset_reason"),
                       "token": self.s.get("reset_token")},
             "account": {"no": a["no"], "phase": a["phase"], "start_balance": a["start_balance"],

@@ -123,6 +123,7 @@ jobs:
       - name: Signal loop
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          FIRMTAPE_API_KEY: ${{ secrets.FIRMTAPE_API_KEY }}
           GEMINI_MODEL: ${{ vars.GEMINI_MODEL }}
           GITHUB_TOKEN: ${{ github.token }}
           GH_TOKEN: ${{ github.token }}

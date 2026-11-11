@@ -9,18 +9,20 @@ Exits after max_runtime (default 5h30m, under the 6h job cap), handing the loop 
 (started by cron or by this loop's own workflow_dispatch), or when a STOP file appears on the data branch.
 """
 from __future__ import annotations
-import asyncio, json, logging, os, shutil, subprocess, tempfile, time
+import asyncio, contextlib, json, logging, os, shutil, subprocess, tempfile, time
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from . import gha_lock as L
 from .config import ROOT
+from .exit_manager import ExitManager, em_cfg, run_exit_loop
 from .lucid import lucid_step
 from .pipeline import next_boundary, run_once
 from .site import write_status
 
 log = logging.getLogger("signals.gha")
 SITE_JSON = ("status.json", "latest_signal.json", "history.json")
+DATA_JSON = ("books.json",)  # committed to the data branch only (not deployed to Pages)
 CYCLE_LOG_KEEP_DAYS = 14
 
 
@@ -47,6 +49,9 @@ class GhaLoop:
         self.deploy_fail_streak = 0
         self.stats = {"deploys_ok": 0, "deploys_failed": 0, "deploy_ms": [], "cycle_s": [], "late_s": []}
         self.last = {}
+        # Serialises data-dir writes from the exit-manager task with git add/commit/push (never held long).
+        self.io_lock = asyncio.Lock()
+        self.exit_task: asyncio.Task | None = None
         for sub in ("state", "logs"):
             (data / sub).mkdir(parents=True, exist_ok=True)
 
@@ -78,7 +83,7 @@ class GhaLoop:
     # ---------- persistence ----------
     def commit_push(self, msg: str) -> bool:
         d = self.data
-        _git(d, "add", "-A", "--", "state", "logs", *[f for f in SITE_JSON if (d / f).exists()])
+        _git(d, "add", "-A", "--", "state", "logs", *[f for f in SITE_JSON + DATA_JSON if (d / f).exists()])
         if _git(d, "diff", "--cached", "--quiet", check=False).returncode != 0:
             _git(d, "commit", "-q", "-m", msg)
         for attempt in range(1, 6):
@@ -181,6 +186,7 @@ class GhaLoop:
                  self.offset, self.ends_at.isoformat(), self.hard_cap.isoformat())
         # data checkout may have been reset during acquire: make sure we start from the newest state
         reason = "max-runtime"
+        self.start_exit_manager()
         while True:
             # The job still wakes every `self.interval` (2 min). The site countdown uses
             # scan_interval (2 active / 15 during ASIAN / DEADZONE) so it matches the next Gemini call.
@@ -211,7 +217,8 @@ class GhaLoop:
             if self.cycles % 30 == 1:
                 self.trim_logs()
             self.heartbeat(last_cycle_at=started.isoformat())
-            ok = await asyncio.to_thread(self.commit_push, f"cycle {started.strftime('%H:%M')}Z run {self.run_id}")
+            async with self.io_lock:
+                ok = await asyncio.to_thread(self.commit_push, f"cycle {started.strftime('%H:%M')}Z run {self.run_id}")
             dres = await deploy_task
             cyc = round(time.monotonic() - t0, 1)
             self.stats["cycle_s"].append(cyc)
@@ -234,7 +241,25 @@ class GhaLoop:
         await self.shutdown(reason)
         return reason
 
+    def start_exit_manager(self) -> None:
+        """Gemini exit checks every [exit_manager].check_seconds (18 s) while a book position is open.
+        Separate asyncio task: never blocks the clock-aligned 2-min entry cycle; idle ticks are a file read."""
+        if not em_cfg(self.cfg).get("enabled") or not (self.cfg.get("lucid") or {}).get("enabled"):
+            return
+        mgr = ExitManager(self.cfg, dry_run=self.dry_run, model=self.model, io_lock=self.io_lock)
+        self.exit_task = asyncio.create_task(run_exit_loop(mgr), name="exit-manager")
+        log.info("exit manager on: check every %ss while a book position is open", mgr.period)
+
+    async def stop_exit_manager(self) -> None:
+        t, self.exit_task = self.exit_task, None
+        if t is None:
+            return
+        t.cancel()
+        with contextlib.suppress(BaseException):
+            await asyncio.wait_for(t, 30)
+
     async def shutdown(self, reason: str) -> None:
+        await self.stop_exit_manager()
         succ = L.read(self.data, L.SUCC)
         handed = succ.get("run_id") if (reason == "handoff" and succ) else None
         if reason == "stop-file":
@@ -271,6 +296,7 @@ async def run_gha_loop(cfg: dict, data: Path, run_id: str, role: str, **kw) -> s
     try:
         return await loop.run()
     except LostLock as e:
+        await loop.stop_exit_manager()
         log.error("lost the loop lock: %s -> exiting without further writes", e)
         return "lost-lock"
     finally:

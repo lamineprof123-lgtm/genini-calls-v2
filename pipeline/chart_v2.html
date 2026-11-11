@@ -85,7 +85,7 @@ function _applyMeta(p) {
   const line2 = [cvdTxt, sessTxt, live,
     `last bar ${new Date(last.time * 1000).toISOString().slice(0,16).replace('T',' ')} UTC`]
     .filter(Boolean).join('  |  ');
-  document.getElementById('meta').textContent = line1 + '\n' + line2;
+  document.getElementById('meta').textContent = line1 + '\n' + line2 + (p.position_header ? '\n' + p.position_header : '');
   const sw = (col, style, h) => `<span class="sw" style="border-top:${h}px ${style} ${col}"></span>`;
   document.getElementById('legend').innerHTML =
     sw(V.color || '#FF9800', 'solid', 2) + 'VWAP'
@@ -96,7 +96,8 @@ function _applyMeta(p) {
     + sw(R.resistance_color, 'dashed', 2) + 'Resistance'
     + sw(R.support_color, 'dashed', 2) + 'Support'
     + sw('#FACC15', 'solid', 3) + 'RVOL&gt;2'
-    + (p.forming_candle ? sw('#7AF7FF', 'solid', 3) + 'Forming' : '');
+    + (p.forming_candle ? sw('#7AF7FF', 'solid', 3) + 'Forming' : '')
+    + (p.entry_line ? sw(p.entry_line.color || '#FFFFFF', 'solid', 2) + 'ENTRY' : '');
 }
 
 function _setAllData(st, p) {
@@ -125,6 +126,13 @@ function _setAllData(st, p) {
       lineWidth: Math.round(R.line_width), lineStyle: ls, axisLabelVisible: true, title: lv.label
     }));
   });
+  // Exit manager: bright ENTRY line for the open position (absent on entry-model charts)
+  if (p.entry_line && typeof p.entry_line.price === 'number') {
+    st.priceLines.push(st.cs.createPriceLine({
+      price: p.entry_line.price, color: p.entry_line.color || '#FFFFFF', lineWidth: 2,
+      lineStyle: LightweightCharts.LineStyle.Solid, axisLabelVisible: true, title: p.entry_line.title || 'ENTRY'
+    }));
+  }
   const n = p.candles.length, vis = Math.max(80, Math.min(120, p.visible || 100));
   const extra = p.forming_candle ? 1 : 0;
   st.chart.timeScale().setVisibleLogicalRange({ from: n - vis - 0.5, to: n - 0.5 + extra });

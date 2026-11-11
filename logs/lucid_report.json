@@ -259,18 +259,19 @@
     }
   ],
   "skips": {
-    "count": 109,
+    "count": 112,
     "by_reason": {
-      "sizing_unreachable": 10,
+      "sizing_unreachable": 11,
       "session_blocked": 2,
       "chase": 6,
       "already_position_or_pending": 82,
-      "stop 0.24 atr from entry (min 0.25)": 7,
+      "stop 0.24 atr from entry (min 0.25)": 8,
       "stop 0.25 atr from entry (min 0.25)": 1,
-      "sell requires take_profit < entry < stop_loss": 1
+      "sell requires take_profit < entry < stop_loss": 1,
+      "entry 1.15 atr from market (max 1.0)": 1
     },
     "exact_reasons": {
-      "cannot reach $381 NET within max_minis=40 at tdist=5.0 / risk budget (SKIP)": 10,
+      "cannot reach $381 NET within max_minis=40 at tdist=5.0 / risk budget (SKIP)": 11,
       "session_blocked": 2,
       "price ran 0.00031 past Gemini entry (chase)": 1,
       "price ran 0.00047 past Gemini entry (chase)": 1,
@@ -278,9 +279,10 @@
       "price ran 0.00037 past Gemini entry (chase)": 1,
       "price ran 0.00077 past Gemini entry (chase)": 2,
       "price ran 0.00107 past Gemini entry (chase)": 1,
-      "stop 0.24 ATR from entry (min 0.25)": 7,
+      "stop 0.24 ATR from entry (min 0.25)": 8,
       "stop 0.25 ATR from entry (min 0.25)": 1,
-      "SELL requires take_profit < entry < stop_loss": 1
+      "SELL requires take_profit < entry < stop_loss": 1,
+      "entry 1.15 ATR from market (max 1.0)": 1
     }
   },
   "definitions": {
@@ -291,7 +293,7 @@
     "cvd_agrees": "bullish label for BUY, bearish for SELL; neutral label uses slope direction",
     "missing_telemetry": "unknown, never backfilled from later bars"
   },
-  "generated_at_utc": "2026-11-11T09:50:29.637414+00:00",
-  "generated_at_dubai": "2026-11-11 13:50:29",
+  "generated_at_utc": "2026-11-11T09:52:30.966991+00:00",
+  "generated_at_dubai": "2026-11-11 13:52:30",
   "malformed_lines": []
 }

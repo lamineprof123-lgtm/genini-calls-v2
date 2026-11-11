@@ -1,22 +1,5 @@
 [
   {
-    "signal_at": "2026-11-11T08:12:20.077284+00:00",
-    "tz": "Asia/Dubai",
-    "model": "gemini-3.6-flash",
-    "dry_run": false,
-    "trades": [],
-    "no_trade": [
-      "XAUUSD",
-      "EURUSD",
-      "GBPUSD",
-      "US100",
-      "BTCUSD"
-    ],
-    "analysis_failed": false,
-    "breaker_halted": false,
-    "written_at": "2026-11-11T08:12:29.634519+00:00"
-  },
-  {
     "signal_at": "2026-11-11T08:14:20.099139+00:00",
     "tz": "Asia/Dubai",
     "model": "gemini-3.6-flash",
@@ -2120,5 +2103,35 @@
     "analysis_failed": false,
     "breaker_halted": false,
     "written_at": "2026-11-11T09:50:28.951166+00:00"
+  },
+  {
+    "signal_at": "2026-11-11T09:52:20.089371+00:00",
+    "tz": "Asia/Dubai",
+    "model": "gemini-3.6-flash",
+    "dry_run": false,
+    "trades": [
+      {
+        "symbol": "US100",
+        "name": "NASDAQ",
+        "action": "BUY",
+        "entry": 28202.39,
+        "stop_loss": 28160.33,
+        "take_profit": 28207.39,
+        "rr": 0.119,
+        "confidence": 0.78,
+        "digits": 2,
+        "session": "LONDON_SESSION",
+        "cvd_label": "BULLISH"
+      }
+    ],
+    "no_trade": [
+      "XAUUSD",
+      "EURUSD",
+      "GBPUSD",
+      "BTCUSD"
+    ],
+    "analysis_failed": false,
+    "breaker_halted": false,
+    "written_at": "2026-11-11T09:52:30.296859+00:00"
   }
 ]

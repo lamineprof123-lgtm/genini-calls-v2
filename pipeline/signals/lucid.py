@@ -182,6 +182,20 @@ class LucidSim:
     def open_risk(self) -> float:
         return sum(max(0.0, -self.pnl(p, p["stop"])) for p in self.s["positions"])
 
+    def pending_reserved_risk(self) -> float:
+        """Risk reserved by queued (not yet filled) entries; counts against DLL room for any other entry."""
+        return sum(float(pe.get("reserved_risk") or 0.0) for pe in self.s["pending"])
+
+    def risk_budget(self) -> float:
+        """$ a NEW entry may risk: max_risk_usd capped by DLL room after open risk + pending reservations."""
+        L = self.L
+        room = self.equity() - self.dll_level() - self.open_risk() - self.pending_reserved_risk()
+        budget = min(L["max_risk_usd"], room - L.get("dll_safety_usd", 0))
+        if L.get("respect_mll_room"):
+            budget = min(budget, self.equity() - self.s["account"]["mll_floor"] - self.open_risk()
+                         - self.pending_reserved_risk() - 50)
+        return budget
+
     def dll_level(self) -> float:
         d = self.s["day"]
         sb = d["start_balance"] if d["start_balance"] is not None else self.s["account"]["balance"]
@@ -375,13 +389,11 @@ class LucidSim:
         if tdist <= 0 or sdist <= 0:
             self.last_size_why = "non-positive stop/target distance"
             return None
-        budget = min(L["max_risk_usd"],
-                     self.equity() - self.dll_level() - self.open_risk() - L.get("dll_safety_usd", 0))
-        if L.get("respect_mll_room"):
-            budget = min(budget, self.equity() - self.s["account"]["mll_floor"] - self.open_risk() - 50)
+        budget = self.risk_budget()
         if budget < L.get("min_risk_usd", 0):
             self.last_size_why = (f"DLL room: risk budget ${budget:.0f} < min_risk_usd ${L.get('min_risk_usd', 0):g} "
-                                  f"(daily loss limit nearly used; no new entries until it resets)")
+                                  f"(open risk ${self.open_risk():.0f} + pending ${self.pending_reserved_risk():.0f}; "
+                                  f"daily loss limit nearly used; no new entries until it resets)")
             return None
         used = sum(self.mini_eq(p["contract"], p["qty"]) for p in self.s["positions"])
         room_minis = L["max_minis"] - used
@@ -501,7 +513,18 @@ class LucidSim:
                 self._skip_entry(now, sym, reason, snapshot=snap, session=sess)
                 out.append({"symbol": sym, "taken": False, "why": reason, "session": sess, "telemetry": True})
                 continue
+            # DLL room at QUEUE time too (open risk + other pending reservations); the same check runs again at fill.
+            plan = self.size_trade(sym, side, cand["atr"], tdist=(scalp or {}).get("tdist"),
+                                   sdist=(scalp or {}).get("sdist"), entry=cand["entry"], scalp=scalp)
+            if plan is None and str(self.last_size_why or "").startswith("DLL room"):
+                why_dll = f"DLL room at queue: {self.last_size_why}"
+                self._skip_entry(now, sym, why_dll, snapshot=snap, session=sess)
+                out.append({"symbol": sym, "taken": False, "why": why_dll, "session": sess, "telemetry": True})
+                continue
             pend = {"symbol": sym, "side": side, "created": _iso(now), "fill_after": _iso(ceil_min(now)),
+                    "reserved_risk": float(plan["risk_usd"]) if plan else float(self.L.get("min_risk_usd", 0)),
+                    "planned": ({k: plan.get(k) for k in ("contract", "qty", "risk_usd", "tdist", "target_source")}
+                                if plan else None),
                     "expires": _iso(ceil_min(now) + timedelta(minutes=self.L["pending_expiry_minutes"])),
                     "atr": cand["atr"], "scalp": scalp, "session": sess, "telemetry": snap,
                     "gemini": {"action": cand["action"], "entry": cand["entry"],
@@ -690,7 +713,14 @@ class LucidSim:
             if fresh:
                 tdist, sdist = fresh["tdist"], fresh["sdist"]
                 scalp = {**scalp, **fresh}
+        # pe was removed above, so its own reservation is not counted; open risk + OTHER pending are.
         size = self.size_trade(sym, side, pe["atr"], tdist=tdist, sdist=sdist, entry=px, scalp=scalp)
+        if not size and str(self.last_size_why or "").startswith("DLL room"):
+            why = f"pending cancelled at fill: {self.last_size_why}"
+            self._event(t, "pending_cancelled", symbol=sym, why=why, reserved_risk=pe.get("reserved_risk"),
+                        open_risk=round(self.open_risk(), 2), realized_today=self.s["day"].get("realized"))
+            self._skip_entry(t, sym, why, snapshot=snap, tdist=tdist, sdist=sdist)
+            return
         if not size:
             why = (f"cannot reach ${self.L['target_usd_min']:g} NET within max_minis={self.L['max_minis']:g} "
                    f"at tdist={tdist} / risk budget (SKIP): {self.last_size_why}")
@@ -710,8 +740,8 @@ class LucidSim:
             return
         sp = self.spec(size["contract"])
         sc = self.cfg.get("scalp") or {}
-        cut_bars = int(sc.get("time_cut_candles", 2))
-        mfe_min = float(sc.get("mfe_min_atr", 0.25)) * float(pe["atr"] or 0)
+        cut_bars, mfe_min, cut_rule = time_cut_rule(sc, float(pe["atr"] or 0), float(size["tdist"]),
+                                                    size.get("target_source"))
         # Stamp final plan into the carried snapshot
         if snap is not None:
             snap = {**snap,
@@ -735,7 +765,7 @@ class LucidSim:
              "atr": pe["atr"], "gemini": g, "scalp": scalp, "telemetry": snap,
              "mfe": 0.0, "mae": 0.0, "mfe_min": mfe_min,
              "time_cut_deadline": _iso(t + timedelta(minutes=15 * cut_bars)),
-             "time_cut_candles": cut_bars}
+             "time_cut_candles": cut_bars, "time_cut_rule": cut_rule}
         self.s["next_pos_id"] += 1
         comm = round(sp["commission"] * p["qty"], 2)
         self.s["account"]["balance"] = round(self.s["account"]["balance"] - comm, 2)
@@ -748,6 +778,7 @@ class LucidSim:
                     target_usd_net=p["target_usd"], target_usd_gross=p["target_usd_gross"],
                     commission_rt=p["commission_rt"],
                     target_source=size.get("target_source"), sizing=size.get("sizing"),
+                    time_cut_rule=cut_rule, time_cut_candles=cut_bars, mfe_min=round(mfe_min, 6),
                     max_minis=self.L["max_minis"],
                     max_minis_note="USER RULE OVERRIDE (Lucid real = 6 minis)",
                     telemetry_keys=sorted((snap or {}).keys()))
@@ -920,6 +951,28 @@ async def fetch_m1(ticker: str, since: datetime, now: datetime, timeout: float =
 
 
 _LOCK = asyncio.Lock()
+
+
+def time_cut_rule(sc: dict, atr: float, tdist: float, target_source: str | None) -> tuple[int, float, str]:
+    """2-bar time cut, made consistent with the planned target.
+
+    Scalp targets (fixed / nearest structure): unchanged user rule, time_cut_candles (2) x 15m and
+    "moved in favour" = MFE >= mfe_min_atr x ATR.
+    Targets stretched past the scalp level (target_source extended:* / structure:next:*): time_cut_candles_extended
+    (4) x 15m, and MFE >= min(mfe_min_atr x ATR, mfe_min_target_frac x planned target distance), i.e. a third of the
+    way to the target counts, so a 38-pt target is not judged by a threshold set for a 5-pt scalp.
+    Hard stop and the risk cap are unchanged."""
+    base = int(sc.get("time_cut_candles", 2))
+    by_atr = float(sc.get("mfe_min_atr", 0.25)) * atr
+    ext = str(target_source or "").startswith(("extended", "structure:next"))
+    if not ext or tdist <= 0:
+        return base, by_atr, f"{base}x15m (scalp target); mfe_min={sc.get('mfe_min_atr', 0.25):g}xATR={by_atr:.5g}"
+    bars = int(sc.get("time_cut_candles_extended", 4))
+    frac = float(sc.get("mfe_min_target_frac", 1 / 3))
+    by_tgt = frac * tdist
+    mfe_min = min(by_atr, by_tgt)
+    return bars, mfe_min, (f"{bars}x15m (extended target); mfe_min=min({sc.get('mfe_min_atr', 0.25):g}xATR={by_atr:.5g}, "
+                           f"{frac:.4g}xtarget {tdist:g}={by_tgt:.5g})={mfe_min:.5g}")
 
 
 async def lucid_step(cfg: dict, record: dict | None = None, now: datetime | None = None) -> dict:

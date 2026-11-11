@@ -1,7 +1,7 @@
 {
   "version": 1,
   "created_at": "2026-11-09T13:59:39.073020+00:00",
-  "last_processed": "2026-11-11T13:39:00+00:00",
+  "last_processed": "2026-11-11T13:41:00+00:00",
   "account": {
     "no": 1,
     "phase": "eval",
@@ -26,26 +26,26 @@
     {
       "symbol": "EURUSD",
       "side": -1,
-      "created": "2026-11-11T13:38:28.213899+00:00",
-      "fill_after": "2026-11-11T13:39:00+00:00",
-      "expires": "2026-11-11T13:49:00+00:00",
+      "created": "2026-11-11T13:42:28.411922+00:00",
+      "fill_after": "2026-11-11T13:43:00+00:00",
+      "expires": "2026-11-11T13:53:00+00:00",
       "atr": 0.000535,
       "scalp": {
         "action": "SELL",
         "side": -1,
-        "entry": 1.11177,
+        "entry": 1.11157,
         "stop_loss": 1.11278,
-        "take_profit": 1.11172,
-        "sdist": 0.0010067499999999452,
-        "tdist": 4.500000000007276e-05,
+        "take_profit": 1.11032,
+        "sdist": 0.0012067499999999232,
+        "tdist": 0.0012499999999999734,
         "stop_source": "structure",
-        "target_source": "structure:Session Low",
-        "rr": 0.045,
+        "target_source": "fixed",
+        "rr": 1.036,
         "structure_stop": 1.1127767499999999,
-        "atr_stop": 1.112198,
-        "fixed_tp": 1.11052,
-        "structure_tp": 1.1117249999999999,
-        "structure_label": "Session Low",
+        "atr_stop": 1.111998,
+        "fixed_tp": 1.11032,
+        "structure_tp": null,
+        "structure_label": null,
         "candle": {
           "high": 1.11275,
           "low": 1.1117
@@ -99,66 +99,66 @@
         },
         "gemini": {
           "action": "SELL",
-          "confidence": 0.85,
+          "confidence": 0.82,
           "confidence_band": ">=0.8",
-          "rationale": "Price is below VAL (1.11308) and well below POC (1.11377). CVD is strongly BEARISH (-5,081) with a sharp negative slope (-4,402). Session is LONDON_NY_OVERLAP. Price is trading below VWAP (1.11487) and EMA50 (1.11483), breaking down past lower ATR band (1.11264) and breaching the previous Session Low (1.11170) with RVOL yellow spikes earlier confirming volume expansion. High conviction short momentum setup.",
+          "rationale": "Price is below_val (VAL 1.11308, live 1.11157) and well below POC 1.11377. CVD is BEARISH (-5081.12) with aggressive negative slope (-4402.17), showing strong sell alignment. Session is LONDON_NY_OVERLAP. Price is steadily trending down below VWAP (1.11487) and EMA50 (1.11483). Price pushed below lower ATR band (1.11264) and broke Session Low (1.11170). Moderate volume expansion confirms ongoing breakdown momentum.",
           "model": "gemini-3.6-flash",
           "model_action": "SELL"
         },
         "scalp": {
           "stop_basis": "structure",
-          "target_basis": "structure:Session Low",
-          "tdist": 4.500000000007276e-05,
-          "sdist": 0.0010067499999999452,
-          "structure_label": "Session Low"
+          "target_basis": "fixed",
+          "tdist": 0.0012499999999999734,
+          "sdist": 0.0012067499999999232,
+          "structure_label": null
         },
         "planned": {
-          "tdist": 4.500000000007276e-05,
-          "sdist": 0.0010067499999999452,
+          "tdist": 0.0012499999999999734,
+          "sdist": 0.0012067499999999232,
           "qty": null,
           "contract": null,
           "target_usd_net": null,
           "risk_usd": null
         },
-        "run_at_utc": "2026-11-11T13:38:20.087515+00:00",
-        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/173820.json/EURUSD.png"
+        "run_at_utc": "2026-11-11T13:42:20.068161+00:00",
+        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/174220.json/EURUSD.png"
       },
       "gemini": {
         "action": "SELL",
-        "entry": 1.11177,
+        "entry": 1.11157,
         "stop_loss": 1.11278,
-        "take_profit": 1.11172,
-        "confidence": 0.85,
-        "rr": 0.05,
+        "take_profit": 1.11032,
+        "confidence": 0.82,
+        "rr": 1.033,
         "shown_on_site": true,
         "basis": "site signal",
-        "run_at_utc": "2026-11-11T13:38:20.087515+00:00",
+        "run_at_utc": "2026-11-11T13:42:20.068161+00:00",
         "session": "LONDON_NY_OVERLAP",
-        "rationale": "Price is below VAL (1.11308) and well below POC (1.11377). CVD is strongly BEARISH (-5,081) with a sharp negative slope (-4,402). Session is LONDON_NY_OVERLAP. Price is trading below VWAP (1.11487) and EMA50 (1.11483), breaking down past lower ATR band (1.11264) and breaching the previous Session Low (1.11170) with RVOL yellow spikes earlier confirming volume expansion. High conviction short momentum setup.",
+        "rationale": "Price is below_val (VAL 1.11308, live 1.11157) and well below POC 1.11377. CVD is BEARISH (-5081.12) with aggressive negative slope (-4402.17), showing strong sell alignment. Session is LONDON_NY_OVERLAP. Price is steadily trending down below VWAP (1.11487) and EMA50 (1.11483). Price pushed below lower ATR band (1.11264) and broke Session Low (1.11170). Moderate volume expansion confirms ongoing breakdown momentum.",
         "model": "gemini-3.6-flash"
       }
     },
     {
       "symbol": "GBPUSD",
       "side": -1,
-      "created": "2026-11-11T13:38:28.213899+00:00",
-      "fill_after": "2026-11-11T13:39:00+00:00",
-      "expires": "2026-11-11T13:49:00+00:00",
+      "created": "2026-11-11T13:42:28.411922+00:00",
+      "fill_after": "2026-11-11T13:43:00+00:00",
+      "expires": "2026-11-11T13:53:00+00:00",
       "atr": 0.000617,
       "scalp": {
         "action": "SELL",
         "side": -1,
-        "entry": 1.32987,
+        "entry": 1.32975,
         "stop_loss": 1.33072,
         "take_profit": 1.32969,
-        "sdist": 0.0008508499999997365,
-        "tdist": 0.00017500000000025828,
+        "sdist": 0.0009708499999998565,
+        "tdist": 5.500000000013827e-05,
         "stop_source": "structure",
         "target_source": "structure:Session Low",
-        "rr": 0.206,
+        "rr": 0.057,
         "structure_stop": 1.3307208499999998,
-        "atr_stop": 1.3303636,
-        "fixed_tp": 1.3286200000000001,
+        "atr_stop": 1.3302436,
+        "fixed_tp": 1.3285,
         "structure_tp": 1.3296949999999998,
         "structure_label": "Session Low",
         "candle": {
@@ -214,42 +214,42 @@
         },
         "gemini": {
           "action": "SELL",
-          "confidence": 0.85,
+          "confidence": 0.8,
           "confidence_band": ">=0.8",
-          "rationale": "Price is trading below VAL (1.33155) and below POC (1.33467). CVD is BEARISH (-3,325) with strong negative slope (-2,256). Session is LONDON_NY_OVERLAP. Price is well below VWAP (1.33278) and EMA50 (1.33289), pushing under the lower ATR band (1.33038) to sweep Session Low (1.32967). Confirmed by preceding RVOL yellow volume spikes and clear structural breakdown.",
+          "rationale": "Price is below_val (VAL 1.33155, live 1.32975) and far below POC 1.33467. CVD is BEARISH (-3324.68) with negative slope (-2256.47) supporting the move. Session is LONDON_NY_OVERLAP. Below VWAP (1.33278) and EMA50 (1.33289). Pushing past lower ATR band (1.33038) and breaking Session Low (1.32967). Steady expansion down without divergence.",
           "model": "gemini-3.6-flash",
           "model_action": "SELL"
         },
         "scalp": {
           "stop_basis": "structure",
           "target_basis": "structure:Session Low",
-          "tdist": 0.00017500000000025828,
-          "sdist": 0.0008508499999997365,
+          "tdist": 5.500000000013827e-05,
+          "sdist": 0.0009708499999998565,
           "structure_label": "Session Low"
         },
         "planned": {
-          "tdist": 0.00017500000000025828,
-          "sdist": 0.0008508499999997365,
+          "tdist": 5.500000000013827e-05,
+          "sdist": 0.0009708499999998565,
           "qty": null,
           "contract": null,
           "target_usd_net": null,
           "risk_usd": null
         },
-        "run_at_utc": "2026-11-11T13:38:20.087515+00:00",
-        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/173820.json/GBPUSD.png"
+        "run_at_utc": "2026-11-11T13:42:20.068161+00:00",
+        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/174220.json/GBPUSD.png"
       },
       "gemini": {
         "action": "SELL",
-        "entry": 1.32987,
+        "entry": 1.32975,
         "stop_loss": 1.33072,
         "take_profit": 1.32969,
-        "confidence": 0.85,
-        "rr": 0.212,
+        "confidence": 0.8,
+        "rr": 0.062,
         "shown_on_site": true,
         "basis": "site signal",
-        "run_at_utc": "2026-11-11T13:38:20.087515+00:00",
+        "run_at_utc": "2026-11-11T13:42:20.068161+00:00",
         "session": "LONDON_NY_OVERLAP",
-        "rationale": "Price is trading below VAL (1.33155) and below POC (1.33467). CVD is BEARISH (-3,325) with strong negative slope (-2,256). Session is LONDON_NY_OVERLAP. Price is well below VWAP (1.33278) and EMA50 (1.33289), pushing under the lower ATR band (1.33038) to sweep Session Low (1.32967). Confirmed by preceding RVOL yellow volume spikes and clear structural breakdown.",
+        "rationale": "Price is below_val (VAL 1.33155, live 1.32975) and far below POC 1.33467. CVD is BEARISH (-3324.68) with negative slope (-2256.47) supporting the move. Session is LONDON_NY_OVERLAP. Below VWAP (1.33278) and EMA50 (1.33289). Pushing past lower ATR band (1.33038) and breaking Session Low (1.32967). Steady expansion down without divergence.",
         "model": "gemini-3.6-flash"
       }
     }
@@ -265,8 +265,8 @@
   },
   "last_price": {
     "US100": 28286.198,
-    "GBPUSD": 1.32972,
-    "EURUSD": 1.11172,
+    "GBPUSD": 1.32974,
+    "EURUSD": 1.11157,
     "XAUUSD": 4035.638
   },
   "history": [],
@@ -296,7 +296,7 @@
     "gross_loss": -2169.1,
     "commissions": 219.6,
     "net_trade_pnl": -1411.85,
-    "skipped_signals": 268,
-    "accepted_signals": 113
+    "skipped_signals": 270,
+    "accepted_signals": 115
   }
 }

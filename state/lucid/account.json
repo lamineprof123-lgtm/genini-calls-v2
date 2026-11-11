@@ -1,7 +1,7 @@
 {
   "version": 1,
   "created_at": "2026-11-09T13:59:39.073020+00:00",
-  "last_processed": "2026-11-11T13:25:00+00:00",
+  "last_processed": "2026-11-11T13:28:00+00:00",
   "account": {
     "no": 1,
     "phase": "eval",
@@ -26,26 +26,26 @@
     {
       "symbol": "US100",
       "side": 1,
-      "created": "2026-11-11T13:24:30.083129+00:00",
-      "fill_after": "2026-11-11T13:25:00+00:00",
-      "expires": "2026-11-11T13:35:00+00:00",
+      "created": "2026-11-11T13:28:30.692083+00:00",
+      "fill_after": "2026-11-11T13:29:00+00:00",
+      "expires": "2026-11-11T13:39:00+00:00",
       "atr": 42.516,
       "scalp": {
         "action": "BUY",
         "side": 1,
-        "entry": 28305.45,
+        "entry": 28288.85,
         "stop_loss": 28223.99,
-        "take_profit": 28310.45,
-        "sdist": 81.45580000000336,
-        "tdist": 5.0,
+        "take_profit": 28290.63,
+        "sdist": 64.85580000000118,
+        "tdist": 1.7796799999996438,
         "stop_source": "structure",
-        "target_source": "fixed",
-        "rr": 0.061,
+        "target_source": "structure:VAH",
+        "rr": 0.027,
         "structure_stop": 28223.994199999997,
-        "atr_stop": 28271.4372,
-        "fixed_tp": 28310.45,
-        "structure_tp": null,
-        "structure_label": null,
+        "atr_stop": 28254.837199999998,
+        "fixed_tp": 28293.85,
+        "structure_tp": 28290.62968,
+        "structure_label": "VAH",
         "candle": {
           "high": 28293.49,
           "low": 28226.12
@@ -99,42 +99,42 @@
         },
         "gemini": {
           "action": "BUY",
-          "confidence": 0.82,
-          "confidence_band": ">=0.8",
-          "rationale": "Price is breaking out above VAH (28291.48) and is well above POC (28121.30). CVD is BULLISH (+9.20) with positive slope (+0.88), fully supporting the long trade. Session timing is LONDON_NY_OVERLAP. Price is comfortably above ascending VWAP (28109.15) and EMA50 (28128.15), riding near upper ATR band (28315.98). Under US100 index CFD tick volume caveats, yellow RVOL is not strictly required; clear structure break above Session High 28302.45 provides solid long momentum.",
+          "confidence": 0.75,
+          "confidence_band": "0.7-0.8",
+          "rationale": "Price is inside VA (VAL 28060.92, VAH 28291.48) and well above POC 28121.30. Live price 28288.85 is pressing right against VAH and near Session High (28302.45). CVD is BULLISH (+9.20, slope +0.88). Session is LONDON_NY_OVERLAP. Strong structural uptrend above rising VWAP (28109.15) and EMA50 (28128.15), riding upper ATR channel. RVOL is 1.094 (acceptable for US100 index CFD). Buying intraday pullbacks in direction of trend.",
           "model": "gemini-3.6-flash",
           "model_action": "BUY"
         },
         "scalp": {
           "stop_basis": "structure",
-          "target_basis": "fixed",
-          "tdist": 5.0,
-          "sdist": 81.45580000000336,
-          "structure_label": null
+          "target_basis": "structure:VAH",
+          "tdist": 1.7796799999996438,
+          "sdist": 64.85580000000118,
+          "structure_label": "VAH"
         },
         "planned": {
-          "tdist": 5.0,
-          "sdist": 81.45580000000336,
+          "tdist": 1.7796799999996438,
+          "sdist": 64.85580000000118,
           "qty": null,
           "contract": null,
           "target_usd_net": null,
           "risk_usd": null
         },
-        "run_at_utc": "2026-11-11T13:24:20.057872+00:00",
-        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/172420.json/US100.png"
+        "run_at_utc": "2026-11-11T13:28:20.054191+00:00",
+        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/172820.json/US100.png"
       },
       "gemini": {
         "action": "BUY",
-        "entry": 28305.45,
+        "entry": 28288.85,
         "stop_loss": 28223.99,
-        "take_profit": 28310.45,
-        "confidence": 0.82,
-        "rr": 0.061,
+        "take_profit": 28290.63,
+        "confidence": 0.75,
+        "rr": 0.027,
         "shown_on_site": true,
         "basis": "site signal",
-        "run_at_utc": "2026-11-11T13:24:20.057872+00:00",
+        "run_at_utc": "2026-11-11T13:28:20.054191+00:00",
         "session": "LONDON_NY_OVERLAP",
-        "rationale": "Price is breaking out above VAH (28291.48) and is well above POC (28121.30). CVD is BULLISH (+9.20) with positive slope (+0.88), fully supporting the long trade. Session timing is LONDON_NY_OVERLAP. Price is comfortably above ascending VWAP (28109.15) and EMA50 (28128.15), riding near upper ATR band (28315.98). Under US100 index CFD tick volume caveats, yellow RVOL is not strictly required; clear structure break above Session High 28302.45 provides solid long momentum.",
+        "rationale": "Price is inside VA (VAL 28060.92, VAH 28291.48) and well above POC 28121.30. Live price 28288.85 is pressing right against VAH and near Session High (28302.45). CVD is BULLISH (+9.20, slope +0.88). Session is LONDON_NY_OVERLAP. Strong structural uptrend above rising VWAP (28109.15) and EMA50 (28128.15), riding upper ATR channel. RVOL is 1.094 (acceptable for US100 index CFD). Buying intraday pullbacks in direction of trend.",
         "model": "gemini-3.6-flash"
       }
     }
@@ -149,7 +149,7 @@
     "traded": true
   },
   "last_price": {
-    "US100": 28305.976,
+    "US100": 28288.854,
     "GBPUSD": 1.3299,
     "EURUSD": 1.1118,
     "XAUUSD": 4042.438
@@ -181,7 +181,7 @@
     "gross_loss": -2169.1,
     "commissions": 219.6,
     "net_trade_pnl": -1411.85,
-    "skipped_signals": 254,
-    "accepted_signals": 104
+    "skipped_signals": 255,
+    "accepted_signals": 105
   }
 }

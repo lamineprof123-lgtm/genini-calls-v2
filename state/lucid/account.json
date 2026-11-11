@@ -1,13 +1,13 @@
 {
   "version": 1,
   "created_at": "2026-11-11T17:32:34.420596+00:00",
-  "last_processed": "2026-11-11T17:32:00+00:00",
+  "last_processed": "2026-11-11T17:34:00+00:00",
   "account": {
     "no": 1,
     "phase": "eval",
     "started_at": "2026-11-11T17:32:34.420596+00:00",
     "start_balance": 100000.0,
-    "balance": 100000.0,
+    "balance": 99998.25,
     "highest_close": 100000.0,
     "mll_floor": 97000.0,
     "mll_locked": false,
@@ -21,30 +21,53 @@
     "realized_pnl": 0.0,
     "trades": 0
   },
-  "positions": [],
-  "pending": [
+  "positions": [
     {
+      "id": 1,
       "symbol": "US100",
+      "contract": "NQ",
+      "qty": 1,
       "side": 1,
-      "created": "2026-11-11T17:32:34.420236+00:00",
-      "fill_after": "2026-11-11T17:33:00+00:00",
-      "expires": "2026-11-11T17:43:00+00:00",
+      "entry": 28548.75,
+      "stop": 28489.75,
+      "target": 28586.5,
+      "entry_time": "2026-11-11T17:33:00+00:00",
+      "risk_usd": 1180.0,
+      "target_usd": 751.5,
+      "target_source": "extended:aim_net",
+      "sizing": "fixed target 5 cannot reach $381 net within $1500 risk; extended:aim_net: 1 NQ (fewest that fit) target 37.75 -> $752 net, risk $1180",
+      "target_usd_gross": 755.0,
+      "commission_rt": 3.5,
       "atr": 68.487,
-      "scalp": {
+      "gemini": {
         "action": "BUY",
-        "side": 1,
         "entry": 28542.47,
         "stop_loss": 28489.67,
         "take_profit": 28558.47,
-        "sdist": 52.80435000000216,
-        "tdist": 16.0,
-        "stop_source": "structure",
-        "target_source": "structure:next:Session High",
+        "confidence": 0.78,
         "rr": 0.303,
+        "shown_on_site": true,
+        "basis": "site signal",
+        "run_at_utc": "2026-11-11T17:32:20.098491+00:00",
+        "session": "NEW_YORK_SESSION",
+        "rationale": "1) VP: Price is strongly above VAH (28381.43) and above POC (28276.77). 2) CVD: +13.70 BULLISH with accelerating positive slope +1.97 (agrees). 3) SESSION: NEW_YORK_SESSION active. 4) Trend: Strong bullish trend holding far above VWAP (28174.86) and EMA50 (28244.34). 5) ATR: Breaking out above upper ATR band (28500.44). 6) Volume: RVOL 0.893 (US100 index tick volume caveat applies, strong trend sequence). 7) S/R: Retesting high at Session High (28558.53) following clean higher-high structural continuation.",
+        "model": "gemini-3.6-flash"
+      },
+      "scalp": {
+        "action": "BUY",
+        "side": 1,
+        "entry": 28548.54,
+        "stop_loss": 28489.67,
+        "take_profit": 28553.54,
+        "sdist": 58.87735000000248,
+        "tdist": 5.0,
+        "stop_source": "structure",
+        "target_source": "fixed",
+        "rr": 0.085,
         "structure_stop": 28489.66565,
-        "atr_stop": 28487.6804,
-        "fixed_tp": 28547.47,
-        "structure_tp": 28557.16026,
+        "atr_stop": 28493.7534,
+        "fixed_tp": 28553.543,
+        "structure_tp": 28558.28,
         "structure_label": "Session High",
         "candle": {
           "high": 28558.53,
@@ -84,7 +107,6 @@
           "sizing": "fixed target 5 cannot reach $381 net at an allowed size; next structure Session High at 16 gives $434 net with 14 MNQ (risk $1484)"
         }
       },
-      "session": "NEW_YORK_SESSION",
       "telemetry": {
         "symbol": "US100",
         "session": "NEW_YORK_SESSION",
@@ -140,48 +162,45 @@
         },
         "scalp": {
           "stop_basis": "structure",
-          "target_basis": "structure:next:Session High",
-          "tdist": 16.0,
-          "sdist": 52.80435000000216,
-          "structure_label": "Session High"
+          "target_basis": "fixed",
+          "tdist": 37.75,
+          "sdist": 59.0,
+          "structure_label": "Session High",
+          "target_source": "extended:aim_net"
         },
         "planned": {
-          "tdist": 16.0,
-          "sdist": 52.80435000000216,
-          "qty": null,
-          "contract": null,
-          "target_usd_net": null,
-          "risk_usd": null
+          "tdist": 37.75,
+          "sdist": 59.0,
+          "qty": 1,
+          "contract": "NQ",
+          "target_usd_net": 751.5,
+          "risk_usd": 1180.0,
+          "target_source": "extended:aim_net",
+          "sizing": "fixed target 5 cannot reach $381 net within $1500 risk; extended:aim_net: 1 NQ (fewest that fit) target 37.75 -> $752 net, risk $1180"
         },
         "run_at_utc": "2026-11-11T17:32:20.098491+00:00",
         "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/213220.json/US100.png"
       },
-      "gemini": {
-        "action": "BUY",
-        "entry": 28542.47,
-        "stop_loss": 28489.67,
-        "take_profit": 28558.47,
-        "confidence": 0.78,
-        "rr": 0.303,
-        "shown_on_site": true,
-        "basis": "site signal",
-        "run_at_utc": "2026-11-11T17:32:20.098491+00:00",
-        "session": "NEW_YORK_SESSION",
-        "rationale": "1) VP: Price is strongly above VAH (28381.43) and above POC (28276.77). 2) CVD: +13.70 BULLISH with accelerating positive slope +1.97 (agrees). 3) SESSION: NEW_YORK_SESSION active. 4) Trend: Strong bullish trend holding far above VWAP (28174.86) and EMA50 (28244.34). 5) ATR: Breaking out above upper ATR band (28500.44). 6) Volume: RVOL 0.893 (US100 index tick volume caveat applies, strong trend sequence). 7) S/R: Retesting high at Session High (28558.53) following clean higher-high structural continuation.",
-        "model": "gemini-3.6-flash"
-      }
+      "mfe": 3.94800000000032,
+      "mae": 7.218000000000757,
+      "mfe_min": 17.12175,
+      "time_cut_deadline": "2026-11-11T18:03:00+00:00",
+      "time_cut_candles": 2
     }
   ],
-  "next_pos_id": 1,
+  "pending": [],
+  "next_pos_id": 2,
   "day": {
     "id": "2026-11-11",
     "start_balance": 100000.0,
     "realized": 0.0,
     "locked": null,
     "eod_done": null,
-    "traded": false
+    "traded": true
   },
-  "last_price": {},
+  "last_price": {
+    "US100": 28551.886
+  },
   "history": [],
   "ledger": {
     "fees_total": 190.4,
@@ -207,9 +226,9 @@
     "losses": 0,
     "gross_win": 0.0,
     "gross_loss": 0.0,
-    "commissions": 0.0,
+    "commissions": 1.75,
     "net_trade_pnl": 0.0,
-    "skipped_signals": 0,
+    "skipped_signals": 1,
     "accepted_signals": 1
   },
   "reset_token": "2026-11-11-target-sizing-fix"

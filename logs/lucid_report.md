@@ -2,7 +2,7 @@
 
 Post-reset account only (pre-reset trades listed separately); paper trades only; net P&L after round-trip commission
 
-Updated: 2026-11-11 22:04:31 (Dubai UTC+4)
+Updated: 2026-11-11 22:06:33 (Dubai UTC+4)
 
 **Every bucket with n < 20 is LOW CONFIDENCE. Descriptive only; no proven edge.**
 
@@ -10,9 +10,9 @@ Account reset at 2026-11-11T17:32:34.420596+00:00 (target sizing bug fix). Table
 
 | Group | n | Win rate | Net P&L | Avg win | Avg loss | Expectancy | Sample |
 |---|---:|---:|---:|---:|---:|---:|---|
-| Post-reset (since 2026-11-11T17:32Z) | 0 | n/a | $0.00 | n/a | n/a | n/a | LOW CONFIDENCE |
+| Post-reset (since 2026-11-11T17:32Z) | 1 | 0.0% | $-693.10 | n/a | $-693.10 | $-693.10 | LOW CONFIDENCE |
 | Pre-reset (archived account history) | 7 | 14.3% | $-1,411.85 | $757.25 | $-361.52 | $-201.69 | LOW CONFIDENCE |
-| All closed trades (both) | 7 | 14.3% | $-1,411.85 | $757.25 | $-361.52 | $-201.69 | LOW CONFIDENCE |
+| All closed trades (both) | 8 | 12.5% | $-2,104.95 | $757.25 | $-408.89 | $-263.12 | LOW CONFIDENCE |
 
 ## Pre-reset history by symbol
 
@@ -24,60 +24,80 @@ Account reset at 2026-11-11T17:32:34.420596+00:00 (target sizing bug fix). Table
 
 Pre-reset entry skips: 407
 
-No closed paper trades yet. Win rate/expectancy are unavailable, not zero.
-
 ## Session
 
-No observations yet.
+| Group | n | Win rate | Net P&L | Avg win | Avg loss | Expectancy | Sample |
+|---|---:|---:|---:|---:|---:|---:|---|
+| NEW_YORK_SESSION | 1 | 0.0% | $-693.10 | n/a | $-693.10 | $-693.10 | LOW CONFIDENCE |
 
 ## Value Area Position
 
-No observations yet.
+| Group | n | Win rate | Net P&L | Avg win | Avg loss | Expectancy | Sample |
+|---|---:|---:|---:|---:|---:|---:|---|
+| above_vah | 1 | 0.0% | $-693.10 | n/a | $-693.10 | $-693.10 | LOW CONFIDENCE |
 
 ## Cvd Agrees
 
-No observations yet.
+| Group | n | Win rate | Net P&L | Avg win | Avg loss | Expectancy | Sample |
+|---|---:|---:|---:|---:|---:|---:|---|
+| yes | 1 | 0.0% | $-693.10 | n/a | $-693.10 | $-693.10 | LOW CONFIDENCE |
 
 ## Rvol Spike
 
-No observations yet.
+| Group | n | Win rate | Net P&L | Avg win | Avg loss | Expectancy | Sample |
+|---|---:|---:|---:|---:|---:|---:|---|
+| no | 1 | 0.0% | $-693.10 | n/a | $-693.10 | $-693.10 | LOW CONFIDENCE |
 
 ## Vwap Aligned
 
-No observations yet.
+| Group | n | Win rate | Net P&L | Avg win | Avg loss | Expectancy | Sample |
+|---|---:|---:|---:|---:|---:|---:|---|
+| yes | 1 | 0.0% | $-693.10 | n/a | $-693.10 | $-693.10 | LOW CONFIDENCE |
 
 ## Ema50 Aligned
 
-No observations yet.
+| Group | n | Win rate | Net P&L | Avg win | Avg loss | Expectancy | Sample |
+|---|---:|---:|---:|---:|---:|---:|---|
+| yes | 1 | 0.0% | $-693.10 | n/a | $-693.10 | $-693.10 | LOW CONFIDENCE |
 
 ## Vwap Ema50 Aligned
 
-No observations yet.
+| Group | n | Win rate | Net P&L | Avg win | Avg loss | Expectancy | Sample |
+|---|---:|---:|---:|---:|---:|---:|---|
+| yes | 1 | 0.0% | $-693.10 | n/a | $-693.10 | $-693.10 | LOW CONFIDENCE |
 
 ## Confidence Band
 
-No observations yet.
+| Group | n | Win rate | Net P&L | Avg win | Avg loss | Expectancy | Sample |
+|---|---:|---:|---:|---:|---:|---:|---|
+| 0.7-0.8 | 1 | 0.0% | $-693.10 | n/a | $-693.10 | $-693.10 | LOW CONFIDENCE |
 
 ## Symbol
 
-No observations yet.
+| Group | n | Win rate | Net P&L | Avg win | Avg loss | Expectancy | Sample |
+|---|---:|---:|---:|---:|---:|---:|---|
+| US100 | 1 | 0.0% | $-693.10 | n/a | $-693.10 | $-693.10 | LOW CONFIDENCE |
 
 ## Exit Reason
 
-No observations yet.
+| Group | n | Win rate | Net P&L | Avg win | Avg loss | Expectancy | Sample |
+|---|---:|---:|---:|---:|---:|---:|---|
+| time_cut_no_mfe | 1 | 0.0% | $-693.10 | n/a | $-693.10 | $-693.10 | LOW CONFIDENCE |
 
 ## Top combinations: Session × Value area × CVD agreement
 
 Ranked by net P&L; small samples are not a strategy recommendation.
 
-No observations yet.
+| Group | n | Win rate | Net P&L | Avg win | Avg loss | Expectancy | Sample |
+|---|---:|---:|---:|---:|---:|---:|---|
+| NEW_YORK_SESSION × above_vah × CVD yes | 1 | 0.0% | $-693.10 | n/a | $-693.10 | $-693.10 | LOW CONFIDENCE |
 
-## Entry skips (20)
+## Entry skips (21)
 
 | Reason | Count |
 |---|---:|
 | already_position_or_pending | 17 |
-| sizing_unreachable | 3 |
+| sizing_unreachable | 4 |
 
 Legacy records without telemetry remain in the totals and are grouped as unknown.
 MFE/MAE are gross price excursions, not hypothetical net realized P&L. Bar-data exit-bar extremes are ambiguous.

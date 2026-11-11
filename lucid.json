@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-11T18:04:31.930999+00:00",
+  "updated_at": "2026-11-11T18:06:33.063457+00:00",
   "paper_only": true,
   "plan": "LucidPro 100K (DLL on)",
   "sizing_rule": "full-size futures only (NQ, GC, 6E, 6B), 1-40 contracts; $381-$1000 NET target (aim $750), max risk $1500",
@@ -12,39 +12,37 @@
     "no": 1,
     "phase": "eval",
     "start_balance": 100000.0,
-    "balance": 99998.25,
-    "equity": 99283.21,
-    "realized_pnl_since_reset": 0.0,
-    "open_pnl": -715.04,
-    "commission_on_open": 1.75,
-    "trades_since_reset": 0,
+    "balance": 99306.9,
+    "equity": 99306.9,
+    "realized_pnl_since_reset": -693.1,
+    "open_pnl": 0.0,
+    "commission_on_open": 0.0,
+    "trades_since_reset": 1,
     "wins": 0,
-    "losses": 0,
+    "losses": 1,
     "mll_floor": 97000.0,
-    "mll_room": 2283.21,
+    "mll_room": 2306.9,
     "dll": 1800.0,
-    "day_realized": 0.0,
+    "day_realized": -693.1,
     "day_locked": null,
-    "to_target": 6001.75
+    "to_target": 6693.1
   },
-  "open_positions": [
+  "open_positions": [],
+  "pending": 2,
+  "recent_trades": [
     {
+      "t_exit": "2026-11-11T18:03:00+00:00",
       "symbol": "US100",
       "contract": "NQ",
       "qty": 1,
       "side": "LONG",
       "entry_time": "2026-11-11T17:33:00+00:00",
       "entry": 28548.75,
-      "stop": 28489.75,
-      "target": 28586.5,
-      "last": 28512.998,
-      "unrealized": -715.04,
-      "risk_usd": 1180.0,
-      "target_usd_net": 751.5,
-      "target_source": "extended:aim_net"
+      "exit": 28514.27,
+      "reason": "time_cut_no_mfe",
+      "net": -693.1,
+      "balance_after": 99306.9
     }
   ],
-  "pending": 1,
-  "recent_trades": [],
-  "last_processed": "2026-11-11T18:03:00+00:00"
+  "last_processed": "2026-11-11T18:05:00+00:00"
 }

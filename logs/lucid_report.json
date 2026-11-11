@@ -1,191 +1,87 @@
 {
-  "scope": "All days and all accounts; paper trades only; net P&L after round-trip commission",
+  "scope": "Post-reset account only (pre-reset trades listed separately); paper trades only; net P&L after round-trip commission",
   "summary": {
-    "count": 7,
-    "wins": 1,
-    "losses": 6,
+    "count": 0,
+    "wins": 0,
+    "losses": 0,
     "breakeven": 0,
-    "win_rate": 0.142857,
-    "net_pnl": -1411.85,
-    "avg_win": 757.25,
-    "avg_loss": -361.52,
-    "expectancy": -201.69,
+    "win_rate": null,
+    "net_pnl": 0,
+    "avg_win": null,
+    "avg_loss": null,
+    "expectancy": null,
     "low_confidence": true
   },
   "groups": {
-    "session": {
-      "LONDON_SESSION": {
-        "count": 7,
-        "wins": 1,
-        "losses": 6,
-        "breakeven": 0,
-        "win_rate": 0.142857,
-        "net_pnl": -1411.85,
-        "avg_win": 757.25,
-        "avg_loss": -361.52,
-        "expectancy": -201.69,
-        "low_confidence": true
-      }
+    "session": {},
+    "value_area_position": {},
+    "cvd_agrees": {},
+    "rvol_spike": {},
+    "vwap_aligned": {},
+    "ema50_aligned": {},
+    "vwap_ema50_aligned": {},
+    "confidence_band": {},
+    "symbol": {},
+    "exit_reason": {}
+  },
+  "top_combinations": [],
+  "skips": {
+    "count": 6,
+    "by_reason": {
+      "already_position_or_pending": 6
     },
-    "value_area_position": {
-      "below_val": {
-        "count": 6,
-        "wins": 1,
-        "losses": 5,
-        "breakeven": 0,
-        "win_rate": 0.166667,
-        "net_pnl": -673.25,
-        "avg_win": 757.25,
-        "avg_loss": -286.1,
-        "expectancy": -112.21,
-        "low_confidence": true
-      },
-      "inside": {
-        "count": 1,
-        "wins": 0,
-        "losses": 1,
-        "breakeven": 0,
-        "win_rate": 0.0,
-        "net_pnl": -738.6,
-        "avg_win": null,
-        "avg_loss": -738.6,
-        "expectancy": -738.6,
-        "low_confidence": true
-      }
+    "exact_reasons": {
+      "already in a position / pending on this symbol (one per symbol)": 6
+    }
+  },
+  "definitions": {
+    "win": "net > 0; breakeven is not a win or a loss",
+    "avg_loss": "signed negative net P&L",
+    "expectancy": "total net / closed trade count",
+    "low_confidence": "n < 20; descriptive only, not proof of an edge",
+    "cvd_agrees": "bullish label for BUY, bearish for SELL; neutral label uses slope direction",
+    "missing_telemetry": "unknown, never backfilled from later bars"
+  },
+  "eras": {
+    "reset_at": "2026-11-11T17:32:34.420596+00:00",
+    "reason": "target sizing bug fix",
+    "post_reset": {
+      "count": 0,
+      "wins": 0,
+      "losses": 0,
+      "breakeven": 0,
+      "win_rate": null,
+      "net_pnl": 0,
+      "avg_win": null,
+      "avg_loss": null,
+      "expectancy": null,
+      "low_confidence": true
     },
-    "cvd_agrees": {
-      "no": {
-        "count": 1,
-        "wins": 0,
-        "losses": 1,
-        "breakeven": 0,
-        "win_rate": 0.0,
-        "net_pnl": -738.6,
-        "avg_win": null,
-        "avg_loss": -738.6,
-        "expectancy": -738.6,
-        "low_confidence": true
-      },
-      "yes": {
-        "count": 6,
-        "wins": 1,
-        "losses": 5,
-        "breakeven": 0,
-        "win_rate": 0.166667,
-        "net_pnl": -673.25,
-        "avg_win": 757.25,
-        "avg_loss": -286.1,
-        "expectancy": -112.21,
-        "low_confidence": true
-      }
+    "pre_reset": {
+      "count": 7,
+      "wins": 1,
+      "losses": 6,
+      "breakeven": 0,
+      "win_rate": 0.142857,
+      "net_pnl": -1411.85,
+      "avg_win": 757.25,
+      "avg_loss": -361.52,
+      "expectancy": -201.69,
+      "low_confidence": true
     },
-    "rvol_spike": {
-      "no": {
-        "count": 5,
-        "wins": 0,
-        "losses": 5,
-        "breakeven": 0,
-        "win_rate": 0.0,
-        "net_pnl": -1683.6,
-        "avg_win": null,
-        "avg_loss": -336.72,
-        "expectancy": -336.72,
-        "low_confidence": true
-      },
-      "yes": {
-        "count": 2,
-        "wins": 1,
-        "losses": 1,
-        "breakeven": 0,
-        "win_rate": 0.5,
-        "net_pnl": 271.75,
-        "avg_win": 757.25,
-        "avg_loss": -485.5,
-        "expectancy": 135.88,
-        "low_confidence": true
-      }
+    "all": {
+      "count": 7,
+      "wins": 1,
+      "losses": 6,
+      "breakeven": 0,
+      "win_rate": 0.142857,
+      "net_pnl": -1411.85,
+      "avg_win": 757.25,
+      "avg_loss": -361.52,
+      "expectancy": -201.69,
+      "low_confidence": true
     },
-    "vwap_aligned": {
-      "yes": {
-        "count": 7,
-        "wins": 1,
-        "losses": 6,
-        "breakeven": 0,
-        "win_rate": 0.142857,
-        "net_pnl": -1411.85,
-        "avg_win": 757.25,
-        "avg_loss": -361.52,
-        "expectancy": -201.69,
-        "low_confidence": true
-      }
-    },
-    "ema50_aligned": {
-      "yes": {
-        "count": 7,
-        "wins": 1,
-        "losses": 6,
-        "breakeven": 0,
-        "win_rate": 0.142857,
-        "net_pnl": -1411.85,
-        "avg_win": 757.25,
-        "avg_loss": -361.52,
-        "expectancy": -201.69,
-        "low_confidence": true
-      }
-    },
-    "vwap_ema50_aligned": {
-      "yes": {
-        "count": 7,
-        "wins": 1,
-        "losses": 6,
-        "breakeven": 0,
-        "win_rate": 0.142857,
-        "net_pnl": -1411.85,
-        "avg_win": 757.25,
-        "avg_loss": -361.52,
-        "expectancy": -201.69,
-        "low_confidence": true
-      }
-    },
-    "confidence_band": {
-      "0.6-0.7": {
-        "count": 1,
-        "wins": 0,
-        "losses": 1,
-        "breakeven": 0,
-        "win_rate": 0.0,
-        "net_pnl": -738.6,
-        "avg_win": null,
-        "avg_loss": -738.6,
-        "expectancy": -738.6,
-        "low_confidence": true
-      },
-      "0.7-0.8": {
-        "count": 2,
-        "wins": 0,
-        "losses": 2,
-        "breakeven": 0,
-        "win_rate": 0.0,
-        "net_pnl": -603.25,
-        "avg_win": null,
-        "avg_loss": -301.62,
-        "expectancy": -301.62,
-        "low_confidence": true
-      },
-      ">=0.8": {
-        "count": 4,
-        "wins": 1,
-        "losses": 3,
-        "breakeven": 0,
-        "win_rate": 0.25,
-        "net_pnl": -70.0,
-        "avg_win": 757.25,
-        "avg_loss": -275.75,
-        "expectancy": -17.5,
-        "low_confidence": true
-      }
-    },
-    "symbol": {
+    "pre_reset_by_symbol": {
       "EURUSD": {
         "count": 4,
         "wins": 1,
@@ -223,127 +119,9 @@
         "low_confidence": true
       }
     },
-    "exit_reason": {
-      "ema50_cross_15m": {
-        "count": 1,
-        "wins": 0,
-        "losses": 1,
-        "breakeven": 0,
-        "win_rate": 0.0,
-        "net_pnl": -738.6,
-        "avg_win": null,
-        "avg_loss": -738.6,
-        "expectancy": -738.6,
-        "low_confidence": true
-      },
-      "stop": {
-        "count": 4,
-        "wins": 0,
-        "losses": 4,
-        "breakeven": 0,
-        "win_rate": 0.0,
-        "net_pnl": -1237.75,
-        "avg_win": null,
-        "avg_loss": -309.44,
-        "expectancy": -309.44,
-        "low_confidence": true
-      },
-      "target": {
-        "count": 1,
-        "wins": 1,
-        "losses": 0,
-        "breakeven": 0,
-        "win_rate": 1.0,
-        "net_pnl": 757.25,
-        "avg_win": 757.25,
-        "avg_loss": null,
-        "expectancy": 757.25,
-        "low_confidence": true
-      },
-      "time_cut_no_mfe": {
-        "count": 1,
-        "wins": 0,
-        "losses": 1,
-        "breakeven": 0,
-        "win_rate": 0.0,
-        "net_pnl": -192.75,
-        "avg_win": null,
-        "avg_loss": -192.75,
-        "expectancy": -192.75,
-        "low_confidence": true
-      }
-    }
+    "pre_reset_skips": 407
   },
-  "top_combinations": [
-    {
-      "session": "LONDON_SESSION",
-      "value_area_position": "below_val",
-      "cvd_agrees": "yes",
-      "count": 6,
-      "wins": 1,
-      "losses": 5,
-      "breakeven": 0,
-      "win_rate": 0.166667,
-      "net_pnl": -673.25,
-      "avg_win": 757.25,
-      "avg_loss": -286.1,
-      "expectancy": -112.21,
-      "low_confidence": true
-    },
-    {
-      "session": "LONDON_SESSION",
-      "value_area_position": "inside",
-      "cvd_agrees": "no",
-      "count": 1,
-      "wins": 0,
-      "losses": 1,
-      "breakeven": 0,
-      "win_rate": 0.0,
-      "net_pnl": -738.6,
-      "avg_win": null,
-      "avg_loss": -738.6,
-      "expectancy": -738.6,
-      "low_confidence": true
-    }
-  ],
-  "skips": {
-    "count": 412,
-    "by_reason": {
-      "sizing_unreachable": 183,
-      "session_blocked": 2,
-      "chase": 6,
-      "already_position_or_pending": 186,
-      "stop 0.24 atr from entry (min 0.25)": 21,
-      "stop 0.25 atr from entry (min 0.25)": 10,
-      "sell requires take_profit < entry < stop_loss": 2,
-      "entry 1.15 atr from market (max 1.0)": 2
-    },
-    "exact_reasons": {
-      "cannot reach $381 NET within max_minis=40 at tdist=5.0 / risk budget (SKIP)": 93,
-      "session_blocked": 2,
-      "price ran 0.00031 past Gemini entry (chase)": 1,
-      "price ran 0.00047 past Gemini entry (chase)": 1,
-      "already in a position / pending on this symbol (one per symbol)": 186,
-      "price ran 0.00037 past Gemini entry (chase)": 1,
-      "price ran 0.00077 past Gemini entry (chase)": 2,
-      "price ran 0.00107 past Gemini entry (chase)": 1,
-      "stop 0.24 ATR from entry (min 0.25)": 21,
-      "stop 0.25 ATR from entry (min 0.25)": 10,
-      "SELL requires take_profit < entry < stop_loss": 2,
-      "entry 1.15 ATR from market (max 1.0)": 2,
-      "cannot reach $381 NET within max_minis=40 at tdist=0.0012499999999999734 / risk budget (SKIP)": 66,
-      "cannot reach $381 NET within max_minis=40 at tdist=1.25 / risk budget (SKIP)": 24
-    }
-  },
-  "definitions": {
-    "win": "net > 0; breakeven is not a win or a loss",
-    "avg_loss": "signed negative net P&L",
-    "expectancy": "total net / closed trade count",
-    "low_confidence": "n < 20; descriptive only, not proof of an edge",
-    "cvd_agrees": "bullish label for BUY, bearish for SELL; neutral label uses slope direction",
-    "missing_telemetry": "unknown, never backfilled from later bars"
-  },
-  "generated_at_utc": "2026-11-11T17:42:30.993991+00:00",
-  "generated_at_dubai": "2026-11-11 21:42:30",
+  "generated_at_utc": "2026-11-11T17:44:34.590036+00:00",
+  "generated_at_dubai": "2026-11-11 21:44:34",
   "malformed_lines": []
 }

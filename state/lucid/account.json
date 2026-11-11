@@ -1,13 +1,13 @@
 {
   "version": 1,
   "created_at": "2026-11-09T13:59:39.073020+00:00",
-  "last_processed": "2026-11-11T10:41:00+00:00",
+  "last_processed": "2026-11-11T10:43:00+00:00",
   "account": {
     "no": 1,
     "phase": "eval",
     "started_at": "2026-11-09T13:59:39.073020+00:00",
     "start_balance": 100000.0,
-    "balance": 98756.4,
+    "balance": 98588.15,
     "highest_close": 100000.0,
     "mll_floor": 97000.0,
     "mll_locked": false,
@@ -18,160 +18,32 @@
     "cycle_day_pnl": {},
     "payouts": [],
     "trading_days": 0,
-    "realized_pnl": -1231.6,
-    "trades": 6
+    "realized_pnl": -1411.85,
+    "trades": 7
   },
-  "positions": [
-    {
-      "id": 7,
-      "symbol": "EURUSD",
-      "contract": "6E",
-      "qty": 5,
-      "side": -1,
-      "entry": 1.11395,
-      "stop": 1.11415,
-      "target": 1.1127,
-      "entry_time": "2026-11-11T10:39:00+00:00",
-      "risk_usd": 125.0,
-      "target_usd": 757.25,
-      "target_usd_gross": 781.25,
-      "commission_rt": 24.0,
-      "atr": 0.000536,
-      "gemini": {
-        "action": "SELL",
-        "entry": 1.11382,
-        "stop_loss": 1.11415,
-        "take_profit": 1.11316,
-        "confidence": 0.75,
-        "rr": 2.0,
-        "shown_on_site": true,
-        "basis": "site signal",
-        "run_at_utc": "2026-11-11T10:38:20.095444+00:00",
-        "session": "LONDON_SESSION",
-        "rationale": "Price is below VAL (1.11461) and below POC (1.11658). CVD is BEARISH (-5035) confirming downside pressure during LONDON_SESSION. Price is well below VWAP (1.11541) and EMA50 (1.11572), pushing against the lower ATR band (1.11369). Low-volume consolidation right under Prev Low resistance (1.11456) near Session Low (1.11314) provides strong downside short alignment.",
-        "model": "gemini-3.6-flash"
-      },
-      "scalp": {
-        "action": "SELL",
-        "side": -1,
-        "entry": 1.11398,
-        "stop_loss": 1.11415,
-        "take_profit": 1.11273,
-        "sdist": 0.0001668000000001335,
-        "tdist": 0.0012499999999999734,
-        "stop_source": "structure",
-        "target_source": "fixed",
-        "rr": 7.494,
-        "structure_stop": 1.1141468,
-        "atr_stop": 1.1144087999999999,
-        "fixed_tp": 1.11273,
-        "structure_tp": null,
-        "structure_label": null,
-        "candle": {
-          "high": 1.11412,
-          "low": 1.11366
-        }
-      },
-      "telemetry": {
-        "symbol": "EURUSD",
-        "session": "LONDON_SESSION",
-        "last_close": 1.11405,
-        "atr": 0.000536,
-        "vwap": 1.11541,
-        "ema20": 1.11476,
-        "ema50": 1.11572,
-        "price_vs_vwap": {
-          "side": "below",
-          "dist_atr": -2.5373
-        },
-        "price_vs_ema50": {
-          "side": "below",
-          "dist_atr": -3.1157
-        },
-        "vwap_aligned_with_side": true,
-        "ema50_aligned_with_side": true,
-        "poc": 1.11658,
-        "vah": 1.117,
-        "val": 1.11461,
-        "price_vs_value_area": "below_val",
-        "dist_to_poc_atr": -4.7201,
-        "cvd": -5035.37,
-        "cvd_label": "BEARISH",
-        "cvd_slope": 2795.53,
-        "cvd_agrees_with_side": true,
-        "rvol": 0.97,
-        "rvol_spike": false,
-        "rvol_bars_since_spike": 7,
-        "atr_band_z": -1.3246,
-        "atr_upper": 1.11583,
-        "atr_lower": 1.11369,
-        "nearest_sr": {
-          "above": {
-            "price": 1.11456,
-            "label": "Prev Low",
-            "dist_atr": 0.9515
-          },
-          "below": {
-            "price": 1.11314,
-            "label": "Session Low",
-            "dist_atr": 1.6978
-          }
-        },
-        "gemini": {
-          "action": "SELL",
-          "confidence": 0.75,
-          "confidence_band": "0.7-0.8",
-          "rationale": "Price is below VAL (1.11461) and below POC (1.11658). CVD is BEARISH (-5035) confirming downside pressure during LONDON_SESSION. Price is well below VWAP (1.11541) and EMA50 (1.11572), pushing against the lower ATR band (1.11369). Low-volume consolidation right under Prev Low resistance (1.11456) near Session Low (1.11314) provides strong downside short alignment.",
-          "model": "gemini-3.6-flash",
-          "model_action": "SELL"
-        },
-        "scalp": {
-          "stop_basis": "structure",
-          "target_basis": "fixed",
-          "tdist": 0.00125,
-          "sdist": 0.0002,
-          "structure_label": null
-        },
-        "planned": {
-          "tdist": 0.00125,
-          "sdist": 0.0002,
-          "qty": 5,
-          "contract": "6E",
-          "target_usd_net": 757.25,
-          "risk_usd": 125.0
-        },
-        "run_at_utc": "2026-11-11T10:38:20.095444+00:00",
-        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/143820.json/EURUSD.png"
-      },
-      "mfe": 5.999999999994898e-05,
-      "mae": 0.0001500000000000945,
-      "mfe_min": 0.000134,
-      "time_cut_deadline": "2026-11-11T11:09:00+00:00",
-      "time_cut_candles": 2
-    }
-  ],
+  "positions": [],
   "pending": [
     {
       "symbol": "US100",
       "side": 1,
-      "created": "2026-11-11T10:40:30.936722+00:00",
-      "fill_after": "2026-11-11T10:41:00+00:00",
-      "expires": "2026-11-11T10:51:00+00:00",
+      "created": "2026-11-11T10:44:29.285630+00:00",
+      "fill_after": "2026-11-11T10:45:00+00:00",
+      "expires": "2026-11-11T10:55:00+00:00",
       "atr": 45.143,
       "scalp": {
         "action": "BUY",
         "side": 1,
-        "entry": 28223.43,
+        "entry": 28229.89,
         "stop_loss": 28178.7,
-        "take_profit": 28228.43,
-        "sdist": 44.72715000000244,
-        "tdist": 5.0,
+        "take_profit": 28233.1,
+        "sdist": 51.187150000001566,
+        "tdist": 3.207140000002255,
         "stop_source": "structure",
-        "target_source": "fixed",
-        "rr": 0.112,
+        "target_source": "structure:Session High",
+        "rr": 0.063,
         "structure_stop": 28178.702849999998,
-        "atr_stop": 28187.3156,
-        "fixed_tp": 28228.43,
+        "atr_stop": 28193.7756,
+        "fixed_tp": 28234.89,
         "structure_tp": 28233.09714,
         "structure_label": "Session High",
         "candle": {
@@ -227,42 +99,42 @@
         },
         "gemini": {
           "action": "BUY",
-          "confidence": 0.78,
-          "confidence_band": "0.7-0.8",
-          "rationale": "Price is at the top of the Value Area (VAH 28234.00, POC 28113.87). CVD is BULLISH (+8.52) with positive slope (+1.48) during LONDON_SESSION. Price is steadily trending above VWAP and EMA20 baseline. Testing the upper ATR band (28249.47) near Session High 28234.00. While index tick volume rarely shows yellow RVOL spikes, visual momentum remains strong. Buying the live price consolidated right under resistance for a breakout target.",
+          "confidence": 0.8,
+          "confidence_band": ">=0.8",
+          "rationale": "Price is expanding above POC (28113.87) and testing VAH/Session High (28234.0). Session is LONDON_SESSION. Strong bullish structure holding well above rising VWAP (28071.52) and EMA50 (28052.60). CVD is BULLISH (+8.52). Per US100 CFD volume caveat, lack of RVOL > 2.0 yellow spikes is expected. Price pressing upper ATR band (28249.47) with strong trend momentum.",
           "model": "gemini-3.6-flash",
           "model_action": "BUY"
         },
         "scalp": {
           "stop_basis": "structure",
-          "target_basis": "fixed",
-          "tdist": 5.0,
-          "sdist": 44.72715000000244,
+          "target_basis": "structure:Session High",
+          "tdist": 3.207140000002255,
+          "sdist": 51.187150000001566,
           "structure_label": "Session High"
         },
         "planned": {
-          "tdist": 5.0,
-          "sdist": 44.72715000000244,
+          "tdist": 3.207140000002255,
+          "sdist": 51.187150000001566,
           "qty": null,
           "contract": null,
           "target_usd_net": null,
           "risk_usd": null
         },
-        "run_at_utc": "2026-11-11T10:40:20.014162+00:00",
-        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/144020.json/US100.png"
+        "run_at_utc": "2026-11-11T10:44:20.089070+00:00",
+        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/144420.json/US100.png"
       },
       "gemini": {
         "action": "BUY",
-        "entry": 28223.43,
+        "entry": 28229.89,
         "stop_loss": 28178.7,
-        "take_profit": 28228.43,
-        "confidence": 0.78,
-        "rr": 0.112,
+        "take_profit": 28233.1,
+        "confidence": 0.8,
+        "rr": 0.063,
         "shown_on_site": true,
         "basis": "site signal",
-        "run_at_utc": "2026-11-11T10:40:20.014162+00:00",
+        "run_at_utc": "2026-11-11T10:44:20.089070+00:00",
         "session": "LONDON_SESSION",
-        "rationale": "Price is at the top of the Value Area (VAH 28234.00, POC 28113.87). CVD is BULLISH (+8.52) with positive slope (+1.48) during LONDON_SESSION. Price is steadily trending above VWAP and EMA20 baseline. Testing the upper ATR band (28249.47) near Session High 28234.00. While index tick volume rarely shows yellow RVOL spikes, visual momentum remains strong. Buying the live price consolidated right under resistance for a breakout target.",
+        "rationale": "Price is expanding above POC (28113.87) and testing VAH/Session High (28234.0). Session is LONDON_SESSION. Strong bullish structure holding well above rising VWAP (28071.52) and EMA50 (28052.60). CVD is BULLISH (+8.52). Per US100 CFD volume caveat, lack of RVOL > 2.0 yellow spikes is expected. Price pressing upper ATR band (28249.47) with strong trend momentum.",
         "model": "gemini-3.6-flash"
       }
     }
@@ -271,15 +143,15 @@
   "day": {
     "id": "2026-11-11",
     "start_balance": 100000.0,
-    "realized": -1231.6,
+    "realized": -1411.85,
     "locked": null,
     "eod_done": null,
     "traded": true
   },
   "last_price": {
-    "US100": 28225.821,
+    "US100": 28223.408,
     "GBPUSD": 1.33279,
-    "EURUSD": 1.11404,
+    "EURUSD": 1.11417,
     "XAUUSD": 4049.015
   },
   "history": [],
@@ -302,14 +174,14 @@
     "payouts_gross": 0.0,
     "payouts_received": 0.0,
     "payout_count": 0,
-    "trades": 6,
+    "trades": 7,
     "wins": 1,
-    "losses": 5,
+    "losses": 6,
     "gross_win": 757.25,
-    "gross_loss": -1988.85,
-    "commissions": 207.6,
-    "net_trade_pnl": -1231.6,
-    "skipped_signals": 163,
-    "accepted_signals": 39
+    "gross_loss": -2169.1,
+    "commissions": 219.6,
+    "net_trade_pnl": -1411.85,
+    "skipped_signals": 165,
+    "accepted_signals": 40
   }
 }

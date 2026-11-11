@@ -1,7 +1,7 @@
 {
   "version": 1,
   "created_at": "2026-11-09T13:59:39.073020+00:00",
-  "last_processed": "2026-11-11T10:09:00+00:00",
+  "last_processed": "2026-11-11T10:11:00+00:00",
   "account": {
     "no": 1,
     "phase": "eval",
@@ -154,24 +154,24 @@
     {
       "symbol": "US100",
       "side": 1,
-      "created": "2026-11-11T10:08:32.180026+00:00",
-      "fill_after": "2026-11-11T10:09:00+00:00",
-      "expires": "2026-11-11T10:19:00+00:00",
+      "created": "2026-11-11T10:12:30.997431+00:00",
+      "fill_after": "2026-11-11T10:13:00+00:00",
+      "expires": "2026-11-11T10:23:00+00:00",
       "atr": 45.223,
       "scalp": {
         "action": "BUY",
         "side": 1,
-        "entry": 28210.11,
-        "stop_loss": 28186.44,
-        "take_profit": 28215.11,
-        "sdist": 23.671149999998306,
+        "entry": 28197.03,
+        "stop_loss": 28185.72,
+        "take_profit": 28202.03,
+        "sdist": 11.30575,
         "tdist": 5.0,
-        "stop_source": "structure",
+        "stop_source": "structure+min_floor",
         "target_source": "fixed",
-        "rr": 0.211,
+        "rr": 0.442,
         "structure_stop": 28186.438850000002,
-        "atr_stop": 28173.9316,
-        "fixed_tp": 28215.11,
+        "atr_stop": 28160.851599999998,
+        "fixed_tp": 28202.03,
         "structure_tp": 28229.945539999997,
         "structure_label": "Session High",
         "candle": {
@@ -227,42 +227,42 @@
         },
         "gemini": {
           "action": "BUY",
-          "confidence": 0.8,
-          "confidence_band": ">=0.8",
-          "rationale": "1) VP: Price 28210.11 is inside VA testing VAH (28230.85) and above POC (28111.52). 2) CVD: BULLISH (+8.50) with positive slope (+1.38), confirming steady buying pressure. 3) SESSION: LONDON_SESSION. 4) VWAP/EMA50: Strong bullish trend holding far above VWAP (28065.23) and EMA50 (28039.31). 5) ATR: Price consolidating near upper ATR band (28237.95). 6) Volume: Tick volume steady (US100 caveat applies for yellow RVOL spikes). 7) S/R: Pullback on forming bar off Session High (28234.0 high) toward EMA20 baseline provides ideal momentum entry point.",
+          "confidence": 0.78,
+          "confidence_band": "0.7-0.8",
+          "rationale": "Price is inside VA near VAH (28230.85) and above POC (28111.52). CVD is BULLISH (+8.50) with positive slope (+1.38). In LONDON_SESSION, price maintains a clean uptrend above VWAP (28065.23) and EMA50 (28039.31), expanding along the upper ATR band. US100 index CFD tick volume rarely triggers >2.0 RVOL, but price action remains cleanly bullish. Intrabar pullback off high gives favorable timing to target continuation past Session High 28230.85.",
           "model": "gemini-3.6-flash",
           "model_action": "BUY"
         },
         "scalp": {
-          "stop_basis": "structure",
+          "stop_basis": "structure+min_floor",
           "target_basis": "fixed",
           "tdist": 5.0,
-          "sdist": 23.671149999998306,
+          "sdist": 11.30575,
           "structure_label": "Session High"
         },
         "planned": {
           "tdist": 5.0,
-          "sdist": 23.671149999998306,
+          "sdist": 11.30575,
           "qty": null,
           "contract": null,
           "target_usd_net": null,
           "risk_usd": null
         },
-        "run_at_utc": "2026-11-11T10:08:20.014174+00:00",
-        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/140820.json/US100.png"
+        "run_at_utc": "2026-11-11T10:12:20.101248+00:00",
+        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/141220.json/US100.png"
       },
       "gemini": {
         "action": "BUY",
-        "entry": 28210.11,
-        "stop_loss": 28186.44,
-        "take_profit": 28215.11,
-        "confidence": 0.8,
-        "rr": 0.211,
+        "entry": 28197.03,
+        "stop_loss": 28185.72,
+        "take_profit": 28202.03,
+        "confidence": 0.78,
+        "rr": 0.442,
         "shown_on_site": true,
         "basis": "site signal",
-        "run_at_utc": "2026-11-11T10:08:20.014174+00:00",
+        "run_at_utc": "2026-11-11T10:12:20.101248+00:00",
         "session": "LONDON_SESSION",
-        "rationale": "1) VP: Price 28210.11 is inside VA testing VAH (28230.85) and above POC (28111.52). 2) CVD: BULLISH (+8.50) with positive slope (+1.38), confirming steady buying pressure. 3) SESSION: LONDON_SESSION. 4) VWAP/EMA50: Strong bullish trend holding far above VWAP (28065.23) and EMA50 (28039.31). 5) ATR: Price consolidating near upper ATR band (28237.95). 6) Volume: Tick volume steady (US100 caveat applies for yellow RVOL spikes). 7) S/R: Pullback on forming bar off Session High (28234.0 high) toward EMA20 baseline provides ideal momentum entry point.",
+        "rationale": "Price is inside VA near VAH (28230.85) and above POC (28111.52). CVD is BULLISH (+8.50) with positive slope (+1.38). In LONDON_SESSION, price maintains a clean uptrend above VWAP (28065.23) and EMA50 (28039.31), expanding along the upper ATR band. US100 index CFD tick volume rarely triggers >2.0 RVOL, but price action remains cleanly bullish. Intrabar pullback off high gives favorable timing to target continuation past Session High 28230.85.",
         "model": "gemini-3.6-flash"
       }
     }
@@ -277,9 +277,9 @@
     "traded": true
   },
   "last_price": {
-    "US100": 28200.12,
+    "US100": 28193.087,
     "GBPUSD": 1.33257,
-    "EURUSD": 1.11378,
+    "EURUSD": 1.11352,
     "XAUUSD": 4049.015
   },
   "history": [],
@@ -309,7 +309,7 @@
     "gross_loss": -1224.1,
     "commissions": 111.6,
     "net_trade_pnl": -466.85,
-    "skipped_signals": 130,
-    "accepted_signals": 26
+    "skipped_signals": 132,
+    "accepted_signals": 27
   }
 }

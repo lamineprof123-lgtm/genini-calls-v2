@@ -2,7 +2,7 @@
 
 Post-reset account only (pre-reset trades listed separately); paper trades only; net P&L after round-trip commission
 
-Updated: 2026-11-11 22:42:30 (Dubai UTC+4)
+Updated: 2026-11-11 22:44:32 (Dubai UTC+4)
 
 **Every bucket with n < 20 is LOW CONFIDENCE. Descriptive only; no proven edge.**
 
@@ -73,11 +73,12 @@ Ranked by net P&L; small samples are not a strategy recommendation.
 
 No observations yet.
 
-## Entry skips (2)
+## Entry skips (4)
 
 | Reason | Count |
 |---|---:|
-| already_position_or_pending | 1 |
+| already_position_or_pending | 2 |
+| dll room at queue: dll room: risk budget $501 < 1 nq stop risk $1,005 (open risk $1500 + pending $0; no new entries until it resets) | 1 |
 | dll room at queue: dll room: risk budget $511 < 1 nq stop risk $995 (open risk $1500 + pending $0; no new entries until it resets) | 1 |
 
 Legacy records without telemetry remain in the totals and are grouped as unknown.

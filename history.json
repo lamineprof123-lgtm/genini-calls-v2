@@ -1,35 +1,5 @@
 [
   {
-    "signal_at": "2026-11-11T17:04:20.020891+00:00",
-    "tz": "Asia/Dubai",
-    "model": "gemini-3.6-flash",
-    "dry_run": false,
-    "trades": [
-      {
-        "symbol": "US100",
-        "name": "NASDAQ",
-        "action": "BUY",
-        "entry": 28517.53,
-        "stop_loss": 28452.71,
-        "take_profit": 28522.53,
-        "rr": 0.077,
-        "confidence": 0.85,
-        "digits": 2,
-        "session": "NEW_YORK_SESSION",
-        "cvd_label": "BULLISH"
-      }
-    ],
-    "no_trade": [
-      "XAUUSD",
-      "EURUSD",
-      "GBPUSD",
-      "BTCUSD"
-    ],
-    "analysis_failed": false,
-    "breaker_halted": false,
-    "written_at": "2026-11-11T17:04:31.424655+00:00"
-  },
-  {
     "signal_at": "2026-11-11T17:06:20.057438+00:00",
     "tz": "Asia/Dubai",
     "model": "gemini-3.6-flash",
@@ -1620,5 +1590,49 @@
     "analysis_failed": false,
     "breaker_halted": false,
     "written_at": "2026-11-11T18:42:30.227742+00:00"
+  },
+  {
+    "signal_at": "2026-11-11T18:44:20.000984+00:00",
+    "tz": "Asia/Dubai",
+    "model": "gemini-3.6-flash",
+    "dry_run": false,
+    "trades": [
+      {
+        "symbol": "XAUUSD",
+        "name": "GOLD",
+        "action": "SELL",
+        "entry": 3990.41,
+        "stop_loss": 3993.92,
+        "take_profit": null,
+        "rr": null,
+        "confidence": 0.82,
+        "digits": 2,
+        "exit": "Gemini",
+        "session": "NEW_YORK_SESSION",
+        "cvd_label": "BEARISH"
+      },
+      {
+        "symbol": "US100",
+        "name": "NASDAQ",
+        "action": "BUY",
+        "entry": 28587.0,
+        "stop_loss": 28536.83,
+        "take_profit": null,
+        "rr": null,
+        "confidence": 0.8,
+        "digits": 2,
+        "exit": "Gemini",
+        "session": "NEW_YORK_SESSION",
+        "cvd_label": "BULLISH"
+      }
+    ],
+    "no_trade": [
+      "EURUSD",
+      "GBPUSD",
+      "BTCUSD"
+    ],
+    "analysis_failed": false,
+    "breaker_halted": false,
+    "written_at": "2026-11-11T18:44:31.592417+00:00"
   }
 ]

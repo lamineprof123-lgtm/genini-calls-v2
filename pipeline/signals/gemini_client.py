@@ -68,7 +68,10 @@ def _image_mime(blob: bytes) -> str:
 #   last_close           — duplicate of signal_candle.close (and of last_price today)
 #   vp_value_area_pct    — constant 0.70; stated once in the system prompt
 #   session_tz           — constant America/New_York; stated once in the system prompt
-_GEMINI_CTX_DROP = ("last_candle", "last_close", "vp_value_area_pct", "session_tz")
+_GEMINI_CTX_DROP = ("last_candle", "last_close", "vp_value_area_pct", "session_tz",
+                    # FirmTape bookkeeping (logged in the cycle record, not sent): see firmtape.LOG_ONLY_KEYS
+                    "gex_status", "live_basis", "live_basis_n", "live_basis_quality", "live_price_dukascopy",
+                    "live_price_dukascopy_ts_utc")
 
 
 def slim_gemini_context(ctx: dict) -> dict:

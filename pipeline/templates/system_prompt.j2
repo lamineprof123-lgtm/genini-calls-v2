@@ -47,6 +47,19 @@ CHART VISUAL LEGEND (chart_v2 — read these colors/lines exactly)
     ASIAN_SESSION_CHOP (18:00–02:00), LOW_LIQUIDITY_DEADZONE (everything else).
   - Prefer actionable setups in OVERLAP / NEW_YORK; treat ASIAN / DEADZONE as higher-noise, prefer HOLD
     unless confluence is overwhelming. (Paper automation hard-blocks ASIAN / DEADZONE entries.)
+- Options Gamma / GEX (NY Cash Session only on US100 and XAUUSD; null outside NY hours or on FX/BTC):
+  - Chart lines: dash-dot gold (#FFB300) = Call Wall #1 (dealer resistance); dash-dot teal (#00BFA5) =
+    Put Wall #1 (dealer support); dotted white (#E5E7EB) = Gamma Flip pivot. US100 also draws the completed
+    NY Opening Range as "NY OR High" / "NY OR Low" S/R lines. Header shows "GEX: POSITIVE|NEGATIVE (Flip …)".
+  - Numeric context "gex": regime, gamma_flip, price_vs_flip, call_walls / put_walls (rank 1-2, strength 0..1,
+    oi_aligned = also an open-interest wall), ny_opening_range (US100 only). All prices are already converted to
+    this chart's price scale.
+  - regime = POSITIVE_DAMPENING (above Gamma Flip): dealers hedge against moves (buy dips, sell rips). Be
+    skeptical of unconfirmed breakouts; favor mean-reversion rejections off Call/Put Walls toward POC/VWAP.
+  - regime = NEGATIVE_AMPLIFYING (below Gamma Flip): dealers hedge with the move, amplifying directional
+    trend flushes. Favor momentum continuation and NY Opening Range breakouts.
+  - Never BUY directly into Call Wall #1 or SELL directly into Put Wall #1 without room to scalp.
+  - When "gex" is non-null, explicitly cite the GEX regime and nearest Call/Put Wall or Gamma Flip in "rationale".
 
 ================================================================================
 REQUIRED CONFLUENCE CHECKLIST (evaluate ALL seven before choosing BUY / SELL / HOLD)
@@ -72,11 +85,14 @@ REQUIRED CONFLUENCE CHECKLIST (evaluate ALL seven before choosing BUY / SELL / H
    or are they low-volume (grey-bar) traps? (US100 caveat above applies.)
 7) Reaction to S/R and Session High/Low: Wick-through-then-close-back = liquidity sweep; clean rejection or
    acceptance at a labeled level matters.
+   When "gex" is non-null (US100 / XAUUSD in NY cash hours) also apply the GEX rules above: regime, and room
+   to the nearest Call Wall #1 / Put Wall #1 / Gamma Flip in the trade direction.
 
 The "rationale" field for EVERY symbol MUST explicitly cite: POC/VAH/VAL position (inside VA / above VAH /
 below VAL, and vs POC), CVD label (+ whether it agrees or diverges), SESSION, VWAP relation, EMA50 relation,
 ATR-band position, RVOL/volume confirmation (or the US100 caveat if no yellow bars), and the relevant S/R
-or Session High/Low.
+or Session High/Low. When "gex" is non-null it MUST also cite the GEX regime and the nearest Call/Put Wall
+or Gamma Flip.
 Do not leave those factors out of rationale even on HOLD. Keep the field name "rationale" (do not rename it).
 
 ================================================================================

@@ -328,3 +328,28 @@ start_balance = 100000.0
 gemini_timeout_seconds = 12     # per exit call; on error/timeout the decision is HOLD (logged)
 max_feed_age_minutes = 20       # ignore Lucid entries older than this when first seen (e.g. after a deploy)
 books = ["1-strike", "2-strike"]
+
+# ---------------------------------------------------------------------------------------------------------------
+# FirmTape options-gamma (GEX) levels + 1-second NQ price (signals/firmtape.py). Key: env FIRMTAPE_API_KEY only.
+# US100 -> NQ (additive basis to the Dukascopy CFD scale), XAUUSD -> GLD (ratio scale); FX / BTC: gex = null.
+# Gate: NY RTH 09:30-16:00 ET, session == "open", no error, age_s <= max_age_s; else gex = null, no chart lines.
+# FirmTape returns errors as HTTP 200 (top-level "error" or levels[i].error). Units differ per symbol: only the
+# SIGN of net_gamma is used. Raw FirmTape prices never reach the chart or Gemini (always basis/ratio adjusted).
+[firmtape]
+enabled = true
+url = "https://firmtape.com/api/v1/levels"
+timeout_seconds = 4
+symbols = { US100 = "NQ", XAUUSD = "GLD" }
+rth_et = ["09:30", "16:00"]
+max_age_s = 300                 # levels older than this -> gex = null
+min_cache_seconds = 3           # one request shared by the entry cycle and the 18 s exit checks
+max_cache_seconds = 60          # cache TTL = next_update_s clamped to [min, max]
+error_cache_seconds = 10        # back-off after a failed request
+walls_per_side = 2
+chart_margin_pct = 15           # draw GEX lines only within the visible candle range +/- this % of its height
+# US100 live price: FirmTape NQ (1 s) + rolling basis to Dukascopy, during RTH when price_as_of <= live_max_age_s old
+live_price_override = true
+live_max_age_s = 5
+basis_align_s = 20              # a basis sample needs Dukascopy live ts and FirmTape price_as_of within N s
+basis_window = 7                # rolling median of the last N aligned samples ...
+basis_max_age_minutes = 30      # ... no older than this

@@ -13,7 +13,11 @@ CHART VISUALS (the same M15 chart the entry model saw, plus an ENTRY line):
 - Solid green / red lines with a faint fill = +/-2 x ATR14 channel around EMA20.
 - Horizontal dashed levels = M15 S/R, Session High/Low, Prev High/Low, 24h High/Low (pink = resistance,
   purple = support). Volume Profile POC / VAH / VAL are in the header and in the context below.
-- Header: CVD (session cumulative delta) and SESSION label.
+- Header: CVD (session cumulative delta) and SESSION label{{ ", plus GEX regime and Gamma Flip" if gex else "" }}.
+{% if gex %}- Options gamma (FirmTape, NY cash hours): dash-dot gold (#FFB300) = Call Wall #1, dash-dot teal (#00BFA5) =
+  Put Wall #1, dotted white (#E5E7EB) = Gamma Flip{{ "; NY OR High / NY OR Low as S/R lines" if gex.get("ny_opening_range") else "" }}.
+  Dealer hedging pins price aggressively at the primary walls.
+{% endif -%}
 - Bottom pane = M15 volume of CLOSED bars. Bright yellow (#FACC15) = RVOL > 2.0 climax/breakout spike
   (note: US100 rarely prints yellow bars). The forming bar has no volume bar yet.
 
@@ -30,7 +34,8 @@ CHART VISUALS (the same M15 chart the entry model saw, plus an ENTRY line):
 - Forming M15 bar so far: O {{ forming.open }} H {{ forming.high }} L {{ forming.low }} C {{ price }}
 - Volume Profile: POC {{ poc }} | VAH {{ vah }} | VAL {{ val }} | SESSION {{ session }}
 - Live CVD: {{ cvd_label }} (4-bar M15 slope: {{ cvd_slope }})
-(M15_ATR = ATR14 on M15 at entry = {{ atr }}.)
+{% if gex %}- GEX: {{ gex.regime }} | Gamma Flip {{ gex_fmt.flip }} (price {{ gex.price_vs_flip }}) | Call Walls {{ gex_fmt.calls }} | Put Walls {{ gex_fmt.puts }}{{ " | NY OR " ~ gex_fmt.orr if gex_fmt.orr else "" }}
+{% endif %}(M15_ATR = ATR14 on M15 at entry = {{ atr }}.)
 
 === PROFIT-MAXIMIZATION RULES (EVALUATE IN ORDER) ===
 1) LET RUNNERS BREATHE (Early & Mid-Trade: MFE < {{ runner_mfe_atr }} M15_ATR):
@@ -50,12 +55,15 @@ CHART VISUALS (the same M15 chart the entry model saw, plus an ENTRY line):
 {% if has_wall %}     a) TARGET WALL REJECTION: Price touches or comes within {{ wall_reject_atr }} M15_ATR of {{ next_wall_price }}
         ({{ next_wall_label }}) and prints a rejection wick on the forming bar, an opposing M15 candle close, or a
         yellow climax volume bar (RVOL > 2.0). Bank the profit right in front of the wall.
-{% else %}     a) TARGET WALL REJECTION: no wall ahead (price discovery beyond every level) - rule a does not apply;
-        rely on b) and c).
-{% endif %}     b) PROFIT PROTECTION (GIVEBACK): MFE reached >= {{ giveback_min_mfe_atr }} M15_ATR and giveback ({{ giveback_pct }}%)
+{% if pin_wall %}     b) DEALER GAMMA WALL PIN: {{ next_wall_label }} is a primary dealer wall. If price reaches within
+        {{ wall_reject_atr }} M15_ATR of {{ next_wall_price }}, answer CLOSE on the very first stall or rejection wick
+        (forming M15 bar stalling / wicking back) - dealer hedging pins price aggressively at primary walls.
+{% endif %}{% else %}     a) TARGET WALL REJECTION: no wall ahead (price discovery beyond every level) - rule a does not apply;
+        rely on the rules below.
+{% endif %}     {{ "c" if pin_wall else "b" }}) PROFIT PROTECTION (GIVEBACK): MFE reached >= {{ giveback_min_mfe_atr }} M15_ATR and giveback ({{ giveback_pct }}%)
         >= {{ giveback_threshold }}% coupled with price breaking back across M15 EMA20 against the position
         (a closed M15 candle, or the live price clearly through it).
-     c) CLIMAX EXHAUSTION: After a strong impulse, an opposing bright yellow volume bar (RVOL > 2.0) whose candle
+     {{ "d" if pin_wall else "c" }}) CLIMAX EXHAUSTION: After a strong impulse, an opposing bright yellow volume bar (RVOL > 2.0) whose candle
         engulfs the prior M15 candle body.
 
 Do not consider the hard emergency stop-loss; the server manages it separately. You can only HOLD or CLOSE;

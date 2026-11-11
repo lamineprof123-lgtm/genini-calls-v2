@@ -90,6 +90,27 @@ def position_metrics(side: int, entry: float, price: float, mfe_pts: float, atr:
             "pnl_usd": round(pnl_pts * usd_per_point, 2)}
 
 
+PIN_WALLS = ("Call Wall #1", "Put Wall #1")
+
+
+def gex_candidates(gex: dict | None) -> list[tuple[str, float]]:
+    """FirmTape walls / flip / NY opening range (already on the chart's price scale) as wall candidates."""
+    if not gex:
+        return []
+    out = []
+    for side, name in (("call_walls", "Call Wall"), ("put_walls", "Put Wall")):
+        for w in gex.get(side) or []:
+            if w.get("price") is not None:
+                out.append((f"{name} #{w.get('rank', 1)}", float(w["price"])))
+    if gex.get("gamma_flip") is not None:
+        out.append(("Gamma Flip", float(gex["gamma_flip"])))
+    orr = gex.get("ny_opening_range") or {}
+    for k, lbl in (("high", "NY OR High"), ("low", "NY OR Low")):
+        if orr.get(k) is not None:
+            out.append((lbl, float(orr[k])))
+    return out
+
+
 def find_walls(ctx: dict, side: int, price: float, entry: float, atr: float, candle: dict | None = None) -> dict:
     """Nearest target wall IN the trade direction (beyond the live price) and the nearest invalidating level
     AGAINST the trade (beyond the worse of entry / live price). Candidates: M15 S/R + Session/Prev/24h H/L + VP
@@ -101,6 +122,7 @@ def find_walls(ctx: dict, side: int, price: float, entry: float, atr: float, can
         v = ctx.get(k)
         if v:
             cands.append((k.upper(), float(v)))
+    cands += gex_candidates(ctx.get("gex"))
     # A Session High (long) / Session Low (short) printed by the last closed or the forming M15 bar is the
     # current move's own price discovery, not a wall: skip it as a TARGET (the next wall beyond is used).
     sc = ctx.get("signal_candle") or {}
@@ -152,6 +174,8 @@ def build_exit_prompt(cfg: dict, pos: dict, ctx: dict, m: dict, walls: dict, now
         minutes_into_bar=ctx.get("minutes_into_bar", "n/a"),
         next_wall_label=walls["next_wall_label"], next_wall_price=fmt(walls["next_wall_price"]),
         has_wall=walls["next_wall_price"] is not None,
+        pin_wall=walls["next_wall_price"] is not None and walls["next_wall_label"] in PIN_WALLS,
+        gex=ctx.get("gex"), gex_fmt=_gex_fmt(ctx.get("gex"), fmt),
         dist_to_wall_atr=walls["dist_to_wall_atr"] if walls["dist_to_wall_atr"] is not None else "n/a",
         invalid_level_label=walls["invalid_level_label"], invalid_level_price=fmt(walls["invalid_level_price"]),
         vwap=fmt(ctx.get("vwap")), price_vs_vwap=rel(price, ctx.get("vwap")),
@@ -167,6 +191,17 @@ def build_exit_prompt(cfg: dict, pos: dict, ctx: dict, m: dict, walls: dict, now
         runner_mfe_atr=e["runner_mfe_atr"], wall_reject_atr=f"{e['wall_reject_atr']:.2f}",
         giveback_min_mfe_atr=e["giveback_min_mfe_atr"], giveback_threshold=f"{e['giveback_pct']:.0f}",
         early_minutes=e["early_minutes"])
+
+
+def _gex_fmt(gex: dict | None, fmt) -> dict:
+    if not gex:
+        return {}
+    w = lambda ws: ", ".join(f"#{x.get('rank')} {fmt(x.get('price'))}"
+                             + (f" (str {x['strength']:.2f})" if isinstance(x.get("strength"), (int, float)) else "")
+                             + (" [OI]" if x.get("oi_aligned") else "") for x in ws or []) or "n/a"
+    orr = gex.get("ny_opening_range")
+    return {"flip": fmt(gex.get("gamma_flip")), "calls": w(gex.get("call_walls")), "puts": w(gex.get("put_walls")),
+            "orr": f"{fmt(orr['high'])} / {fmt(orr['low'])}" if orr else None}
 
 
 def exit_user_text(pos: dict) -> str:
@@ -374,8 +409,19 @@ class Books:
                "mae_atr": round(p.get("mae", 0) / atr, 3) if atr else None,
                "mfe_usd": round(p.get("mfe", 0) * self.usd_per_point(p), 2),
                "checks": p.get("checks", 0), "strikes_at_exit": p.get("strikes", 0), **(extra or {})}
+        rec["event"] = "close"
         self.closed.append(rec)
+        self.queue_post_exit(rec)
         return rec
+
+    # -- post-exit tracking (5 min after every close: books AND the baseline sim)
+    def queue_post_exit(self, rec: dict, minutes: float = 5.0) -> None:
+        t = datetime.fromisoformat(rec["t_exit"])
+        self.s.setdefault("post_exit", []).append(
+            {"book": rec["book"], "id": rec["id"], "symbol": rec["symbol"], "contract": rec["contract"],
+             "qty": rec["qty"], "side": rec["side"], "exit": rec["exit"], "t_exit": rec["t_exit"],
+             "reason": rec.get("reason"), "net": rec.get("net"),
+             "due": (t + timedelta(minutes=minutes)).isoformat()})
 
     def breaker(self, t: datetime) -> list[dict]:
         """3.5% daily loss per book (realized + open at last prices vs start-of-day balance) -> flatten + halt."""
@@ -407,6 +453,31 @@ class Books:
                          "exit_reasons": st["exit_reasons"], "open_positions": len(b["positions"]),
                          "day": b["day"]}
         return out
+
+
+def post_exit_metrics(item: dict, bars: pd.DataFrame, usd_per_point: float) -> dict | None:
+    """Price 5 min after the exit + the best/worst move inside that window, signed in the CLOSED trade's direction
+    (positive move_* = price kept going the trade's way = money left on the table; negative = reversal avoided).
+    None until the M1 feed covers the whole window."""
+    t_exit, due = datetime.fromisoformat(item["t_exit"]), datetime.fromisoformat(item["due"])
+    if bars is None or not len(bars):
+        return None
+    if bars.index[-1].to_pydatetime() + timedelta(minutes=1) < due:
+        return None
+    w = bars[(bars.index >= pd.Timestamp(t_exit).floor("min")) & (bars.index < pd.Timestamp(due))]
+    if not len(w):
+        return None
+    sd = 1 if item["side"] == "LONG" else -1
+    ex = float(item["exit"])
+    p5 = float(w["close"].iloc[-1])
+    fav = (float(w["high"].max()) - ex) if sd > 0 else (ex - float(w["low"].min()))
+    adv = (ex - float(w["low"].min())) if sd > 0 else (float(w["high"].max()) - ex)
+    mv = sd * (p5 - ex)
+    return {"price_after_5m": round(p5, 6), "move_after_5m_pts": round(mv, 6),
+            "move_after_5m_usd": round(mv * usd_per_point, 2),
+            "max_fav_5m_pts": round(max(0.0, fav), 6), "max_fav_5m_usd": round(max(0.0, fav) * usd_per_point, 2),
+            "max_adv_5m_pts": round(max(0.0, adv), 6), "max_adv_5m_usd": round(max(0.0, adv) * usd_per_point, 2),
+            "window_bars": int(len(w))}
 
 
 def baseline_summary(logs_dir: str | Path, ids: set[int]) -> dict:
@@ -504,6 +575,8 @@ async def market_snapshot(sym: str, cfg: dict, now: datetime) -> tuple[dict, pd.
     tf = int(cfg["general"]["timeframe_minutes"])
     digits = int(payload["context"].get("digits") or 5)
     apply_live_fields(payload, live_from_m1(m1, tf_min=tf, now=now, digits=digits, source=m1src), tf_min=tf)
+    from .firmtape import enrich_firmtape   # shared cached request with the entry cycle
+    await enrich_firmtape([payload], cfg, now)
     return payload, m1
 
 
@@ -512,7 +585,7 @@ class ExitManager:
     def __init__(self, cfg: dict, dry_run: bool = False, model: str | None = None,
                  io_lock: asyncio.Lock | None = None, state_dir: str | Path | None = None,
                  logs_dir: str | Path | None = None, site_dir: str | Path | None = None,
-                 snapshot=None, render=None, decide=None):
+                 snapshot=None, render=None, decide=None, m1_fetch=None):
         self.cfg, self.dry_run, self.model = cfg, dry_run, model
         self.e = em_cfg(cfg)
         self.io_lock = io_lock or asyncio.Lock()
@@ -527,6 +600,7 @@ class ExitManager:
         self._snapshot = snapshot or market_snapshot
         self._render = render or self._render_default
         self._decide = decide
+        self._m1_fetch = m1_fetch
         self.busy = False
 
     @property
@@ -568,21 +642,74 @@ class ExitManager:
         try:
             now = now or datetime.now(UTC)
             opened = self.books.sync_feed(self._feed(), now)
+            self._queue_baseline_closes(now)
+            post = await self._process_post_exit(now)
             ids = sorted(self.books.open_ids())
             if not ids:
-                if opened:
-                    await self._persist(now, [])
-                return {"idle": True, "opened": opened}
+                if opened or post:
+                    await self._persist(now, [], post)
+                return {"idle": True, "opened": opened, "post_exit": post}
             recs = await asyncio.gather(*[self._check(pid, now) for pid in ids], return_exceptions=True)
             recs = [r if not isinstance(r, Exception) else {"error": f"{type(r).__name__}: {r}"} for r in recs]
             self.books.breaker(now)
-            await self._persist(now, recs)
-            return {"checked": ids, "opened": opened, "records": recs}
+            await self._persist(now, recs, post)
+            return {"checked": ids, "opened": opened, "records": recs, "post_exit": post}
         finally:
             self.busy = False
 
-    async def _persist(self, now: datetime, recs: list[dict]) -> None:
+    def _queue_baseline_closes(self, now: datetime) -> None:
+        """Queue the baseline Lucid sim's closes of the copied entries for the same 5-min post-exit tracking."""
+        seen = set(self.books.s["seen_ids"])
+        done = set(self.books.s.setdefault("baseline_tracked", []))
+        if not (seen - done):
+            return
+        days = {(now - timedelta(days=k)).astimezone(self.tz).strftime("%Y-%m-%d") for k in (0, 1)}
+        for day in sorted(days):
+            f = self.logs_dir / day / "lucid_trades.jsonl"
+            if not f.exists():
+                continue
+            for line in f.read_text().splitlines():
+                try:
+                    r = json.loads(line)
+                except Exception:
+                    continue
+                if r.get("id") in seen and r["id"] not in done:
+                    done.add(r["id"])
+                    self.books.queue_post_exit({**r, "book": "baseline"})
+        self.books.s["baseline_tracked"] = sorted(done)[-500:]
+
+    async def _process_post_exit(self, now: datetime) -> list[dict]:
+        q = self.books.s.get("post_exit") or []
+        due = [x for x in q if now >= datetime.fromisoformat(x["due"])]
+        if not due:
+            return []
+        from .live_price import fetch_symbol_m1
+        fetch = self._m1_fetch or (lambda sym: fetch_symbol_m1(sym, self.cfg, now))
+        bars = {}
+        for sym in {x["symbol"] for x in due}:
+            try:
+                bars[sym] = (await fetch(sym))[0]
+            except Exception as ex:
+                log.warning("post-exit m1 %s failed: %s", sym, ex)
+        out = []
+        for x in due:
+            upp = self.books.spec(x["contract"])["point_value"] * x["qty"]
+            m = post_exit_metrics(x, bars.get(x["symbol"]), upp)
+            late = now - datetime.fromisoformat(x["due"]) > timedelta(minutes=20)
+            if m is None and not late:
+                continue   # feed has not covered the window yet: retry next tick
+            q.remove(x)
+            out.append({"event": "post_exit_5m", "t_utc": now.isoformat(timespec="microseconds"),
+                        "t_dubai": now.astimezone(self.tz).isoformat(timespec="microseconds"),
+                        **{k: x[k] for k in ("book", "id", "symbol", "side", "exit", "t_exit", "reason", "net")},
+                        **(m or {"status": "no_m1_data_for_window"})})
+        self.books.s["post_exit"] = q
+        return out
+
+    async def _persist(self, now: datetime, recs: list[dict], post: list[dict] | None = None) -> None:
         async with self.io_lock:
+            for x in post or []:
+                self._jsonl("exit_book_trades.jsonl", now, x)
             for r in recs:
                 if r and "t_utc" in r:
                     self._jsonl("exits.jsonl", now, r)

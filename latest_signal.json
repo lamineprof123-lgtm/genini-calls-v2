@@ -1,17 +1,42 @@
 {
-  "signal_at": "2026-11-11T09:54:20.097738+00:00",
+  "signal_at": "2026-11-11T09:56:20.094199+00:00",
   "tz": "Asia/Dubai",
   "model": "gemini-3.6-flash",
   "dry_run": false,
-  "trades": [],
+  "trades": [
+    {
+      "symbol": "EURUSD",
+      "name": "EURO",
+      "action": "SELL",
+      "entry": 1.11369,
+      "stop_loss": 1.11398,
+      "take_profit": 1.11316,
+      "rr": 1.828,
+      "confidence": 0.82,
+      "digits": 5,
+      "session": "LONDON_SESSION",
+      "cvd_label": "BEARISH"
+    },
+    {
+      "symbol": "US100",
+      "name": "NASDAQ",
+      "action": "BUY",
+      "entry": 28209.12,
+      "stop_loss": 28160.33,
+      "take_profit": 28214.12,
+      "rr": 0.102,
+      "confidence": 0.84,
+      "digits": 2,
+      "session": "LONDON_SESSION",
+      "cvd_label": "BULLISH"
+    }
+  ],
   "no_trade": [
     "XAUUSD",
-    "EURUSD",
     "GBPUSD",
-    "US100",
     "BTCUSD"
   ],
   "analysis_failed": false,
   "breaker_halted": false,
-  "written_at": "2026-11-11T09:54:29.422011+00:00"
+  "written_at": "2026-11-11T09:56:31.656337+00:00"
 }

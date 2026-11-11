@@ -1,47 +1,5 @@
 [
   {
-    "signal_at": "2026-11-11T18:06:20.097976+00:00",
-    "tz": "Asia/Dubai",
-    "model": "gemini-3.6-flash",
-    "dry_run": false,
-    "trades": [
-      {
-        "symbol": "XAUUSD",
-        "name": "GOLD",
-        "action": "SELL",
-        "entry": 3990.33,
-        "stop_loss": 4001.31,
-        "take_profit": 3983.83,
-        "rr": 0.592,
-        "confidence": 0.85,
-        "digits": 2,
-        "session": "NEW_YORK_SESSION",
-        "cvd_label": "BEARISH"
-      },
-      {
-        "symbol": "US100",
-        "name": "NASDAQ",
-        "action": "BUY",
-        "entry": 28511.71,
-        "stop_loss": 28495.81,
-        "take_profit": 28564.96,
-        "rr": 3.349,
-        "confidence": 0.8,
-        "digits": 2,
-        "session": "NEW_YORK_SESSION",
-        "cvd_label": "BULLISH"
-      }
-    ],
-    "no_trade": [
-      "EURUSD",
-      "GBPUSD",
-      "BTCUSD"
-    ],
-    "analysis_failed": false,
-    "breaker_halted": false,
-    "written_at": "2026-11-11T18:06:32.586396+00:00"
-  },
-  {
     "signal_at": "2026-11-11T18:08:20.015744+00:00",
     "tz": "Asia/Dubai",
     "model": "gemini-3.6-flash",
@@ -1536,5 +1494,37 @@
     "analysis_failed": false,
     "breaker_halted": false,
     "written_at": "2026-11-11T19:44:33.486046+00:00"
+  },
+  {
+    "signal_at": "2026-11-11T19:46:20.002643+00:00",
+    "tz": "Asia/Dubai",
+    "model": "gemini-3.6-flash",
+    "dry_run": false,
+    "trades": [
+      {
+        "symbol": "XAUUSD",
+        "name": "GOLD",
+        "action": "SELL",
+        "entry": 3987.41,
+        "stop_loss": null,
+        "take_profit": null,
+        "rr": null,
+        "confidence": 0.85,
+        "digits": 2,
+        "exit": "Gemini",
+        "card": "SL: none \u00b7 TP: none \u00b7 exit: Gemini",
+        "session": "NEW_YORK_SESSION",
+        "cvd_label": "BEARISH"
+      }
+    ],
+    "no_trade": [
+      "EURUSD",
+      "GBPUSD",
+      "US100",
+      "BTCUSD"
+    ],
+    "analysis_failed": false,
+    "breaker_halted": false,
+    "written_at": "2026-11-11T19:46:32.714829+00:00"
   }
 ]

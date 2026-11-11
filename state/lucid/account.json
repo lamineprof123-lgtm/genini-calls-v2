@@ -1,7 +1,7 @@
 {
   "version": 1,
   "created_at": "2026-11-09T13:59:39.073020+00:00",
-  "last_processed": "2026-11-11T17:28:00+00:00",
+  "last_processed": "2026-11-11T17:30:00+00:00",
   "account": {
     "no": 1,
     "phase": "eval",
@@ -26,82 +26,82 @@
     {
       "symbol": "US100",
       "side": 1,
-      "created": "2026-11-11T17:28:31.540574+00:00",
-      "fill_after": "2026-11-11T17:29:00+00:00",
-      "expires": "2026-11-11T17:39:00+00:00",
-      "atr": 68.721,
+      "created": "2026-11-11T17:30:31.659091+00:00",
+      "fill_after": "2026-11-11T17:31:00+00:00",
+      "expires": "2026-11-11T17:41:00+00:00",
+      "atr": 68.487,
       "scalp": {
         "action": "BUY",
         "side": 1,
-        "entry": 28529.87,
-        "stop_loss": 28471.08,
-        "take_profit": 28534.87,
-        "sdist": 58.786049999998795,
+        "entry": 28535.06,
+        "stop_loss": 28489.67,
+        "take_profit": 28540.06,
+        "sdist": 45.394350000002305,
         "tdist": 5.0,
         "stop_source": "structure",
         "target_source": "fixed",
-        "rr": 0.085,
-        "structure_stop": 28471.08395,
-        "atr_stop": 28474.8932,
-        "fixed_tp": 28534.87,
-        "structure_tp": null,
-        "structure_label": null,
+        "rr": 0.11,
+        "structure_stop": 28489.66565,
+        "atr_stop": 28480.2704,
+        "fixed_tp": 28540.06,
+        "structure_tp": 28557.16026,
+        "structure_label": "Session High",
         "candle": {
-          "high": 28523.41,
-          "low": 28474.52
+          "high": 28558.53,
+          "low": 28493.09
         }
       },
       "session": "NEW_YORK_SESSION",
       "telemetry": {
         "symbol": "US100",
         "session": "NEW_YORK_SESSION",
-        "last_close": 28503.38,
-        "atr": 68.721,
-        "vwap": 28169.29,
-        "ema20": 28345.69,
-        "ema50": 28232.56,
+        "last_close": 28532.35,
+        "atr": 68.487,
+        "vwap": 28174.86,
+        "ema20": 28363.47,
+        "ema50": 28244.34,
         "price_vs_vwap": {
           "side": "above",
-          "dist_atr": 4.8615
+          "dist_atr": 5.2198
         },
         "price_vs_ema50": {
           "side": "above",
-          "dist_atr": 3.9409
+          "dist_atr": 4.2053
         },
         "vwap_aligned_with_side": true,
         "ema50_aligned_with_side": true,
-        "poc": 28269.34,
-        "vah": 28338.63,
-        "val": 28061.47,
+        "poc": 28276.77,
+        "vah": 28381.43,
+        "val": 28059.42,
         "price_vs_value_area": "above_vah",
-        "dist_to_poc_atr": 3.4057,
-        "cvd": 13.46,
+        "dist_to_poc_atr": 3.7318,
+        "cvd": 13.7,
         "cvd_label": "BULLISH",
-        "cvd_slope": 2.9,
+        "cvd_slope": 1.97,
         "cvd_agrees_with_side": true,
-        "rvol": 0.923,
+        "rvol": 0.893,
         "rvol_spike": false,
-        "rvol_bars_since_spike": 10,
-        "atr_band_z": 2.2946,
-        "atr_upper": 28483.13,
-        "atr_lower": 28208.25,
+        "rvol_bars_since_spike": 11,
+        "atr_band_z": 2.4659,
+        "atr_upper": 28500.44,
+        "atr_lower": 28226.49,
         "nearest_sr": {
           "above": {
-            "price": 28523.41,
+            "price": 28558.53,
             "label": "Session High",
-            "dist_atr": 0.2915
+            "dist_atr": 0.3823
           },
           "below": {
             "price": 28083.64,
             "label": "S/R",
-            "dist_atr": 6.1079
+            "dist_atr": 6.5518
           }
         },
         "gemini": {
           "action": "BUY",
-          "confidence": 0.85,
-          "confidence_band": ">=0.8",
-          "rationale": "Price is above VAH (28338.63) and well above POC (28269.34). CVD is BULLISH (+13.46) with positive slope (+2.9). Session is NEW_YORK_SESSION. Price is in strong uptrend above rising VWAP (28169.29) and EMA50 (28232.56), pushing above upper ATR band (28483.13) and breaking out above Session High (28523.41). Dukascopy tick RVOL is 0.923 (US100 index CFD tick volume rule applies). Strong trend expansion with order flow alignment.",
+          "confidence": 0.75,
+          "confidence_band": "0.7-0.8",
+          "rationale": "Price is above VAH (28381.43) and above POC (28276.77). CVD is BULLISH (+13.70) with positive slope (+1.97), agreeing with the upward expansion. Session is NEW_YORK_SESSION. Price is well above VWAP (28174.86) and EMA50 (28244.34), riding above the upper ATR band (28500.44). As per US100 tick volume rules, lack of yellow RVOL > 2.0 does not invalidate trend expansion. The strong directional momentum above VAH and EMA baseline confirms buyer control.",
           "model": "gemini-3.6-flash",
           "model_action": "BUY"
         },
@@ -109,32 +109,32 @@
           "stop_basis": "structure",
           "target_basis": "fixed",
           "tdist": 5.0,
-          "sdist": 58.786049999998795,
-          "structure_label": null
+          "sdist": 45.394350000002305,
+          "structure_label": "Session High"
         },
         "planned": {
           "tdist": 5.0,
-          "sdist": 58.786049999998795,
+          "sdist": 45.394350000002305,
           "qty": null,
           "contract": null,
           "target_usd_net": null,
           "risk_usd": null
         },
-        "run_at_utc": "2026-11-11T17:28:20.020892+00:00",
-        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/212820.json/US100.png"
+        "run_at_utc": "2026-11-11T17:30:20.020980+00:00",
+        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/213020.json/US100.png"
       },
       "gemini": {
         "action": "BUY",
-        "entry": 28529.87,
-        "stop_loss": 28471.08,
-        "take_profit": 28534.87,
-        "confidence": 0.85,
-        "rr": 0.085,
+        "entry": 28535.06,
+        "stop_loss": 28489.67,
+        "take_profit": 28540.06,
+        "confidence": 0.75,
+        "rr": 0.11,
         "shown_on_site": true,
         "basis": "site signal",
-        "run_at_utc": "2026-11-11T17:28:20.020892+00:00",
+        "run_at_utc": "2026-11-11T17:30:20.020980+00:00",
         "session": "NEW_YORK_SESSION",
-        "rationale": "Price is above VAH (28338.63) and well above POC (28269.34). CVD is BULLISH (+13.46) with positive slope (+2.9). Session is NEW_YORK_SESSION. Price is in strong uptrend above rising VWAP (28169.29) and EMA50 (28232.56), pushing above upper ATR band (28483.13) and breaking out above Session High (28523.41). Dukascopy tick RVOL is 0.923 (US100 index CFD tick volume rule applies). Strong trend expansion with order flow alignment.",
+        "rationale": "Price is above VAH (28381.43) and above POC (28276.77). CVD is BULLISH (+13.70) with positive slope (+1.97), agreeing with the upward expansion. Session is NEW_YORK_SESSION. Price is well above VWAP (28174.86) and EMA50 (28244.34), riding above the upper ATR band (28500.44). As per US100 tick volume rules, lack of yellow RVOL > 2.0 does not invalidate trend expansion. The strong directional momentum above VAH and EMA baseline confirms buyer control.",
         "model": "gemini-3.6-flash"
       }
     }
@@ -149,7 +149,7 @@
     "traded": true
   },
   "last_price": {
-    "US100": 28532.031,
+    "US100": 28532.354,
     "GBPUSD": 1.32812,
     "EURUSD": 1.10933,
     "XAUUSD": 3999.169
@@ -181,7 +181,7 @@
     "gross_loss": -2169.1,
     "commissions": 219.6,
     "net_trade_pnl": -1411.85,
-    "skipped_signals": 406,
-    "accepted_signals": 196
+    "skipped_signals": 407,
+    "accepted_signals": 197
   }
 }

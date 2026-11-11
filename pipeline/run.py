@@ -7,6 +7,7 @@
   python run.py models                                list Flash models available to your key
   python run.py gha-loop --data DIR --role holder    GitHub Actions in-job loop (state/logs/site JSON in DIR)
   python run.py gha-loop --data DIR --max-cycles 1   single cycle: data -> charts -> Gemini -> Lucid -> commit
+  python run.py exit-sample --symbol EURUSD --side SELL --out DIR   exit-manager chart + prompt (fake position)
 """
 import argparse, asyncio, logging, os, sys
 
@@ -16,7 +17,7 @@ from signals.pipeline import run_loop, run_once
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("cmd", choices=["once", "loop", "models", "seed-site", "pause", "lucid-status", "lucid-step", "lucid-report", "gha-loop"])
+    ap.add_argument("cmd", choices=["once", "loop", "models", "seed-site", "pause", "lucid-status", "lucid-step", "lucid-report", "gha-loop", "exit-sample"])
     ap.add_argument("path", nargs="?", help="seed-site: a logs/.../validated.json")
     ap.add_argument("--dry-run", action="store_true", help="render + validate with a mocked Gemini response")
     ap.add_argument("--model", help="override [gemini].model")
@@ -29,6 +30,9 @@ def main():
     ap.add_argument("--max-runtime-min", type=float, default=float(os.environ.get("SIGNALS_MAX_RUNTIME_MIN", "330")))
     ap.add_argument("--hard-cap-min", type=float, default=float(os.environ.get("SIGNALS_HARD_CAP_MIN", "350")))
     ap.add_argument("--no-deploy", action="store_true")
+    ap.add_argument("--symbol", default="EURUSD", help="exit-sample: symbol of the fake open position")
+    ap.add_argument("--side", default="SELL", choices=["BUY", "SELL"], help="exit-sample: fake position side")
+    ap.add_argument("--out", default="exit_sample", help="exit-sample: output folder")
     a = ap.parse_args()
     load_env()
     if a.cmd == "gha-loop":
@@ -62,6 +66,12 @@ def main():
         from signals.lucid_report import write_report
         _, md = write_report(cfg["general"]["logs_dir"])
         print(md)
+        return
+    if a.cmd == "exit-sample":  # exit-manager chart + prompt for a FAKE open position (no Gemini call)
+        import json
+        from signals.exit_manager import render_sample
+        res = asyncio.run(render_sample(cfg, a.symbol, 1 if a.side == "BUY" else -1, a.out))
+        print(json.dumps(res, indent=1, default=str))
         return
     if a.cmd == "lucid-status":  # paper prop-account summary (no network, no Gemini)
         from signals.lucid import LucidSim, format_status

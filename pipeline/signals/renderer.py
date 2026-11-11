@@ -86,11 +86,12 @@ class ChartPool:
             return {}
         w = payloads[0]["style"]["width"]
         h = payloads[0]["style"]["height"]
-        await self.start([p["symbol"] for p in payloads], w, h)
+        # page_key lets the exit manager keep its own warm page per symbol (never shares the entry page)
+        await self.start([p.get("page_key") or p["symbol"] for p in payloads], w, h)
 
         async def one(p: dict) -> tuple[str, bytes, float]:
             t0 = time.monotonic()
-            page = self._pages[p["symbol"]]
+            page = self._pages[p.get("page_key") or p["symbol"]]
             # Single round-trip: update + wait for rAF render-done inside the page.
             await page.evaluate(
                 """async p => {

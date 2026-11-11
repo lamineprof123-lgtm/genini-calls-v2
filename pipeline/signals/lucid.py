@@ -717,6 +717,14 @@ class LucidSim:
         self.s["account"]["balance"] = round(self.s["account"]["balance"] - comm, 2)
         self.s["ledger"]["commissions"] = round(self.s["ledger"]["commissions"] + comm, 2)
         self.s["positions"].append(p)
+        # Feed for the Gemini exit-manager paper books (signals/exit_manager.py). Additive only: the
+        # baseline sim never reads it. Books copy entry/qty/contract/stop from here (same entries).
+        feed = self.s.setdefault("book_feed", [])
+        feed.append({k: p[k] for k in ("id", "symbol", "contract", "qty", "side", "entry", "stop", "target",
+                                       "entry_time", "risk_usd", "atr")}
+                    | {"candle": (scalp or {}).get("candle"), "gemini_run_at_utc": g.get("run_at_utc"),
+                       "gemini_confidence": g.get("confidence")})
+        del feed[:-50]
         self.s["day"]["traded"] = True
         self.s["last_price"][sym] = c
         self._event(t, "entry", symbol=sym, contract=p["contract"], qty=p["qty"], side="LONG" if side > 0 else "SHORT",

@@ -141,3 +141,13 @@ account trades immediately.
 
 State `state/lucid/account.json`; logs `logs/YYYY-MM-DD/lucid_trades.jsonl` + `lucid_events.jsonl`.
 `python run.py lucid-status`. Tests: `tests/test_lucid.py`.
+
+## Gemini exit manager (paper books, branch `exit-manager`)
+
+`signals/exit_manager.py` copies every Lucid sim entry into two paper books and lets Gemini manage the exit on
+the same M15 chart as the entry model plus a white ENTRY line (prompt: `templates/exit_prompt.j2`).
+One Gemini call per open position every 18 s (`[exit_manager]` in `config.toml`), shared by both books:
+`1-strike` exits on the first CLOSE; `2-strike` needs two consecutive CLOSEs while MFE < 0.8 ATR, one after.
+Both keep the hard stop, 16:45 ET flat, 3.5% daily breaker and a 90-min max hold; no fixed TP / 2-bar time cut.
+Logs: `logs/YYYY-MM-DD/exits.jsonl`, `logs/YYYY-MM-DD/exit_book_trades.jsonl`; summary: `books.json` (data root).
+Review sample (no Gemini call): `python run.py exit-sample --symbol EURUSD --side SELL --out exit_sample`.

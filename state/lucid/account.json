@@ -1,7 +1,7 @@
 {
   "version": 1,
   "created_at": "2026-11-11T17:32:34.420596+00:00",
-  "last_processed": "2026-11-11T17:49:00+00:00",
+  "last_processed": "2026-11-11T17:51:00+00:00",
   "account": {
     "no": 1,
     "phase": "eval",
@@ -182,7 +182,7 @@
         "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/213220.json/US100.png"
       },
       "mfe": 16.35900000000038,
-      "mae": 15.18500000000131,
+      "mae": 23.418000000001484,
       "mfe_min": 17.12175,
       "time_cut_deadline": "2026-11-11T18:03:00+00:00",
       "time_cut_candles": 2
@@ -192,26 +192,26 @@
     {
       "symbol": "XAUUSD",
       "side": -1,
-      "created": "2026-11-11T17:48:33.040555+00:00",
-      "fill_after": "2026-11-11T17:49:00+00:00",
-      "expires": "2026-11-11T17:59:00+00:00",
+      "created": "2026-11-11T17:52:30.693949+00:00",
+      "fill_after": "2026-11-11T17:53:00+00:00",
+      "expires": "2026-11-11T18:03:00+00:00",
       "atr": 6.431,
       "scalp": {
         "action": "SELL",
         "side": -1,
-        "entry": 4000.33,
+        "entry": 3996.54,
         "stop_loss": 4004.81,
-        "take_profit": 3998.23,
-        "sdist": 4.48154999999997,
-        "tdist": 2.1,
+        "take_profit": 3990.14,
+        "sdist": 8.271549999999934,
+        "tdist": 6.4,
         "stop_source": "structure",
-        "target_source": "structure:next:Session Low",
-        "rr": 0.469,
+        "target_source": "extended:min_net",
+        "rr": 0.774,
         "structure_stop": 4004.81155,
-        "atr_stop": 4005.4748,
-        "fixed_tp": 3999.08,
-        "structure_tp": 3998.3486199999998,
-        "structure_label": "Session Low",
+        "atr_stop": 4001.6848,
+        "fixed_tp": 3995.29,
+        "structure_tp": null,
+        "structure_label": null,
         "candle": {
           "high": 4004.49,
           "low": 3999.63
@@ -239,15 +239,15 @@
           "vah": 4062.67,
           "val": 4029.76
         },
-        "target_scalp": 3999.08,
+        "target_scalp": 3995.29,
         "lucid_plan": {
           "contract": "GC",
-          "qty": 3,
-          "tdist": 2.1,
-          "target_usd": 616.2,
-          "risk_usd": 1350.0,
-          "target_source": "structure:next:Session Low",
-          "sizing": "fixed target 1.25 cannot reach $381 net at an allowed size; next structure Session Low at 2.1 gives $616 net with 3 GC (risk $1350)"
+          "qty": 1,
+          "tdist": 6.4,
+          "target_usd": 635.4,
+          "risk_usd": 830.0,
+          "target_source": "extended:min_net",
+          "sizing": "fixed target 1.25 cannot reach $381 net within $1500 risk; extended:min_net: 1 GC (fewest that fit) target 6.4 -> $635 net, risk $830"
         }
       },
       "session": "NEW_YORK_SESSION",
@@ -300,40 +300,40 @@
           "action": "SELL",
           "confidence": 0.82,
           "confidence_band": ">=0.8",
-          "rationale": "Price is below VAL (4029.76) and well below POC (4044.16). CVD is -2.40 (BEARISH), agreeing with the strong downside momentum. Session is NEW_YORK_SESSION. Price remains below both VWAP (4037.35) and EMA50 (4029.89) with a steep bearish slope. Candles are pushing along the lower ATR band (4001.80) while testing Session Low (3998.22). RVOL spiked earlier at 15:00 on the initial breakdown but is currently lower (0.635). Given the strong bearish trend and break below VAL, high probability continuation sell setup.",
+          "rationale": "Price is below VAL (4029.76) and below POC (4044.16). CVD is BEARISH (-2.40) agreeing with downside momentum during NEW_YORK_SESSION. Price is well below VWAP (4037.35) and EMA50 (4029.89), stretching outside the lower ATR band (4001.80) to break new Session Lows. Recent sell-off printed yellow RVOL spikes confirming real liquidity imbalance. Initiating short momentum scalp.",
           "model": "gemini-3.6-flash",
           "model_action": "SELL"
         },
         "scalp": {
           "stop_basis": "structure",
-          "target_basis": "structure:next:Session Low",
-          "tdist": 2.1,
-          "sdist": 4.48154999999997,
-          "structure_label": "Session Low"
+          "target_basis": "extended:min_net",
+          "tdist": 6.4,
+          "sdist": 8.271549999999934,
+          "structure_label": null
         },
         "planned": {
-          "tdist": 2.1,
-          "sdist": 4.48154999999997,
+          "tdist": 6.4,
+          "sdist": 8.271549999999934,
           "qty": null,
           "contract": null,
           "target_usd_net": null,
           "risk_usd": null
         },
-        "run_at_utc": "2026-11-11T17:48:20.100444+00:00",
-        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/214820.json/XAUUSD.png"
+        "run_at_utc": "2026-11-11T17:52:20.085033+00:00",
+        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/215220.json/XAUUSD.png"
       },
       "gemini": {
         "action": "SELL",
-        "entry": 4000.33,
+        "entry": 3996.54,
         "stop_loss": 4004.81,
-        "take_profit": 3998.23,
+        "take_profit": 3990.14,
         "confidence": 0.82,
-        "rr": 0.469,
+        "rr": 0.774,
         "shown_on_site": true,
         "basis": "site signal",
-        "run_at_utc": "2026-11-11T17:48:20.100444+00:00",
+        "run_at_utc": "2026-11-11T17:52:20.085033+00:00",
         "session": "NEW_YORK_SESSION",
-        "rationale": "Price is below VAL (4029.76) and well below POC (4044.16). CVD is -2.40 (BEARISH), agreeing with the strong downside momentum. Session is NEW_YORK_SESSION. Price remains below both VWAP (4037.35) and EMA50 (4029.89) with a steep bearish slope. Candles are pushing along the lower ATR band (4001.80) while testing Session Low (3998.22). RVOL spiked earlier at 15:00 on the initial breakdown but is currently lower (0.635). Given the strong bearish trend and break below VAL, high probability continuation sell setup.",
+        "rationale": "Price is below VAL (4029.76) and below POC (4044.16). CVD is BEARISH (-2.40) agreeing with downside momentum during NEW_YORK_SESSION. Price is well below VWAP (4037.35) and EMA50 (4029.89), stretching outside the lower ATR band (4001.80) to break new Session Lows. Recent sell-off printed yellow RVOL spikes confirming real liquidity imbalance. Initiating short momentum scalp.",
         "model": "gemini-3.6-flash"
       }
     }
@@ -348,8 +348,8 @@
     "traded": true
   },
   "last_price": {
-    "US100": 28545.51,
-    "XAUUSD": 3999.521
+    "US100": 28526.832,
+    "XAUUSD": 3997.849
   },
   "history": [],
   "ledger": {
@@ -378,8 +378,8 @@
     "gross_loss": 0.0,
     "commissions": 1.75,
     "net_trade_pnl": 0.0,
-    "skipped_signals": 9,
-    "accepted_signals": 2
+    "skipped_signals": 11,
+    "accepted_signals": 3
   },
   "reset_token": "2026-11-11-target-sizing-fix"
 }

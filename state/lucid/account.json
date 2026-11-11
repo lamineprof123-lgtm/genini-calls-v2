@@ -1,7 +1,7 @@
 {
   "version": 1,
   "created_at": "2026-11-11T17:32:34.420596+00:00",
-  "last_processed": "2026-11-11T18:21:00+00:00",
+  "last_processed": "2026-11-11T18:23:00+00:00",
   "account": {
     "no": 1,
     "phase": "eval",
@@ -192,26 +192,26 @@
     {
       "symbol": "US100",
       "side": 1,
-      "created": "2026-11-11T18:20:30.421451+00:00",
-      "fill_after": "2026-11-11T18:21:00+00:00",
-      "expires": "2026-11-11T18:31:00+00:00",
+      "created": "2026-11-11T18:24:30.811587+00:00",
+      "fill_after": "2026-11-11T18:25:00+00:00",
+      "expires": "2026-11-11T18:35:00+00:00",
       "atr": 62.467,
       "scalp": {
         "action": "BUY",
         "side": 1,
-        "entry": 28547.53,
+        "entry": 28580.83,
         "stop_loss": 28498.56,
-        "take_profit": 28585.28,
-        "sdist": 48.97335000000021,
-        "tdist": 37.75,
+        "take_profit": 28585.83,
+        "sdist": 82.27335000000312,
+        "tdist": 5.0,
         "stop_source": "structure",
-        "target_source": "extended:aim_net",
-        "rr": 0.771,
+        "target_source": "fixed",
+        "rr": 0.061,
         "structure_stop": 28498.55665,
-        "atr_stop": 28497.556399999998,
-        "fixed_tp": 28552.53,
-        "structure_tp": 28563.860660000002,
-        "structure_label": "Session High",
+        "atr_stop": 28530.8564,
+        "fixed_tp": 28585.83,
+        "structure_tp": null,
+        "structure_label": null,
         "candle": {
           "high": 28549.64,
           "low": 28501.68
@@ -238,16 +238,6 @@
           "poc": 28264.82,
           "vah": 28337.86,
           "val": 27996.99
-        },
-        "target_scalp": 28552.53,
-        "lucid_plan": {
-          "contract": "NQ",
-          "qty": 1,
-          "tdist": 37.75,
-          "target_usd": 751.5,
-          "risk_usd": 980.0,
-          "target_source": "extended:aim_net",
-          "sizing": "fixed target 5 cannot reach $381 net within $1500 risk; extended:aim_net: 1 NQ (fewest that fit) target 37.75 -> $752 net, risk $980"
         }
       },
       "session": "NEW_YORK_SESSION",
@@ -298,42 +288,42 @@
         },
         "gemini": {
           "action": "BUY",
-          "confidence": 0.78,
-          "confidence_band": "0.7-0.8",
-          "rationale": "Price is above VAH (28337.86) and above POC (28264.82). CVD is BULLISH (+13.39) agreeing with the trend. Session is NEW_YORK_SESSION. Price is strong above rising VWAP (28190.61) and EMA50 (28277.38). Price is riding above upper ATR band (28533.33) pushing towards Session High (28565.11). Tick volume does not produce frequent RVOL spikes on US100 CFD (noted caveat), but structural trend and value area expansion strongly favor momentum.",
+          "confidence": 0.82,
+          "confidence_band": ">=0.8",
+          "rationale": "Price is above VAH (28337.86) and above POC (28264.82), indicating robust bullish value acceptance. CVD is BULLISH (+13.39) supporting the upward trend. Session is NEW_YORK_SESSION. Price is trading strongly above VWAP (28190.61) and EMA50 (28277.38) with upward sloping baselines. Live price (28580.83) is breaking out above Session High (28565.11) and pushing past the upper ATR band (28533.33). Note index CFD tick volume rarely prints RVOL > 2.0 (rvol 0.876), but price action and CVD align cleanly with momentum.",
           "model": "gemini-3.6-flash",
           "model_action": "BUY"
         },
         "scalp": {
           "stop_basis": "structure",
-          "target_basis": "extended:aim_net",
-          "tdist": 37.75,
-          "sdist": 48.97335000000021,
-          "structure_label": "Session High"
+          "target_basis": "fixed",
+          "tdist": 5.0,
+          "sdist": 82.27335000000312,
+          "structure_label": null
         },
         "planned": {
-          "tdist": 37.75,
-          "sdist": 48.97335000000021,
+          "tdist": 5.0,
+          "sdist": 82.27335000000312,
           "qty": null,
           "contract": null,
           "target_usd_net": null,
           "risk_usd": null
         },
-        "run_at_utc": "2026-11-11T18:20:20.066470+00:00",
-        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/222020.json/US100.png"
+        "run_at_utc": "2026-11-11T18:24:20.006478+00:00",
+        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-11/cycles/222420.json/US100.png"
       },
       "gemini": {
         "action": "BUY",
-        "entry": 28547.53,
+        "entry": 28580.83,
         "stop_loss": 28498.56,
-        "take_profit": 28585.28,
-        "confidence": 0.78,
-        "rr": 0.771,
+        "take_profit": 28585.83,
+        "confidence": 0.82,
+        "rr": 0.061,
         "shown_on_site": true,
         "basis": "site signal",
-        "run_at_utc": "2026-11-11T18:20:20.066470+00:00",
+        "run_at_utc": "2026-11-11T18:24:20.006478+00:00",
         "session": "NEW_YORK_SESSION",
-        "rationale": "Price is above VAH (28337.86) and above POC (28264.82). CVD is BULLISH (+13.39) agreeing with the trend. Session is NEW_YORK_SESSION. Price is strong above rising VWAP (28190.61) and EMA50 (28277.38). Price is riding above upper ATR band (28533.33) pushing towards Session High (28565.11). Tick volume does not produce frequent RVOL spikes on US100 CFD (noted caveat), but structural trend and value area expansion strongly favor momentum.",
+        "rationale": "Price is above VAH (28337.86) and above POC (28264.82), indicating robust bullish value acceptance. CVD is BULLISH (+13.39) supporting the upward trend. Session is NEW_YORK_SESSION. Price is trading strongly above VWAP (28190.61) and EMA50 (28277.38) with upward sloping baselines. Live price (28580.83) is breaking out above Session High (28565.11) and pushing past the upper ATR band (28533.33). Note index CFD tick volume rarely prints RVOL > 2.0 (rvol 0.876), but price action and CVD align cleanly with momentum.",
         "model": "gemini-3.6-flash"
       }
     }
@@ -348,8 +338,8 @@
     "traded": true
   },
   "last_price": {
-    "US100": 28547.376,
-    "XAUUSD": 3991.215
+    "US100": 28576.554,
+    "XAUUSD": 3991.075
   },
   "history": [],
   "ledger": {
@@ -378,8 +368,8 @@
     "gross_loss": -693.1,
     "commissions": 5.8,
     "net_trade_pnl": -693.1,
-    "skipped_signals": 33,
-    "accepted_signals": 10
+    "skipped_signals": 34,
+    "accepted_signals": 11
   },
   "reset_token": "2026-11-11-target-sizing-fix"
 }

@@ -9,17 +9,18 @@
     5,
     6,
     7,
-    8
+    8,
+    9
   ],
   "last_price": {
     "US100": 28136.24,
-    "XAUUSD": 3947.26,
+    "XAUUSD": 3945.24,
     "EURUSD": 1.10894,
-    "GBPUSD": 1.32685
+    "GBPUSD": 1.32667
   },
   "books": {
     "1-strike": {
-      "balance": 96259.6,
+      "balance": 96255.0,
       "positions": [
         {
           "id": 8,
@@ -43,9 +44,39 @@
           "strikes": 0,
           "mfe": 0.0,
           "mae": 0.0006099999999999994,
-          "scan_from": "2026-11-12T11:42:00+00:00",
-          "checks": 32,
+          "scan_from": "2026-11-12T11:45:00+00:00",
+          "checks": 39,
           "opened_at": "2026-11-12T11:35:03.381618+00:00",
+          "giveback_hist": [
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "id": 9,
+          "symbol": "XAUUSD",
+          "contract": "GC",
+          "qty": 2,
+          "side": -1,
+          "entry": 3945.1,
+          "stop": null,
+          "target": null,
+          "entry_time": "2026-11-12T11:45:00+00:00",
+          "risk_usd": null,
+          "atr": 7.397,
+          "candle": {
+            "high": 3949.01,
+            "low": 3946.57
+          },
+          "gemini_run_at_utc": "2026-11-12T11:44:20.219157+00:00",
+          "gemini_confidence": 0.72,
+          "book": "1-strike",
+          "strikes": 0,
+          "mfe": 0.0,
+          "mae": 0.0,
+          "scan_from": "2026-11-12T11:45:00+00:00",
+          "checks": 5,
+          "opened_at": "2026-11-12T11:45:15.425400+00:00",
           "giveback_hist": [
             0.0,
             0.0
@@ -70,7 +101,7 @@
         "gross_win": 477.5,
         "gross_loss": -4208.3,
         "net_pnl": -3730.8,
-        "commissions": 70.4,
+        "commissions": 75.0,
         "hold_seconds": 7209,
         "exit_reasons": {
           "gemini_close": 7
@@ -78,7 +109,7 @@
       }
     },
     "2-strike": {
-      "balance": 96039.6,
+      "balance": 96035.0,
       "positions": [
         {
           "id": 8,
@@ -102,9 +133,39 @@
           "strikes": 0,
           "mfe": 0.0,
           "mae": 0.0006099999999999994,
-          "scan_from": "2026-11-12T11:42:00+00:00",
-          "checks": 32,
+          "scan_from": "2026-11-12T11:45:00+00:00",
+          "checks": 39,
           "opened_at": "2026-11-12T11:35:03.381618+00:00",
+          "giveback_hist": [
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "id": 9,
+          "symbol": "XAUUSD",
+          "contract": "GC",
+          "qty": 2,
+          "side": -1,
+          "entry": 3945.1,
+          "stop": null,
+          "target": null,
+          "entry_time": "2026-11-12T11:45:00+00:00",
+          "risk_usd": null,
+          "atr": 7.397,
+          "candle": {
+            "high": 3949.01,
+            "low": 3946.57
+          },
+          "gemini_run_at_utc": "2026-11-12T11:44:20.219157+00:00",
+          "gemini_confidence": 0.72,
+          "book": "2-strike",
+          "strikes": 0,
+          "mfe": 0.0,
+          "mae": 0.0,
+          "scan_from": "2026-11-12T11:45:00+00:00",
+          "checks": 5,
+          "opened_at": "2026-11-12T11:45:15.425400+00:00",
           "giveback_hist": [
             0.0,
             0.0
@@ -129,7 +190,7 @@
         "gross_win": 457.5,
         "gross_loss": -4408.3,
         "net_pnl": -3950.8,
-        "commissions": 70.4,
+        "commissions": 75.0,
         "hold_seconds": 7839,
         "exit_reasons": {
           "gemini_close": 7
@@ -148,32 +209,5 @@
     6,
     7
   ],
-  "post_exit": [
-    {
-      "book": "1-strike",
-      "id": 7,
-      "symbol": "XAUUSD",
-      "contract": "GC",
-      "qty": 2,
-      "side": "SHORT",
-      "exit": 3947.2,
-      "t_exit": "2026-11-12T11:38:02.788472+00:00",
-      "reason": "gemini_close",
-      "net": 110.8,
-      "due": "2026-11-12T11:43:02.788472+00:00"
-    },
-    {
-      "book": "2-strike",
-      "id": 7,
-      "symbol": "XAUUSD",
-      "contract": "GC",
-      "qty": 2,
-      "side": "SHORT",
-      "exit": 3947.4,
-      "t_exit": "2026-11-12T11:38:21.621755+00:00",
-      "reason": "gemini_close",
-      "net": 70.8,
-      "due": "2026-11-12T11:43:21.621755+00:00"
-    }
-  ]
+  "post_exit": []
 }

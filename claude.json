@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-12T16:26:43.081517+00:00",
+  "updated_at": "2026-11-12T16:28:36.368152+00:00",
   "paper_only": true,
   "key_present": true,
   "status": "running",
@@ -24,16 +24,16 @@
       "account": {
         "start_balance": 100000.0,
         "balance": 99449.4,
-        "equity": 99819.4,
+        "equity": 99659.4,
         "realized_pnl": -550.6,
-        "open_pnl": 370.0,
+        "open_pnl": 210.0,
         "trades": 6,
         "wins": 2,
         "losses": 4,
         "r_total": -1.454,
         "r_per_trade": -0.242,
         "mll_floor": 97000.0,
-        "mll_room": 2819.4,
+        "mll_room": 2659.4,
         "day_realized": -550.6,
         "day_flattened": false,
         "blown": null
@@ -47,12 +47,12 @@
           "entry_time": "2026-11-12T16:16:42.089492+00:00",
           "entry": 1.1063,
           "stop": 1.107,
-          "floor": 1.10625,
-          "floor_label": "break-even + commission",
-          "last": 1.10556,
-          "unrealized": 370.0,
+          "floor": 1.10585,
+          "floor_label": "profit lock 50% of best",
+          "last": 1.10588,
+          "unrealized": 210.0,
           "risk_usd": 369.2,
-          "phase": "B",
+          "phase": "C",
           "setup_type": "trend",
           "score": 5,
           "server_only": false,
@@ -187,12 +187,12 @@
           "r_avg": -0.471
         },
         "twin": {
-          "n": 10,
+          "n": 11,
           "wins": 4,
-          "losses": 6,
-          "net": -1917.08,
-          "r_total": -2.371,
-          "r_avg": -0.237
+          "losses": 7,
+          "net": -2015.63,
+          "r_total": -3.439,
+          "r_avg": -0.313
         },
         "whatif_gated": {
           "n": 10,
@@ -224,17 +224,17 @@
           }
         },
         "exit": {
-          "calls": 107,
+          "calls": 142,
           "failed": 0,
-          "latency_p50_ms": 1570.0,
-          "latency_p95_ms": 2589.8,
-          "cost_usd": 0.0398,
+          "latency_p50_ms": 1570.5,
+          "latency_p95_ms": 2494.2,
+          "cost_usd": 0.0535,
           "by_utc_day": {
             "2026-11-12": {
-              "calls": 107,
-              "cost_usd": 0.0428,
-              "input_tokens": 356248,
-              "output_tokens": 8391,
+              "calls": 142,
+              "cost_usd": 0.0568,
+              "input_tokens": 478955,
+              "output_tokens": 11193,
               "thinking_tokens": 0
             }
           }

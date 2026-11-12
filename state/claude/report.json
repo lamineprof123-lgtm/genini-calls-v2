@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-12T16:16:42.095093+00:00",
+  "generated_at": "2026-11-12T16:27:08.075086+00:00",
   "since": "2026-11-12T12:14:51.993423+00:00",
   "sims": {
     "C-OPUS": {
@@ -370,20 +370,20 @@
         }
       },
       "twin": {
-        "n": 10,
+        "n": 11,
         "wins": 4,
-        "losses": 6,
-        "net": -1917.08,
-        "r_total": -2.371,
-        "r_avg": -0.237,
+        "losses": 7,
+        "net": -2015.63,
+        "r_total": -3.439,
+        "r_avg": -0.313,
         "by_symbol": {
           "EURUSD": {
-            "n": 3,
+            "n": 4,
             "wins": 1,
-            "losses": 2,
-            "net": -65.65,
-            "r_total": -0.279,
-            "r_avg": -0.093
+            "losses": 3,
+            "net": -164.2,
+            "r_total": -1.347,
+            "r_avg": -0.337
           },
           "GBPUSD": {
             "n": 3,
@@ -412,12 +412,12 @@
         },
         "by_side": {
           "LONG": {
-            "n": 4,
+            "n": 5,
             "wins": 2,
-            "losses": 2,
-            "net": -66.63,
-            "r_total": 0.079,
-            "r_avg": 0.02
+            "losses": 3,
+            "net": -165.18,
+            "r_total": -0.989,
+            "r_avg": -0.198
           },
           "SHORT": {
             "n": 6,
@@ -438,12 +438,12 @@
             "r_avg": 0.174
           },
           "trend": {
-            "n": 8,
+            "n": 9,
             "wins": 3,
-            "losses": 5,
-            "net": -2605.63,
-            "r_total": -2.719,
-            "r_avg": -0.34
+            "losses": 6,
+            "net": -2704.18,
+            "r_total": -3.787,
+            "r_avg": -0.421
           }
         },
         "by_session": {
@@ -462,6 +462,14 @@
             "net": -9.53,
             "r_total": 0.236,
             "r_avg": 0.118
+          },
+          "NEW_YORK_SESSION": {
+            "n": 1,
+            "wins": 0,
+            "losses": 1,
+            "net": -98.55,
+            "r_total": -1.068,
+            "r_avg": -1.068
           }
         },
         "by_reason": {
@@ -474,12 +482,12 @@
             "r_avg": -0.122
           },
           "hard_stop": {
-            "n": 4,
+            "n": 5,
             "wins": 0,
-            "losses": 4,
-            "net": -2679.0,
-            "r_total": -4.164,
-            "r_avg": -1.041
+            "losses": 5,
+            "net": -2777.55,
+            "r_total": -5.232,
+            "r_avg": -1.046
           },
           "profit_lock": {
             "n": 5,
@@ -491,12 +499,12 @@
           }
         },
         "since_fix": {
-          "n": 0,
+          "n": 1,
           "wins": 0,
-          "losses": 0,
-          "net": 0,
-          "r_total": 0,
-          "r_avg": null
+          "losses": 1,
+          "net": -98.55,
+          "r_total": -1.068,
+          "r_avg": -1.068
         }
       },
       "signals": {
@@ -525,17 +533,21 @@
         }
       },
       "exit_calibration": {
+        "0.3": {
+          "n": 1,
+          "for_rate": 0.0
+        },
         "0.4": {
-          "n": 12,
-          "for_rate": 0.583
+          "n": 14,
+          "for_rate": 0.5
         },
         "0.5": {
-          "n": 48,
-          "for_rate": 0.708
+          "n": 60,
+          "for_rate": 0.75
         },
         "0.6": {
-          "n": 42,
-          "for_rate": 0.548
+          "n": 58,
+          "for_rate": 0.655
         }
       },
       "ops": {
@@ -556,17 +568,17 @@
           }
         },
         "exit": {
-          "calls": 107,
+          "calls": 142,
           "failed": 0,
-          "latency_p50_ms": 1570.0,
-          "latency_p95_ms": 2589.8,
-          "cost_usd": 0.0398,
+          "latency_p50_ms": 1570.5,
+          "latency_p95_ms": 2494.2,
+          "cost_usd": 0.0535,
           "by_utc_day": {
             "2026-11-12": {
-              "calls": 107,
-              "cost_usd": 0.0428,
-              "input_tokens": 356248,
-              "output_tokens": 8391,
+              "calls": 142,
+              "cost_usd": 0.0568,
+              "input_tokens": 478955,
+              "output_tokens": 11193,
               "thinking_tokens": 0
             }
           }

@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-12T23:00:41.027919+00:00",
+  "updated_at": "2026-11-12T23:15:39.347159+00:00",
   "paper_only": true,
   "plan": "LucidPro 100K (DLL on)",
   "exit_mode": "uniform-1atr-v1",
@@ -135,11 +135,11 @@
   "rules": "C-OPUS-B: claude-opus-5-5 entries, adaptive thinking, effort high, shared bracket-v1 package with DS-FLASH (same charts, facts, 3 symbols, M15 close +20s). Question: will price travel 1 ATR my way before 1 ATR against? Code-computed facts + hold gates (no trend >2 ATR from VWAP; \u22651 ATR room; US100 volume-free S2). 0.3 ATR fill check. Uniform 1 ATR / 1 ATR / 90-min exits, no model exits. Fresh $100k Lucid account.",
   "stop_txt": "1 ATR stop \u00b7 1 ATR target \u00b7 90 min",
   "last_call": {
-    "t": "2026-11-12T23:00:41.025097+00:00",
+    "t": "2026-11-12T23:15:39.344443+00:00",
     "ok": true,
-    "latency_ms": 16172,
-    "cost_usd": 0.104912,
-    "thinking_tokens": 466,
+    "latency_ms": 17129,
+    "cost_usd": 0.10512,
+    "thinking_tokens": 455,
     "usage": {
       "cache_creation": {
         "ephemeral_1h_input_tokens": 0,
@@ -148,10 +148,10 @@
       "cache_creation_input_tokens": 0,
       "cache_read_input_tokens": 0,
       "inference_geo": "global",
-      "input_tokens": 16593,
-      "output_tokens": 1927,
+      "input_tokens": 16610,
+      "output_tokens": 1934,
       "output_tokens_details": {
-        "thinking_tokens": 466
+        "thinking_tokens": 455
       },
       "service_tier": "standard",
       "speed": "standard"
@@ -159,14 +159,14 @@
     "error": null,
     "effort": "high",
     "prompt_version": "bracket-v1",
-    "snapshot_id": "m15-20261112214500-f3c9b4e6a091",
-    "snapshot_hash": "f3c9b4e6a091b2073322361d430c38389134102104d5259f428504f84050c04e",
-    "package_id": "m15-20261112T230000-51d65fe3799e",
-    "package_hash": "51d65fe3799e1b8909dc2f3e17d5f102668e0bec65cc7b1d10e00ae7849ea2a3",
-    "bar_close_ts": "2026-11-12T23:00:00+00:00",
-    "snapshot_ts": "2026-11-12T23:00:23.594599+00:00",
-    "call_start": "2026-11-12T23:00:24.853227+00:00",
-    "answer_ts": "2026-11-12T23:00:41.025097+00:00",
+    "snapshot_id": "m15-20261112230000-595c0230e17d",
+    "snapshot_hash": "595c0230e17d752e5e4da02b49a24c5c90d1a3c7fd3e3492f971d955ecb797ff",
+    "package_id": "m15-20261112T231500-801c8b51470f",
+    "package_hash": "801c8b51470f43ef9a07fb0ab5ab5afee6933a75503e637048661e71c6f8b6be",
+    "bar_close_ts": "2026-11-12T23:15:00+00:00",
+    "snapshot_ts": "2026-11-12T23:15:21.856229+00:00",
+    "call_start": "2026-11-12T23:15:22.215340+00:00",
+    "answer_ts": "2026-11-12T23:15:39.344443+00:00",
     "model": "claude-opus-5-5"
   },
   "last_signals": [
@@ -174,11 +174,11 @@
       "symbol": "XAUUSD",
       "action": "HOLD",
       "confidence": 0.0,
-      "score": 0,
+      "score": 4,
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "Session blocks automation (LOW_LIQUIDITY_DEADZONE). Every level is untouched on the last closed bar, so T2 and F1 are missing. Room is under 1 ATR both ways: up 0.39 to EMA20, down 0.49 to POC. Price is 7.3 ATR from VWAP, which is chasing f",
+      "rationale": "Automation blocked by session (ASIAN_SESSION_CHOP). T1 yes: below VWAP and EMA50. T2 yes: EMA20 rejected. Fails gates: VWAP distance -7.6 ATR exceeds 2.0, and room down only 0.30 ATR to POC. S3 S5 only.",
       "gate_reasons": [],
       "issues": []
     },
@@ -186,11 +186,11 @@
       "symbol": "EURUSD",
       "action": "HOLD",
       "confidence": 0.0,
-      "score": 1,
+      "score": 4,
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "Session blocks automation. T1 fails for a long: price is below VWAP and EMA50. The POC cross is not at an extreme, so F1 fails. Room down is only 0.05 ATR to EMA20. VWAP is 4.3 ATR away. RVOL is negligible.",
+      "rationale": "Automation blocked by session (ASIAN_SESSION_CHOP). T1 yes and T2 yes (EMA20 rejected), but VWAP distance -4.7 ATR exceeds the 2.0 chase limit. Room down is 1.82 ATR. CVD is NEUTRAL. S1 S5 only.",
       "gate_reasons": [],
       "issues": []
     },
@@ -198,11 +198,11 @@
       "symbol": "US100",
       "action": "HOLD",
       "confidence": 0.0,
-      "score": 6,
+      "score": 5,
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "T1 yes: above VWAP and EMA50. T2 yes: closed_through VAH. Supporting: S1 (1.95 ATR room up), S2 (US100 awarded), S3 (cvd_slope up), S5 (h1 up). S4 fails: deadzone. Session blocks automation and the signal bar (21:00) is 2 hours old, so HOLD",
+      "rationale": "Automation blocked by session (ASIAN_SESSION_CHOP). T1 yes and T2 yes (closed_through VWAP/POC). Fails S1 room gate: only 0.023 ATR to VAH, with Session High just above. S2 (US100 awarded), S3, S5.",
       "gate_reasons": [],
       "issues": []
     },
@@ -210,11 +210,11 @@
       "symbol": "XAGUSD",
       "action": "HOLD",
       "confidence": 0.0,
-      "score": 0,
+      "score": 1,
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "Session blocks automation. EMA20 was only touched, not rejected or closed through, so T2 is weak. A short is chasing at 6.6 ATR from VWAP. There is no extreme for a fade (F1 missing). Room up is 0.35 ATR.",
+      "rationale": "Automation blocked by session (ASIAN_SESSION_CHOP). T1 yes. T2 no: EMA20 only touched, no rejection or close-through. VWAP distance -7.0 ATR exceeds the 2.0 limit. Room down 1.41 ATR. S1 S3 S5.",
       "gate_reasons": [],
       "issues": []
     },
@@ -226,7 +226,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "Session blocks automation. All levels are untouched on the last closed bar, so T2 and F1 are missing. Room down is 0.65 ATR to Session Low and room up is 0.97 ATR to EMA20, both under 1 ATR. Price is 5.8 ATR from VWAP.",
+      "rationale": "Automation blocked by session (ASIAN_SESSION_CHOP). No level event: every level is untouched, so there are no must-haves. VWAP distance -5.3 ATR. Room down only 0.975 ATR to Session Low, under the 1.0 gate.",
       "gate_reasons": [],
       "issues": []
     }

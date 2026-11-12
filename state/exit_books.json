@@ -7,7 +7,7 @@
   ],
   "last_price": {
     "XAUUSD": 3929.75,
-    "EURUSD": 1.10941
+    "EURUSD": 1.10927
   },
   "books": {
     "1-strike": {
@@ -35,8 +35,8 @@
           "strikes": 0,
           "mfe": 0.000260000000000149,
           "mae": 0.00017999999999984695,
-          "scan_from": "2026-11-12T09:08:00+00:00",
-          "checks": 25,
+          "scan_from": "2026-11-12T09:10:00+00:00",
+          "checks": 32,
           "opened_at": "2026-11-12T09:03:06.248431+00:00"
         }
       ],
@@ -85,8 +85,8 @@
           "strikes": 0,
           "mfe": 0.000260000000000149,
           "mae": 0.00017999999999984695,
-          "scan_from": "2026-11-12T09:08:00+00:00",
-          "checks": 25,
+          "scan_from": "2026-11-12T09:10:00+00:00",
+          "checks": 32,
           "opened_at": "2026-11-12T09:03:06.248431+00:00"
         }
       ],
@@ -113,7 +113,9 @@
   },
   "reset_token": "2026-11-12-exitcheck-fix",
   "account_token": "2026-11-12-exitcheck-fix",
-  "baseline_tracked": [],
+  "baseline_tracked": [
+    1
+  ],
   "post_exit": [
     {
       "book": "1-strike",
@@ -140,6 +142,19 @@
       "reason": "gemini_close",
       "net": 150.8,
       "due": "2026-11-12T09:14:24.010254+00:00"
+    },
+    {
+      "book": "baseline",
+      "id": 1,
+      "symbol": "XAUUSD",
+      "contract": "GC",
+      "qty": 2,
+      "side": "SHORT",
+      "exit": 3930.0,
+      "t_exit": "2026-11-12T09:09:00+00:00",
+      "reason": "gemini_close",
+      "net": 110.8,
+      "due": "2026-11-12T09:14:00+00:00"
     }
   ]
 }

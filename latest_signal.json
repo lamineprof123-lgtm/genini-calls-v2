@@ -1,19 +1,48 @@
 {
-  "signal_at": "2026-11-12T14:44:20.242341+00:00",
+  "signal_at": "2026-11-12T14:46:20.206423+00:00",
   "tz": "Asia/Dubai",
   "model": "gemini-3.8-flash",
   "dry_run": false,
-  "trades": [],
+  "trades": [
+    {
+      "symbol": "GBPUSD",
+      "name": "POUND",
+      "action": "SELL",
+      "entry": 1.32564,
+      "stop_loss": null,
+      "take_profit": null,
+      "rr": null,
+      "confidence": 0.78,
+      "digits": 5,
+      "exit": "Gemini",
+      "card": "Hard stop \u2212$500 net \u00b7 TP: none \u00b7 exit: Gemini",
+      "session": "LONDON_NY_OVERLAP",
+      "cvd_label": "BEARISH"
+    },
+    {
+      "symbol": "US100",
+      "name": "NASDAQ",
+      "action": "BUY",
+      "entry": 28227.63,
+      "stop_loss": null,
+      "take_profit": null,
+      "rr": null,
+      "confidence": 0.82,
+      "digits": 2,
+      "exit": "Gemini",
+      "card": "Hard stop \u2212$500 net \u00b7 TP: none \u00b7 exit: Gemini",
+      "session": "LONDON_NY_OVERLAP",
+      "cvd_label": "NEUTRAL"
+    }
+  ],
   "no_trade": [
-    "GBPUSD",
-    "US100",
+    "EURUSD",
     "BTCUSD"
   ],
   "in_position": [
-    "EURUSD",
     "XAUUSD"
   ],
   "analysis_failed": false,
   "breaker_halted": false,
-  "written_at": "2026-11-12T14:44:35.752894+00:00"
+  "written_at": "2026-11-12T14:46:39.339633+00:00"
 }

@@ -1,13 +1,13 @@
 {
   "version": 1,
   "created_at": "2026-11-12T10:14:47.081605+00:00",
-  "last_processed": "2026-11-12T13:06:00+00:00",
+  "last_processed": "2026-11-12T13:08:00+00:00",
   "account": {
     "no": 1,
     "phase": "eval",
     "started_at": "2026-11-12T10:14:47.081605+00:00",
     "start_balance": 100000.0,
-    "balance": 99105.35,
+    "balance": 98598.6,
     "highest_close": 100000.0,
     "mll_floor": 97000.0,
     "mll_locked": false,
@@ -18,8 +18,8 @@
     "cycle_day_pnl": {},
     "payouts": [],
     "trading_days": 0,
-    "realized_pnl": -885.7,
-    "trades": 20
+    "realized_pnl": -1394.2,
+    "trades": 21
   },
   "positions": [
     {
@@ -184,212 +184,13 @@
         "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-12/cycles/164220.json/GBPUSD.png"
       },
       "mfe": 0.0,
-      "mae": 0.0008399999999999519,
+      "mae": 0.0009999999999998899,
       "mfe_min": 0.0,
       "time_cut_deadline": null,
       "time_cut_candles": 0,
       "time_cut_rule": "none: exit = Gemini CLOSE (1-strike) or hard stop -$500 NET; no target, no max hold, no 16:45 flat; DLL/MLL/breaker log-only",
       "hard_stop_px": 1.3285,
       "hard_stop_armed_at": "2026-11-12T12:43:00+00:00",
-      "hard_stop_usd": 500.0
-    },
-    {
-      "id": 22,
-      "symbol": "US100",
-      "contract": "NQ",
-      "qty": 1,
-      "side": -1,
-      "entry": 28074.5,
-      "stop": null,
-      "notional_risk_usd": 795.0,
-      "target": null,
-      "entry_time": "2026-11-12T13:01:10.724613+00:00",
-      "exit_mode": "gemini_only",
-      "fill_source": "live_quote:dukascopy:tick",
-      "fill_check": {
-        "fill_minute": "2026-11-12T13:01:00+00:00",
-        "fill_t": "2026-11-12T13:01:10.724613+00:00",
-        "ref_price": 28074.74,
-        "booked": 28074.5,
-        "slippage_ticks": 1,
-        "tick": 0.25,
-        "signal_entry": 28075.22,
-        "adverse_ticks_vs_quote": 0.96,
-        "m1_bar_open": 28074.74,
-        "quote_price": 28074.74,
-        "quote_ts": "2026-11-12T13:01:10.378000+00:00",
-        "quote_source": "dukascopy:tick",
-        "quote_age_s": 0.35,
-        "quote_fetched_at": "2026-11-12T13:01:10.724613+00:00",
-        "bar_open_minus_quote": 0.0,
-        "tolerance_ticks": 1.5,
-        "within_slippage": true
-      },
-      "risk_usd": null,
-      "target_usd": null,
-      "target_source": "none (gemini_only)",
-      "sizing": "gemini_only: notional 0.8 ATR = 39.75 x 20/pt = $795 per NQ; 1 NQ ~ $795 notional <= $1500 (reference only; NO stop, NO target, exit = Gemini CLOSE)",
-      "target_usd_gross": null,
-      "commission_rt": 3.5,
-      "atr": 49.546,
-      "gemini": {
-        "action": "SELL",
-        "entry": 28075.22,
-        "stop_loss": 28111.78,
-        "take_profit": 28030.22,
-        "confidence": 0.76,
-        "rr": 1.231,
-        "shown_on_site": true,
-        "basis": "site signal",
-        "run_at_utc": "2026-11-12T13:00:20.284760+00:00",
-        "session": "LONDON_SESSION",
-        "rationale": "Price is trading below VAL (28086.57) and below POC (28117.21). CVD is BEARISH (-4.10) with negative slope (-0.69). Active in LONDON_SESSION prior to NY cash open. Structure is decisively bearish below descending VWAP (28131.81) and EMA50 (28153.17). Price rejected overhead S/R (28083.64) on the signal candle, pressing down toward the lower ATR band (28032.29) and Session Low (28030.00). Applying the US100 CFD volume caveat (yellow RVOL spikes rare), the breakdown acceptance below VAL and rejection of resistance confirms clean short continuation.",
-        "model": "gemini-3.8-flash"
-      },
-      "scalp": {
-        "action": "SELL",
-        "side": -1,
-        "entry": 28074.74,
-        "stop_loss": 28111.78,
-        "take_profit": 28069.74,
-        "sdist": 37.03729999999632,
-        "tdist": 5.0,
-        "stop_source": "structure",
-        "target_source": "fixed",
-        "rr": 0.135,
-        "structure_stop": 28111.777299999998,
-        "atr_stop": 28114.376800000002,
-        "fixed_tp": 28069.74,
-        "structure_tp": 28030.25,
-        "structure_label": "Session Low",
-        "candle": {
-          "high": 28109.3,
-          "low": 28071.22
-        },
-        "levels": [
-          {
-            "price": 28083.64,
-            "label": "S/R"
-          },
-          {
-            "price": 28209.17,
-            "label": "S/R"
-          },
-          {
-            "price": 28265.71,
-            "label": "Session High"
-          },
-          {
-            "price": 28030.0,
-            "label": "Session Low"
-          },
-          {
-            "price": 27753.51,
-            "label": "Prev Low"
-          },
-          {
-            "price": 27420.02,
-            "label": "S/R"
-          }
-        ],
-        "vp": {
-          "poc": 28117.21,
-          "vah": 28185.57,
-          "val": 28086.57
-        },
-        "target_scalp": 28070.22,
-        "lucid_plan": {
-          "contract": "NQ",
-          "qty": 1,
-          "tdist": 45.0,
-          "target_usd": 896.5,
-          "risk_usd": 735.0,
-          "target_source": "structure:next:Session Low",
-          "sizing": "fixed target 5 cannot reach $381 net at an allowed size; next structure Session Low at 45 gives $896 net with 1 NQ (risk $735)"
-        }
-      },
-      "telemetry": {
-        "symbol": "US100",
-        "session": "LONDON_SESSION",
-        "last_close": 28077.96,
-        "atr": 49.546,
-        "vwap": 28131.81,
-        "ema20": 28131.38,
-        "ema50": 28153.17,
-        "price_vs_vwap": {
-          "side": "below",
-          "dist_atr": -1.0869
-        },
-        "price_vs_ema50": {
-          "side": "below",
-          "dist_atr": -1.518
-        },
-        "vwap_aligned_with_side": true,
-        "ema50_aligned_with_side": true,
-        "poc": 28117.21,
-        "vah": 28185.57,
-        "val": 28086.57,
-        "price_vs_value_area": "below_val",
-        "dist_to_poc_atr": -0.7922,
-        "cvd": -4.1,
-        "cvd_label": "BEARISH",
-        "cvd_slope": -0.69,
-        "cvd_agrees_with_side": true,
-        "rvol": 0.961,
-        "rvol_spike": false,
-        "rvol_bars_since_spike": 82,
-        "atr_band_z": -1.0782,
-        "atr_upper": 28230.47,
-        "atr_lower": 28032.29,
-        "nearest_sr": {
-          "above": {
-            "price": 28083.64,
-            "label": "S/R",
-            "dist_atr": 0.1146
-          },
-          "below": {
-            "price": 28030.0,
-            "label": "Session Low",
-            "dist_atr": 0.968
-          }
-        },
-        "gemini": {
-          "action": "SELL",
-          "confidence": 0.76,
-          "confidence_band": "0.7-0.8",
-          "rationale": "Price is trading below VAL (28086.57) and below POC (28117.21). CVD is BEARISH (-4.10) with negative slope (-0.69). Active in LONDON_SESSION prior to NY cash open. Structure is decisively bearish below descending VWAP (28131.81) and EMA50 (28153.17). Price rejected overhead S/R (28083.64) on the signal candle, pressing down toward the lower ATR band (28032.29) and Session Low (28030.00). Applying the US100 CFD volume caveat (yellow RVOL spikes rare), the breakdown acceptance below VAL and rejection of resistance confirms clean short continuation.",
-          "model": "gemini-3.8-flash",
-          "model_action": "SELL"
-        },
-        "scalp": {
-          "stop_basis": "structure",
-          "target_basis": "fixed",
-          "tdist": null,
-          "sdist": null,
-          "structure_label": "Session Low",
-          "target_source": "none (gemini_only)"
-        },
-        "planned": {
-          "tdist": null,
-          "sdist": null,
-          "qty": 1,
-          "contract": "NQ",
-          "target_usd_net": null,
-          "risk_usd": null,
-          "target_source": "none (gemini_only)",
-          "sizing": "gemini_only: notional 0.8 ATR = 39.75 x 20/pt = $795 per NQ; 1 NQ ~ $795 notional <= $1500 (reference only; NO stop, NO target, exit = Gemini CLOSE)"
-        },
-        "run_at_utc": "2026-11-12T13:00:20.284760+00:00",
-        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-12/cycles/170020.json/US100.png"
-      },
-      "mfe": 18.334999999999127,
-      "mae": 8.221000000001368,
-      "mfe_min": 0.0,
-      "time_cut_deadline": null,
-      "time_cut_candles": 0,
-      "time_cut_rule": "none: exit = Gemini CLOSE (1-strike) or hard stop -$500 NET; no target, no max hold, no 16:45 flat; DLL/MLL/breaker log-only",
-      "hard_stop_px": 28099.5,
-      "hard_stop_armed_at": "2026-11-12T13:01:10.724613+00:00",
       "hard_stop_usd": 500.0
     }
   ],
@@ -398,16 +199,16 @@
   "day": {
     "id": "2026-11-12",
     "start_balance": 100000.0,
-    "realized": -885.7,
+    "realized": -1394.2,
     "locked": null,
     "eod_done": null,
     "traded": true
   },
   "last_price": {
-    "US100": 28056.742,
+    "US100": 28046.175,
     "XAUUSD": 3935.998,
     "EURUSD": 1.10904,
-    "GBPUSD": 1.32614
+    "GBPUSD": 1.32646
   },
   "history": [],
   "ledger": {
@@ -429,13 +230,13 @@
     "payouts_gross": 0.0,
     "payouts_received": 0.0,
     "payout_count": 0,
-    "trades": 20,
+    "trades": 21,
     "wins": 12,
-    "losses": 8,
+    "losses": 9,
     "gross_win": 4423.2,
-    "gross_loss": -5308.9,
-    "commissions": 219.65,
-    "net_trade_pnl": -885.7,
+    "gross_loss": -5817.4,
+    "commissions": 221.4,
+    "net_trade_pnl": -1394.2,
     "skipped_signals": 1,
     "accepted_signals": 23
   },
@@ -903,7 +704,8 @@
     18,
     19,
     16,
-    20
+    20,
+    22
   ],
   "breaches": [
     {

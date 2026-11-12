@@ -49,6 +49,36 @@ def _dt(s: str | None) -> datetime | None:
     return datetime.fromisoformat(s) if s else None
 
 
+def format_held(seconds: float | int | None) -> str | None:
+    """Human hold time for the panel: '45s', '2m 14s', or '1h 05m'."""
+    if seconds is None:
+        return None
+    s = int(round(float(seconds)))
+    if s < 0:
+        s = 0
+    h, rem = divmod(s, 3600)
+    m, sec = divmod(rem, 60)
+    if h:
+        return f"{h}h {m:02d}m"
+    if m:
+        return f"{m}m {sec:02d}s"
+    return f"{sec}s"
+
+
+def trade_hold_seconds(row: dict) -> int | None:
+    """Prefer the close-time hold_seconds; otherwise entry_time → t_exit."""
+    if row.get("hold_seconds") is not None:
+        try:
+            return int(row["hold_seconds"])
+        except (TypeError, ValueError):
+            pass
+    if row.get("t_exit") and row.get("entry_time"):
+        a, b = _dt(row["entry_time"]), _dt(row["t_exit"])
+        if a and b:
+            return int((b - a).total_seconds())
+    return None
+
+
 class LucidSim:
     def __init__(self, cfg: dict, state_dir: str | Path | None = None, logs_dir: str | Path | None = None):
         self.cfg = cfg
@@ -1033,7 +1063,14 @@ class LucidSim:
                         "unrealized": round(self.pnl(p, px), 2), "risk_usd": p.get("risk_usd"),
                         "target_usd_net": p.get("target_usd"), "target_source": p.get("target_source")})
         keep = ("t_exit", "symbol", "contract", "qty", "side", "entry_time", "entry", "exit", "reason", "net",
-                "balance_after")
+                "balance_after", "hold_seconds", "held")
+        recent_rows = []
+        for trow in trades[-recent:][::-1]:
+            row = {k: trow.get(k) for k in keep}
+            hs = trade_hold_seconds(trow)
+            row["hold_seconds"] = hs
+            row["held"] = format_held(hs)
+            recent_rows.append(row)
         return {
             "updated_at": datetime.now(UTC).isoformat(), "paper_only": True, "plan": self.L.get("plan"),
             "exit_mode": ("gemini_only" if self.gemini_only else "gemini" if self.gemini_exit else "server"),
@@ -1066,7 +1103,7 @@ class LucidSim:
                         "to_target": round(a["start_balance"] + self.L["eval_profit_target"] - a["balance"], 2)
                         if a["phase"] == "eval" else None},
             "open_positions": pos, "pending": len(self.s["pending"]),
-            "recent_trades": [{k: t.get(k) for k in keep} for t in trades[-recent:]][::-1],
+            "recent_trades": recent_rows,
             "last_processed": self.s.get("last_processed"),
         }
 

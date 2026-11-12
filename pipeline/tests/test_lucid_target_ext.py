@@ -9,7 +9,7 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from signals.config import load_config
-from signals.lucid import LucidSim
+from signals.lucid import LucidSim, format_held, trade_hold_seconds
 from signals.scalp_levels import apply_server_levels, compute_scalp_levels
 
 UTC = timezone.utc
@@ -202,3 +202,42 @@ def test_site_lucid_json_post_reset_only(cfg, tmp_path):
     r, md = write_report(lg)
     assert r["eras"]["pre_reset"]["count"] == 1 and r["eras"]["post_reset"]["count"] == 1
     assert r["summary"]["count"] == 1 and "Pre-reset" in md and "Post-reset" in md
+
+
+def test_format_held():
+    assert format_held(None) is None
+    assert format_held(0) == "0s"
+    assert format_held(45) == "45s"
+    assert format_held(120) == "2m 00s"
+    assert format_held(134) == "2m 14s"
+    assert format_held(3600 + 5 * 60) == "1h 05m"
+    assert format_held(3600 + 5 * 60 + 7) == "1h 05m"  # seconds dropped from the hour+ form
+
+
+def test_site_recent_trades_include_held_and_opened(cfg, tmp_path):
+    """lucid.json recent_trades carry entry_time, hold_seconds, and a formatted held string."""
+    st, lg = tmp_path / "state", tmp_path / "logs"
+    cfg["lucid"]["reset_token"] = "held-test"
+    s = LucidSim(cfg, st, lg)
+    t0 = datetime.now(UTC) + timedelta(minutes=1)  # after this sim's reset_at
+    t1 = t0 + timedelta(minutes=2)          # 2m 00s, hold_seconds already on the close record
+    t2 = t0 + timedelta(hours=1, minutes=5, seconds=7)  # backfill from times only
+    s._jsonl("lucid_trades.jsonl", t1, {
+        "t_exit": t1.isoformat(), "entry_time": t0.isoformat(),
+        "symbol": "US100", "contract": "NQ", "qty": 2, "side": "LONG",
+        "entry": 28182.75, "exit": 28188.25, "reason": "gemini_close",
+        "net": 213.0, "hold_seconds": 120, "balance_after": 100213.0,
+    })
+    s._jsonl("lucid_trades.jsonl", t2, {
+        "t_exit": t2.isoformat(), "entry_time": t0.isoformat(),
+        "symbol": "EURUSD", "contract": "6E", "qty": 1, "side": "LONG",
+        "net": 10.0,
+    })
+    j = json.loads(s.write_site(tmp_path / "site").read_text())
+    # newest first
+    euru, us = j["recent_trades"]
+    assert us["symbol"] == "US100" and us["entry_time"] == t0.isoformat()
+    assert us["hold_seconds"] == 120 and us["held"] == "2m 00s"
+    assert euru["symbol"] == "EURUSD"
+    assert euru["hold_seconds"] == trade_hold_seconds(euru) == 3907
+    assert euru["held"] == "1h 05m" and euru["entry_time"] == t0.isoformat()

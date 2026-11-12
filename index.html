@@ -381,6 +381,21 @@
   const hm = iso => fmt(iso, { hour: '2-digit', minute: '2-digit' });
   const dayhm = iso => fmt(iso, { weekday: 'short', hour: '2-digit', minute: '2-digit' });
   const mmss = s => { s = Math.max(0, Math.ceil(s)); const m = Math.floor(s / 60); return String(m).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0'); };
+  const fmtHeld = s => {
+    s = Math.max(0, Math.round(Number(s)));
+    if (!Number.isFinite(s)) return '—';
+    const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), sec = s % 60;
+    if (h) return h + 'h ' + String(m).padStart(2, '0') + 'm';
+    if (m) return m + 'm ' + String(sec).padStart(2, '0') + 's';
+    return sec + 's';
+  };
+  const heldOf = t => {
+    if (t.held) return t.held;
+    if (t.hold_seconds != null && t.hold_seconds !== '') return fmtHeld(t.hold_seconds);
+    const a = Date.parse(t.entry_time), b = Date.parse(t.t_exit);
+    if (Number.isFinite(a) && Number.isFinite(b)) return fmtHeld((b - a) / 1000);
+    return '—';
+  };
   const px = (v, d) => v == null ? '—' : Number(v).toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d });
 
   function schedule(now) {
@@ -510,9 +525,9 @@
       <td>${p.target != null ? px(p.target, 2) : 'Gemini'}</td><td class="${cls(p.unrealized)}">${usd(p.unrealized, true)}</td></tr>`).join('')}</table>`
       : `<div class="lu-note">None${L.pending ? ` · ${L.pending} pending entry` : ''}</div>`;
     const T = L.recent_trades || [];
-    $('luTrades').innerHTML = T.length ? `<table class="lu-t"><tr><th>Closed</th><th>Symbol</th><th>Size</th><th>Side</th>
-      <th>Exit</th><th>Net</th></tr>${T.map(t => `<tr><td>${dayhm(t.t_exit)}</td><td>${esc(t.symbol)}</td>
-      <td>${t.qty} ${esc(t.contract)}</td><td>${esc(t.side)}</td><td>${esc(t.reason)}</td>
+    $('luTrades').innerHTML = T.length ? `<table class="lu-t"><tr><th>Closed</th><th>Opened</th><th>Symbol</th><th>Size</th><th>Side</th>
+      <th>Held</th><th>Exit</th><th>Net</th></tr>${T.map(t => `<tr><td>${dayhm(t.t_exit)}</td><td>${dayhm(t.entry_time)}</td><td>${esc(t.symbol)}</td>
+      <td>${t.qty} ${esc(t.contract)}</td><td>${esc(t.side)}</td><td>${esc(heldOf(t))}</td><td>${esc(t.reason)}</td>
       <td class="${cls(t.net)}">${usd(t.net, true)}</td></tr>`).join('')}</table>`
       : '<div class="lu-note">No closed trades since the reset yet.</div>';
     const B = L.breaches || [];

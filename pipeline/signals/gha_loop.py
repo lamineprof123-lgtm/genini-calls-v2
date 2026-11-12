@@ -21,7 +21,7 @@ from .pipeline import next_boundary, run_once
 from .site import write_status
 
 log = logging.getLogger("signals.gha")
-SITE_JSON = ("status.json", "latest_signal.json", "history.json", "lucid.json", "claude.json")
+SITE_JSON = ("status.json", "latest_signal.json", "history.json", "lucid.json", "claude.json", "bracket.json")
 DATA_JSON = ("books.json",)  # committed to the data branch only (not deployed to Pages)
 CYCLE_LOG_KEEP_DAYS = 14
 
@@ -54,6 +54,9 @@ class GhaLoop:
         self.exit_task: asyncio.Task | None = None
         self.claude = None                   # Claude parallel paper sims (signals/claude_sim.py)
         self.claude_exit_task: asyncio.Task | None = None
+        self.bracket = None                  # 'bracket' Gemini shadow book (signals/bracket.py)
+        self.bracket_task: asyncio.Task | None = None
+        self.bracket_cycle_task: asyncio.Task | None = None
         for sub in ("state", "logs"):
             (data / sub).mkdir(parents=True, exist_ok=True)
 
@@ -191,6 +194,7 @@ class GhaLoop:
         await self._verify_models_once()
         self.start_exit_manager()
         self.start_claude()
+        self.start_bracket()
         while True:
             # The job still wakes every `self.interval` (2 min). The site countdown uses
             # scan_interval (2 active / 15 during ASIAN / DEADZONE) so it matches the next Gemini call.
@@ -224,6 +228,7 @@ class GhaLoop:
             nxt2 = next_boundary(datetime.now(timezone.utc), self.scan_interval, self.offset)
             self.status("running", nxt2)
             self.schedule_claude(res)
+            self.schedule_bracket(res)
             deploy_task = asyncio.create_task(self.deploy())
             if not self.dry_run:
                 lres = await lucid_step(self.cfg, (res or {}).get("record"))
@@ -338,9 +343,50 @@ class GhaLoop:
                 await asyncio.wait_for(t, 30)
         self.claude_exit_task = None
 
+    def start_bracket(self) -> None:
+        """'bracket' shadow book: consumes the same validated Gemini signals after each cycle (no extra Gemini
+        call) + its own 18 s bracket checks. Isolated: errors are logged and never touch main / exit books."""
+        from .bracket import bracket_cfg
+        if self.dry_run or not bracket_cfg(self.cfg).get("enabled", False):
+            return
+        try:
+            from .bracket import BracketBook, run_bracket_loop
+            self.bracket = BracketBook(self.cfg, io_lock=self.io_lock)
+            self.bracket_task = asyncio.create_task(run_bracket_loop(self.bracket), name="bracket")
+            log.info("bracket shadow book on: %s", self.bracket.site_view()["rules"])
+        except Exception:
+            log.exception("bracket book failed to start (main loop unaffected)")
+            self.bracket = None
+
+    def schedule_bracket(self, res: dict | None) -> None:
+        if self.bracket is None:
+            return
+        rec = (res or {}).get("record")
+        if self.bracket_cycle_task is not None and not self.bracket_cycle_task.done():
+            log.info("bracket: previous intake still running; this cycle's signals queued after it")
+        prev = self.bracket_cycle_task
+
+        async def _run():
+            if prev is not None:
+                with contextlib.suppress(BaseException):
+                    await prev
+            r = await self.bracket.on_cycle(rec)
+            log.info("bracket: %s", json.dumps(r, default=str)[:300])
+        self.bracket_cycle_task = asyncio.create_task(_run(), name="bracket-cycle")
+
+    async def stop_bracket(self) -> None:
+        for t in (self.bracket_cycle_task, self.bracket_task):
+            if t is None:
+                continue
+            t.cancel()
+            with contextlib.suppress(BaseException):
+                await asyncio.wait_for(t, 30)
+        self.bracket_task = self.bracket_cycle_task = None
+
     async def shutdown(self, reason: str) -> None:
         await self.stop_exit_manager()
         await self.stop_claude()
+        await self.stop_bracket()
         succ = L.read(self.data, L.SUCC)
         handed = succ.get("run_id") if (reason == "handoff" and succ) else None
         if reason == "stop-file":
@@ -379,6 +425,7 @@ async def run_gha_loop(cfg: dict, data: Path, run_id: str, role: str, **kw) -> s
     except LostLock as e:
         await loop.stop_exit_manager()
         await loop.stop_claude()
+        await loop.stop_bracket()
         log.error("lost the loop lock: %s -> exiting without further writes", e)
         return "lost-lock"
     finally:

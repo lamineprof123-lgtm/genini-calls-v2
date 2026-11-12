@@ -260,6 +260,16 @@
   <div class="lu-note" id="luNote"></div>
 </section>
 
+<section class="lucid" id="bracket" hidden aria-label="Bracket shadow book">
+  <h2><span><span class="who g">Gemini</span>Bracket shadow · conf ≥ 0.75 · 1 ATR / 1 ATR</span><small id="brUpd"></small></h2>
+  <div class="lu-grid" id="brGrid"></div>
+  <h3>Open positions</h3>
+  <div class="lu-wrap" id="brPos"></div>
+  <h3>Recent trades</h3>
+  <div class="lu-wrap" id="brTrades"></div>
+  <div class="lu-note" id="brNote"></div>
+</section>
+
 <section class="lucid" id="cmp" hidden aria-label="Gemini vs Claude comparison">
   <h2><span>Gemini vs Claude Opus vs Claude Sonnet</span><small id="cmpUpd"></small></h2>
   <div class="lu-wrap" id="cmpT"></div>
@@ -416,7 +426,7 @@
     return fmtHeld((Date.now() - a) / 1000);
   };
   const tickOpenHeld = () => {
-    document.querySelectorAll('#luPos [data-entry-time], #clSims [data-entry-time]').forEach(el => {
+    document.querySelectorAll('#luPos [data-entry-time], #brPos [data-entry-time], #clSims [data-entry-time]').forEach(el => {
       el.textContent = heldSince(el.getAttribute('data-entry-time'));
     });
   };
@@ -526,7 +536,7 @@
   }
 
   // ---- Lucid paper account (lucid.json, written each cycle; paper trading only) ----
-  let lucid = null;
+  let lucid = null, bracket = null;
   const usd = (v, sign) => v == null ? '—' : (sign && v > 0 ? '+' : (v < 0 ? '−' : '')) + '$' +
     Math.abs(Number(v)).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const cls = v => v > 0 ? 'pos' : (v < 0 ? 'neg' : '');
@@ -557,10 +567,16 @@
       <td>${t.qty} ${esc(t.contract)}</td><td>${esc(t.side)}</td><td>${esc(heldOf(t))}</td><td>${t.stopped ? '<b class="neg">STOPPED</b> ' : ''}${esc(t.reason)}</td>
       <td class="${cls(t.net)}">${usd(t.net, true)}</td></tr>`).join('')}</table>`
       : '<div class="lu-note">No closed trades since the reset yet.</div>';
-    const C = L.comparison || [];
+    const C = (L.comparison || []).slice();
+    if (bracket && bracket.account) {
+      const ba = bracket.account;
+      C.push({ label: bracket.label || 'Bracket shadow (conf>=0.75, 1 ATR / 1 ATR)', stop_txt: '1 ATR · tgt 1 ATR',
+               balance: ba.balance, net_pnl: ba.net_pnl, open_pnl: ba.open_pnl, trades: ba.trades, wins: ba.wins,
+               losses: ba.losses, stopped: ba.stopped, open_positions: ba.open_positions });
+    }
     $('luCmp').innerHTML = C.length ? `<table class="lu-t"><tr><th>Book</th><th>Stop</th><th>Balance</th><th>Net P&amp;L</th>
       <th>Open P&amp;L</th><th>Trades</th><th>Stopped</th><th>Open</th></tr>${C.map(c => `<tr><td>${esc(c.label || c.book)}</td>
-      <td>${c.hard_stop_net_usd ? '−$' + Number(c.hard_stop_net_usd).toLocaleString('en-US') : 'none'}</td><td>${usd(c.balance)}</td>
+      <td>${c.stop_txt ? esc(c.stop_txt) : c.hard_stop_net_usd ? '−$' + Number(c.hard_stop_net_usd).toLocaleString('en-US') : 'none'}</td><td>${usd(c.balance)}</td>
       <td class="${cls(c.net_pnl)}">${usd(c.net_pnl, true)}</td><td class="${cls(c.open_pnl)}">${usd(c.open_pnl, true)}</td>
       <td>${c.trades}${c.trades ? ` <small>(${c.wins}W/${c.losses}L)</small>` : ''}</td><td>${c.stopped || 0}</td>
       <td>${c.open_positions || 0}</td></tr>`).join('')}</table>`
@@ -651,6 +667,48 @@
   }
   pollClaude();
   setInterval(pollClaude, 15000);
+  // ---- Bracket shadow book (bracket.json; paper only, own $100k, same Gemini entry signals) ----
+  function renderBracket() {
+    const B = bracket; if (!B || !B.account) return;
+    const a = B.account;
+    const cell = (k, v, c) => `<div><div class="lu-k">${k}</div><div class="lu-v ${c || ''}">${v}</div></div>`;
+    $('brGrid').innerHTML = [
+      cell('Balance', usd(a.balance)), cell('Equity', usd(a.equity)),
+      cell('Net P&amp;L', usd(a.net_pnl, true), cls(a.net_pnl)),
+      cell('Open P&amp;L', usd(a.open_pnl, true), cls(a.open_pnl)),
+      cell('Trades', `${a.trades}${a.trades ? ` <small>(${a.wins}W/${a.losses}L)</small>` : ''}`),
+      cell('Max DD', usd(a.max_drawdown, true), cls(a.max_drawdown)),
+      cell('Signals', `${a.signals_taken}<small> / ${a.signals_seen} seen</small>`),
+    ].join('');
+    const P = B.open_positions || [];
+    const d = v => v != null && Math.abs(v) < 10 ? 5 : 2;
+    $('brPos').innerHTML = P.length ? `<table class="lu-t"><tr><th>Symbol</th><th>Size</th><th>Side</th><th>Opened</th><th>Held</th>
+      <th>Entry</th><th>Stop</th><th>Target</th><th>Conf</th><th>Open P&amp;L</th></tr>${P.map(p => `<tr><td>${esc(p.symbol)}</td>
+      <td>${p.qty} ${esc(p.contract)}</td><td>${esc(p.side)}</td><td>${dayhm(p.entry_time)}</td>
+      <td data-entry-time="${esc(p.entry_time)}">${esc(heldSince(p.entry_time))}</td>
+      <td>${px(p.entry, d(p.entry))}</td><td>${px(p.stop, d(p.stop))}</td><td>${px(p.target, d(p.target))}</td>
+      <td>${p.confidence != null ? Number(p.confidence).toFixed(2) : '—'}</td>
+      <td class="${cls(p.unrealized)}">${usd(p.unrealized, true)}</td></tr>`).join('')}</table>`
+      : `<div class="lu-note">None${a.pending ? ` · ${a.pending} pending entry` : ''}</div>`;
+    const T = B.recent_trades || [];
+    $('brTrades').innerHTML = T.length ? `<table class="lu-t"><tr><th>Closed</th><th>Opened</th><th>Symbol</th><th>Size</th><th>Side</th>
+      <th>Held</th><th>Exit</th><th>Net</th></tr>${T.map(t => `<tr><td>${dayhm(t.t_exit)}</td><td>${dayhm(t.entry_time)}</td><td>${esc(t.symbol)}</td>
+      <td>${t.qty} ${esc(t.contract)}</td><td>${esc(t.side)}</td><td>${esc(heldOf(t))}</td><td>${t.stopped ? '<b class="neg">STOPPED</b>' : esc(t.reason)}</td>
+      <td class="${cls(t.net)}">${usd(t.net, true)}</td></tr>`).join('')}</table>`
+      : '<div class="lu-note">No closed trades yet.</div>';
+    const ms = a.missed_scans_main_held || {};
+    const mtxt = Object.keys(ms).length ? ' · scans missed while main held: ' + Object.entries(ms).map(([k, v]) => `${k} ${v}`).join(', ') : '';
+    $('brUpd').textContent = B.updated_at ? `updated ${hm(B.updated_at)} ${city()}` : '';
+    $('brNote').textContent = `Paper trading only · fresh $${Number(a.start_balance || 100000).toLocaleString('en-US')} account since ` +
+      `${dayhm(B.since)} ${city()} · ${B.rules || ''} · ${B.limitation || ''}${mtxt}`;
+    $('bracket').hidden = false;
+  }
+  async function pollBracket() {
+    const j = await getJSON('bracket.json');
+    if (j && !(bracket && Date.parse(j.updated_at) < Date.parse(bracket.updated_at))) { bracket = j; renderBracket(); renderLucid(); }
+  }
+  pollBracket();
+  setInterval(pollBracket, 15000);
   async function pollLucid() {
     const j = await getJSON('lucid.json');
     if (j && !(lucid && Date.parse(j.updated_at) < Date.parse(lucid.updated_at))) { lucid = j; renderLucid(); }

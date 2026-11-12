@@ -455,3 +455,34 @@ max_chase_atr = 0.5
 min_score = 5
 slippage_ticks = 1
 max_qty = { NQ = 1, GC = 1, 6E = 4, 6B = 4 }
+
+# ---------------------------------------------------------------------------------------------------------------
+# 'bracket' GEMINI SHADOW BOOK (signals/bracket.py). PAPER ONLY, its own $100k account. Main account rules unchanged.
+# From gemini-signals/analysis/edge_study.md (12 Nov 2026): the same live Gemini entry signals as main (no extra
+# Gemini call), confidence >= 0.75, XAUUSD / EURUSD / US100 only (no GBPUSD, no BTC); fixed bracket at entry:
+# stop 1 M15 ATR, target 1 ATR, 90-min max hold, flat by 21:45 UTC; Gemini CLOSEs ignored. Fill = live quote
+# (same feed as the hard stop) + 1 tick; every exit 1 tick slippage; real commission. Half of Lucid sizing:
+# qty = floor(risk_usd / (1 ATR x point value)) >= 1, max 6 full-size open in this book, one per symbol.
+# Tracked independently of main (takes a signal even while main holds the symbol). Limitation: main's entry scan
+# drops symbols MAIN holds, so there is no signal for them that cycle (counted as missed_scans in bracket.json).
+[bracket]
+enabled = true
+symbols = ["XAUUSD", "EURUSD", "US100"]
+min_confidence = 0.75
+stop_atr = 1.0
+target_atr = 1.0
+max_hold_minutes = 90
+flat_utc = "21:45"
+reopen_utc = "23:00"
+no_new_entries_last_minutes = 15
+risk_usd = 900.0                # half of Lucid: 1-ATR stop risks ~$750-900 (1 contract minimum)
+max_risk_usd = 1500.0           # skip if ONE contract at the 1-ATR stop would risk more than this
+max_minis = 6
+slippage_ticks = 1
+start_balance = 100000.0
+check_seconds = 18
+pending_expiry_seconds = 180    # no usable live quote for this long -> the signal is dropped
+max_chase_atr = 0.5
+fill_quote_max_age_s = 60
+gap_seconds = 180
+reset_token = "bracket-v1"

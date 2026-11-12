@@ -1071,7 +1071,7 @@ class ExitManager:
                                     ("Gemini exit calls paused — mechanical exits" if mech else None)),
                 "exit_rules": ({k: "1 ATR stop · 1 ATR target · 90-min cap"
                                 for k in ("main", "1-strike", "nostop", "bracket",
-                                          "CB-BRACKET", "CB-RUNNER", "C-OPUS", "C-SONNET", "DS-FLASH")}
+                                          "CB-BRACKET", "CB-RUNNER", "C-OPUS", "C-SONNET", "C-OPUS-B", "DS-FLASH")}
                                if uni else ({
                     "main": (f"−${hs:g} net hard stop · 1 ATR target · 90-min cap" if hs else
                              "1 ATR target · 90-min cap"),

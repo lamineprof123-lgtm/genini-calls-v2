@@ -751,3 +751,38 @@ def test_claude_scan_offset_is_m15_plus_20s():
     assert next_boundary(t, 15, 20) == datetime(2026, 11, 11, 15, 0, 20, tzinfo=UTC)
     t2 = datetime(2026, 11, 11, 15, 0, 21, tzinfo=UTC)
     assert next_boundary(t2, 15, 20) == datetime(2026, 11, 11, 15, 15, 20, tzinfo=UTC)
+
+
+# ------------------------------------------------------------------ other-venue BTC in the what-if path (KeyError '?')
+def test_btc_other_venue_signal_skips_lucid_whatif_and_other_books_continue(tmp_path):
+    from signals.other_venue import is_other_venue_symbol
+    btc = _payload("BTCUSD", 90000.0, 300.0)
+    ans = {OPUS: [_sig("XAUUSD"), _sig("EURUSD"), _sig("GBPUSD"), _sig("US100"),
+                  _sig("BTCUSD", "BUY", 7, "trend", 0.8, stop=89700.0)],
+           SON: [_sig("XAUUSD", "BUY", 6, "trend", 0.6, stop=1996.0), _sig("EURUSD"), _sig("GBPUSD"),
+                 _sig("US100"), _sig("BTCUSD", "SELL", 6, "fade", 0.7, stop=90300.0)]}
+    eng, _ = _engine(tmp_path, ans)
+    eng.ov_symbols = set(getattr(eng, "ov_symbols", ()) or ()) | {"BTCUSD"}
+    assert eng.contract_of("BTCUSD") == "?" and "?" not in eng.contracts
+    out = asyncio.run(eng.on_cycle(PAYLOADS + [btc], now=T0))
+    assert set(out["sims"]) == {"C-OPUS", "C-SONNET"}
+    # no Lucid what-if / twin for BTCUSD, and the XAUUSD what-if from Sonnet still exists
+    assert all(t["symbol"] != "BTCUSD" for t in eng.eng["shadow"])
+    assert any(t["symbol"] == "XAUUSD" and t["sim"] == "C-SONNET" for t in eng.eng["shadow"])
+
+
+def test_one_book_processing_error_does_not_abort_the_other(tmp_path):
+    ans = {OPUS: [_sig("XAUUSD"), _sig("EURUSD"), _sig("GBPUSD"), _sig("US100")],
+           SON: [_sig("XAUUSD", "BUY", 6, "trend", 0.6, stop=1996.0), _sig("EURUSD"), _sig("GBPUSD"),
+                 _sig("US100")]}
+    eng, _ = _engine(tmp_path, ans)
+    orig = eng._process_signals
+
+    def boom(sid, *a, **k):
+        if sid == "C-OPUS":
+            raise KeyError("?")
+        return orig(sid, *a, **k)
+    eng._process_signals = boom
+    out = asyncio.run(eng.on_cycle(PAYLOADS, now=T0))
+    assert out["sims"]["C-OPUS"]["signals"] == [] and "KeyError" in out["sims"]["C-OPUS"]["error"]
+    assert len(eng.sims["C-SONNET"]["positions"]) == 1

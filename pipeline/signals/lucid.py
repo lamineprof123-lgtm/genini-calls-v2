@@ -1320,6 +1320,7 @@ class LucidSim:
                 "CB-RUNNER": "1 ATR stop · 1 ATR target · 90-min cap",
                 "C-OPUS": "1 ATR stop · 1 ATR target · 90-min cap",
                 "C-SONNET": "1 ATR stop · 1 ATR target · 90-min cap",
+                "C-OPUS-B": "1 ATR stop · 1 ATR target · 90-min cap",
                 "DS-FLASH": "1 ATR stop · 1 ATR target · 90-min cap",
             } if uniform_exits_enabled(self.cfg) else ({
                 "main": (f"−${self.hard_stop_usd:,.0f} net hard stop · 1 ATR target · 90-min cap"

@@ -475,9 +475,19 @@ class ClaudeEngine:
                 if isinstance(r, Exception):
                     r = {"ok": False, "model": m, "error": f"{type(r).__name__}: {str(r)[:200]}"}
                 self._log_call(sid, "entry", m, r, t_done, bar=bar, n_symbols=len(syms))
-                sigs = self._process_signals(sid, m, r, lp, htf, bar, t_done)
+                try:
+                    sigs = self._process_signals(sid, m, r, lp, htf, bar, t_done)
+                except Exception as e:
+                    # One book's bad row must not abort the other books in this cycle.
+                    log.exception("claude %s signal processing failed (other books continue)", sid)
+                    self._jsonl("claude_events.jsonl", {"t": _iso(t_done), "sim": sid, "event": "process_error",
+                                                        "bar": bar, "error": f"{type(e).__name__}: {str(e)[:200]}"},
+                                t_done)
+                    sigs = []
+                    r = {**r, "error": r.get("error") or f"process: {type(e).__name__}: {str(e)[:120]}"}
                 out["sims"][sid] = {"ok": r.get("ok"), "latency_ms": r.get("latency_ms"), "cost_usd": r.get("cost_usd"),
-                                    "error": r.get("error"),
+                                    "error": r.get("error"), "model": m, "answer_ts": _iso(t_done),
+                                    "thinking_tokens": r.get("thinking_tokens"), "stop_reason": r.get("stop_reason"),
                                     "signals": [{k: s.get(k) for k in ("symbol", "action", "setup_type", "score",
                                                                         "confidence", "decision")} for s in sigs]}
             self.last_entry = out
@@ -568,7 +578,10 @@ class ClaudeEngine:
                                                                                               "prior_day_high", "prior_day_low")}})
             v["decision"] = "HOLD"
             rows.append(v)
-            if v["action"] in ("BUY", "SELL") and price is not None and ctx.get("atr"):
+            if v["action"] in ("BUY", "SELL") and price is not None and ctx.get("atr") \
+                    and self.contract_of(sym) in self.contracts:
+                # Lucid what-if / coin-flip twin shadows only exist for Lucid contracts. OTHER-VENUE symbols
+                # (BTCUSD: contract_of -> '?') are routed to the hub by _try_open and scored by signal_score.
                 side = 1 if v["action"] == "BUY" else -1
                 atr = float(ctx["atr"])
                 stop, dist, note = clamp_stop(side, float(price), v.get("stop_loss"), atr, self.r)

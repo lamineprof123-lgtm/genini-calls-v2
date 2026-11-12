@@ -75,7 +75,7 @@ DEFAULTS = {
              "locked_mll_balance": 100100.0},
     "spend_cap": {"soft_usd": 15, "hard_usd": 19,
                   "price_per_mtok": {"until_2026-11-30": [2, 10], "from_2026-12-01": [4, 20]},
-                  "max_output_tokens": {"entry": 6000, "exit": 800}},
+                  "max_output_tokens": {"entry": 24000, "exit": 800}},
     "start_balance": 100000.0,
     "check_seconds": 18,
     "slippage_ticks": 1,
@@ -986,7 +986,8 @@ class CarbonEngine:
         crec = self.book_call(kind, r, t_done, thinking=self.cc["entry_thinking"], symbols=send, render_ms=render_ms,
                               parse_error=perr, trigger=trigger)
         out.update({"ok": crec["ok"], "latency_s": crec["latency_s"], "cost_usd": crec["cost_usd"],
-                    "tokens": crec["tokens"], "error": crec["error"] or perr})
+                    "tokens": crec["tokens"], "error": crec["error"] or perr,
+                    "finish_reason": crec.get("finish_reason"), "answer_ts": _iso(t_done)})
         sigs = []
         by = {}
         for s in (obj or {}).get("signals") or []:

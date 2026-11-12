@@ -115,7 +115,7 @@ def test_config_matches_playbook(cfg):
     assert r["target_atr"] == 1.0 and r["max_hold_min"] == 90 and r["model_exits"] is False
     assert cc["sizing"]["caps"] == {"US100": 1, "XAUUSD": 1, "XAGUSD": 1, "EURUSD": 4} and cc["sizing"]["aggregate_max"] == 6
     assert cc["spend_cap"]["soft_usd"] == 15 and cc["spend_cap"]["hard_usd"] == 19
-    assert cc["spend_cap"]["max_output_tokens"] == {"entry": 6000, "exit": 800}
+    assert cc["spend_cap"]["max_output_tokens"] == {"entry": 24000, "exit": 800}
     assert cc["triggered_checks"]["max_per_day"] == 40 and cc["triggered_checks"]["max_per_symbol_per_bar"] == 1
 
 
@@ -163,7 +163,7 @@ def test_scan_opens_both_books_and_scores_whatif(cfg, tmp_path):
     r = run(e.scan(T0))
     assert r["ok"] and r["sent"] == ["XAUUSD", "EURUSD", "US100", "XAGUSD", "BTCUSD"]
     kw = api.calls[0]
-    assert kw["thinking"] == "high" and kw["max_output_tokens"] == 6000
+    assert kw["thinking"] == "high" and kw["max_output_tokens"] == 24000
     assert r["thinking_level"] == "high"
     for name in C.BOOKS:
         P = e.books[name].s["positions"]

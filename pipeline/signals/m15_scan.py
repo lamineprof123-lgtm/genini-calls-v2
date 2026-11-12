@@ -218,6 +218,43 @@ class M15Coordinator:
         with open(day / "m15_calls.jsonl", "a") as f:
             f.write(json.dumps(rec, default=str) + "\n")
 
+    def _log_claude_calls(self, r: dict | None, snap: M15Snapshot, call_start: datetime) -> None:
+        """One m15_calls.jsonl row per Claude v2 book (C-OPUS / C-SONNET) with timings. Never raises."""
+        try:
+            r = r or {}
+            if r.get("skipped"):
+                self.log_call(book="C-OPUS/C-SONNET", model="claude-v2", snap=snap, call_start=call_start,
+                              answer_ts=datetime.now(UTC), fill_ts=None, ok=False,
+                              error=None, extra={"skipped": r.get("skipped")})
+                return
+            for sid, v in (r.get("sims") or {}).items():
+                lat = v.get("latency_ms")
+                self.log_call(book=sid, model=v.get("model") or "claude", snap=snap, call_start=call_start,
+                              answer_ts=_dt(v.get("answer_ts")) or datetime.now(UTC), fill_ts=None,
+                              ok=bool(v.get("ok")), latency_s=round(lat / 1000, 3) if lat else None,
+                              cost_usd=v.get("cost_usd"), thinking_tokens=v.get("thinking_tokens"),
+                              error=v.get("error"),
+                              extra={"stop_reason": v.get("stop_reason"),
+                                     "symbols": [x.get("symbol") for x in v.get("signals") or []]})
+        except Exception:
+            log.exception("m15_calls claude log failed")
+
+    def _log_carbon_call(self, r: dict | None, snap: M15Snapshot, call_start: datetime) -> None:
+        """One m15_calls.jsonl row for the Carbon M15 entry scan (gemini-4-carbon). Never raises."""
+        try:
+            r = r or {}
+            model = (getattr(self.carbon, "cc", None) or {}).get("model") or "gemini-4-carbon"
+            tok = r.get("tokens") or {}
+            self.log_call(book="CARBON", model=model, snap=snap, call_start=call_start,
+                          answer_ts=_dt(r.get("answer_ts")) or datetime.now(UTC), fill_ts=None,
+                          ok=bool(r.get("ok")), latency_s=r.get("latency_s"), cost_usd=r.get("cost_usd"),
+                          thinking_tokens=tok.get("thoughts"), error=r.get("error"),
+                          extra={"skipped": r.get("skipped"), "finish_reason": r.get("finish_reason"),
+                                 "thinking_level": r.get("thinking_level"),
+                                 "output_tokens": tok.get("output"), "symbols": r.get("sent")})
+        except Exception:
+            log.exception("m15_calls carbon log failed")
+
     def enqueue_signals(self, signals: list[dict]) -> None:
         sc = self.scorer
         if sc is None:
@@ -258,7 +295,10 @@ class M15Coordinator:
             fn = getattr(self.claude, "on_shared_snapshot", None)
             if fn is None:
                 return {"skipped": "no on_shared_snapshot"}
-            return await fn(payloads, pngs, snap, now=snap.now)
+            call_start = datetime.now(UTC)
+            r = await fn(payloads, pngs, snap, now=snap.now)
+            self._log_claude_calls(r, snap, call_start)
+            return r
         except Exception as e:
             log.exception("m15 claude fan-out failed (other models unaffected)")
             return {"error": f"{type(e).__name__}: {e}"}
@@ -271,12 +311,15 @@ class M15Coordinator:
             payloads = snap.slice(syms or list(snap.charts))
             pngs = snap.charts_for([p["symbol"] for p in payloads])
             snaps = {p["symbol"]: p for p in payloads}
-            return await self.carbon.scan(snap.now, kind="entry", symbols=list(snaps),
-                                          snaps=snaps, pngs=pngs, snapshot_meta={
-                                              "snapshot_id": snap.snapshot_id,
-                                              "snapshot_hash": snap.snapshot_hash,
-                                              "bar_close_ts": iso(snap.bar_close_ts),
-                                              "snapshot_ts": iso(snap.snapshot_ts)})
+            call_start = datetime.now(UTC)
+            r = await self.carbon.scan(snap.now, kind="entry", symbols=list(snaps),
+                                       snaps=snaps, pngs=pngs, snapshot_meta={
+                                           "snapshot_id": snap.snapshot_id,
+                                           "snapshot_hash": snap.snapshot_hash,
+                                           "bar_close_ts": iso(snap.bar_close_ts),
+                                           "snapshot_ts": iso(snap.snapshot_ts)})
+            self._log_carbon_call(r, snap, call_start)
+            return r
         except Exception as e:
             log.exception("m15 carbon fan-out failed (other models unaffected)")
             return {"error": f"{type(e).__name__}: {e}"}

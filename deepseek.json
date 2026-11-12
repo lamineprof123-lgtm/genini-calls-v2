@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-12T17:08:36.193463+00:00",
+  "updated_at": "2026-11-12T17:10:35.890994+00:00",
   "paper_only": true,
   "plan": "LucidPro 100K (DLL on)",
   "exit_mode": "mech",
@@ -22,15 +22,15 @@
     "phase": "eval",
     "start_balance": 100000.0,
     "balance": 99998.25,
-    "equity": 100345.97,
+    "equity": 100634.87,
     "realized_pnl_since_reset": 0.0,
-    "open_pnl": 347.72,
+    "open_pnl": 636.62,
     "commission_on_open": 1.75,
     "trades_since_reset": 0,
     "wins": 0,
     "losses": 0,
     "mll_floor": 97000.0,
-    "mll_room": 3345.97,
+    "mll_room": 3634.87,
     "dll": 1800.0,
     "day_realized": 0.0,
     "day_locked": null,
@@ -50,8 +50,8 @@
       "entry": 28419.75,
       "stop": null,
       "target": 28308.5,
-      "last": 28402.364,
-      "unrealized": 347.72,
+      "last": 28387.919,
+      "unrealized": 636.62,
       "risk_usd": null,
       "hard_stop_px": 28444.75,
       "target_usd_net": null,
@@ -60,7 +60,7 @@
   ],
   "pending": 0,
   "recent_trades": [],
-  "last_processed": "2026-11-12T17:07:00+00:00",
+  "last_processed": "2026-11-12T17:09:00+00:00",
   "book": "DS-FLASH",
   "label": "DS-FLASH (deepseek-flash entries, mechanical exits)",
   "model": "deepseek-flash",
@@ -70,17 +70,17 @@
   "stop_txt": "\u2212$500 net \u00b7 1 ATR tgt \u00b7 90 min",
   "spend": {
     "day_dubai": "2026-11-12",
-    "usd": 0.0221,
+    "usd": 0.0244,
     "soft_usd": 5.0,
     "state": "ok",
-    "calls": 8,
+    "calls": 9,
     "failed": 0,
     "tokens": {
-      "prompt": 73469,
-      "cache_hit": 16896,
-      "cache_miss": 56573,
-      "completion": 22659,
-      "reasoning": 9474
+      "prompt": 81322,
+      "cache_hit": 19712,
+      "cache_miss": 61610,
+      "completion": 25092,
+      "reasoning": 10540
     },
     "pricing": {
       "off_peak": {
@@ -102,20 +102,20 @@
     }
   },
   "last_call": {
-    "t": "2026-11-12T17:08:20.013944+00:00",
+    "t": "2026-11-12T17:10:20.012284+00:00",
     "ok": true,
-    "cost_usd": 0.0020261,
-    "spend_today_usd": 0.0221,
+    "cost_usd": 0.0022238,
+    "spend_today_usd": 0.0244,
     "band": "off_peak",
     "tokens": {
-      "prompt": 8031,
+      "prompt": 7853,
       "cache_hit": 2816,
-      "cache_miss": 5215,
-      "completion": 2059,
-      "reasoning": 782,
-      "total": 10090
+      "cache_miss": 5037,
+      "completion": 2433,
+      "reasoning": 1066,
+      "total": 10286
     },
-    "latency_s": 12.056,
+    "latency_s": 13.968,
     "error": null,
     "model": "deepseek-flash",
     "symbols": [
@@ -128,24 +128,24 @@
   "last_signals": [
     {
       "symbol": "XAUUSD",
-      "action": "HOLD",
-      "confidence": 0.55,
-      "entry": 3872.86,
-      "rationale": "VP: price BELOW VAL (3905.62) and below POC (3978.13) \u2014 full bearish value-area break but now stretched. CVD -7.90 BEARISH (agrees with downtrend) yet cvd_slope +1.15 shows short-term pressure fading/diverging mildly. SESSION NEW_YORK (allo"
+      "action": "BUY",
+      "confidence": 0.5,
+      "entry": 3874.44,
+      "rationale": "Price is below VAL (3905.62) and below POC (3978.13) \u2014 a low-value/oversold condition, not a clean yellow-RVOL breakdown, so the break is suspect on its own. CVD is BEARISH (-7.90) but cvd_slope is +1.15, a positive short-term divergence su"
     },
     {
       "symbol": "EURUSD",
       "action": "HOLD",
-      "confidence": 0.6,
-      "entry": 1.10545,
-      "rationale": "VP: price BELOW VAL (1.10740) and below POC (1.10943) \u2014 bearish value-area break. CVD -2,011 NEUTRAL but cvd_slope +843 improving (mild positive divergence vs price lows). SESSION NEW_YORK (allowed). VWAP: bearish, price below VWAP 1.10810 "
+      "confidence": 0.3,
+      "entry": 1.1056,
+      "rationale": "Price is below VAL (1.10740) and below POC (1.10943) \u2014 bearish value context. CVD is NEUTRAL (-2,011, only ~1% of 171k session volume) with a positive cvd_slope of +843, so order flow neither confirms nor drives the move. SESSION NEW_YORK ("
     },
     {
       "symbol": "GBPUSD",
-      "action": "HOLD",
-      "confidence": 0.58,
-      "entry": 1.32334,
-      "rationale": "VP: price BELOW VAL (1.32533) and below POC (1.32731) \u2014 bearish value-area break. CVD -8,172 BEARISH (agrees with downtrend) but cvd_slope +2,959 shows accelerating buy-side short-covering/dip absorption. SESSION NEW_YORK (allowed). VWAP: b"
+      "action": "BUY",
+      "confidence": 0.45,
+      "entry": 1.32351,
+      "rationale": "Price is below VAL (1.32533) and below POC (1.32731) \u2014 bearish value context. CVD is BEARISH (-8,172, ~8.5% of 95.8k session volume) but cvd_slope is strongly positive at +2,959, flagging seller exhaustion / short-term divergence. SESSION N"
     }
   ]
 }

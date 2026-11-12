@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-12T16:28:36.368152+00:00",
+  "updated_at": "2026-11-12T16:30:42.055500+00:00",
   "paper_only": true,
   "key_present": true,
   "status": "running",
@@ -8,7 +8,7 @@
     "claude-opus-5-5",
     "claude-sonnet-5-5"
   ],
-  "last_entry_bar": "2026-11-12T16:00:00+00:00",
+  "last_entry_bar": "2026-11-12T16:15:00+00:00",
   "last_entry_skipped": null,
   "rules": "Binding server rules: hard stop = model stop clamped 0.6-1.5 ATR; $900 risk sizing (NQ 1, GC 1, 6E/6B up to 4, 6 max); break-even at +0.5 ATR; profit lock 50% of best at +1.0 ATR, 60% at +1.5 ATR; 45-min time stop; daily -$1,500; trailing $300 buffer; re-entry lock; USD-group cap (one open per long-USD / short-USD group; 30-min lock after a stop-out); skip fill if the live quote is >0.3 ATR worse than the chart; one entry per M15 close +20s (score >= 5). Phase A (never +0.25 ATR): Haiku CLOSE is ignored; server exits on a closed M15 after entry beyond invalidation or wrong-side of both VWAP and EMA20. Phases B/C ignore a CLOSE until the first M15 close after entry. Exit confidence is logged, never acted on. Exit model every 18 s.",
   "reset": {
@@ -23,43 +23,41 @@
       "exit_model": "claude-haiku-5-5",
       "account": {
         "start_balance": 100000.0,
-        "balance": 99449.4,
-        "equity": 99659.4,
-        "realized_pnl": -550.6,
-        "open_pnl": 210.0,
-        "trades": 6,
-        "wins": 2,
+        "balance": 99630.2,
+        "equity": 99630.2,
+        "realized_pnl": -369.8,
+        "open_pnl": 0.0,
+        "trades": 7,
+        "wins": 3,
         "losses": 4,
-        "r_total": -1.454,
-        "r_per_trade": -0.242,
+        "r_total": -0.964,
+        "r_per_trade": -0.138,
         "mll_floor": 97000.0,
-        "mll_room": 2659.4,
-        "day_realized": -550.6,
+        "mll_room": 2630.2,
+        "day_realized": -369.8,
         "day_flattened": false,
         "blown": null
       },
-      "open_positions": [
+      "open_positions": [],
+      "recent_trades": [
         {
+          "t_exit": "2026-11-12T16:27:00+00:00",
+          "entry_time": "2026-11-12T16:16:42.089492+00:00",
           "symbol": "EURUSD",
           "contract": "6E",
           "qty": 4,
           "side": "SHORT",
-          "entry_time": "2026-11-12T16:16:42.089492+00:00",
           "entry": 1.1063,
-          "stop": 1.107,
-          "floor": 1.10585,
-          "floor_label": "profit lock 50% of best",
-          "last": 1.10588,
-          "unrealized": 210.0,
-          "risk_usd": 369.2,
-          "phase": "C",
+          "exit": 1.1059,
+          "reason": "profit_lock",
+          "net": 180.8,
+          "R": 0.49,
+          "hold_seconds": 617,
           "setup_type": "trend",
           "score": 5,
-          "server_only": false,
-          "target": 1.1054
-        }
-      ],
-      "recent_trades": [
+          "exit_prompt_version": "v3",
+          "held": "10m 17s"
+        },
         {
           "t_exit": "2026-11-12T15:26:00+00:00",
           "entry_time": "2026-11-12T15:17:16.977361+00:00",
@@ -171,20 +169,20 @@
       ],
       "books": {
         "mech": {
-          "n": 6,
-          "wins": 3,
+          "n": 7,
+          "wins": 4,
           "losses": 3,
-          "net": -100.6,
-          "r_total": 0.354,
-          "r_avg": 0.059
+          "net": 80.2,
+          "r_total": 0.844,
+          "r_avg": 0.121
         },
         "whatif": {
-          "n": 10,
-          "wins": 4,
+          "n": 11,
+          "wins": 5,
           "losses": 6,
-          "net": -3689.27,
-          "r_total": -4.708,
-          "r_avg": -0.471
+          "net": -3644.07,
+          "r_total": -4.218,
+          "r_avg": -0.383
         },
         "twin": {
           "n": 11,
@@ -195,9 +193,9 @@
           "r_avg": -0.313
         },
         "whatif_gated": {
-          "n": 10,
-          "r_total": -4.708,
-          "r_avg": -0.471
+          "n": 11,
+          "r_total": -4.218,
+          "r_avg": -0.383
         }
       },
       "signals": {
@@ -224,29 +222,29 @@
           }
         },
         "exit": {
-          "calls": 142,
+          "calls": 148,
           "failed": 0,
-          "latency_p50_ms": 1570.5,
-          "latency_p95_ms": 2494.2,
-          "cost_usd": 0.0535,
+          "latency_p50_ms": 1574.0,
+          "latency_p95_ms": 2483.8,
+          "cost_usd": 0.0558,
           "by_utc_day": {
             "2026-11-12": {
-              "calls": 142,
-              "cost_usd": 0.0568,
-              "input_tokens": 478955,
-              "output_tokens": 11193,
+              "calls": 148,
+              "cost_usd": 0.0592,
+              "input_tokens": 500033,
+              "output_tokens": 11675,
               "thinking_tokens": 0
             }
           }
         }
       },
       "since_fix": {
-        "n": 0,
-        "wins": 0,
+        "n": 1,
+        "wins": 1,
         "losses": 0,
-        "net": 0,
-        "r_total": 0,
-        "r_avg": null
+        "net": 180.8,
+        "r_total": 0.49,
+        "r_avg": 0.49
       },
       "exit_prompt_version": "v3",
       "last_entry_call": {

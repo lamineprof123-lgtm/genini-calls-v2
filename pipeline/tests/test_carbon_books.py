@@ -108,7 +108,7 @@ def test_config_matches_playbook(cfg):
     assert cc["model"] == "gemini-4-carbon" and cc["entry_thinking"] == "high" and cc["exit_thinking"] == "low"
     assert cc["symbols"] == ["XAUUSD", "EURUSD", "US100", "XAGUSD", "BTCUSD"] and cc["entry_window_utc"] == ["08:00", "20:30"]
     assert cc["tradeable_symbols"] == ["XAUUSD", "EURUSD", "US100", "XAGUSD"]
-    assert cc["timeout_seconds"] == 180 and cc["min_confidence"] == 0.75 and cc["max_chase_atr"] == 0.5
+    assert cc["timeout_seconds"] == 300 and cc["min_confidence"] == 0.75 and cc["max_chase_atr"] == 0.5
     assert cc["whatif_units"]["BTCUSD"]["flag"] == "site-only/what-if"
     assert cc["books"]["CB-BRACKET"] == {"stop_atr": 1.0, "target_atr": 1.0, "max_hold_min": 90, "model_exits": False}
     r = cc["books"]["CB-RUNNER"]

@@ -559,7 +559,7 @@ entry_window_utc = ["08:00", "20:30"]
 flat_utc = "21:45"
 scan = "m15_close_plus_20s"
 scan_offset_seconds = 20
-timeout_seconds = 180                # raised for thinking=high + XAGUSD/BTCUSD charts; one attempt, no fallback
+timeout_seconds = 300                # thinking=high with 24k output: 18:00Z close took 175 s (14.3k thought tokens); 180 s hit 504 DEADLINE on a trigger. One attempt, no fallback
 min_confidence = 0.75
 max_chase_atr = 0.5
 start_balance = 100000.0

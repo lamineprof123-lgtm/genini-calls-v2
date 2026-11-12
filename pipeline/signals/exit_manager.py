@@ -85,7 +85,7 @@ def em_cfg(cfg: dict) -> dict:
     d = {"enabled": False, "check_seconds": 18, "runner_mfe_atr": 0.8, "wall_reject_atr": 0.10,
          "giveback_pct": 35.0, "giveback_min_mfe_atr": 1.0, "early_minutes": 12, "max_hold_minutes": 90,
          "max_daily_loss_pct": 3.5, "start_balance": 100000.0, "gemini_timeout_seconds": 12,
-         "max_feed_age_minutes": 20, "books": [BOOK_1, BOOK_2]}
+         "max_feed_age_minutes": 20, "books": [BOOK_1]}
     return {**d, **(cfg.get("exit_manager") or {})}
 
 
@@ -476,6 +476,18 @@ class Books:
         self.L = cfg["lucid"]
         self.tz = ZoneInfo(cfg["general"]["session_tz"])
         self.s = state or self.fresh()
+        self.retired_now: list[str] = []
+        # USER RULE (2026-11-12 ~17:45 Dubai, t210u): books removed from [exit_manager].books are RETIRED, not
+        # deleted: moved (balance, stats, open positions as they were) into s["retired_books"] and never checked
+        # again, so they cost no Gemini exit calls. Their logs stay in logs/<day>/exit_book_trades.jsonl.
+        for b in [k for k in list(self.s.get("books", {})) if k not in self.e["books"]]:
+            rb = self.s["books"].pop(b)
+            rb["retired_at"] = datetime.now(UTC).isoformat()
+            rb["retired_open_positions"] = [{k: p.get(k) for k in ("id", "symbol", "side", "qty", "entry", "entry_time")}
+                                            for p in rb.get("positions") or []]
+            self.s.setdefault("retired_books", {})[b] = rb
+            self.retired_now.append(b)
+            log.info("exit books: retired book %s (state archived, no more exit checks)", b)
         for b in self.e["books"]:
             if b in self.s["books"]:
                 continue
@@ -880,6 +892,10 @@ class ExitManager:
             st = None
             reset_books = True
         self.books = Books(cfg, st)
+        for b in self.books.retired_now:
+            _atomic_write(self.state_dir / f"exit_books_retired_{b}_{datetime.now(UTC).strftime('%Y%m%dT%H%M%SZ')}.json",
+                          self.books.s["retired_books"][b])
+            reset_books = True                  # rewrite exit_books.json / books.json without the retired book
         if tok:
             self.books.s["reset_token"] = tok
         # Persist immediately: with no open trades, tick() is idle and would not write, leaving the old

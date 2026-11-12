@@ -377,7 +377,11 @@ max_feed_age_minutes = 20       # ignore Lucid entries older than this when firs
 # nostop = shadow book: identical entries, exits ONLY on Gemini CLOSE (1-strike rule), never hard-stopped. It keeps
 # getting Gemini exit checks after the main position was stopped, until Gemini closes it. Added mid-run it starts
 # as a copy of the 1-strike book (balance, stats, open positions: all pre-stop trades were no-stop).
-books = ["1-strike", "2-strike", "nostop"]
+# USER RULE (2026-11-12 ~17:45 Dubai, t210u): the 2-strike book is KILLED (it alone was costing ~18% of all Gemini
+# exit calls: it keeps a position open after the 1-strike/nostop books closed on the first CLOSE). Removed from
+# this list -> retired at the next loop start: state archived to state/exit_books_retired_2-strike_<ts>.json and
+# exit_books.json["retired_books"]; logs kept. No exit checks, no Gemini calls, not on the panel.
+books = ["1-strike", "nostop"]
 shadow_books = ["nostop"]
 hard_stop_gap_seconds = 180     # live stop trigger: fill at the level (resting stop) if the stop was working <= this long ago, else at the live price (gap)
 

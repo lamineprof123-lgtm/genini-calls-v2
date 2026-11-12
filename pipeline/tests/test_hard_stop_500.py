@@ -22,7 +22,8 @@ def cfg():
     c = copy.deepcopy(load_config())
     assert c["lucid"]["exit_mode"] == "gemini_only" and c["lucid"]["hard_stop_net_usd"] == 500.0
     assert c["lucid"]["slippage_ticks"] == 1
-    assert c["exit_manager"]["books"] == [BOOK_1, BOOK_2, BOOK_NOSTOP]
+    assert c["exit_manager"]["books"] == [BOOK_1, BOOK_NOSTOP]      # 2-strike killed live (t210u)
+    c["exit_manager"]["books"] = [BOOK_1, BOOK_2, BOOK_NOSTOP]       # the stop logic is still tested with 3 books
     return c
 
 

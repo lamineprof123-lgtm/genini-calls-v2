@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-12T14:58:40.881304+00:00",
+  "updated_at": "2026-11-12T15:00:13.329349+00:00",
   "paper_only": true,
   "key_present": true,
   "status": "running",
@@ -23,43 +23,41 @@
       "exit_model": "claude-haiku-5-5",
       "account": {
         "start_balance": 100000.0,
-        "balance": 99137.8,
-        "equity": 99310.3,
-        "realized_pnl": -862.2,
-        "open_pnl": 172.5,
-        "trades": 4,
-        "wins": 0,
+        "balance": 99268.6,
+        "equity": 99268.6,
+        "realized_pnl": -731.4,
+        "open_pnl": 0.0,
+        "trades": 5,
+        "wins": 1,
         "losses": 4,
-        "r_total": -2.356,
-        "r_per_trade": -0.589,
+        "r_total": -1.82,
+        "r_per_trade": -0.364,
         "mll_floor": 97000.0,
-        "mll_room": 2310.3,
-        "day_realized": -862.2,
+        "mll_room": 2268.6,
+        "day_realized": -731.4,
         "day_flattened": false,
         "blown": null
       },
-      "open_positions": [
+      "open_positions": [],
+      "recent_trades": [
         {
+          "t_exit": "2026-11-12T15:00:09.882784+00:00",
+          "entry_time": "2026-11-12T14:47:06.400113+00:00",
           "symbol": "GBPUSD",
           "contract": "6B",
           "qty": 4,
           "side": "SHORT",
-          "entry_time": "2026-11-12T14:47:06.400113+00:00",
           "entry": 1.3254,
-          "stop": 1.3263,
-          "floor": 1.3253,
-          "floor_label": "break-even + commission",
-          "last": 1.32471,
-          "unrealized": 172.5,
-          "risk_usd": 244.2,
-          "phase": "C",
+          "exit": 1.3248,
+          "reason": "claude_close",
+          "net": 130.8,
+          "R": 0.536,
+          "hold_seconds": 783,
           "setup_type": "trend",
           "score": 5,
-          "server_only": false,
-          "target": 1.32505
-        }
-      ],
-      "recent_trades": [
+          "exit_prompt_version": "v2-grace",
+          "held": "13m 03s"
+        },
         {
           "t_exit": "2026-11-12T13:47:20.430886+00:00",
           "entry_time": "2026-11-12T13:47:16.599319+00:00",
@@ -188,29 +186,29 @@
           }
         },
         "exit": {
-          "calls": 66,
+          "calls": 72,
           "failed": 0,
-          "latency_p50_ms": 1562.5,
-          "latency_p95_ms": 2644.0,
-          "cost_usd": 0.0246,
+          "latency_p50_ms": 1561.0,
+          "latency_p95_ms": 2639.2,
+          "cost_usd": 0.0269,
           "by_utc_day": {
             "2026-11-12": {
-              "calls": 66,
-              "cost_usd": 0.0264,
-              "input_tokens": 219976,
-              "output_tokens": 5278,
+              "calls": 72,
+              "cost_usd": 0.0288,
+              "input_tokens": 240003,
+              "output_tokens": 5778,
               "thinking_tokens": 0
             }
           }
         }
       },
       "since_fix": {
-        "n": 0,
-        "wins": 0,
+        "n": 1,
+        "wins": 1,
         "losses": 0,
-        "net": 0,
-        "r_total": 0,
-        "r_avg": null
+        "net": 130.8,
+        "r_total": 0.536,
+        "r_avg": 0.536
       },
       "exit_prompt_version": "v2-grace",
       "last_entry_call": {

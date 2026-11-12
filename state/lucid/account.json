@@ -1,7 +1,7 @@
 {
   "version": 1,
   "created_at": "2026-11-12T10:14:47.081605+00:00",
-  "last_processed": "2026-11-12T14:58:00+00:00",
+  "last_processed": "2026-11-12T15:00:00+00:00",
   "account": {
     "no": 1,
     "phase": "eval",
@@ -208,35 +208,35 @@
     {
       "symbol": "US100",
       "side": 1,
-      "created": "2026-11-12T14:58:40.881142+00:00",
-      "fill_after": "2026-11-12T14:59:00+00:00",
+      "created": "2026-11-12T15:00:35.830785+00:00",
+      "fill_after": "2026-11-12T15:01:00+00:00",
       "reserved_risk": 0.0,
       "planned": null,
-      "expires": "2026-11-12T15:09:00+00:00",
-      "atr": 87.187,
+      "expires": "2026-11-12T15:11:00+00:00",
+      "atr": 90.793,
       "scalp": {
         "action": "BUY",
         "side": 1,
-        "entry": 28231.17,
-        "stop_loss": 27937.85,
-        "take_profit": 28236.17,
-        "sdist": 293.31934999999794,
+        "entry": 28239.19,
+        "stop_loss": 28153.55,
+        "take_profit": 28244.19,
+        "sdist": 85.63964999999735,
         "tdist": 5.0,
         "stop_source": "structure",
         "target_source": "fixed",
-        "rr": 0.017,
-        "structure_stop": 27937.85065,
-        "atr_stop": 28161.4204,
-        "fixed_tp": 28236.17,
-        "structure_tp": 28287.696259999997,
+        "rr": 0.058,
+        "structure_stop": 28153.55035,
+        "atr_stop": 28166.5556,
+        "fixed_tp": 28244.19,
+        "structure_tp": 28293.924140000003,
         "structure_label": "Session High",
         "candle": {
-          "high": 28289.44,
-          "low": 27942.21
+          "high": 28295.74,
+          "low": 28158.09
         },
         "levels": [
           {
-            "price": 28289.44,
+            "price": 28295.74,
             "label": "Session High"
           },
           {
@@ -257,62 +257,62 @@
           }
         ],
         "vp": {
-          "poc": 28119.65,
-          "vah": 28198.89,
-          "val": 28078.15
+          "poc": 28115.45,
+          "vah": 28203.68,
+          "val": 28080.92
         }
       },
       "session": "LONDON_NY_OVERLAP",
       "telemetry": {
         "symbol": "US100",
         "session": "LONDON_NY_OVERLAP",
-        "last_close": 28227.6,
-        "atr": 87.187,
-        "vwap": 28117.18,
-        "ema20": 28082.32,
-        "ema50": 28122.28,
+        "last_close": 28249.0,
+        "atr": 90.793,
+        "vwap": 28121.48,
+        "ema20": 28098.13,
+        "ema50": 28127.31,
         "price_vs_vwap": {
           "side": "above",
-          "dist_atr": 1.2665
+          "dist_atr": 1.4045
         },
         "price_vs_ema50": {
           "side": "above",
-          "dist_atr": 1.208
+          "dist_atr": 1.3403
         },
         "vwap_aligned_with_side": true,
         "ema50_aligned_with_side": true,
-        "poc": 28119.65,
-        "vah": 28198.89,
-        "val": 28078.15,
+        "poc": 28115.45,
+        "vah": 28203.68,
+        "val": 28080.92,
         "price_vs_value_area": "above_vah",
-        "dist_to_poc_atr": 1.2381,
-        "cvd": -2.92,
+        "dist_to_poc_atr": 1.4709,
+        "cvd": -2.03,
         "cvd_label": "NEUTRAL",
-        "cvd_slope": 0.97,
+        "cvd_slope": 1.53,
         "cvd_agrees_with_side": true,
-        "rvol": 2.396,
+        "rvol": 2.194,
         "rvol_spike": true,
         "rvol_bars_since_spike": 0,
-        "atr_band_z": 1.6663,
-        "atr_upper": 28256.69,
-        "atr_lower": 27907.94,
+        "atr_band_z": 1.6617,
+        "atr_upper": 28279.72,
+        "atr_lower": 27916.55,
         "nearest_sr": {
           "above": {
-            "price": 28289.44,
+            "price": 28295.74,
             "label": "Session High",
-            "dist_atr": 0.7093
+            "dist_atr": 0.5148
           },
           "below": {
             "price": 28209.17,
             "label": "S/R",
-            "dist_atr": 0.2114
+            "dist_atr": 0.4387
           }
         },
         "gemini": {
           "action": "BUY",
           "confidence": 0.76,
           "confidence_band": "0.7-0.8",
-          "rationale": "Price has broken out above VAH (28198.89) and POC (28119.65). CVD is -2.92 (NEUTRAL) with positive short-term slope (+0.97). Session is LONDON_NY_OVERLAP. Price reclaimed both VWAP (28117.18) and EMA50 (28122.28) with strong structural thrust. Candles are expanding along the upper ATR band (28256.69), confirmed by an RVOL > 2.0 spike (2.396). GEX regime is POSITIVE_DAMPENING above Gamma Flip (28157.93). Live price (28231.17) cleanly accepts above prior resistance turned support at S/R 28209.17 with plenty of upside room toward Call Wall #1 (28428.25).",
+          "rationale": "Price has broken out above VAH (28203.68) and POC (28115.45). CVD is NEUTRAL (-2.03) but cvd_slope is positive (+1.53). In LONDON_NY_OVERLAP, price made an aggressive V-shape reclaim above VWAP (28121.48) and EMA50 (28127.31) backed by an RVOL spike of 2.194 (yellow bar). GEX regime is POSITIVE_DAMPENING above Gamma Flip (28157.59). While Call Wall #1 sits overhead at 28424.24, there is ample room (~185 points) for momentum continuation upward towards the wall and Prev High (28596.50). Taking a BUY scalp on acceptance above local S/R 28209.17.",
           "model": "gemini-3.8-flash",
           "model_action": "BUY"
         },
@@ -320,32 +320,32 @@
           "stop_basis": "structure",
           "target_basis": "fixed",
           "tdist": 5.0,
-          "sdist": 293.31934999999794,
+          "sdist": 85.63964999999735,
           "structure_label": "Session High"
         },
         "planned": {
           "tdist": 5.0,
-          "sdist": 293.31934999999794,
+          "sdist": 85.63964999999735,
           "qty": null,
           "contract": null,
           "target_usd_net": null,
           "risk_usd": null
         },
-        "run_at_utc": "2026-11-12T14:58:20.223250+00:00",
-        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-12/cycles/185820.json/US100.png"
+        "run_at_utc": "2026-11-12T15:00:20.200755+00:00",
+        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-12/cycles/190020.json/US100.png"
       },
       "gemini": {
         "action": "BUY",
-        "entry": 28231.17,
-        "stop_loss": 27937.85,
-        "take_profit": 28236.17,
+        "entry": 28239.19,
+        "stop_loss": 28153.55,
+        "take_profit": 28244.19,
         "confidence": 0.76,
-        "rr": 0.017,
+        "rr": 0.058,
         "shown_on_site": true,
         "basis": "site signal",
-        "run_at_utc": "2026-11-12T14:58:20.223250+00:00",
+        "run_at_utc": "2026-11-12T15:00:20.200755+00:00",
         "session": "LONDON_NY_OVERLAP",
-        "rationale": "Price has broken out above VAH (28198.89) and POC (28119.65). CVD is -2.92 (NEUTRAL) with positive short-term slope (+0.97). Session is LONDON_NY_OVERLAP. Price reclaimed both VWAP (28117.18) and EMA50 (28122.28) with strong structural thrust. Candles are expanding along the upper ATR band (28256.69), confirmed by an RVOL > 2.0 spike (2.396). GEX regime is POSITIVE_DAMPENING above Gamma Flip (28157.93). Live price (28231.17) cleanly accepts above prior resistance turned support at S/R 28209.17 with plenty of upside room toward Call Wall #1 (28428.25).",
+        "rationale": "Price has broken out above VAH (28203.68) and POC (28115.45). CVD is NEUTRAL (-2.03) but cvd_slope is positive (+1.53). In LONDON_NY_OVERLAP, price made an aggressive V-shape reclaim above VWAP (28121.48) and EMA50 (28127.31) backed by an RVOL spike of 2.194 (yellow bar). GEX regime is POSITIVE_DAMPENING above Gamma Flip (28157.59). While Call Wall #1 sits overhead at 28424.24, there is ample room (~185 points) for momentum continuation upward towards the wall and Prev High (28596.50). Taking a BUY scalp on acceptance above local S/R 28209.17.",
         "model": "gemini-3.8-flash"
       }
     }
@@ -360,7 +360,7 @@
     "traded": true
   },
   "last_price": {
-    "US100": 28189.45,
+    "US100": 28245.12,
     "XAUUSD": 3881.465,
     "EURUSD": 1.10825,
     "GBPUSD": 1.32511
@@ -392,8 +392,8 @@
     "gross_loss": -11787.05,
     "commissions": 542.5,
     "net_trade_pnl": -1800.6,
-    "skipped_signals": 12,
-    "accepted_signals": 69
+    "skipped_signals": 13,
+    "accepted_signals": 70
   },
   "reset_token": "2026-11-12-profit-lock",
   "reset_at": "2026-11-12T10:14:47.081605+00:00",

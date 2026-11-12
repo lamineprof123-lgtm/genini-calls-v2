@@ -270,6 +270,14 @@
   <div class="lu-note" id="brNote"></div>
 </section>
 
+<section class="lucid" id="carbon" hidden aria-label="Gemini 4 Carbon side books">
+  <h2><span><span class="who g">Carbon</span>gemini-4-carbon side books · CB-BRACKET / CB-RUNNER</span><small id="cbUpd"></small></h2>
+  <div class="lu-grid" id="cbSpend"></div>
+  <div class="lu-note" id="cbCall"></div>
+  <div id="cbBooks"></div>
+  <div class="lu-note" id="cbNote"></div>
+</section>
+
 <section class="lucid" id="cmp" hidden aria-label="Gemini vs Claude comparison">
   <h2><span>Gemini vs Claude Opus vs Claude Sonnet</span><small id="cmpUpd"></small></h2>
   <div class="lu-wrap" id="cmpT"></div>
@@ -536,7 +544,7 @@
   }
 
   // ---- Lucid paper account (lucid.json, written each cycle; paper trading only) ----
-  let lucid = null, bracket = null;
+  let lucid = null, bracket = null, carbon = null;
   const usd = (v, sign) => v == null ? '—' : (sign && v > 0 ? '+' : (v < 0 ? '−' : '')) + '$' +
     Math.abs(Number(v)).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const cls = v => v > 0 ? 'pos' : (v < 0 ? 'neg' : '');
@@ -574,6 +582,12 @@
                balance: ba.balance, net_pnl: ba.net_pnl, open_pnl: ba.open_pnl, trades: ba.trades, wins: ba.wins,
                losses: ba.losses, stopped: ba.stopped, open_positions: ba.open_positions });
     }
+    for (const K of (carbon && carbon.books) || []) {
+      const ka = K.account || {};
+      C.push({ label: K.label || K.book, stop_txt: K.book === 'CB-RUNNER' ? '1 ATR · lock/trail · tgt 2.5 ATR' : '1 ATR · tgt 1 ATR',
+               balance: ka.balance, net_pnl: ka.net_pnl, open_pnl: ka.open_pnl, trades: ka.trades, wins: ka.wins,
+               losses: ka.losses, stopped: ka.stopped, open_positions: ka.open_positions });
+    }
     $('luCmp').innerHTML = C.length ? `<table class="lu-t"><tr><th>Book</th><th>Stop</th><th>Balance</th><th>Net P&amp;L</th>
       <th>Open P&amp;L</th><th>Trades</th><th>Stopped</th><th>Open</th></tr>${C.map(c => `<tr><td>${esc(c.label || c.book)}</td>
       <td>${c.stop_txt ? esc(c.stop_txt) : c.hard_stop_net_usd ? '−$' + Number(c.hard_stop_net_usd).toLocaleString('en-US') : 'none'}</td><td>${usd(c.balance)}</td>
@@ -607,12 +621,16 @@
       rows.push({ who: S.label, c: whoCls(S.id), bal: a.balance, net: a.realized_pnl, w: a.wins, l: a.losses,
                   rps: wi.r_avg, n: a.trades, sig: wi.n, wait: !claude.key_present });
     }
+    for (const K of (carbon && carbon.books) || []) {
+      const ka = K.account || {}, wi = (((carbon.whatif || {})[K.book]) || {})['all'] || {};
+      rows.push({ who: K.book, c: 'g', bal: ka.balance, net: ka.net_pnl, w: ka.wins, l: ka.losses, rps: wi.r_avg, n: ka.trades, sig: wi.n, carbon: true });
+    }
     if (!rows.length) return;
     $('cmpT').innerHTML = `<table class="lu-t cmp-t"><tr><th>Sim</th><th>Balance</th><th>Net</th><th>Trades</th><th>W/L</th><th>R / signal</th></tr>` +
       rows.map(r => `<tr><td><span class="who ${r.c}">${esc(r.who)}</span>${r.wait ? '<small>waiting for key</small>' : ''}</td>
         <td>${usd(r.bal)}</td><td class="${cls(r.net)}">${usd(r.net, true)}</td><td>${r.n ?? 0}</td><td>${r.w ?? 0}/${r.l ?? 0}</td>
-        <td class="${cls(r.rps)}">${r.c === 'g' ? 'n/a' : rr(r.rps) + (r.sig ? ` <small>(${r.sig})</small>` : '')}</td></tr>`).join('') + '</table>';
-    const u = [lucid && lucid.updated_at, claude && claude.updated_at].filter(Boolean).sort().pop();
+        <td class="${cls(r.rps)}">${r.c === 'g' && !r.carbon ? 'n/a' : rr(r.rps) + (r.sig ? ` <small>(${r.sig})</small>` : '')}</td></tr>`).join('') + '</table>';
+    const u = [lucid && lucid.updated_at, claude && claude.updated_at, carbon && carbon.updated_at].filter(Boolean).sort().pop();
     $('cmpUpd').textContent = u ? `updated ${hm(u)} ${city()}` : '';
     $('cmp').hidden = false;
   }
@@ -715,6 +733,67 @@
   }
   pollBracket();
   setInterval(pollBracket, 15000);
+  // ---- Carbon side books (carbon.json; paper only, two own $100k accounts, gemini-4-carbon entries) ----
+  function renderCarbon() {
+    const K = carbon; if (!K || !K.books) return;
+    const cell = (k, v, c) => `<div><div class="lu-k">${k}</div><div class="lu-v ${c || ''}">${v}</div></div>`;
+    const sp = K.spend || {}, tk = sp.tokens || {}, bk = sp.by_kind || {};
+    const capCls = sp.state === 'hard_cap' ? 'neg' : (sp.state === 'soft_cap' ? 'neg' : '');
+    const kinds = ['entry', 'trigger', 'exit'].map(k => `${k} ${(bk[k] || {}).calls || 0}`).join(' · ');
+    $('cbSpend').innerHTML = [
+      cell(`Spend today <small>(${esc(sp.day_dubai || '')} Dubai)</small>`, `$${Number(sp.usd || 0).toFixed(2)} <small>/ $${sp.soft_usd} soft · $${sp.hard_usd} hard</small>`, capCls),
+      cell('Cap state', esc(sp.state || 'ok'), capCls),
+      cell('Carbon calls today', `${sp.calls || 0}${sp.failed ? ` <small>(${sp.failed} failed)</small>` : ''} <small>${kinds}</small>`),
+      cell('Triggered checks', `${K.triggers_today || 0} <small>/ ${K.max_triggers_per_day} today</small>`),
+      cell('Tokens today', `<small>in ${Number(tk.input || 0).toLocaleString('en-US')} · out ${Number(tk.output || 0).toLocaleString('en-US')} · thoughts ${Number(tk.thoughts || 0).toLocaleString('en-US')}</small>`),
+      cell('Next M15 scan', K.in_window ? hm(K.next_scan_at) + ' ' + city() : `outside ${esc((K.entry_window_utc || []).join('-'))} UTC`),
+    ].join('');
+    const lc = K.last_call;
+    $('cbCall').textContent = lc ? `Last Carbon call ${dayhm(lc.t)} ${city()} · ${lc.kind} · ${lc.ok ? 'OK' : 'FAILED: ' + (lc.error || '')} · ` +
+      `${Number(lc.latency_s || 0).toFixed(1)} s · thinking ${lc.thinking} (${lc.thoughts_token_count} thought tokens) · $${Number(lc.cost_usd || 0).toFixed(4)}` +
+      ((K.last_scan && K.last_scan.signals) ? ' · ' + K.last_scan.signals.map(g => `${g.symbol} ${g.action}${g.confidence != null ? ' ' + Number(g.confidence).toFixed(2) : ''}`).join(' · ') : '')
+      : 'No Carbon call yet.';
+    const d = v => v != null && Math.abs(v) < 10 ? 5 : 2;
+    $('cbBooks').innerHTML = K.books.map(B => {
+      const a = B.account || {}, P = B.open_positions || [], T = B.recent_trades || [];
+      const wi = ((K.whatif || {})[B.book]) || {};
+      const grid = [
+        cell('Balance', usd(a.balance)), cell('Equity', usd(a.equity)),
+        cell('Net P&amp;L', usd(a.net_pnl, true), cls(a.net_pnl)), cell('Open P&amp;L', usd(a.open_pnl, true), cls(a.open_pnl)),
+        cell('Trades', `${a.trades || 0}${a.trades ? ` <small>(${a.wins}W/${a.losses}L)</small>` : ''}`),
+        cell('R total', rr(a.r_total), cls(a.r_total)), cell('Max DD', usd(a.max_drawdown, true), cls(a.max_drawdown)),
+        cell('Day', `${usd(a.day_realized, true)}${a.day_flattened ? ' <small class="neg">flat (daily stop)</small>' : ''}`, cls(a.day_realized)),
+        cell('Room to MLL', usd(a.mll_room), a.mll_room < 1000 ? 'neg' : ''),
+        cell('What-if R / signal', `${rr((wi.all || {}).r_avg)} <small>(${(wi.all || {}).n || 0} all · ${rr((wi['conf>=min'] || {}).r_avg)} conf≥${K.min_confidence})</small>`, cls((wi.all || {}).r_avg)),
+      ].join('');
+      const pos = P.length ? `<table class="lu-t"><tr><th>Symbol</th><th>Size</th><th>Side</th><th>Opened</th><th>Held</th><th>Entry</th>
+        <th>Stop</th><th>Target</th><th>Conf</th><th>Open R</th><th>Open P&amp;L</th></tr>${P.map(p => `<tr><td>${esc(p.symbol)}</td>
+        <td>${p.qty} ${esc(p.contract)}</td><td>${esc(p.side)}</td><td>${dayhm(p.entry_time)}</td>
+        <td data-entry-time="${esc(p.entry_time)}">${esc(heldSince(p.entry_time))}</td><td>${px(p.entry, d(p.entry))}</td>
+        <td>${px(p.stop, d(p.stop))}${p.locked ? ' <small>trail</small>' : ''}</td><td>${px(p.target, d(p.target))}</td>
+        <td>${p.confidence != null ? Number(p.confidence).toFixed(2) : '—'}</td><td class="${cls(p.open_R)}">${rr(p.open_R)}</td>
+        <td class="${cls(p.unrealized)}">${usd(p.unrealized, true)}</td></tr>`).join('')}</table>`
+        : `<div class="lu-note">None${a.pending ? ` · ${a.pending} pending entry` : ''}</div>`;
+      const trs = T.length ? `<table class="lu-t"><tr><th>Closed</th><th>Opened</th><th>Symbol</th><th>Size</th><th>Side</th>
+        <th>Held</th><th>Exit</th><th>R</th><th>Net</th></tr>${T.map(t => `<tr><td>${dayhm(t.t_exit)}</td><td>${dayhm(t.entry_time)}</td>
+        <td>${esc(t.symbol)}</td><td>${t.qty} ${esc(t.contract)}</td><td>${esc(t.side)}</td><td>${esc(t.held || heldOf(t))}</td>
+        <td>${t.stopped ? '<b class="neg">' + esc(t.reason) + '</b>' : esc(t.reason)}</td><td class="${cls(t.R)}">${rr(t.R)}</td>
+        <td class="${cls(t.net)}">${usd(t.net, true)}</td></tr>`).join('')}</table>`
+        : '<div class="lu-note">No closed trades yet.</div>';
+      return `<h3>${esc(B.label || B.book)}</h3><div class="lu-grid">${grid}</div><h3>Open positions</h3><div class="lu-wrap">${pos}</div>
+        <h3>Recent trades</h3><div class="lu-wrap">${trs}</div>`;
+    }).join('');
+    $('cbUpd').textContent = K.updated_at ? `updated ${hm(K.updated_at)} ${city()}` : '';
+    const since = (K.books[0] || {}).since;
+    $('cbNote').textContent = `Paper trading only · two fresh $100,000 accounts${since ? ` since ${dayhm(since)} ${city()}` : ''} · ${K.rules || ''}`;
+    $('carbon').hidden = false;
+  }
+  async function pollCarbon() {
+    const j = await getJSON('carbon.json');
+    if (j && !(carbon && Date.parse(j.updated_at) < Date.parse(carbon.updated_at))) { carbon = j; renderCarbon(); renderLucid(); renderCmp(); }
+  }
+  pollCarbon();
+  setInterval(pollCarbon, 15000);
   async function pollLucid() {
     const j = await getJSON('lucid.json');
     if (j && !(lucid && Date.parse(j.updated_at) < Date.parse(lucid.updated_at))) { lucid = j; renderLucid(); }

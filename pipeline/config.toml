@@ -493,3 +493,74 @@ max_chase_atr = 0.5
 fill_quote_max_age_s = 60
 gap_seconds = 180
 reset_token = "bracket-v1"
+
+# ---------------------------------------------------------------------------------------------------------------
+# GEMINI 4 CARBON SIDE BOOKS CB-BRACKET / CB-RUNNER (signals/carbon.py). PAPER ONLY, each its own $100k account.
+# Source: the "Blue Bird: Gemini 4 Carbon side books" playbook (user t221u/t222u, 12 Nov 2026). Separate asyncio
+# tasks (own M15-close+20 s scan, own triggered checks, own 18 s server exits); separate state (state/carbon/),
+# logs (logs/<day>/carbon_*.jsonl) and site file (carbon.json). Main / 1-strike / nostop / bracket / Claude untouched.
+# Entries: gemini-4-carbon, thinking_level medium, the live entry prompt + SignalBatch schema unchanged, 90 s
+# timeout, one attempt, no fallback. Risk rules below are BINDING in these two books only.
+[carbon_books]
+enabled = true
+model = "gemini-4-carbon"
+entry_thinking = "medium"
+exit_thinking = "low"
+symbols = ["XAUUSD", "EURUSD", "US100"]
+entry_window_utc = ["08:00", "20:30"]
+flat_utc = "21:45"
+scan = "m15_close_plus_20s"
+scan_offset_seconds = 20
+timeout_seconds = 90
+min_confidence = 0.75
+max_chase_atr = 0.5
+start_balance = 100000.0
+check_seconds = 18
+slippage_ticks = 1
+reset_token = "carbon-v1"        # change to start both Carbon accounts fresh (old state archived)
+
+[carbon_books.triggered_checks]
+level_cross_atr = 0.1
+bar_range_atr = 1.5
+rvol_gt = 2.0
+max_per_symbol_per_bar = 1
+max_per_day = 40
+poll_seconds = 30                # how often the code-side triggers are evaluated (no Carbon call unless one fires)
+
+[carbon_books.sizing]
+risk_usd = 900
+atr_mult = 1.0
+min_contracts = 1
+skip_if_one_contract_risk_gt = 1200
+caps = { US100 = 1, XAUUSD = 1, EURUSD = 4 }
+aggregate_max = 6
+
+[carbon_books.books.CB-BRACKET]
+stop_atr = 1.0
+target_atr = 1.0
+max_hold_min = 90
+model_exits = false
+
+[carbon_books.books.CB-RUNNER]
+stop_atr = 1.0
+lock_at_atr = 1.0
+lock_to_atr = 0.5
+trail_atr = 0.75
+target_atr = 2.5
+max_hold_min = 150
+model_exits = "m15_close_only_when_mfe_ge_1atr"
+
+[carbon_books.risk]
+daily_stop_usd = -1500
+mll_buffer_usd = 300
+one_per_symbol = true
+reentry_lock = "next_m15_close"
+after_loss_lock_min = 30
+mll_usd = 3000.0                 # Lucid EOD trailing loss limit used for the trailing guard
+locked_mll_balance = 100100.0
+
+[carbon_books.spend_cap]
+soft_usd = 15
+hard_usd = 19
+price_per_mtok = { "until_2026-11-30" = [2, 10], "from_2026-12-01" = [4, 20] }
+max_output_tokens = { entry = 6000, exit = 800 }

@@ -21,7 +21,8 @@ from .pipeline import next_boundary, run_once
 from .site import write_status
 
 log = logging.getLogger("signals.gha")
-SITE_JSON = ("status.json", "latest_signal.json", "history.json", "lucid.json", "claude.json", "bracket.json")
+SITE_JSON = ("status.json", "latest_signal.json", "history.json", "lucid.json", "claude.json", "bracket.json",
+             "carbon.json")
 DATA_JSON = ("books.json",)  # committed to the data branch only (not deployed to Pages)
 CYCLE_LOG_KEEP_DAYS = 14
 
@@ -57,6 +58,8 @@ class GhaLoop:
         self.bracket = None                  # 'bracket' Gemini shadow book (signals/bracket.py)
         self.bracket_task: asyncio.Task | None = None
         self.bracket_cycle_task: asyncio.Task | None = None
+        self.carbon = None                   # CB-BRACKET / CB-RUNNER Carbon side books (signals/carbon.py)
+        self.carbon_tasks: list[asyncio.Task] = []
         for sub in ("state", "logs"):
             (data / sub).mkdir(parents=True, exist_ok=True)
 
@@ -195,6 +198,7 @@ class GhaLoop:
         self.start_exit_manager()
         self.start_claude()
         self.start_bracket()
+        self.start_carbon()
         while True:
             # The job still wakes every `self.interval` (2 min). The site countdown uses
             # scan_interval (2 active / 15 during ASIAN / DEADZONE) so it matches the next Gemini call.
@@ -383,10 +387,37 @@ class GhaLoop:
                 await asyncio.wait_for(t, 30)
         self.bracket_task = self.bracket_cycle_task = None
 
+    def start_carbon(self) -> None:
+        """Carbon side books: own M15-close+20 s entry scan, own triggered checks, own 18 s server exits, each an
+        independent task (never awaited by the 2-min cycle). Errors are logged; no other book is touched."""
+        from .carbon import carbon_cfg
+        if self.dry_run or not carbon_cfg(self.cfg).get("enabled", False):
+            return
+        try:
+            from .carbon import CarbonEngine, run_carbon_exit_loop, run_carbon_scan_loop, run_carbon_trigger_loop
+            self.carbon = CarbonEngine(self.cfg, io_lock=self.io_lock)
+            self.carbon_tasks = [asyncio.create_task(run_carbon_scan_loop(self.carbon), name="carbon-scan"),
+                                 asyncio.create_task(run_carbon_trigger_loop(self.carbon), name="carbon-trigger"),
+                                 asyncio.create_task(run_carbon_exit_loop(self.carbon), name="carbon-exit")]
+            log.info("carbon side books on: %s model=%s thinking=%s key %s", list(self.carbon.books),
+                     self.carbon.cc["model"], self.carbon.cc["entry_thinking"],
+                     "present" if os.environ.get("GEMINI_API_KEY") else "MISSING")
+        except Exception:
+            log.exception("carbon side books failed to start (main loop unaffected)")
+            self.carbon = None
+
+    async def stop_carbon(self) -> None:
+        for t in self.carbon_tasks:
+            t.cancel()
+            with contextlib.suppress(BaseException):
+                await asyncio.wait_for(t, 30)
+        self.carbon_tasks = []
+
     async def shutdown(self, reason: str) -> None:
         await self.stop_exit_manager()
         await self.stop_claude()
         await self.stop_bracket()
+        await self.stop_carbon()
         succ = L.read(self.data, L.SUCC)
         handed = succ.get("run_id") if (reason == "handoff" and succ) else None
         if reason == "stop-file":
@@ -426,6 +457,7 @@ async def run_gha_loop(cfg: dict, data: Path, run_id: str, role: str, **kw) -> s
         await loop.stop_exit_manager()
         await loop.stop_claude()
         await loop.stop_bracket()
+        await loop.stop_carbon()
         log.error("lost the loop lock: %s -> exiting without further writes", e)
         return "lost-lock"
     finally:

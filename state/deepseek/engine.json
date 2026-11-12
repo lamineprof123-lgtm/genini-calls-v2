@@ -15,33 +15,33 @@
       }
     },
     "2026-11-13": {
-      "usd": 0.02266,
-      "calls": 10,
+      "usd": 0.02447,
+      "calls": 11,
       "failed": 0,
       "tokens": {
-        "prompt": 112936,
-        "cache_hit": 17920,
-        "cache_miss": 95016,
-        "completion": 13923,
-        "reasoning": 3998
+        "prompt": 124024,
+        "cache_hit": 20352,
+        "cache_miss": 103672,
+        "completion": 14763,
+        "reasoning": 4045
       }
     }
   },
   "last_call": {
-    "t": "2026-11-12T22:15:20.005664+00:00",
+    "t": "2026-11-12T22:30:20.004552+00:00",
     "ok": true,
-    "cost_usd": 0.00202783,
-    "spend_today_usd": 0.0227,
+    "cost_usd": 0.0018097,
+    "spend_today_usd": 0.0245,
     "band": "off_peak",
     "tokens": {
-      "prompt": 11087,
-      "cache_hit": 1792,
-      "cache_miss": 9295,
-      "completion": 1047,
-      "reasoning": 48,
-      "total": 12134
+      "prompt": 11088,
+      "cache_hit": 2432,
+      "cache_miss": 8656,
+      "completion": 840,
+      "reasoning": 47,
+      "total": 11928
     },
-    "latency_s": 6.503,
+    "latency_s": 4.27,
     "error": null,
     "model": "deepseek-flash",
     "symbols": [
@@ -53,11 +53,11 @@
     ],
     "http_status": 200,
     "prompt_version": "bracket-v1",
-    "snapshot_id": "m15-20261112214500-2d71886bb4f9",
-    "bar_close_ts": "2026-11-12T22:15:00+00:00",
-    "snapshot_ts": "2026-11-12T22:15:21.793020+00:00",
-    "call_start": "2026-11-12T22:15:22.146063+00:00",
-    "answer_ts": "2026-11-12T22:15:28.649526+00:00"
+    "snapshot_id": "m15-20261112214500-f737ca74a340",
+    "bar_close_ts": "2026-11-12T22:30:00+00:00",
+    "snapshot_ts": "2026-11-12T22:30:23.322697+00:00",
+    "call_start": "2026-11-12T22:30:24.049291+00:00",
+    "answer_ts": "2026-11-12T22:30:28.319788+00:00"
   },
   "last_signals": [
     {
@@ -68,7 +68,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "HOLD. session_blocks_automation true (LOW_LIQUIDITY_DEADZONE) is a hard gate. Also every key level untouched on the last closed bar, price 7.5 ATR below VWAP (chasing), and only 0.58 ATR room up to EMA20. T1/T2 both missing. No setup."
+      "rationale": "HOLD: session_blocks_automation true (LOW_LIQUIDITY_DEADZONE). No level event on last closed bar (all untouched). Price 7.5 ATR below VWAP, T1 fails. Room up only 0.58 ATR to EMA20."
     },
     {
       "symbol": "EURUSD",
@@ -78,7 +78,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "HOLD. session_blocks_automation true is a hard gate. Level events are only EMA20/POC micro-closes, not a labelled level, VAH/VAL or a rejected pullback, so T2 fails; price 3.9 ATR below VWAP fails the trend room gate, and room up is 0.10 AT"
+      "rationale": "HOLD: session_blocks_automation true. Closed_through EMA20/POC is not a labelled-level trend event in trade direction; T1 fails (below VWAP 1.10749). Room up 0.02 ATR to POC."
     },
     {
       "symbol": "US100",
@@ -88,7 +88,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "HOLD. session_blocks_automation true (LOW_LIQUIDITY_DEADZONE) is a hard gate. Trend must-haves would otherwise be met (above VWAP/EMA50, closed_through VAH, S1 1.59 ATR, S2, S5 h1 up), but scheduled-block gate forbids entry."
+      "rationale": "HOLD: session_blocks_automation true (LOW_LIQUIDITY_DEADZONE). T1 and T2 would qualify (above VWAP/EMA50, closed_through VAH) with 1.59 ATR room, S2 awarded, but session gate blocks automation."
     },
     {
       "symbol": "XAGUSD",
@@ -98,7 +98,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "HOLD. session_blocks_automation true is a hard gate. No labelled level, VAH/VAL or band event on the last closed bar (EMEA20 touch only), price 6.5 ATR below VWAP, and room up is 0.24 ATR. T2 and S1 both fail."
+      "rationale": "HOLD: session_blocks_automation true. No labelled-level event; EMA20 touch is not a valid F1 extreme rejection. Price 6.5 ATR below VWAP, no fade magnet within 1 ATR. Room up 0.24 ATR."
     },
     {
       "symbol": "BTCUSD",
@@ -108,7 +108,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "HOLD. session_blocks_automation true is a hard gate. Every key level untouched on the last closed bar, price 5.4 ATR below VWAP, room down only 0.80 ATR to Session Low and 0.98 ATR up to EMA20. T2 and S1 fail."
+      "rationale": "HOLD: session_blocks_automation true. All levels untouched on last closed bar; 5.1 ATR below VWAP, no fresh event. Room up 0.66 ATR to EMA20."
     }
   ],
   "last_bars": {

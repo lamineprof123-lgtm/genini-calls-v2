@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-12T22:15:40.026949+00:00",
+  "updated_at": "2026-11-12T22:30:41.955787+00:00",
   "paper_only": true,
   "plan": "LucidPro 100K (DLL on)",
   "exit_mode": "uniform-1atr-v1",
@@ -135,11 +135,11 @@
   "rules": "C-OPUS-B: claude-opus-5-5 entries, adaptive thinking, effort high, shared bracket-v1 package with DS-FLASH (same charts, facts, 3 symbols, M15 close +20s). Question: will price travel 1 ATR my way before 1 ATR against? Code-computed facts + hold gates (no trend >2 ATR from VWAP; \u22651 ATR room; US100 volume-free S2). 0.3 ATR fill check. Uniform 1 ATR / 1 ATR / 90-min exits, no model exits. Fresh $100k Lucid account.",
   "stop_txt": "1 ATR stop \u00b7 1 ATR target \u00b7 90 min",
   "last_call": {
-    "t": "2026-11-12T22:15:40.024163+00:00",
+    "t": "2026-11-12T22:30:41.953089+00:00",
     "ok": true,
-    "latency_ms": 17882,
-    "cost_usd": 0.10732,
-    "thinking_tokens": 569,
+    "latency_ms": 17907,
+    "cost_usd": 0.107088,
+    "thinking_tokens": 622,
     "usage": {
       "cache_creation": {
         "ephemeral_1h_input_tokens": 0,
@@ -148,10 +148,10 @@
       "cache_creation_input_tokens": 0,
       "cache_read_input_tokens": 0,
       "inference_geo": "global",
-      "input_tokens": 16565,
-      "output_tokens": 2053,
+      "input_tokens": 16567,
+      "output_tokens": 2041,
       "output_tokens_details": {
-        "thinking_tokens": 569
+        "thinking_tokens": 622
       },
       "service_tier": "standard",
       "speed": "standard"
@@ -159,14 +159,14 @@
     "error": null,
     "effort": "high",
     "prompt_version": "bracket-v1",
-    "snapshot_id": "m15-20261112214500-2d71886bb4f9",
-    "snapshot_hash": "2d71886bb4f9c87d1e540787ce2ffb0737fa2ac2718878d49096870d12f3c274",
-    "package_id": "m15-20261112T221500-aec872dab595",
-    "package_hash": "aec872dab5958648ab14450e32dce969084a72bb107038cdd02dd44ef117a1a7",
-    "bar_close_ts": "2026-11-12T22:15:00+00:00",
-    "snapshot_ts": "2026-11-12T22:15:21.793020+00:00",
-    "call_start": "2026-11-12T22:15:22.142446+00:00",
-    "answer_ts": "2026-11-12T22:15:40.024163+00:00",
+    "snapshot_id": "m15-20261112214500-f737ca74a340",
+    "snapshot_hash": "f737ca74a3401b601938499a308a8aef072b9fba399fba6cd7b7c0d124d1e123",
+    "package_id": "m15-20261112T223000-c6b578435593",
+    "package_hash": "c6b578435593b3622129489fb956a507afc421d9859f23568ea36286ea17368d",
+    "bar_close_ts": "2026-11-12T22:30:00+00:00",
+    "snapshot_ts": "2026-11-12T22:30:23.322697+00:00",
+    "call_start": "2026-11-12T22:30:24.045633+00:00",
+    "answer_ts": "2026-11-12T22:30:41.953089+00:00",
     "model": "claude-opus-5-5"
   },
   "last_signals": [
@@ -178,7 +178,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "Session LOW_LIQUIDITY_DEADZONE, so automation is blocked. No level event on the last closed bar; every level is untouched. Room up is 0.58 ATR and room down is 0.30 ATR, both under 1.0. A trend short would be chasing at 7.5 ATR from VWAP.",
+      "rationale": "Session blocks automation (LOW_LIQUIDITY_DEADZONE). Every level untouched, so T2 and F1 fail. VWAP distance -7.5 ATR (chasing). Room up 0.58 and down 0.30 ATR, both under 1.0. HOLD.",
       "gate_reasons": [],
       "issues": []
     },
@@ -186,11 +186,11 @@
       "symbol": "EURUSD",
       "action": "HOLD",
       "confidence": 0.0,
-      "score": 1,
+      "score": 4,
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "Session is a deadzone, so automation is blocked. T1 no: price is below VWAP and EMA50 for a long. No valid fade extreme. Room up is 0.10 ATR, which fails S1. RVOL 0.14 and CVD is neutral.",
+      "rationale": "T1 yes: below VWAP and EMA50. T2 yes: closed_through EMA20/POC down. S1 (room down 1.78) S5 (h1 down) = 4. Gates fail: session blocks automation, VWAP distance -4.2 ATR > 2.0, score < 5. HOLD.",
       "gate_reasons": [],
       "issues": []
     },
@@ -202,7 +202,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "T1 yes: above VWAP and EMA50. T2 yes: closed_through VAH. Supporting: S1 (1.59 ATR room), S2 (US100 awarded), S3 (cvd_slope up), S5 (h1 up); S4 no. Score 6, but the deadzone blocks automation and the live price is an hour old.",
+      "rationale": "T1 yes: above VWAP and EMA50. T2 yes: closed_through VAH up. S1 (room up 1.59) S2 (US100 awarded) S3 (cvd_slope up) S5 (h1 up) = 6. Session blocks automation (deadzone), and live price is a 21:15 print. HOLD.",
       "gate_reasons": [],
       "issues": []
     },
@@ -214,7 +214,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "Session is a deadzone, so automation is blocked. The EMA20 was only touched, with no rejection or close-through. A short would be chasing at 6.45 ATR from VWAP. Room up is 0.24 ATR. Neither TREND nor FADE must-haves are met.",
+      "rationale": "Session blocks automation. EMA20 was only touched, with no rejection or close-through, so T2 and F1 fail. VWAP distance -6.5 ATR. Room up 0.24 ATR. HOLD.",
       "gate_reasons": [],
       "issues": []
     },
@@ -226,7 +226,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "Session is a deadzone, so automation is blocked. No level event; every level is untouched. A short would be chasing at 5.4 ATR from VWAP. Room down is 0.80 ATR to the Session Low and room up is 0.98 ATR, both under 1.0.",
+      "rationale": "Session blocks automation. All levels untouched, so T2 and F1 fail. VWAP distance -5.1 ATR. Room up 0.66 ATR; room down 1.08 ATR, but there is no event. HOLD.",
       "gate_reasons": [],
       "issues": []
     }

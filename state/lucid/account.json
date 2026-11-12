@@ -1,7 +1,7 @@
 {
   "version": 1,
   "created_at": "2026-11-12T10:14:47.081605+00:00",
-  "last_processed": "2026-11-12T15:04:00+00:00",
+  "last_processed": "2026-11-12T15:06:00+00:00",
   "account": {
     "no": 1,
     "phase": "eval",
@@ -203,7 +203,7 @@
         "run_at_utc": "2026-11-12T15:02:20.228462+00:00",
         "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-12/cycles/190220.json/GBPUSD.png"
       },
-      "mfe": 0.0,
+      "mfe": 0.00025999999999992696,
       "mae": 0.0,
       "mfe_min": 0.0,
       "time_cut_deadline": null,
@@ -214,7 +214,148 @@
       "hard_stop_usd": 500.0
     }
   ],
-  "pending": [],
+  "pending": [
+    {
+      "symbol": "XAUUSD",
+      "side": -1,
+      "created": "2026-11-12T15:06:34.117125+00:00",
+      "fill_after": "2026-11-12T15:07:00+00:00",
+      "reserved_risk": 0.0,
+      "planned": null,
+      "expires": "2026-11-12T15:17:00+00:00",
+      "atr": 12.798,
+      "scalp": {
+        "action": "SELL",
+        "side": -1,
+        "entry": 3867.76,
+        "stop_loss": 3890.52,
+        "take_profit": 3866.51,
+        "sdist": 22.759900000000016,
+        "tdist": 1.25,
+        "stop_source": "structure",
+        "target_source": "fixed",
+        "rr": 0.055,
+        "structure_stop": 3890.5199000000002,
+        "atr_stop": 3877.9984000000004,
+        "fixed_tp": 3866.51,
+        "structure_tp": 3866.34596,
+        "structure_label": "Session Low",
+        "candle": {
+          "high": 3889.88,
+          "low": 3866.09
+        },
+        "levels": [
+          {
+            "price": 3924.3,
+            "label": "S/R"
+          },
+          {
+            "price": 3968.55,
+            "label": "S/R"
+          },
+          {
+            "price": 3977.99,
+            "label": "Prev Low"
+          },
+          {
+            "price": 3866.09,
+            "label": "Session Low"
+          }
+        ],
+        "vp": {
+          "poc": 3977.51,
+          "vah": 4000.33,
+          "val": 3938.58
+        }
+      },
+      "session": "LONDON_NY_OVERLAP",
+      "telemetry": {
+        "symbol": "XAUUSD",
+        "session": "LONDON_NY_OVERLAP",
+        "last_close": 3870.91,
+        "atr": 12.798,
+        "vwap": 3952.84,
+        "ema20": 3917.8,
+        "ema50": 3943.27,
+        "price_vs_vwap": {
+          "side": "below",
+          "dist_atr": -6.4018
+        },
+        "price_vs_ema50": {
+          "side": "below",
+          "dist_atr": -5.654
+        },
+        "vwap_aligned_with_side": true,
+        "ema50_aligned_with_side": true,
+        "poc": 3977.51,
+        "vah": 4000.33,
+        "val": 3938.58,
+        "price_vs_value_area": "below_val",
+        "dist_to_poc_atr": -8.3294,
+        "cvd": -9.83,
+        "cvd_label": "BEARISH",
+        "cvd_slope": -1.31,
+        "cvd_agrees_with_side": true,
+        "rvol": 1.539,
+        "rvol_spike": false,
+        "rvol_bars_since_spike": 4,
+        "atr_band_z": -3.6639,
+        "atr_upper": 3943.4,
+        "atr_lower": 3892.21,
+        "nearest_sr": {
+          "above": {
+            "price": 3924.3,
+            "label": "S/R",
+            "dist_atr": 4.1717
+          },
+          "below": {
+            "price": 3866.09,
+            "label": "Session Low",
+            "dist_atr": 0.3766
+          }
+        },
+        "gemini": {
+          "action": "SELL",
+          "confidence": 0.82,
+          "confidence_band": ">=0.8",
+          "rationale": "Price is trading well below VAL (3938.58) and far below POC (3977.51), confirming an extended low-volume breakdown. Cumulative Delta is BEARISH (-9.83) with negative slope (-1.31), agreeing with the strong downtrend during the active LONDON_NY_OVERLAP session. Both VWAP (3952.84) and EMA50 (3943.27) are sloping down, maintaining structural bearish control. Price is expanding beyond the lower ATR band (3892.21). Heavy RVOL spikes (last rvol 1.54, 6 prior yellow spikes) confirm aggressive liquidation. GEX regime is NEGATIVE_AMPLIFYING below Gamma Flip (3924.51), accelerating the sell-off through Put Wall #1 (3874.20) toward Put Wall #2 (3819.63). Forming bar is printing fresh lows under Session Low (3866.09).",
+          "model": "gemini-3.8-flash",
+          "model_action": "SELL"
+        },
+        "scalp": {
+          "stop_basis": "structure",
+          "target_basis": "fixed",
+          "tdist": 1.25,
+          "sdist": 22.759900000000016,
+          "structure_label": "Session Low"
+        },
+        "planned": {
+          "tdist": 1.25,
+          "sdist": 22.759900000000016,
+          "qty": null,
+          "contract": null,
+          "target_usd_net": null,
+          "risk_usd": null
+        },
+        "run_at_utc": "2026-11-12T15:06:20.212168+00:00",
+        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-12/cycles/190620.json/XAUUSD.png"
+      },
+      "gemini": {
+        "action": "SELL",
+        "entry": 3867.76,
+        "stop_loss": 3890.52,
+        "take_profit": 3866.51,
+        "confidence": 0.82,
+        "rr": 0.055,
+        "shown_on_site": true,
+        "basis": "site signal",
+        "run_at_utc": "2026-11-12T15:06:20.212168+00:00",
+        "session": "LONDON_NY_OVERLAP",
+        "rationale": "Price is trading well below VAL (3938.58) and far below POC (3977.51), confirming an extended low-volume breakdown. Cumulative Delta is BEARISH (-9.83) with negative slope (-1.31), agreeing with the strong downtrend during the active LONDON_NY_OVERLAP session. Both VWAP (3952.84) and EMA50 (3943.27) are sloping down, maintaining structural bearish control. Price is expanding beyond the lower ATR band (3892.21). Heavy RVOL spikes (last rvol 1.54, 6 prior yellow spikes) confirm aggressive liquidation. GEX regime is NEGATIVE_AMPLIFYING below Gamma Flip (3924.51), accelerating the sell-off through Put Wall #1 (3874.20) toward Put Wall #2 (3819.63). Forming bar is printing fresh lows under Session Low (3866.09).",
+        "model": "gemini-3.8-flash"
+      }
+    }
+  ],
   "next_pos_id": 59,
   "day": {
     "id": "2026-11-12",
@@ -228,7 +369,7 @@
     "US100": 28208.42,
     "XAUUSD": 3881.465,
     "EURUSD": 1.10825,
-    "GBPUSD": 1.32456
+    "GBPUSD": 1.32429
   },
   "history": [],
   "ledger": {
@@ -258,7 +399,7 @@
     "commissions": 574.8,
     "net_trade_pnl": -2262.9,
     "skipped_signals": 13,
-    "accepted_signals": 71
+    "accepted_signals": 72
   },
   "reset_token": "2026-11-12-profit-lock",
   "reset_at": "2026-11-12T10:14:47.081605+00:00",

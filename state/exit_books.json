@@ -62,54 +62,19 @@
     58
   ],
   "last_price": {
-    "US100": 28183.52,
+    "US100": 28157.15,
     "XAUUSD": 3875.26,
     "EURUSD": 1.10821,
-    "GBPUSD": 1.32444
+    "GBPUSD": 1.32441
   },
   "books": {
     "1-strike": {
-      "balance": 97722.7,
-      "positions": [
-        {
-          "id": 58,
-          "symbol": "GBPUSD",
-          "contract": "6B",
-          "qty": 6,
-          "side": -1,
-          "entry": 1.3245,
-          "stop": null,
-          "target": null,
-          "entry_time": "2026-11-12T15:03:10.653905+00:00",
-          "risk_usd": null,
-          "atr": 0.000896,
-          "candle": {
-            "high": 1.32589,
-            "low": 1.3245
-          },
-          "gemini_run_at_utc": "2026-11-12T15:02:20.228462+00:00",
-          "gemini_confidence": 0.76,
-          "hard_stop_px": 1.3258,
-          "hard_stop_armed_at": "2026-11-12T15:03:10.653905+00:00",
-          "fill_source": "live_quote:dukascopy:tick",
-          "book": "1-strike",
-          "strikes": 0,
-          "mfe": 0.0,
-          "mae": 0.0,
-          "scan_from": "2026-11-12T15:03:00+00:00",
-          "checks": 5,
-          "opened_at": "2026-11-12T15:03:10.681961+00:00",
-          "hard_stop_ok_t": "2026-11-12T15:04:21.876236+00:00",
-          "giveback_hist": [
-            0.0,
-            0.0
-          ]
-        }
-      ],
+      "balance": 97708.3,
+      "positions": [],
       "day": {
         "id": "2026-11-12",
         "start_balance": 100000.0,
-        "realized": -2262.9,
+        "realized": -2291.7,
         "halted": null,
         "breach_logged": {
           "t": "2026-11-12T10:59:39.148958+00:00",
@@ -118,22 +83,22 @@
         }
       },
       "stats": {
-        "trades": 57,
+        "trades": 58,
         "wins": 26,
-        "losses": 31,
+        "losses": 32,
         "gross_win": 10032.65,
-        "gross_loss": -12295.55,
-        "net_pnl": -2262.9,
-        "commissions": 574.8,
-        "hold_seconds": 21839,
+        "gross_loss": -12324.35,
+        "net_pnl": -2291.7,
+        "commissions": 589.2,
+        "hold_seconds": 22018,
         "exit_reasons": {
-          "gemini_close": 44,
+          "gemini_close": 45,
           "hard_stop_500": 13
         }
       }
     },
     "nostop": {
-      "balance": 105059.45,
+      "balance": 105045.05,
       "positions": [
         {
           "id": 57,
@@ -157,41 +122,10 @@
           "book": "nostop",
           "strikes": 0,
           "mfe": 0.0,
-          "mae": 48.41900000000169,
-          "scan_from": "2026-11-12T15:02:00+00:00",
-          "checks": 12,
+          "mae": 58.9419999999991,
+          "scan_from": "2026-11-12T15:04:00+00:00",
+          "checks": 19,
           "opened_at": "2026-11-12T15:01:04.730339+00:00",
-          "giveback_hist": [
-            0.0,
-            0.0
-          ]
-        },
-        {
-          "id": 58,
-          "symbol": "GBPUSD",
-          "contract": "6B",
-          "qty": 6,
-          "side": -1,
-          "entry": 1.3245,
-          "stop": null,
-          "target": null,
-          "entry_time": "2026-11-12T15:03:10.653905+00:00",
-          "risk_usd": null,
-          "atr": 0.000896,
-          "candle": {
-            "high": 1.32589,
-            "low": 1.3245
-          },
-          "gemini_run_at_utc": "2026-11-12T15:02:20.228462+00:00",
-          "gemini_confidence": 0.76,
-          "fill_source": "live_quote:dukascopy:tick",
-          "book": "nostop",
-          "strikes": 0,
-          "mfe": 0.0,
-          "mae": 0.0,
-          "scan_from": "2026-11-12T15:03:00+00:00",
-          "checks": 5,
-          "opened_at": "2026-11-12T15:03:10.681961+00:00",
           "giveback_hist": [
             0.0,
             0.0
@@ -201,7 +135,7 @@
       "day": {
         "id": "2026-11-12",
         "start_balance": 100000.0,
-        "realized": 5075.6,
+        "realized": 5046.8,
         "halted": null,
         "breach_logged": {
           "t": "2026-11-12T10:59:39.148958+00:00",
@@ -210,16 +144,16 @@
         }
       },
       "stats": {
-        "trades": 56,
+        "trades": 57,
         "wins": 31,
-        "losses": 25,
+        "losses": 26,
         "gross_win": 14431.95,
-        "gross_loss": -9356.35,
-        "net_pnl": 5075.6,
-        "commissions": 573.05,
-        "hold_seconds": 26981,
+        "gross_loss": -9385.15,
+        "net_pnl": 5046.8,
+        "commissions": 587.45,
+        "hold_seconds": 27160,
         "exit_reasons": {
-          "gemini_close": 56
+          "gemini_close": 57
         },
         "overlap_trades": 6,
         "overlap_net": 3260.7
@@ -297,45 +231,6 @@
   "post_exit": [
     {
       "book": "1-strike",
-      "id": 56,
-      "symbol": "GBPUSD",
-      "contract": "6B",
-      "qty": 6,
-      "side": "SHORT",
-      "exit": 1.3248,
-      "t_exit": "2026-11-12T15:00:09.884596+00:00",
-      "reason": "gemini_close",
-      "net": 46.2,
-      "due": "2026-11-12T15:05:09.884596+00:00"
-    },
-    {
-      "book": "nostop",
-      "id": 56,
-      "symbol": "GBPUSD",
-      "contract": "6B",
-      "qty": 6,
-      "side": "SHORT",
-      "exit": 1.3248,
-      "t_exit": "2026-11-12T15:00:09.884596+00:00",
-      "reason": "gemini_close",
-      "net": 46.2,
-      "due": "2026-11-12T15:05:09.884596+00:00"
-    },
-    {
-      "book": "baseline",
-      "id": 56,
-      "symbol": "GBPUSD",
-      "contract": "6B",
-      "qty": 6,
-      "side": "SHORT",
-      "exit": 1.3248,
-      "t_exit": "2026-11-12T15:00:00+00:00",
-      "reason": "gemini_close",
-      "net": 46.2,
-      "due": "2026-11-12T15:05:00+00:00"
-    },
-    {
-      "book": "1-strike",
       "id": 57,
       "symbol": "US100",
       "contract": "NQ",
@@ -359,6 +254,32 @@
       "reason": "hard_stop_500",
       "net": -508.5,
       "due": "2026-11-12T15:07:00+00:00"
+    },
+    {
+      "book": "1-strike",
+      "id": 58,
+      "symbol": "GBPUSD",
+      "contract": "6B",
+      "qty": 6,
+      "side": "SHORT",
+      "exit": 1.3245,
+      "t_exit": "2026-11-12T15:06:09.887093+00:00",
+      "reason": "gemini_close",
+      "net": -28.8,
+      "due": "2026-11-12T15:11:09.887093+00:00"
+    },
+    {
+      "book": "nostop",
+      "id": 58,
+      "symbol": "GBPUSD",
+      "contract": "6B",
+      "qty": 6,
+      "side": "SHORT",
+      "exit": 1.3245,
+      "t_exit": "2026-11-12T15:06:09.887093+00:00",
+      "reason": "gemini_close",
+      "net": -28.8,
+      "due": "2026-11-12T15:11:09.887093+00:00"
     }
   ],
   "retired_books": {

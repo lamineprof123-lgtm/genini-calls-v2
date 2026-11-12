@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-12T20:00:45.139266+00:00",
+  "generated_at": "2026-11-12T20:16:09.652987+00:00",
   "since": "2026-11-12T18:11:32.204243+00:00",
   "sims": {
     "C-OPUS": {
@@ -46,24 +46,69 @@
         }
       },
       "whatif": {
-        "n": 0,
+        "n": 1,
         "wins": 0,
-        "losses": 0,
-        "net": 0,
-        "r_total": 0,
-        "r_avg": null,
-        "by_symbol": {},
-        "by_side": {},
-        "by_setup_type": {},
-        "by_session": {},
-        "by_reason": {},
+        "losses": 1,
+        "net": -409.6,
+        "r_total": -0.418,
+        "r_avg": -0.418,
+        "by_symbol": {
+          "XAUUSD": {
+            "n": 1,
+            "wins": 0,
+            "losses": 1,
+            "net": -409.6,
+            "r_total": -0.418,
+            "r_avg": -0.418
+          }
+        },
+        "by_side": {
+          "SHORT": {
+            "n": 1,
+            "wins": 0,
+            "losses": 1,
+            "net": -409.6,
+            "r_total": -0.418,
+            "r_avg": -0.418
+          }
+        },
+        "by_setup_type": {
+          "trend": {
+            "n": 1,
+            "wins": 0,
+            "losses": 1,
+            "net": -409.6,
+            "r_total": -0.418,
+            "r_avg": -0.418
+          }
+        },
+        "by_session": {
+          "NEW_YORK_SESSION": {
+            "n": 1,
+            "wins": 0,
+            "losses": 1,
+            "net": -409.6,
+            "r_total": -0.418,
+            "r_avg": -0.418
+          }
+        },
+        "by_reason": {
+          "max_hold_90m": {
+            "n": 1,
+            "wins": 0,
+            "losses": 1,
+            "net": -409.6,
+            "r_total": -0.418,
+            "r_avg": -0.418
+          }
+        },
         "gated_only": {
-          "n": 0,
+          "n": 1,
           "wins": 0,
-          "losses": 0,
-          "net": 0,
-          "r_total": 0,
-          "r_avg": null
+          "losses": 1,
+          "net": -409.6,
+          "r_total": -0.418,
+          "r_avg": -0.418
         },
         "since_fix": {
           "n": 0,
@@ -75,17 +120,62 @@
         }
       },
       "twin": {
-        "n": 0,
-        "wins": 0,
+        "n": 1,
+        "wins": 1,
         "losses": 0,
-        "net": 0,
-        "r_total": 0,
-        "r_avg": null,
-        "by_symbol": {},
-        "by_side": {},
-        "by_setup_type": {},
-        "by_session": {},
-        "by_reason": {},
+        "net": 380.4,
+        "r_total": 0.388,
+        "r_avg": 0.388,
+        "by_symbol": {
+          "XAUUSD": {
+            "n": 1,
+            "wins": 1,
+            "losses": 0,
+            "net": 380.4,
+            "r_total": 0.388,
+            "r_avg": 0.388
+          }
+        },
+        "by_side": {
+          "LONG": {
+            "n": 1,
+            "wins": 1,
+            "losses": 0,
+            "net": 380.4,
+            "r_total": 0.388,
+            "r_avg": 0.388
+          }
+        },
+        "by_setup_type": {
+          "trend": {
+            "n": 1,
+            "wins": 1,
+            "losses": 0,
+            "net": 380.4,
+            "r_total": 0.388,
+            "r_avg": 0.388
+          }
+        },
+        "by_session": {
+          "NEW_YORK_SESSION": {
+            "n": 1,
+            "wins": 1,
+            "losses": 0,
+            "net": 380.4,
+            "r_total": 0.388,
+            "r_avg": 0.388
+          }
+        },
+        "by_reason": {
+          "max_hold_90m": {
+            "n": 1,
+            "wins": 1,
+            "losses": 0,
+            "net": 380.4,
+            "r_total": 0.388,
+            "r_avg": 0.388
+          }
+        },
         "since_fix": {
           "n": 0,
           "wins": 0,
@@ -96,16 +186,16 @@
         }
       },
       "signals": {
-        "rows": 48,
+        "rows": 54,
         "buy_sell": 5,
         "gated": 5,
         "opened": 2
       },
-      "whatif_open": 4,
+      "whatif_open": 3,
       "entry_calibration": {
         "0.5-0.6": {
-          "n": 0,
-          "hit_rate": null
+          "n": 1,
+          "hit_rate": 1.0
         },
         "0.6-0.7": {
           "n": 0,
@@ -123,18 +213,18 @@
       "exit_calibration": {},
       "ops": {
         "entry": {
-          "calls": 8,
+          "calls": 9,
           "failed": 0,
-          "latency_p50_ms": 20963.0,
-          "latency_p95_ms": 30906.4,
-          "cost_usd": 0.9155,
+          "latency_p50_ms": 21270.0,
+          "latency_p95_ms": 30726.8,
+          "cost_usd": 1.0272,
           "by_utc_day": {
             "2026-11-12": {
-              "calls": 8,
-              "cost_usd": 0.9156,
-              "input_tokens": 129859,
-              "output_tokens": 19804,
-              "thinking_tokens": 7716
+              "calls": 9,
+              "cost_usd": 1.0272,
+              "input_tokens": 146178,
+              "output_tokens": 22122,
+              "thinking_tokens": 8649
             }
           }
         },
@@ -242,7 +332,7 @@
         }
       },
       "signals": {
-        "rows": 48,
+        "rows": 54,
         "buy_sell": 0,
         "gated": 0,
         "opened": 0
@@ -269,17 +359,17 @@
       "exit_calibration": {},
       "ops": {
         "entry": {
-          "calls": 8,
+          "calls": 9,
           "failed": 0,
-          "latency_p50_ms": 10430.0,
-          "latency_p95_ms": 11450.5,
-          "cost_usd": 0.3794,
+          "latency_p50_ms": 10380.0,
+          "latency_p95_ms": 11417.0,
+          "cost_usd": 0.4259,
           "by_utc_day": {
             "2026-11-12": {
-              "calls": 8,
-              "cost_usd": 0.3794,
-              "input_tokens": 129859,
-              "output_tokens": 11973,
+              "calls": 9,
+              "cost_usd": 0.4258,
+              "input_tokens": 146178,
+              "output_tokens": 13354,
               "thinking_tokens": 0
             }
           }

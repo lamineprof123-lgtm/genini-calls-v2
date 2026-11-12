@@ -29,6 +29,7 @@ import httpx
 from .uniform_exit import close_tag, uniform_exits_enabled, UNIFORM_BANNER, UNIFORM_EXIT_VERSION
 from .exit_versions import GEMINI_MECH_EXIT_VERSION
 from .gemini_client import SignalBatch, _image_mime, chart_user_text, system_prompt
+from . import bracket_v1 as B
 from .lucid import (LucidSim, _fetch_and_replay, apply_due_fills, due_pendings,
                     lucid_needs_replay)
 from .risk import _atomic_write
@@ -55,6 +56,10 @@ DEFAULTS = {
     "soft_spend_usd": 5.0,
     "check_seconds": 18,
     "recent_trades": 20,
+    "symbols": list(B.SYMBOLS),
+    "prompt_version": B.PROMPT_VERSION,
+    "fill_max_adverse_atr": B.FILL_MAX_ADVERSE_ATR,
+    "scan": "m15_close_plus_20s",
 }
 
 # Official https://api-docs.deepseek.com/quick_start/pricing/ (USD per 1M tokens).
@@ -81,15 +86,10 @@ def set_engine(engine: "DeepSeekEngine | None") -> None:
 
 def kick(cfg: dict, payloads: list[dict] | None, pngs: dict[str, bytes] | None = None,
          skipped: str | None = None, now: datetime | None = None) -> asyncio.Task | None:
-    """Fire-and-forget: schedule a DS entry cycle without awaiting it. Never raises."""
-    eng = _ENGINE
-    if eng is None or not payloads:
-        return None
-    try:
-        return eng.schedule_cycle(payloads, pngs=pngs, skipped=skipped, now=now)
-    except Exception:
-        log.exception("deepseek kick failed (Gemini loop unaffected)")
-        return None
+    """t251u: DS-FLASH no longer rides the 2-min Gemini flash loop. Kept as a no-op
+    so a stale pipeline.py hook cannot fire a mid-bar entry call. Never raises."""
+    log.info("deepseek kick ignored (DS-FLASH is on the shared M15 close +20s scan)")
+    return None
 
 
 def spend_day(t: datetime) -> str:
@@ -209,9 +209,8 @@ def busy_symbols(sim: LucidSim) -> set[str]:
 
 
 def filter_ds_payloads(payloads: list[dict], busy: set[str], cfg: dict) -> list[dict]:
-    from .pipeline import lucid_symbols
-    allow = set(lucid_symbols(cfg))
-    allow.discard("BTCUSD")
+    from . import bracket_v1 as B
+    allow = set((cfg.get("deepseek") or {}).get("symbols") or B.SYMBOLS)
     return [p for p in payloads if p.get("symbol") in allow and p.get("symbol") not in busy]
 
 
@@ -230,26 +229,15 @@ def signal_batch_schema_prompt() -> str:
     )
 
 
-def build_messages(cfg: dict, payloads: list[dict], pngs: dict[str, bytes]) -> list[dict]:
-    """OpenAI-compatible multimodal messages: same system prompt + numeric context as Gemini flash.
-
-    Live-price label is model-neutral (Gemini's 'LIVE PRICE SENT TO GEMINI' is unchanged).
-    Charts are the pipeline JPEGs (quality 78). JSON mode + SignalBatch schema in the prompt;
-    the response is validated against SignalBatch via parse_raw.
-    """
-    symbols = [p["symbol"] for p in payloads]
-    user: list[dict] = []
-    for i, p in enumerate(payloads, 1):
-        user.append({"type": "text", "text": chart_user_text(
-            p, i, len(payloads), live_price_tag="LIVE PRICE SENT TO MODEL")})
-        blob = pngs[p["symbol"]]
-        mime, b64 = _b64_image(blob)
-        user.append({"type": "image_url", "image_url": {"url": f"data:{mime};base64,{b64}"}})
-    user.append({"type": "text", "text": signal_batch_schema_prompt()})
-    return [
-        {"role": "system", "content": system_prompt(cfg, symbols)},
-        {"role": "user", "content": user},
-    ]
+def build_messages(cfg: dict, payloads: list[dict], pngs: dict[str, bytes],
+                   htf: dict | None = None, bar_close_ts: str | None = None,
+                   snapshot_ts: str | None = None) -> list[dict]:
+    """OpenAI-compatible multimodal messages for the shared bracket-v1 package
+    (same system prompt, facts block, and JPEG bytes as C-OPUS-B)."""
+    from . import bracket_v1 as B
+    pkg = B.build_package(payloads, pngs, htf=htf, bar_close_ts=bar_close_ts,
+                          snapshot_ts=snapshot_ts)
+    return pkg["openai_messages"]
 
 
 async def call_deepseek(cc: dict, *, messages: list[dict]) -> dict:
@@ -528,6 +516,7 @@ class DeepSeekEngine:
                "latency_s": resp.get("latency_s"), "cost_usd": cost, "usage": resp.get("usage"),
                "parse_error": parse_err, "error": resp.get("error"),
                "spend_today_usd": self.spend_today(now)["usd"],
+               "prompt_version": B.PROMPT_VERSION,
                "signals": [{"symbol": v.get("symbol"),
                             "action": v.get("model_action") or v.get("action"),
                             "confidence": v.get("confidence"),
@@ -536,9 +525,162 @@ class DeepSeekEngine:
                             "take_profit": v.get("take_profit"),
                             "rationale": v.get("rationale"),
                             "reasons": v.get("reasons"),
-                            "atr": v.get("atr")} for v in validated]}
+                            "atr": v.get("atr"),
+                            "prompt_version": v.get("prompt_version") or B.PROMPT_VERSION,
+                            "setup_type": v.get("setup_type"), "score": v.get("score"),
+                            "gated": v.get("gated"), "decision": v.get("decision")} for v in validated]}
         with open(day / "deepseek_signals.jsonl", "a") as f:
             f.write(json.dumps(rec, default=str) + "\n")
+
+
+    async def on_bracket_package(self, pkg: dict, now: datetime | None = None,
+                                 snap_meta: dict | None = None) -> dict:
+        """Consume the shared bracket-v1 package (identical to C-OPUS-B). Never raises."""
+        now = now or datetime.now(UTC)
+        meta = snap_meta or {}
+        try:
+            return await self._on_bracket_package(pkg, now, meta)
+        except Exception as e:
+            log.exception("DS-FLASH bracket cycle failed (other books unaffected)")
+            return {"ok": False, "error": f"{type(e).__name__}: {e}", "model": MODEL, "book": BOOK}
+
+    async def _on_bracket_package(self, pkg: dict, now: datetime, meta: dict) -> dict:
+        from .validator import parse_raw
+        if not self.cc.get("enabled", True):
+            return {"ok": False, "skipped": "disabled", "model": MODEL, "book": BOOK}
+        if not self._key():
+            await self._persist_site(now)
+            return {"ok": False, "skipped": "waiting for key", "model": MODEL, "book": BOOK}
+        blocked = self.spend_blocked(now)
+        if blocked:
+            return {"ok": False, "skipped": blocked, "model": MODEL, "book": BOOK}
+        busy = busy_symbols(self.sim)
+        payloads = B.filter_symbols(pkg.get("payloads") or [], busy)
+        if not payloads:
+            return {"ok": True, "skipped": "all_symbols_in_position", "busy": sorted(busy),
+                    "model": MODEL, "book": BOOK}
+        call_start = datetime.now(UTC)
+        resp = await self.call_fn(self.cc, messages=pkg["openai_messages"])
+        answer_ts = datetime.now(UTC)
+        cost = self.record_usage(now, resp.get("usage"), bool(resp.get("ok")),
+                                 {"latency_s": resp.get("latency_s"), "error": resp.get("error"),
+                                  "model": resp.get("model"), "symbols": [p["symbol"] for p in payloads],
+                                  "http_status": resp.get("http_status"),
+                                  "prompt_version": B.PROMPT_VERSION,
+                                  "snapshot_id": meta.get("snapshot_id") or pkg.get("snapshot_id"),
+                                  "bar_close_ts": meta.get("bar_close_ts"),
+                                  "snapshot_ts": meta.get("snapshot_ts"),
+                                  "call_start": meta.get("call_start") or _iso(call_start),
+                                  "answer_ts": _iso(answer_ts)})
+        obj, parse_err = parse_raw(resp.get("raw_text") or "") if resp.get("raw_text") else (
+            None, resp.get("error") or "empty response")
+        facts = pkg.get("facts") or {}
+        ctxs = {p["symbol"]: p.get("context") or {} for p in payloads}
+        by = {}
+        for s in (obj or {}).get("signals") or []:
+            if isinstance(s, dict) and s.get("symbol"):
+                by[str(s["symbol"]).upper()] = s
+        rows, score_signals, validated = [], [], []
+        for p in payloads:
+            sym = p["symbol"]
+            v = B.apply_gates(by.get(sym) or {"action": "HOLD", "symbol": sym},
+                              facts.get(sym) or B.compute_facts(p), ctxs[sym])
+            v.update({"t": _iso(answer_ts), "model": MODEL, "book": BOOK,
+                      "bar": ctxs[sym].get("last_closed_bar_utc"),
+                      "prompt_version": B.PROMPT_VERSION, "effort": self.cc.get("effort") or "low",
+                      "snapshot_id": pkg.get("snapshot_id"),
+                      "live_price": ctxs[sym].get("live_price") or ctxs[sym].get("last_close"),
+                      "atr": ctxs[sym].get("atr"), "session": ctxs[sym].get("session"),
+                      "decision": "HOLD"})
+            rows.append(v)
+            # 0.3 ATR fill check vs the chart live price (same as C-OPUS-B).
+            why = None
+            if v.get("gated"):
+                chart = ctxs[sym].get("live_price")
+                if chart is None:
+                    chart = ctxs[sym].get("last_close")
+                px = v.get("live_price") or chart
+                atr = ctxs[sym].get("atr")
+                if chart is None or px is None or not atr:
+                    why = "missing price/ATR for 0.3 ATR fill check"
+                else:
+                    side = 1 if v["action"] == "BUY" else -1
+                    ok, ratio, why = B.fill_adverse(
+                        side, float(px), float(chart), float(atr),
+                        float(self.cc.get("fill_max_adverse_atr") or B.FILL_MAX_ADVERSE_ATR))
+                    v["fill_adverse_atr"] = round(ratio, 4)
+            if v.get("gated") and not why:
+                v["decision"] = "OPENED"
+            elif v.get("gated") and why:
+                v["gated"] = False
+                v["decision"] = f"skip: {why}"
+            score_signals.append({
+                "model": MODEL, "book": BOOK, "prompt_version": B.PROMPT_VERSION,
+                "thinking_level": self.cc.get("effort") or "low",
+                "symbol": sym, "action": v.get("action"), "confidence": v.get("confidence"),
+                "entry": v.get("entry") or v.get("live_price"), "atr": v.get("atr"),
+                "signal_at": _iso(answer_ts), "session": v.get("session"),
+                "bar": v.get("bar"), "traded": v.get("decision") == "OPENED",
+                "setup_type": v.get("setup_type"), "score": v.get("score"),
+                "snapshot_id": pkg.get("snapshot_id"),
+            })
+            row = {"symbol": sym,
+                   "action": v["action"] if v.get("decision") == "OPENED" else "HOLD",
+                   "model_action": v["action"], "confidence": v.get("confidence"),
+                   "entry": v.get("entry") or v.get("live_price"),
+                   "stop_loss": v.get("stop_loss"), "take_profit": v.get("take_profit"),
+                   "rationale": v.get("rationale"), "atr": v.get("atr"),
+                   "prompt_version": B.PROMPT_VERSION, "setup_type": v.get("setup_type"),
+                   "score": v.get("score"), "reasons": v.get("issues"),
+                   "gated": v.get("gated"), "decision": v.get("decision")}
+            for k in ("session", "live_price", "live_price_stale", "last_close", "digits"):
+                if ctxs[sym].get(k) is not None:
+                    row[k] = ctxs[sym][k]
+            validated.append(row)
+        # one new entry per cycle
+        opened = None
+        for v, row in zip(rows, validated):
+            if v.get("decision") == "OPENED":
+                if opened is None:
+                    opened = v
+                else:
+                    v["decision"] = "skip: one new entry per cycle"
+                    row["action"] = "HOLD"
+                    row["decision"] = v["decision"]
+        self._log_signals(now, validated, resp, cost, parse_err)
+        self.last_signals = [{"symbol": v.get("symbol"), "action": v.get("action"),
+                              "confidence": v.get("confidence"), "score": v.get("score"),
+                              "setup_type": v.get("setup_type"), "gated": v.get("gated"),
+                              "decision": v.get("decision"),
+                              "rationale": (v.get("rationale") or "")[:240]} for v in rows]
+        record = {"run_at_utc": _iso(now), "signals": validated,
+                  "data": {p["symbol"]: {**(p.get("context") or {}), "source": p.get("source"),
+                                         "ticker": p.get("ticker")} for p in (pkg.get("payloads") or [])},
+                  "model": MODEL, "book": BOOK, "prompt_version": B.PROMPT_VERSION,
+                  "snapshot_id": pkg.get("snapshot_id")}
+        fill_ts = None
+        async with self.sim_lock:
+            dec = self.sim.on_record(record, now)
+            self.sim.stamp_positions()
+            if due_pendings(self.sim, now):
+                try:
+                    from .lucid import _default_live_prices
+                    live = await _default_live_prices(self.ds_cfg, {pe["symbol"] for pe in due_pendings(self.sim, now)}, now)
+                    apply_due_fills(self.sim, {}, now, live)
+                    self.sim.stamp_positions()
+                    fill_ts = datetime.now(UTC)
+                except Exception:
+                    log.exception("deepseek same-step fill failed (pending stays queued)")
+            await self._persist(now)
+        tok = usage_tokens(resp.get("usage"))
+        thinking = tok.get("reasoning")
+        return {"ok": bool(resp.get("ok")), "model": MODEL, "book": BOOK,
+                "latency_s": resp.get("latency_s"), "cost_usd": cost,
+                "thinking_tokens": thinking, "answer_ts": _iso(answer_ts),
+                "fill_ts": _iso(fill_ts) if fill_ts else None, "error": resp.get("error") or parse_err,
+                "signals": self.last_signals, "score_signals": score_signals,
+                "decisions": dec, "prompt_version": B.PROMPT_VERSION,
+                "snapshot_id": pkg.get("snapshot_id")}
 
     async def exit_tick(self, now: datetime | None = None) -> dict:
         """18 s mechanical-exit / pending-fill replay. Never raises."""
@@ -586,14 +728,14 @@ class DeepSeekEngine:
         state = "soft_cap" if float(sp["usd"]) > cap else ("waiting_for_key" if not self._key() else "ok")
         hs = self.sim.hard_stop_usd
         if uniform_exits_enabled(self.ds_cfg if hasattr(self, "ds_cfg") else self.sim.cfg):
-            rules = (f"deepseek-flash entries (effort low), same 2-min cycle / charts / numbers as Gemini flash; "
+            rules = (f"deepseek-flash entries (effort low), shared bracket-v1 package with C-OPUS-B (same charts, facts, 3 symbols, M15 close +20s); "
                      f"no model exits; {UNIFORM_BANNER}; same fill and full-size sizing as main; "
                      f"spend soft-stop ${cap:g}/day Dubai")
             payload["card"] = UNIFORM_BANNER
             payload["exit_calls_note"] = UNIFORM_BANNER
             payload["stop_txt"] = "1 ATR stop · 1 ATR target · 90 min"
         else:
-            rules = (f"deepseek-flash entries (effort low), same 2-min cycle / charts / numbers as Gemini flash; "
+            rules = (f"deepseek-flash entries (effort low), shared bracket-v1 package with C-OPUS-B (same charts, facts, 3 symbols, M15 close +20s); "
                      f"no model exits; −${hs:,.0f} net hard stop · 1 ATR target · 90-min cap; "
                      f"same fill and full-size sizing as main; spend soft-stop ${cap:g}/day Dubai")
             payload["card"] = (f"Hard stop −${hs:,.0f} net · 1 ATR target · 90-min cap · no model exits"

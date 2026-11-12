@@ -113,7 +113,7 @@ def test_mech_exits_even_when_gemini_exits_enabled(cfg):
     day = Path(cfg["general"]["logs_dir"]) / "2026-11-12"
     rows = [json.loads(l) for l in (day / "deepseek_trades.jsonl").read_text().splitlines()]
     assert rows[-1]["model"] == "deepseek-flash"
-    assert rows[-1]["exit_mode"] == "mech"
+    assert rows[-1]["exit_mode"] in ("mech", "uniform-1atr-v1")
     assert rows[-1]["book"] == "DS-FLASH"
     assert rows[-1]["exit_prompt_version"] == GEMINI_MECH_EXIT_VERSION
     assert not (day / "lucid_trades.jsonl").exists()
@@ -129,7 +129,7 @@ def test_fresh_account_is_100k_no_eval_fee(cfg):
 def test_filter_skips_btc_and_busy(cfg):
     payloads = [payload("XAUUSD"), payload("EURUSD"), payload("GBPUSD"), payload("US100"), payload("BTCUSD")]
     got = D.filter_ds_payloads(payloads, {"XAUUSD", "BTCUSD"}, cfg)
-    assert [p["symbol"] for p in got] == ["EURUSD", "GBPUSD", "US100"]
+    assert [p["symbol"] for p in got] == ["EURUSD", "US100"]
 
 
 def test_build_messages_include_images_and_prompt(cfg):
@@ -144,7 +144,8 @@ def test_build_messages_include_images_and_prompt(cfg):
     assert len(images) == 2
     assert images[0]["image_url"]["url"].startswith("data:image/jpeg;base64,")
     assert images[1]["image_url"]["url"].startswith("data:image/png;base64,")
-    assert any("Numeric context" in p["text"] for p in texts)
+    assert any("Numeric context" in p["text"] or "CODE-COMPUTED FACTS" in p["text"] for p in texts)
+    assert any("CODE-COMPUTED FACTS" in p["text"] for p in texts)
     assert any("LIVE PRICE SENT TO MODEL" in p["text"] for p in texts)
     assert not any("LIVE PRICE SENT TO GEMINI" in p["text"] for p in texts)
     # Default (Gemini) wording is unchanged when the optional tag is omitted.
@@ -202,7 +203,7 @@ def test_logs_every_signal_with_confidence_and_writes_site(cfg, monkeypatch):
     site = json.loads((Path(cfg["site"]["dir"]) / "deepseek.json").read_text())
     assert site["book"] == "DS-FLASH"
     assert site["model"] == "deepseek-flash"
-    assert site["exit_mode"] == "mech"
+    assert site["exit_mode"] in ("mech", "uniform-1atr-v1")
     assert site["account"]["balance"] == 100000.0 or site["account"]["start_balance"] == 100000.0
     assert site["spend"]["soft_usd"] == 5.0
     assert "lucid.json" not in [p.name for p in Path(cfg["site"]["dir"]).iterdir() if p.suffix == ".json"] or \
@@ -238,20 +239,15 @@ def test_throttle_skip_does_not_call(cfg, monkeypatch):
 
 
 def test_kick_is_fire_and_forget(cfg, monkeypatch):
+    """t251u: kick is a no-op — DS-FLASH must not ride the 2-min Gemini loop."""
     monkeypatch.setenv("DEEPSEEK_API_KEY", "test-key-not-real")
     api = Api([], delay=0.4)
     eng = _engine(cfg, api)
     D.set_engine(eng)
-    async def _go():
-        t0 = asyncio.get_running_loop().time()
-        task = D.kick(cfg, [payload("XAUUSD")], pngs={"XAUUSD": b"\xff\xd8\xff x"}, now=T_OFFPEAK)
-        elapsed = asyncio.get_running_loop().time() - t0
-        assert elapsed < 0.1
-        assert task is not None and not task.done()
-        await task
-        assert api.calls
     try:
-        run(_go())
+        task = D.kick(cfg, [payload("XAUUSD")], pngs={"XAUUSD": b"\xff\xd8\xff x"}, now=T_OFFPEAK)
+        assert task is None
+        assert api.calls == []
     finally:
         D.set_engine(None)
 
@@ -271,3 +267,16 @@ def test_config_and_workflow_wire_the_key():
     # Do not require the value to appear anywhere else in the repo.
     src = (Path(__file__).resolve().parents[1] / "signals" / "deepseek.py").read_text()
     assert "os.environ.get(\"DEEPSEEK_API_KEY\")" in src
+
+
+def test_kick_is_noop_off_the_two_min_loop(cfg, monkeypatch):
+    monkeypatch.setenv("DEEPSEEK_API_KEY", "test-key-not-real")
+    api = Api([])
+    eng = _engine(cfg, api)
+    D.set_engine(eng)
+    try:
+        task = D.kick(cfg, [payload("XAUUSD")], pngs={"XAUUSD": b"\xff\xd8\xff x"}, now=T_OFFPEAK)
+        assert task is None
+        assert api.calls == []
+    finally:
+        D.set_engine(None)

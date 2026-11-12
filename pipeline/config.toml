@@ -601,11 +601,12 @@ max_output_tokens = { entry = 6000, exit = 800 }
 
 # ---------------------------------------------------------------------------------------------------------------
 # DEEPSEEK ENTRY-ONLY SIDE BOOK DS-FLASH (signals/deepseek.py). PAPER ONLY.
-# Own fresh $100k Lucid-style account. Same 2-min batched entry cycle, charts, system prompt and numeric
-# context as Gemini flash. Model: deepseek-flash (DeepSeek-V4.1-Flash, text+image, effort low). Timeout 60 s,
-# one attempt, never blocks the Gemini call (runs concurrently). No model exit calls. Mechanical exits match
-# main's uniform exits (t247u): 1 ATR stop / 1 ATR target / 90-min cap, no model exits. Same fill logic and
-# full-size NQ/GC/6E/6B sizing as main. BTCUSD is site-only and is not traded.
+# Own $100k Lucid-style account (no reset on the bracket-v1 switch). Shares the bracket-v1 input
+# package with C-OPUS-B: same prompt, code-computed facts, JPEG q78 charts, hold gates, and the
+# 3-symbol set (XAUUSD / EURUSD / US100; no GBPUSD). Cadence is the shared M15 close +20s
+# snapshot, never the 2-min Gemini flash loop. Model: deepseek-flash, effort low. Timeout 60 s,
+# one attempt. No model exit calls. Uniform 1 ATR / 1 ATR / 90-min exits. 0.3 ATR fill check.
+# New signals tagged prompt_version=bracket-v1.
 # Key: env DEEPSEEK_API_KEY only (repo secret). Missing key -> idle, panel shows "waiting for key".
 # Daily spend (Dubai day) soft-stops new entry calls once estimated cost exceeds $5. Official pricing
 # (https://api-docs.deepseek.com/quick_start/pricing/, USD per 1M tokens): off-peak cache-hit $0.003 /
@@ -624,3 +625,46 @@ reset_token = "2026-11-12-ds-flash"
 reset_reason = "DS-FLASH fresh $100k paper book"
 soft_spend_usd = 5.0
 check_seconds = 18
+prompt_version = "bracket-v1"
+symbols = ["XAUUSD", "EURUSD", "US100"]
+scan = "m15_close_plus_20s"
+fill_max_adverse_atr = 0.3
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# SHARED M15 CLOSE +20s SCAN (signals/m15_scan.py). PAPER ONLY.
+# One scheduler for every close-bar model (C-OPUS, C-SONNET, C-OPUS-B, Carbon, DS-FLASH). Charts and
+# facts are rendered once; the identical snapshot (snapshot_id + sha256 of the chart bytes and facts)
+# is sent to every model. The 2-min loop stays for gemini-3.8-flash only. Carbon triggered mid-bar
+# checks keep their own loop. Odd and even closes (:00/:30 and :15/:45) all wake at close+20s.
+[m15_scan]
+enabled = true
+offset_seconds = 20
+symbols = ["XAUUSD", "EURUSD", "GBPUSD", "US100", "BTCUSD"]
+
+# ---------------------------------------------------------------------------------------------------------------
+# C-OPUS-B (signals/opus_b.py). PAPER ONLY. Same model as C-OPUS (claude-opus-5-5) but a fresh $100k
+# Lucid account, the shared bracket-v1 package (with DS-FLASH), effort high / adaptive thinking,
+# XAUUSD / EURUSD / US100 only, 0.3 ATR fill check, uniform 1 ATR / 1 ATR / 90-min exits, no Haiku.
+# Prompt at templates/bracket_entry_v1.txt is a reconstruction of the "DeepSeek v1.1 prompt core"
+# (original file was not in the repo). Trades tagged prompt_version=bracket-v1, exit_mode=uniform-1atr-v1.
+[opus_b]
+enabled = true
+model = "claude-opus-5-5"
+effort = "high"
+timeout_seconds = 150
+max_tokens = 8000
+max_attempts = 2
+book = "C-OPUS-B"
+start_balance = 100000.0
+reset_token = "c-opus-b-v1"
+reset_reason = "C-OPUS-B fresh $100k paper book (bracket-v1, high effort)"
+fill_max_adverse_atr = 0.3
+symbols = ["XAUUSD", "EURUSD", "US100"]
+prompt_version = "bracket-v1"
+check_seconds = 18
+
+[claude.books.C-OPUS-B]
+enabled = true
+model = "claude-opus-5-5"
+effort = "high"

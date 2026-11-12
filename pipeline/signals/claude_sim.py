@@ -28,6 +28,8 @@ from .claude_rules import (rules_cfg, clamp_stop, size_for, risk_per_contract, a
                            usd_group, us100_alignment, open_usd_groups, group_lock_until, set_group_lock,
                            m15_bars_closed_since_entry, phase_a_structure_reason)
 from .exit_versions import CLAUDE_EXIT_PROMPT_VERSION, CLAUDE_EXIT_PROMPT_VERSION_PRE
+from .uniform_exit import (uniform_exits_enabled, claude_exit_calls_enabled, close_tag,
+                           arm_uniform, UNIFORM_BANNER, UNIFORM_EXIT_VERSION, TIME_CAP_MINUTES)
 from .uniform_exit import (uniform_exits_enabled, claude_exit_calls_enabled, arm_uniform,
                            close_tag, UNIFORM_BANNER, UNIFORM_EXIT_VERSION, TIME_CAP_MINUTES)
 
@@ -407,7 +409,17 @@ class ClaudeEngine:
                 ctx[k] = round(v, d) if isinstance(v, float) else v
         return f"Chart {i}/{n} - {p['symbol']}\nNumeric context (authoritative): {json.dumps(ctx, default=str)}"
 
-    async def on_cycle(self, payloads: list[dict], now: datetime | None = None) -> dict:
+    async def on_shared_snapshot(self, payloads: list[dict], pngs: dict[str, bytes], snap, now=None) -> dict:
+        """t251u: consume the shared M15+20s snapshot (same chart bytes as Carbon / C-OPUS-B / DS-FLASH)."""
+        meta = {"snapshot_id": getattr(snap, "snapshot_id", None),
+                "snapshot_hash": getattr(snap, "snapshot_hash", None),
+                "bar_close_ts": getattr(snap, "bar_close_ts", None),
+                "snapshot_ts": getattr(snap, "snapshot_ts", None)}
+        return await self.on_cycle(payloads, now=now or getattr(snap, "now", None),
+                                   pngs=pngs, snapshot_meta=meta)
+
+    async def on_cycle(self, payloads: list[dict], now: datetime | None = None,
+                       pngs: dict[str, bytes] | None = None, snapshot_meta: dict | None = None) -> dict:
         now = now or datetime.now(UTC)
         lp = [p for p in payloads if p.get("symbol") in self.symmap]
         lp.sort(key=lambda p: self.symbols.index(p["symbol"]) if p["symbol"] in self.symbols else 99)
@@ -432,7 +444,12 @@ class ClaudeEngine:
         htf = dict(zip(syms, await asyncio.gather(*[self._htf(s, now) for s in syms])))
         rp = [{**p, "page_key": f"ce-{p['symbol']}"} for p in lp]
         t_r = time.monotonic()
-        pngs = await self._render(rp)
+        if pngs is None:
+            pngs = await self._render(rp)
+        else:
+            missing = [p for p in rp if p["symbol"] not in pngs]
+            if missing:
+                pngs = {**pngs, **(await self._render(missing) or {})}
         render_ms = round((time.monotonic() - t_r) * 1000)
         content = []
         for i, p in enumerate(lp, 1):
@@ -447,6 +464,9 @@ class ClaudeEngine:
                                    return_exceptions=True)
         await self._refresh_live(res, now)
         out = {"bar": bar, "t": _iso(now), "render_ms": render_ms, "sims": {}}
+        if snapshot_meta:
+            out.update({k: (v.isoformat() if hasattr(v, "isoformat") else v)
+                        for k, v in snapshot_meta.items() if v is not None})
         async with self.mu:
             t_done = datetime.now(UTC)
             for m, r in zip(models, res):
@@ -1340,6 +1360,9 @@ async def run_claude_scan_loop(eng: ClaudeEngine, stop: asyncio.Event | None = N
         if stop and stop.is_set():
             return
         try:
+            if getattr(eng, "shared_m15", False):
+                # Entry scan is owned by the shared M15+20s coordinator.
+                continue
             now = datetime.now(UTC)
             payloads = await eng.fetch_entry_payloads(now)
             if payloads:

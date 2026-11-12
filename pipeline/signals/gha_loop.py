@@ -22,7 +22,7 @@ from .site import write_status
 
 log = logging.getLogger("signals.gha")
 SITE_JSON = ("status.json", "latest_signal.json", "history.json", "lucid.json", "claude.json", "bracket.json",
-             "carbon.json", "deepseek.json", "signal_scores.json")
+             "carbon.json", "deepseek.json", "signal_scores.json", "opus_b.json", "m15_scan.json")
 DATA_JSON = ("books.json",)  # committed to the data branch only (not deployed to Pages)
 CYCLE_LOG_KEEP_DAYS = 14
 
@@ -65,6 +65,10 @@ class GhaLoop:
         self.deepseek_exit_task: asyncio.Task | None = None
         self.scorer = None
         self.scorer_task: asyncio.Task | None = None
+        self.opus_b = None
+        self.opus_b_exit_task: asyncio.Task | None = None
+        self.m15 = None
+        self.m15_task: asyncio.Task | None = None
         for sub in ("state", "logs"):
             (data / sub).mkdir(parents=True, exist_ok=True)
 
@@ -205,7 +209,9 @@ class GhaLoop:
         self.start_bracket()
         self.start_carbon()
         self.start_deepseek()
+        self.start_opus_b()
         self.start_scorer()
+        self.start_m15_scan()
         while True:
             # The job still wakes every `self.interval` (2 min). The site countdown uses
             # scan_interval (2 active / 15 during ASIAN / DEADZONE) so it matches the next Gemini call.
@@ -339,12 +345,8 @@ class GhaLoop:
             self.claude = None
 
     def schedule_claude(self, res: dict | None) -> None:
-        if self.claude is None:
-            return
-        try:
-            self.claude.schedule_entry((res or {}).get("payloads"))
-        except Exception:
-            log.exception("claude schedule failed (Gemini loop unaffected)")
+        """t251u: Claude entries fire only on the shared M15 close +20s scan, never the 2-min loop."""
+        return
 
     async def stop_claude(self) -> None:
         for t in (self.claude_exit_task, self.claude_scan_task, getattr(self.claude, "entry_task", None)):
@@ -462,6 +464,62 @@ class GhaLoop:
             pass
         self.deepseek = None
 
+    def start_opus_b(self) -> None:
+        """C-OPUS-B: own $100k Lucid account, shared bracket-v1 package, 18 s mechanical exits."""
+        from .opus_b import opus_b_cfg
+        if self.dry_run or not opus_b_cfg(self.cfg).get("enabled", True):
+            return
+        if not (self.cfg.get("claude") or {}).get("enabled", False):
+            # still allow C-OPUS-B if claude section is on; if the whole claude block is off, skip
+            pass
+        try:
+            from .opus_b import OpusBEngine, run_opus_b_exit_loop
+            self.opus_b = OpusBEngine(self.cfg, io_lock=self.io_lock)
+            self.opus_b_exit_task = asyncio.create_task(run_opus_b_exit_loop(self.opus_b), name="opus-b-exit")
+            log.info("C-OPUS-B on: model=%s effort=%s key %s",
+                     self.opus_b.cc["model"], self.opus_b.cc["effort"],
+                     "present" if self.opus_b._key() else "MISSING (waiting)")
+        except Exception:
+            log.exception("C-OPUS-B failed to start (other books unaffected)")
+            self.opus_b = None
+
+    async def stop_opus_b(self) -> None:
+        t, self.opus_b_exit_task = self.opus_b_exit_task, None
+        if t:
+            t.cancel()
+            with contextlib.suppress(BaseException):
+                await asyncio.wait_for(t, 30)
+        self.opus_b = None
+
+    def start_m15_scan(self) -> None:
+        """Shared M15 close +20s coordinator: one snapshot, every close-bar model."""
+        if self.dry_run or (self.cfg.get("m15_scan") or {}).get("enabled", True) is False:
+            return
+        try:
+            from .m15_scan import M15Coordinator, run_m15_scan_loop
+            self.m15 = M15Coordinator(
+                self.cfg, io_lock=self.io_lock,
+                claude=self.claude, carbon=self.carbon,
+                deepseek=self.deepseek, opus_b=self.opus_b, scorer=self.scorer,
+                state_dir=self.data / "state", logs_dir=self.data / "logs", site_dir=self.data,
+            )
+            self.m15_task = asyncio.create_task(run_m15_scan_loop(self.m15), name="m15-scan")
+            log.info("m15 shared scan on: offset=%ss symbols=%s claude=%s carbon=%s ds=%s opus_b=%s",
+                     self.m15.offset(), self.m15.symbols(),
+                     self.claude is not None, self.carbon is not None,
+                     self.deepseek is not None, self.opus_b is not None)
+        except Exception:
+            log.exception("m15 shared scan failed to start (2-min Gemini loop unaffected)")
+            self.m15 = None
+
+    async def stop_m15_scan(self) -> None:
+        t, self.m15_task = self.m15_task, None
+        if t:
+            t.cancel()
+            with contextlib.suppress(BaseException):
+                await asyncio.wait_for(t, 30)
+        self.m15 = None
+
     def start_scorer(self) -> None:
         """Universal signal scorer (t248u): backfill logs, then score ready rows on a 60 s loop. No model calls."""
         if self.dry_run:
@@ -507,7 +565,9 @@ class GhaLoop:
         await self.stop_claude()
         await self.stop_bracket()
         await self.stop_carbon()
+        await self.stop_m15_scan()
         await self.stop_deepseek()
+        await self.stop_opus_b()
         await self.stop_scorer()
         succ = L.read(self.data, L.SUCC)
         handed = succ.get("run_id") if (reason == "handoff" and succ) else None
@@ -549,7 +609,9 @@ async def run_gha_loop(cfg: dict, data: Path, run_id: str, role: str, **kw) -> s
         await loop.stop_claude()
         await loop.stop_bracket()
         await loop.stop_carbon()
+        await loop.stop_m15_scan()
         await loop.stop_deepseek()
+        await loop.stop_opus_b()
         await loop.stop_scorer()
         log.error("lost the loop lock: %s -> exiting without further writes", e)
         return "lost-lock"

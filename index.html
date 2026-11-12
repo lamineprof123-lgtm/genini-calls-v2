@@ -288,7 +288,7 @@
 </section>
 
 <section class="lucid" id="deepseek" hidden aria-label="DeepSeek DS-FLASH paper book">
-  <h2><span><span class="who d">DeepSeek</span>DS-FLASH · deepseek-flash entries · mechanical exits</span><small id="dsUpd"></small></h2>
+  <h2><span><span class="who d">DeepSeek</span>DS-FLASH · bracket-v1 · M15+20s · effort low</span><small id="dsUpd"></small></h2>
   <div class="lu-grid" id="dsGrid"></div>
   <div class="lu-note" id="dsCall"></div>
   <h3>Open positions</h3>
@@ -298,8 +298,19 @@
   <div class="lu-note" id="dsNote"></div>
 </section>
 
+<section class="lucid" id="opusb" hidden aria-label="C-OPUS-B paper book">
+  <h2><span><span class="who o">Claude</span>C-OPUS-B · bracket-v1 · M15+20s · effort high</span><small id="obUpd"></small></h2>
+  <div class="lu-grid" id="obGrid"></div>
+  <div class="lu-note" id="obCall"></div>
+  <h3>Open positions</h3>
+  <div class="lu-wrap" id="obPos"></div>
+  <h3>Recent trades</h3>
+  <div class="lu-wrap" id="obTrades"></div>
+  <div class="lu-note" id="obNote"></div>
+</section>
+
 <section class="lucid" id="cmp" hidden aria-label="Gemini vs Claude comparison">
-  <h2><span>Gemini vs Claude vs Carbon vs DeepSeek</span><small id="cmpUpd"></small></h2>
+  <h2><span>Gemini vs Claude vs Carbon vs DeepSeek vs C-OPUS-B</span><small id="cmpUpd"></small></h2>
   <div class="lu-wrap" id="cmpT"></div>
   <div class="lu-note">Paper sims only. R per signal = average R of every BUY/SELL signal played 1 contract under the
     uniform 1 ATR / 1 ATR / 90-min bracket (see Signal scorer).</div>
@@ -569,7 +580,7 @@
   }
 
   // ---- Lucid paper account (lucid.json, written each cycle; paper trading only) ----
-  let lucid = null, bracket = null, carbon = null, deepseek = null;
+  let lucid = null, bracket = null, carbon = null, deepseek = null, opusb = null;
   const usd = (v, sign) => v == null ? '—' : (sign && v > 0 ? '+' : (v < 0 ? '−' : '')) + '$' +
     Math.abs(Number(v)).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const cls = v => v > 0 ? 'pos' : (v < 0 ? 'neg' : '');
@@ -629,11 +640,19 @@
     }
     if (deepseek && deepseek.account) {
       const da = deepseek.account;
-      C.push({ label: deepseek.label || 'DS-FLASH (deepseek-flash, mechanical exits)',
-               stop_txt: deepseek.stop_txt || '−$500 net · 1 ATR tgt · 90 min',
+      C.push({ label: deepseek.label || 'DS-FLASH (deepseek-flash, bracket-v1)',
+               stop_txt: deepseek.stop_txt || '1 ATR stop · 1 ATR target · 90 min',
                balance: da.balance, net_pnl: da.net_pnl ?? da.realized_pnl_since_reset,
                open_pnl: da.open_pnl, trades: da.trades ?? da.trades_since_reset, wins: da.wins,
                losses: da.losses, stopped: da.stopped, open_positions: (deepseek.open_positions || []).length });
+    }
+    if (opusb && opusb.account) {
+      const oa = opusb.account;
+      C.push({ label: opusb.label || 'C-OPUS-B (claude-opus-5-5, bracket-v1, effort high)',
+               stop_txt: opusb.stop_txt || '1 ATR stop · 1 ATR target · 90 min',
+               balance: oa.balance, net_pnl: oa.net_pnl ?? oa.realized_pnl_since_reset,
+               open_pnl: oa.open_pnl, trades: oa.trades ?? oa.trades_since_reset, wins: oa.wins,
+               losses: oa.losses, stopped: oa.stopped, open_positions: (opusb.open_positions || []).length });
     }
     $('luCmp').innerHTML = C.length ? `<table class="lu-t"><tr><th>Book</th><th>Stop</th><th>Balance</th><th>Net P&amp;L</th>
       <th>Open P&amp;L</th><th>Trades</th><th>Stopped</th><th>Open</th></tr>${C.map(c => `<tr><td>${esc(c.label || c.book)}</td>
@@ -678,12 +697,18 @@
                   net: da.net_pnl ?? da.realized_pnl_since_reset, w: da.wins, l: da.losses, rps: null,
                   n: da.trades ?? da.trades_since_reset, wait: deepseek.key_present === false, ds: true });
     }
+    if (opusb && opusb.account) {
+      const oa = opusb.account;
+      rows.push({ who: opusb.book || 'C-OPUS-B', c: 'o', bal: oa.balance,
+                  net: oa.net_pnl ?? oa.realized_pnl_since_reset, w: oa.wins, l: oa.losses, rps: null,
+                  n: oa.trades ?? oa.trades_since_reset, wait: opusb.key_present === false });
+    }
     if (!rows.length) return;
     $('cmpT').innerHTML = `<table class="lu-t cmp-t"><tr><th>Sim</th><th>Balance</th><th>Net</th><th>Trades</th><th>W/L</th><th>R / signal</th></tr>` +
       rows.map(r => `<tr><td><span class="who ${r.c}">${esc(r.who)}</span>${r.wait ? '<small>waiting for key</small>' : ''}</td>
         <td>${usd(r.bal)}</td><td class="${cls(r.net)}">${usd(r.net, true)}</td><td>${r.n ?? 0}</td><td>${r.w ?? 0}/${r.l ?? 0}</td>
         <td class="${cls(r.rps)}">${r.c === 'g' && !r.carbon ? 'n/a' : rr(r.rps) + (r.sig ? ` <small>(${r.sig})</small>` : '')}</td></tr>`).join('') + '</table>';
-    const u = [lucid && lucid.updated_at, claude && claude.updated_at, carbon && carbon.updated_at, deepseek && deepseek.updated_at].filter(Boolean).sort().pop();
+    const u = [lucid && lucid.updated_at, claude && claude.updated_at, carbon && carbon.updated_at, deepseek && deepseek.updated_at, opusb && opusb.updated_at].filter(Boolean).sort().pop();
     $('cmpUpd').textContent = u ? `updated ${hm(u)} ${city()}` : '';
     $('cmp').hidden = false;
   }
@@ -974,6 +999,63 @@
   }
   pollDeepseek();
   setInterval(pollDeepseek, 15000);
+
+  function renderOpusB() {
+    const D = opusb; if (!D || !D.account) return;
+    const a = D.account;
+    const cell = (k, v, c) => `<div><div class="lu-k">${k}</div><div class="lu-v ${c || ''}">${v}</div></div>`;
+    const lc = D.last_call || {};
+    const d = v => v != null && Math.abs(v) < 10 ? 5 : 2;
+    $('obGrid').innerHTML = [
+      cell('Balance', usd(a.balance)), cell('Equity', usd(a.equity)),
+      cell('Net P&amp;L', usd(a.net_pnl ?? a.realized_pnl_since_reset, true), cls(a.net_pnl ?? a.realized_pnl_since_reset)),
+      cell('Open P&amp;L', usd(a.open_pnl, true), cls(a.open_pnl)),
+      cell('Trades', `${a.trades ?? a.trades_since_reset ?? 0}${(a.trades ?? a.trades_since_reset) ? ` <small>(${a.wins}W/${a.losses}L)</small>` : ''}`),
+      cell('Model', esc(D.model || 'claude-opus-5-5')),
+      cell('Effort', esc(D.effort || 'high')),
+      cell('Prompt', esc(D.prompt_version || 'bracket-v1')),
+      cell('Thinking tokens (last)', lc.thinking_tokens != null ? Number(lc.thinking_tokens).toLocaleString('en-US') : '—'),
+      cell('Last cost', lc.cost_usd != null ? '$' + Number(lc.cost_usd).toFixed(4) : '—'),
+    ].join('');
+    const sigs = (D.last_signals || []).map(g => `${g.symbol} ${g.action}${g.confidence != null ? ' ' + Number(g.confidence).toFixed(2) : ''}${g.score != null ? ' s' + g.score : ''}`).join(' · ');
+    $('obCall').textContent = !D.key_present ? 'Waiting for ANTHROPIC_API_KEY (repo secret).' :
+      (lc.t ? `Last C-OPUS-B call ${dayhm(lc.t)} ${city()} · ${lc.ok ? 'OK' : 'FAILED: ' + (lc.error || lc.skipped || '')} · ` +
+        `${Number((lc.latency_ms || 0)/1000).toFixed(1)} s · $${Number(lc.cost_usd || 0).toFixed(4)}` +
+        (lc.thinking_tokens != null ? ` · thinking ${Number(lc.thinking_tokens).toLocaleString('en-US')}` : '') +
+        (lc.snapshot_id ? ` · ${lc.snapshot_id}` : '') +
+        (sigs ? ' · ' + sigs : '')
+        : 'No C-OPUS-B call yet.');
+    const P = D.open_positions || [];
+    $('obPos').innerHTML = P.length ? `<table class="lu-t"><tr><th>Symbol</th><th>Size</th><th>Side</th><th>Opened</th><th>Held</th>
+      <th>Entry</th><th>Stop</th><th>Target</th><th>Open P&amp;L</th></tr>${P.map(p => `<tr><td>${esc(p.symbol)}</td>
+      <td>${p.qty} ${esc(p.contract)}</td><td>${esc(p.side)}</td><td>${dayhm(p.entry_time)}</td>
+      <td data-entry-time="${esc(p.entry_time)}">${esc(heldSince(p.entry_time))}</td>
+      <td>${px(p.entry, d(p.entry))}</td>
+      <td>${p.stop != null ? px(p.stop, d(p.stop)) : '—'}</td>
+      <td>${p.target != null ? px(p.target, d(p.target)) : '—'}</td>
+      <td class="${cls(p.unrealized)}">${usd(p.unrealized, true)}</td></tr>`).join('')}</table>`
+      : `<div class="lu-note">None${D.pending ? ` · ${D.pending} pending entry` : ''}</div>`;
+    const T = D.recent_trades || [];
+    $('obTrades').innerHTML = T.length ? `<table class="lu-t"><tr><th>Closed</th><th>Opened</th><th>Symbol</th><th>Size</th><th>Side</th>
+      <th>Held</th><th>Exit</th><th>Net</th></tr>${T.map(t => `<tr><td>${dayhm(t.t_exit)}</td><td>${dayhm(t.entry_time)}</td><td>${esc(t.symbol)}</td>
+      <td>${t.qty} ${esc(t.contract)}</td><td>${esc(t.side)}</td><td>${esc(t.held || heldOf(t))}</td>
+      <td>${esc(t.reason)}</td>
+      <td class="${cls(t.net)}">${usd(t.net, true)}</td></tr>`).join('')}</table>`
+      : '<div class="lu-note">No closed trades yet.</div>';
+    $('obUpd').textContent = D.updated_at ? `updated ${hm(D.updated_at)} ${city()}` : '';
+    const r = D.reset || {};
+    $('obNote').textContent = `Paper trading only · ${D.rules || ''} ` +
+      (r.at ? `· fresh $${Number(a.start_balance || 100000).toLocaleString('en-US')} account since ${dayhm(r.at)} ${city()}` : '');
+    $('opusb').hidden = false;
+  }
+  async function pollOpusB() {
+    const j = await getJSON('opus_b.json');
+    if (j && !(opusb && Date.parse(j.updated_at) < Date.parse(opusb.updated_at))) {
+      opusb = j; renderOpusB(); renderLucid(); renderCmp();
+    }
+  }
+  pollOpusB();
+  setInterval(pollOpusB, 15000);
   async function pollLucid() {
     const j = await getJSON('lucid.json');
     if (j && !(lucid && Date.parse(j.updated_at) < Date.parse(lucid.updated_at))) { lucid = j; renderLucid(); }

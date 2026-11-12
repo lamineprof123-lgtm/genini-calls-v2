@@ -897,26 +897,34 @@ class CarbonEngine:
         return out
 
     async def scan(self, now: datetime | None = None, *, kind: str = "entry", symbols: list[str] | None = None,
-                   trigger: dict | None = None) -> dict:
+                   trigger: dict | None = None, snaps=None, pngs=None, snapshot_meta=None) -> dict:
         """One Carbon entry call (M15 scan: all eligible symbols; trigger: one symbol). Never raises."""
         try:
             now = now or datetime.now(UTC)
             async with self.call_mu:
-                return await self._scan(now, kind, symbols, trigger)
+                return await self._scan(now, kind, symbols, trigger, snaps=snaps, pngs=pngs,
+                                        snapshot_meta=snapshot_meta)
         except Exception as e:
             log.exception("carbon scan failed (other books unaffected)")
             return {"error": f"{type(e).__name__}: {e}"}
 
-    async def _scan(self, now: datetime, kind: str, symbols, trigger) -> dict:
+    async def _scan(self, now: datetime, kind: str, symbols, trigger, snaps=None, pngs=None,
+                    snapshot_meta=None) -> dict:
         from .gemini_client import SignalBatch, build_contents, system_prompt
         from .validator import parse_raw
         syms = symbols or self.cc["symbols"]
-        snaps = await self._snapshots(list(syms), now)
+        if snaps is None:
+            snaps = await self._snapshots(list(syms), now)
+        else:
+            snaps = {s: snaps[s] for s in (syms if symbols else snaps) if s in snaps}
         for p in snaps.values():
             self._cache_payload(p)
         if kind == "entry":
             self.e["last_scan_bar"] = next(iter(snaps.values()))["context"].get("last_closed_bar_utc") if snaps else None
         out = {"kind": kind, "t": _iso(now), "trigger": trigger}
+        if snapshot_meta:
+            out.update({k: snapshot_meta.get(k) for k in
+                        ("snapshot_id", "snapshot_hash", "bar_close_ts", "snapshot_ts")})
         if not self.entries_allowed(now):
             out["skipped"] = "outside entry window / session"
             return out
@@ -940,7 +948,12 @@ class CarbonEngine:
             p["page_key"] = f"carbon-{s}"
             payloads.append(p)
         t_r = time.monotonic()
-        pngs = await self._render(payloads)
+        if pngs is None:
+            pngs = await self._render(payloads)
+        else:
+            missing = [p for p in payloads if p["symbol"] not in pngs]
+            if missing:
+                pngs = {**pngs, **(await self._render(missing) or {})}
         render_ms = round((time.monotonic() - t_r) * 1000)
         r = await self._api(self.cc, system_text=system_prompt(self.cfg, send), contents=build_contents(payloads, pngs),
                             schema=SignalBatch, thinking=self.cc["entry_thinking"],
@@ -1341,7 +1354,11 @@ async def run_carbon_scan_loop(eng: CarbonEngine, stop: asyncio.Event | None = N
             now = datetime.now(UTC)
             await eng.tick(now)
             await eng.runner_exit_checks(now)
-            if eng.entries_allowed(now):
+            if getattr(eng, "shared_m15", False):
+                # Entry scan is owned by the shared M15+20s coordinator (same chart bytes
+                # as Claude / C-OPUS-B / DS-FLASH). This loop still runs tick + runner exits.
+                await eng.persist(now)
+            elif eng.entries_allowed(now):
                 r = await eng.scan(now, kind="entry")
                 log.info("carbon scan: %s", json.dumps(r, default=str)[:400])
             else:

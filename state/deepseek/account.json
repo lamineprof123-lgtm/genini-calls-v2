@@ -22,7 +22,157 @@
     "trades": 0
   },
   "positions": [],
-  "pending": [],
+  "pending": [
+    {
+      "symbol": "XAUUSD",
+      "side": 1,
+      "created": "2026-11-12T20:15:20.003476+00:00",
+      "fill_after": "2026-11-12T20:16:00+00:00",
+      "reserved_risk": 0.0,
+      "planned": {
+        "contract": "GC",
+        "qty": 2,
+        "risk_usd": null,
+        "tdist": null,
+        "target_source": "none (gemini_only)"
+      },
+      "expires": "2026-11-12T20:26:00+00:00",
+      "atr": 8.195,
+      "scalp": {
+        "action": "BUY",
+        "side": 1,
+        "entry": 3885.68,
+        "stop_loss": 3880.43,
+        "take_profit": 3886.93,
+        "sdist": 5.249749999999494,
+        "tdist": 1.25,
+        "stop_source": "structure",
+        "target_source": "fixed",
+        "rr": 0.238,
+        "structure_stop": 3880.4302500000003,
+        "atr_stop": 3879.124,
+        "fixed_tp": 3886.93,
+        "structure_tp": 3924.2000000000003,
+        "structure_label": "S/R",
+        "candle": {
+          "high": 3886.25,
+          "low": 3880.84
+        },
+        "levels": [
+          {
+            "price": 3924.3,
+            "label": "S/R"
+          },
+          {
+            "price": 3968.55,
+            "label": "S/R"
+          },
+          {
+            "price": 3977.99,
+            "label": "Prev Low"
+          },
+          {
+            "price": 3852.35,
+            "label": "Session Low"
+          }
+        ],
+        "vp": {
+          "poc": 3978.13,
+          "vah": 4000.33,
+          "val": 3881.94
+        }
+      },
+      "session": "NEW_YORK_SESSION",
+      "telemetry": {
+        "symbol": "XAUUSD",
+        "session": "NEW_YORK_SESSION",
+        "last_close": 3886.1,
+        "atr": 8.195,
+        "vwap": 3927.89,
+        "ema20": 3884.01,
+        "ema50": 3905.77,
+        "price_vs_vwap": {
+          "side": "below",
+          "dist_atr": -5.0995
+        },
+        "price_vs_ema50": {
+          "side": "below",
+          "dist_atr": -2.4002
+        },
+        "vwap_aligned_with_side": false,
+        "ema50_aligned_with_side": false,
+        "poc": 3978.13,
+        "vah": 4000.33,
+        "val": 3881.94,
+        "price_vs_value_area": "inside",
+        "dist_to_poc_atr": -11.23,
+        "cvd": -4.36,
+        "cvd_label": "BEARISH",
+        "cvd_slope": 1.64,
+        "cvd_agrees_with_side": false,
+        "rvol": 0.749,
+        "rvol_spike": false,
+        "rvol_bars_since_spike": 25,
+        "atr_band_z": 0.255,
+        "atr_upper": 3900.4,
+        "atr_lower": 3867.62,
+        "nearest_sr": {
+          "above": {
+            "price": 3924.3,
+            "label": "S/R",
+            "dist_atr": 4.6614
+          },
+          "below": {
+            "price": 3852.35,
+            "label": "Session Low",
+            "dist_atr": 4.1184
+          }
+        },
+        "gemini": {
+          "action": "BUY",
+          "confidence": 0.55,
+          "confidence_band": "<0.6",
+          "rationale": "Trend continuation blocked: -5.15 ATR from VWAP (>2.0) and only 0.204 ATR room to EMA20. Fade qualifies: F1 VAL 3881.94 rejected on the last closed bar, F2 VWAP magnet 5 ATR away. S1 room 1.796 up, S2 no (RVOL 0.749), S3 cvd_slope +1.64 turning up, S4 NY, S5 GEX POSITIVE_DAMPENING.",
+          "model": "deepseek-flash",
+          "model_action": "BUY"
+        },
+        "scalp": {
+          "stop_basis": "structure",
+          "target_basis": "fixed",
+          "tdist": 1.25,
+          "sdist": 5.249749999999494,
+          "structure_label": "S/R"
+        },
+        "planned": {
+          "tdist": 1.25,
+          "sdist": 5.249749999999494,
+          "qty": null,
+          "contract": null,
+          "target_usd_net": null,
+          "risk_usd": null
+        },
+        "run_at_utc": "2026-11-12T20:15:20.003476+00:00",
+        "chart_path": null
+      },
+      "gemini": {
+        "action": "BUY",
+        "entry": 3885.68,
+        "stop_loss": 3877.49,
+        "take_profit": 3893.88,
+        "confidence": 0.55,
+        "rr": null,
+        "shown_on_site": true,
+        "basis": "site signal",
+        "run_at_utc": "2026-11-12T20:15:20.003476+00:00",
+        "session": "NEW_YORK_SESSION",
+        "rationale": "Trend continuation blocked: -5.15 ATR from VWAP (>2.0) and only 0.204 ATR room to EMA20. Fade qualifies: F1 VAL 3881.94 rejected on the last closed bar, F2 VWAP magnet 5 ATR away. S1 room 1.796 up, S2 no (RVOL 0.749), S3 cvd_slope +1.64 turning up, S4 NY, S5 GEX POSITIVE_DAMPENING.",
+        "model": "deepseek-flash"
+      },
+      "model": "deepseek-flash",
+      "exit_mode": "uniform-1atr-v1",
+      "book": "DS-FLASH"
+    }
+  ],
   "next_pos_id": 1,
   "day": {
     "id": "2026-11-12",
@@ -54,7 +204,7 @@
     "commissions": 0.0,
     "net_trade_pnl": 0.0,
     "skipped_signals": 0,
-    "accepted_signals": 0
+    "accepted_signals": 1
   },
   "reset_token": "2026-11-12-uniform-reset",
   "reset_at": "2026-11-12T18:11:32.211543+00:00",

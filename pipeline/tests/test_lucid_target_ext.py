@@ -153,7 +153,7 @@ def test_full_size_only_never_micros(sim, cfg):
     assert all(not n.startswith("M") for n in cfg["lucid"]["contracts"])
     for sym in cfg["lucid"]["symbols"]:
         assert set(cfg["lucid"]["symbols"][sym]["contracts"]) <= {"NQ", "GC", "6E", "6B"}
-    # many shapes: every plan is full-size, 1..40, NET in [381, 1000], risk <= 1500
+    # many shapes: every plan is full-size, 1..max_minis, NET in [381, 1000], risk <= 1500
     for sym, atr, tds, sds in (("US100", 44.0, (2, 5, 10, 20, 40), (5, 10, 30, 46, 70)),
                                ("XAUUSD", 5.3, (0.5, 1.25, 3, 5), (0.8, 2, 4.8, 7)),
                                ("EURUSD", 0.0006, (0.0002, 0.00125), (0.0002, 0.0005, 0.001)),
@@ -164,7 +164,7 @@ def test_full_size_only_never_micros(sim, cfg):
                 if sz is None:
                     assert "cannot reach" in sim.last_size_why or "no ATR" in sim.last_size_why
                     continue
-                assert sz["contract"] in ("NQ", "GC", "6E", "6B") and 1 <= sz["qty"] <= 40
+                assert sz["contract"] in ("NQ", "GC", "6E", "6B") and 1 <= sz["qty"] <= int(sim.L["max_minis"])
                 assert 381 <= sz["target_usd"] <= 1000 and sz["risk_usd"] <= 1500
     # a micro spec handed in directly is refused
     plan, why = plan_target_and_size(tdist0=20, sdist=30, atr=44, contracts=[("MNQ", {"point_value": 2, "tick": .25,

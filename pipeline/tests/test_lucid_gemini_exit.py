@@ -58,7 +58,7 @@ def test_size_by_stop_full_size_no_381_floor(sim):
     gc = sim.size_trade("XAUUSD", -1, 5.3, tdist=1.25, sdist=4.83)
     assert (gc["contract"], gc["qty"], gc["risk_usd"]) == ("GC", 3, 1470.0)
     eu = sim.size_trade("EURUSD", 1, 0.0005, tdist=0.00125, sdist=0.000457)
-    assert eu["contract"] == "6E" and eu["qty"] == 24 and eu["risk_usd"] == pytest.approx(1500.0)
+    assert eu["contract"] == "6E" and eu["qty"] == 6 and eu["risk_usd"] == pytest.approx(375.0)  # cap 6, not 24
     assert sim.size_trade("US100", 1, 44.0, sdist=80.0) is None and sim.last_size_why.startswith("risk cap")
 
 
@@ -207,6 +207,21 @@ def test_gemini_only_sizing_notional_08atr(gsim):
     gc = gsim.size_trade("XAUUSD", -1, 6.3, sdist=3.0)                  # 5.1 x 100 = $510 -> 2 GC
     assert (gc["contract"], gc["qty"]) == ("GC", 2)
     assert gsim.size_trade("US100", 1, 200.0)["qty"] == 1               # notional > $1,500 still 1 (never blocked)
+
+
+def test_gemini_only_qty_capped_at_lucidpro_six(gsim):
+    """Risk-cap sizing is unchanged but never exceeds the LucidPro 100K 6-mini aggregate.
+    Already-open size above the cap is kept; a new entry is refused."""
+    assert gsim.L["max_minis"] == 6
+    # 0.8 ATR * 0.0005 * $125,000 = $50/contract; floor(1500/50)=30 would have been used under the old 40 cap.
+    eu = gsim.size_trade("EURUSD", 1, 0.0005)
+    assert eu["contract"] == "6E" and eu["qty"] == 6
+    # An already-open 24-lot (pre-cap) is not resized; no room remains for a new symbol.
+    gsim.s["positions"].append({"id": 1, "symbol": "EURUSD", "contract": "6E", "qty": 24, "side": 1,
+                                "entry": 1.10, "stop": None, "target": None})
+    assert gsim.s["positions"][0]["qty"] == 24
+    assert gsim.size_trade("US100", 1, 60.0) is None
+    assert "max_minis=6 already used" in gsim.last_size_why
 
 
 def test_gemini_only_no_stop_no_forced_exits_dll_log_only(gsim):

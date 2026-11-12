@@ -136,8 +136,8 @@ the target distance is ~0.6 ATR(14,M15). Rules: EOD-trailing MLL (intraday bindi
 payouts (40% consistency, $103,100 buffer, caps, 90/10), blown accounts pay a reset/new-eval fee and the next
 account trades immediately.
 
-**USER RULE OVERRIDE:** `max_minis = 40` (400 micros). Lucid's real LucidPro 100K aggregate cap is **6 minis /
-60 micros**; this paper sim intentionally exceeds it per user request. DLL/MLL and `max_risk_usd` still bind.
+**Size cap:** `max_minis = 6` full-size contracts (NQ, GC, 6E, 6B; never micros), matching the real LucidPro 100K
+aggregate cap of 6 minis / 60 micros. DLL/MLL and `max_risk_usd` still bind (log-only in `gemini_only`).
 
 State `state/lucid/account.json`; logs `logs/YYYY-MM-DD/lucid_trades.jsonl` + `lucid_events.jsonl`.
 `python run.py lucid-status`. Tests: `tests/test_lucid.py`.

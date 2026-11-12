@@ -241,9 +241,9 @@ class LucidSim:
                            f"no target / no $381 floor (exit = Gemini CLOSE)")}
 
     def size_notional(self, symbol: str, atr: float) -> dict | None:
-        """gemini_only sizing: full-size, 1..40, qty = floor($max_risk / (0.8 ATR x point value)), at least 1.
+        """gemini_only sizing: full-size, 1..max_minis, qty = floor($max_risk / (0.8 ATR x point value)), at least 1.
         0.8 ATR is a NOTIONAL reference only - there is no stop and it never triggers an exit. Never blocked by
-        DLL/MLL (log-only); only the 40-contract aggregate cap applies."""
+        DLL/MLL (log-only); only the LucidPro 100K aggregate cap (max_minis, 6) applies."""
         from .scalp_levels import ceil_tick, full_size_contracts
         L = self.L
         cs = full_size_contracts([(c, self.spec(c)) for c in L["symbols"][symbol]["contracts"]])
@@ -441,7 +441,7 @@ class LucidSim:
                "risk_usd": p["risk_usd"], "target_usd": p["target_usd"],  # planned NET of RT commission
                "target_usd_is_net": True,
                "max_minis": self.L["max_minis"],
-               "max_minis_note": "USER RULE OVERRIDE (Lucid real LucidPro 100K cap is 6 minis); full-size only",
+               "max_minis_note": "LucidPro 100K cap: 6 full-size minis (NQ, GC, 6E, 6B); no micros",
                "gemini": p.get("gemini"),
                "telemetry": telem,
                "mfe_usd": telem.get("mfe_usd"), "mae_usd": telem.get("mae_usd"),
@@ -466,7 +466,7 @@ class LucidSim:
         Stop distance = server scalp stop (structure / 0.8 ATR). Target: the scalp target if it clears the NET
         floor at an allowed size; else the next structure level beyond it that does; else extended to ~$aim NET
         with the fewest contracts that fit the risk cap (see scalp_levels.plan_target_and_size). Size respects
-        max_risk_usd, the remaining DLL budget and max_minis (USER RULE OVERRIDE). Returns None (SKIP) when no
+        max_risk_usd, the remaining DLL budget and max_minis (LucidPro 100K cap). Returns None (SKIP) when no
         size fits; the reason is in self.last_size_why. Result carries target_source + sizing rationale.
         """
         L = self.L
@@ -967,7 +967,7 @@ class LucidSim:
                     target_source=size.get("target_source"), sizing=size.get("sizing"),
                     time_cut_rule=cut_rule, time_cut_candles=cut_bars, mfe_min=round(mfe_min, 6),
                     max_minis=self.L["max_minis"],
-                    max_minis_note="USER RULE OVERRIDE (Lucid real = 6 minis)",
+                    max_minis_note="LucidPro 100K cap: 6 full-size minis (NQ, GC, 6E, 6B); no micros",
                     telemetry_keys=sorted((snap or {}).keys()))
 
     def _breach_check(self, t: datetime, bar: dict) -> None:
@@ -1403,13 +1403,8 @@ def format_status(sm: dict, cfg: dict) -> str:
     L = []
     L.append(f"LUCID PAPER SIM - {cfg['lucid']['plan']}  (paper only, proxy spot/CFD prices)")
     L.append(f"  processed through {lp} Dubai")
-    real_cap = 6
     mm = cfg["lucid"]["max_minis"]
-    if mm > real_cap:
-        L.append(f"  SIZE CAP: max {mm:g} full-size contracts (NQ/GC/6E/6B, no micros)  "
-                 f"** USER RULE OVERRIDE ** (Lucid real LucidPro 100K cap is {real_cap} minis)")
-    else:
-        L.append(f"  SIZE CAP: max_minis={mm:g}")
+    L.append(f"  SIZE CAP: max {mm:g} full-size contracts (NQ/GC/6E/6B, no micros; LucidPro 100K cap)")
     L.append(f"  TARGETS: ${cfg['lucid']['target_usd_min']:g}-${cfg['lucid']['target_usd_max']:g} "
              f"NET of RT commission (aim ${cfg['lucid']['target_usd_aim']:g} net)")
     if (cfg.get("scalp") or {}).get("enabled", False):

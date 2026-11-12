@@ -263,7 +263,7 @@ exit_books_archive = "exit_books_pre_reset5_{day}.json"
 # USER RULE (2026-11-11 23:00 Dubai): "100% Gemini decision. Remove the hard stop, no stop loss no tp".
 # exit_mode = "gemini_only": entry = Gemini signal, exit = Gemini CLOSE only (1-strike for the account; books A/B).
 # No stop, no target, no max hold, no 16:45 flat, no forced exit. DLL / MLL / 3.5% breaker are LOG-ONLY.
-# Size = full-size 1..40 as if risk were 0.8 ATR at max_risk_usd (notional reference only).
+# Size = full-size 1..6 as if risk were 0.8 ATR at max_risk_usd (notional reference only), capped at the LucidPro 100K max of 6 minis.
 exit_mode = "gemini_only"
 gemini_exit_book = "1-strike"
 max_hold_minutes = 90
@@ -275,10 +275,9 @@ locked_mll_balance = 100100.0   # floor locks here once an EOD close exceeds ini
 mll_intraday_binding = true     # conservative: intraday equity <= MLL floor blows the account (Lucid unconfirmed)
 dll_fixed = 1800.0              # soft: flatten + no more trades until next session
 lucidscale_pct = 0.60           # funded: after an EOD close above initial trail, DLL = 60% x peak EOD profit (never decreases)
-# USER RULE OVERRIDE (2026-11-09): LucidPro 100K real aggregate cap is 6 minis.
-# User set max_minis = 40 for this paper sim. DLL/MLL/risk caps are unchanged.
-# USER RULE (2026-11-11): FULL-SIZE futures only (NQ, GC, 6E, 6B), never micros. Size = 1..40 full-size contracts.
-max_minis = 40                  # USER OVERRIDE (Lucid real = 6); aggregate full-size contracts across open positions
+# USER RULE (2026-11-11): FULL-SIZE futures only (NQ, GC, 6E, 6B), never micros.
+# Cap matches the real LucidPro 100K aggregate: 6 minis (or 60 micros; we do not trade micros).
+max_minis = 6                   # LucidPro 100K aggregate full-size contracts across open positions
 flat_by_et = "16:45"            # forced flat Mon-Fri (America/New_York)
 session_open_et = "18:00"       # reopen Sun-Thu
 no_new_entries_last_minutes = 15

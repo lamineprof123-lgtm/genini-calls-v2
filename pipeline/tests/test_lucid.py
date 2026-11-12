@@ -71,7 +71,7 @@ def trade(sim, t, win=True, px=20000.0, side="BUY"):
 
 def test_sizing_low_rr(sim):
     """target_usd is NET of RT commission; must be >= $381 net; stop still <= max_risk_usd."""
-    assert sim.L["max_minis"] == 40  # USER RULE OVERRIDE (Lucid real = 6)
+    assert sim.L["max_minis"] == 6  # LucidPro 100K real aggregate cap
     assert sim.L["target_usd_min"] == 381
     # Fixed US100 tactical target = 5.0 pts; pair with a 10-pt stop so unit_net is large enough
     sz = sim.size_trade("US100", 1, ATR, tdist=20.0, sdist=30.0)
@@ -84,7 +84,7 @@ def test_sizing_low_rr(sim):
 
 def test_sizing_net_of_commission_all_symbols(sim):
     """Every tradable Lucid symbol must size to >= $381 NET at a reachable distance, or return None (skip)."""
-    # Distances: fixed tactical (or a bit wider) so the 40-mini cap can clear $381
+    # Distances: fixed tactical (or a bit wider) so the 6-mini cap can clear $381
     cases = {
         "US100":  (40.0, 20.0, 30.0),      # 20 pts on NQ
         "XAUUSD": (8.0,  3.0,  5.0),       # wider than 1.25 fixed
@@ -113,10 +113,11 @@ def test_sizing_extends_small_target_instead_of_skipping(sim):
     assert 381 <= sz["target_usd"] <= 1000 and sz["tdist"] <= ATR
 
 
-def test_format_status_mentions_override(sim):
+def test_format_status_mentions_size_cap(sim):
     text = format_status(sim.summary(), sim.cfg)
-    assert "USER RULE OVERRIDE" in text
-    assert "max 40 full-size contracts" in text and "no micros" in text
+    assert "USER RULE OVERRIDE" not in text
+    assert "max 6 full-size contracts" in text and "no micros" in text
+    assert "LucidPro 100K cap" in text
     assert "NET of RT commission" in text
 
 

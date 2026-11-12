@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-12T10:18:35.378337+00:00",
+  "updated_at": "2026-11-12T10:20:35.184664+00:00",
   "paper_only": true,
   "plan": "LucidPro 100K (DLL on)",
   "exit_mode": "gemini_only",
@@ -16,39 +16,37 @@
     "no": 1,
     "phase": "eval",
     "start_balance": 100000.0,
-    "balance": 99996.5,
-    "equity": 99984.62,
-    "realized_pnl_since_reset": 0.0,
-    "open_pnl": -11.88,
-    "commission_on_open": 3.5,
-    "trades_since_reset": 0,
-    "wins": 0,
+    "balance": 100213.0,
+    "equity": 100213.0,
+    "realized_pnl_since_reset": 213.0,
+    "open_pnl": 0.0,
+    "commission_on_open": 0.0,
+    "trades_since_reset": 1,
+    "wins": 1,
     "losses": 0,
     "mll_floor": 97000.0,
-    "mll_room": 2984.62,
+    "mll_room": 3213.0,
     "dll": 1800.0,
-    "day_realized": 0.0,
+    "day_realized": 213.0,
     "day_locked": null,
-    "to_target": 6003.5
+    "to_target": 5787.0
   },
-  "open_positions": [
+  "open_positions": [],
+  "pending": 1,
+  "recent_trades": [
     {
+      "t_exit": "2026-11-12T10:19:00+00:00",
       "symbol": "US100",
       "contract": "NQ",
       "qty": 2,
       "side": "LONG",
       "entry_time": "2026-11-12T10:17:00+00:00",
       "entry": 28182.75,
-      "stop": null,
-      "target": null,
-      "last": 28182.453,
-      "unrealized": -11.88,
-      "risk_usd": null,
-      "target_usd_net": null,
-      "target_source": "none (gemini_only)"
+      "exit": 28188.25,
+      "reason": "gemini_close",
+      "net": 213.0,
+      "balance_after": 100213.0
     }
   ],
-  "pending": 0,
-  "recent_trades": [],
-  "last_processed": "2026-11-12T10:18:00+00:00"
+  "last_processed": "2026-11-12T10:20:00+00:00"
 }

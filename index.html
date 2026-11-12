@@ -200,7 +200,7 @@
   .lu-banner small { display: block; margin-top: 4px; color: var(--faint); }
   .lucid .who { display: inline-block; font-size: 9px; letter-spacing: .14em; padding: 2px 7px; border-radius: 999px;
                 border: 1px solid var(--line); color: var(--fg); margin-right: 8px; }
-  .who.g { background: rgba(66,133,244,.16); } .who.o { background: rgba(217,119,87,.20); } .who.s { background: rgba(204,153,102,.16); }
+  .who.g { background: rgba(66,133,244,.16); } .who.o { background: rgba(217,119,87,.20); } .who.s { background: rgba(204,153,102,.16); } .who.d { background: rgba(80,200,180,.20); }
   .cmp-t td:first-child { font-family: var(--sans); }
 </style>
 </head>
@@ -283,8 +283,19 @@
   <div class="lu-note" id="cbNote"></div>
 </section>
 
+<section class="lucid" id="deepseek" hidden aria-label="DeepSeek DS-FLASH paper book">
+  <h2><span><span class="who d">DeepSeek</span>DS-FLASH · deepseek-flash entries · mechanical exits</span><small id="dsUpd"></small></h2>
+  <div class="lu-grid" id="dsGrid"></div>
+  <div class="lu-note" id="dsCall"></div>
+  <h3>Open positions</h3>
+  <div class="lu-wrap" id="dsPos"></div>
+  <h3>Recent trades</h3>
+  <div class="lu-wrap" id="dsTrades"></div>
+  <div class="lu-note" id="dsNote"></div>
+</section>
+
 <section class="lucid" id="cmp" hidden aria-label="Gemini vs Claude comparison">
-  <h2><span>Gemini vs Claude Opus vs Claude Sonnet</span><small id="cmpUpd"></small></h2>
+  <h2><span>Gemini vs Claude vs Carbon vs DeepSeek</span><small id="cmpUpd"></small></h2>
   <div class="lu-wrap" id="cmpT"></div>
   <div class="lu-note">Paper sims only. R per signal = average R of every BUY/SELL signal played 1 contract under the
     server rules (what-if book); Gemini trades without a fixed stop, so it has no R.</div>
@@ -549,7 +560,7 @@
   }
 
   // ---- Lucid paper account (lucid.json, written each cycle; paper trading only) ----
-  let lucid = null, bracket = null, carbon = null;
+  let lucid = null, bracket = null, carbon = null, deepseek = null;
   const usd = (v, sign) => v == null ? '—' : (sign && v > 0 ? '+' : (v < 0 ? '−' : '')) + '$' +
     Math.abs(Number(v)).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const cls = v => v > 0 ? 'pos' : (v < 0 ? 'neg' : '');
@@ -607,6 +618,14 @@
                balance: ka.balance, net_pnl: ka.net_pnl, open_pnl: ka.open_pnl, trades: ka.trades, wins: ka.wins,
                losses: ka.losses, stopped: ka.stopped, open_positions: ka.open_positions });
     }
+    if (deepseek && deepseek.account) {
+      const da = deepseek.account;
+      C.push({ label: deepseek.label || 'DS-FLASH (deepseek-flash, mechanical exits)',
+               stop_txt: deepseek.stop_txt || '−$500 net · 1 ATR tgt · 90 min',
+               balance: da.balance, net_pnl: da.net_pnl ?? da.realized_pnl_since_reset,
+               open_pnl: da.open_pnl, trades: da.trades ?? da.trades_since_reset, wins: da.wins,
+               losses: da.losses, stopped: da.stopped, open_positions: (deepseek.open_positions || []).length });
+    }
     $('luCmp').innerHTML = C.length ? `<table class="lu-t"><tr><th>Book</th><th>Stop</th><th>Balance</th><th>Net P&amp;L</th>
       <th>Open P&amp;L</th><th>Trades</th><th>Stopped</th><th>Open</th></tr>${C.map(c => `<tr><td>${esc(c.label || c.book)}</td>
       <td>${c.stop_txt ? esc(c.stop_txt) : c.hard_stop_net_usd ? '−$' + Number(c.hard_stop_net_usd).toLocaleString('en-US') : 'none'}</td><td>${usd(c.balance)}</td>
@@ -644,12 +663,18 @@
       const ka = K.account || {}, wi = (((carbon.whatif || {})[K.book]) || {})['all'] || {};
       rows.push({ who: K.book, c: 'g', bal: ka.balance, net: ka.net_pnl, w: ka.wins, l: ka.losses, rps: wi.r_avg, n: ka.trades, sig: wi.n, carbon: true });
     }
+    if (deepseek && deepseek.account) {
+      const da = deepseek.account;
+      rows.push({ who: deepseek.book || 'DS-FLASH', c: 'd', bal: da.balance,
+                  net: da.net_pnl ?? da.realized_pnl_since_reset, w: da.wins, l: da.losses, rps: null,
+                  n: da.trades ?? da.trades_since_reset, wait: deepseek.key_present === false, ds: true });
+    }
     if (!rows.length) return;
     $('cmpT').innerHTML = `<table class="lu-t cmp-t"><tr><th>Sim</th><th>Balance</th><th>Net</th><th>Trades</th><th>W/L</th><th>R / signal</th></tr>` +
       rows.map(r => `<tr><td><span class="who ${r.c}">${esc(r.who)}</span>${r.wait ? '<small>waiting for key</small>' : ''}</td>
         <td>${usd(r.bal)}</td><td class="${cls(r.net)}">${usd(r.net, true)}</td><td>${r.n ?? 0}</td><td>${r.w ?? 0}/${r.l ?? 0}</td>
         <td class="${cls(r.rps)}">${r.c === 'g' && !r.carbon ? 'n/a' : rr(r.rps) + (r.sig ? ` <small>(${r.sig})</small>` : '')}</td></tr>`).join('') + '</table>';
-    const u = [lucid && lucid.updated_at, claude && claude.updated_at, carbon && carbon.updated_at].filter(Boolean).sort().pop();
+    const u = [lucid && lucid.updated_at, claude && claude.updated_at, carbon && carbon.updated_at, deepseek && deepseek.updated_at].filter(Boolean).sort().pop();
     $('cmpUpd').textContent = u ? `updated ${hm(u)} ${city()}` : '';
     $('cmp').hidden = false;
   }
@@ -813,6 +838,62 @@
   }
   pollCarbon();
   setInterval(pollCarbon, 15000);
+  function renderDeepseek() {
+    const D = deepseek; if (!D || !D.account) return;
+    const a = D.account;
+    const cell = (k, v, c) => `<div><div class="lu-k">${k}</div><div class="lu-v ${c || ''}">${v}</div></div>`;
+    const sp = D.spend || {}, tk = sp.tokens || {};
+    const capCls = sp.state === 'soft_cap' ? 'neg' : '';
+    const d = v => v != null && Math.abs(v) < 10 ? 5 : 2;
+    $('dsGrid').innerHTML = [
+      cell('Balance', usd(a.balance)), cell('Equity', usd(a.equity)),
+      cell('Net P&amp;L', usd(a.net_pnl ?? a.realized_pnl_since_reset, true), cls(a.net_pnl ?? a.realized_pnl_since_reset)),
+      cell('Open P&amp;L', usd(a.open_pnl, true), cls(a.open_pnl)),
+      cell('Trades', `${a.trades ?? a.trades_since_reset ?? 0}${(a.trades ?? a.trades_since_reset) ? ` <small>(${a.wins}W/${a.losses}L)</small>` : ''}`),
+      cell('Hard stop', D.hard_stop_net_usd ? `−$${Number(D.hard_stop_net_usd).toLocaleString('en-US')} <small>net</small>` : 'none'),
+      cell(`Spend today <small>(${esc(sp.day_dubai || '')} Dubai)</small>`, `$${Number(sp.usd || 0).toFixed(4)} <small>/ $${sp.soft_usd} soft</small>`, capCls),
+      cell('Cap state', esc(!D.key_present ? 'waiting for key' : (sp.state || 'ok')), !D.key_present || capCls ? 'neg' : ''),
+      cell('Calls today', `${sp.calls || 0}${sp.failed ? ` <small>(${sp.failed} failed)</small>` : ''}`),
+      cell('Tokens today', `<small>in ${Number(tk.prompt || 0).toLocaleString('en-US')} · out ${Number(tk.completion || 0).toLocaleString('en-US')} · cache hit ${Number(tk.cache_hit || 0).toLocaleString('en-US')}</small>`),
+    ].join('');
+    const lc = D.last_call;
+    const sigs = (D.last_signals || []).map(g => `${g.symbol} ${g.action}${g.confidence != null ? ' ' + Number(g.confidence).toFixed(2) : ''}`).join(' · ');
+    $('dsCall').textContent = !D.key_present ? 'Waiting for DEEPSEEK_API_KEY (repo secret).' :
+      (lc ? `Last DeepSeek call ${dayhm(lc.t)} ${city()} · ${lc.ok ? 'OK' : 'FAILED: ' + (lc.error || lc.skipped || '')} · ` +
+        `${Number(lc.latency_s || 0).toFixed(1)} s · ${esc(lc.band || '')} · $${Number(lc.cost_usd || 0).toFixed(5)}` +
+        (sigs ? ' · ' + sigs : '')
+        : 'No DeepSeek call yet.');
+    const P = D.open_positions || [];
+    $('dsPos').innerHTML = P.length ? `<table class="lu-t"><tr><th>Symbol</th><th>Size</th><th>Side</th><th>Opened</th><th>Held</th>
+      <th>Entry</th><th>Stop</th><th>Target</th><th>Open P&amp;L</th></tr>${P.map(p => `<tr><td>${esc(p.symbol)}</td>
+      <td>${p.qty} ${esc(p.contract)}</td><td>${esc(p.side)}</td><td>${dayhm(p.entry_time)}</td>
+      <td data-entry-time="${esc(p.entry_time)}">${esc(heldSince(p.entry_time))}</td>
+      <td>${px(p.entry, d(p.entry))}</td>
+      <td>${p.stop != null ? px(p.stop, d(p.stop)) : p.hard_stop_px != null ? `${px(p.hard_stop_px, d(p.hard_stop_px))} <small>(−$${Number(D.hard_stop_net_usd || 500).toLocaleString('en-US')})</small>` : 'none'}</td>
+      <td>${p.target != null ? px(p.target, d(p.target)) : '—'}</td>
+      <td class="${cls(p.unrealized)}">${usd(p.unrealized, true)}</td></tr>`).join('')}</table>`
+      : `<div class="lu-note">None${D.pending ? ` · ${D.pending} pending entry` : ''}</div>`;
+    const T = D.recent_trades || [];
+    $('dsTrades').innerHTML = T.length ? `<table class="lu-t"><tr><th>Closed</th><th>Opened</th><th>Symbol</th><th>Size</th><th>Side</th>
+      <th>Held</th><th>Exit</th><th>Net</th></tr>${T.map(t => `<tr><td>${dayhm(t.t_exit)}</td><td>${dayhm(t.entry_time)}</td><td>${esc(t.symbol)}</td>
+      <td>${t.qty} ${esc(t.contract)}</td><td>${esc(t.side)}</td><td>${esc(t.held || heldOf(t))}</td>
+      <td>${t.stopped ? '<b class="neg">STOPPED</b> ' : ''}${esc(t.reason)}</td>
+      <td class="${cls(t.net)}">${usd(t.net, true)}</td></tr>`).join('')}</table>`
+      : '<div class="lu-note">No closed trades yet.</div>';
+    $('dsUpd').textContent = D.updated_at ? `updated ${hm(D.updated_at)} ${city()}` : '';
+    const r = D.reset || {};
+    $('dsNote').textContent = `Paper trading only · ${D.rules || ''} ` +
+      (r.at ? `· fresh $${Number(a.start_balance || 100000).toLocaleString('en-US')} account since ${dayhm(r.at)} ${city()}` : '');
+    $('deepseek').hidden = false;
+  }
+  async function pollDeepseek() {
+    const j = await getJSON('deepseek.json');
+    if (j && !(deepseek && Date.parse(j.updated_at) < Date.parse(deepseek.updated_at))) {
+      deepseek = j; renderDeepseek(); renderLucid(); renderCmp();
+    }
+  }
+  pollDeepseek();
+  setInterval(pollDeepseek, 15000);
   async function pollLucid() {
     const j = await getJSON('lucid.json');
     if (j && !(lucid && Date.parse(j.updated_at) < Date.parse(lucid.updated_at))) { lucid = j; renderLucid(); }

@@ -80,14 +80,17 @@ def slim_gemini_context(ctx: dict) -> dict:
     return {k: v for k, v in ctx.items() if k not in _GEMINI_CTX_DROP and k not in LIVE_LOG_ONLY_KEYS}
 
 
-def chart_user_text(payload: dict, index: int, total: int) -> str:
+def chart_user_text(payload: dict, index: int, total: int,
+                    live_price_tag: str = "LIVE PRICE SENT TO GEMINI") -> str:
+    """Per-chart numeric preface. Default tag is Gemini-specific; other models pass a
+    model-neutral label (e.g. 'LIVE PRICE SENT TO MODEL') so Gemini's wording stays unchanged."""
     ctx = {"symbol": payload["symbol"], "source": f"{payload['source']}:{payload['ticker']}",
            "timeframe": payload["timeframe"], **slim_gemini_context(payload["context"])}
     raw = payload.get("context") or {}
     price = ctx.get("live_price", ctx.get("last_price", raw.get("last_close")))
     ts = ctx.get("live_price_ts_utc", ctx.get("last_price_ts_utc", ctx.get("last_closed_bar_utc")))
     stale = ctx.get("live_price_stale")
-    tag = "LIVE PRICE SENT TO GEMINI"
+    tag = live_price_tag
     extra = " (STALE — last closed M15 close)" if stale else ""
     return (f"Chart {index}/{total} - {payload['symbol']}\n"
             f"{tag}: {price} @ {ts}{extra}\n"

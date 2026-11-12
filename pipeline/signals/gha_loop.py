@@ -22,7 +22,7 @@ from .site import write_status
 
 log = logging.getLogger("signals.gha")
 SITE_JSON = ("status.json", "latest_signal.json", "history.json", "lucid.json", "claude.json", "bracket.json",
-             "carbon.json")
+             "carbon.json", "deepseek.json")
 DATA_JSON = ("books.json",)  # committed to the data branch only (not deployed to Pages)
 CYCLE_LOG_KEEP_DAYS = 14
 
@@ -61,6 +61,8 @@ class GhaLoop:
         self.bracket_cycle_task: asyncio.Task | None = None
         self.carbon = None                   # CB-BRACKET / CB-RUNNER Carbon side books (signals/carbon.py)
         self.carbon_tasks: list[asyncio.Task] = []
+        self.deepseek = None                 # DS-FLASH DeepSeek entry-only book (signals/deepseek.py)
+        self.deepseek_exit_task: asyncio.Task | None = None
         for sub in ("state", "logs"):
             (data / sub).mkdir(parents=True, exist_ok=True)
 
@@ -200,6 +202,7 @@ class GhaLoop:
         self.start_claude()
         self.start_bracket()
         self.start_carbon()
+        self.start_deepseek()
         while True:
             # The job still wakes every `self.interval` (2 min). The site countdown uses
             # scan_interval (2 active / 15 during ASIAN / DEADZONE) so it matches the next Gemini call.
@@ -416,11 +419,52 @@ class GhaLoop:
                 await asyncio.wait_for(t, 30)
         self.carbon_tasks = []
 
+    def start_deepseek(self) -> None:
+        """DS-FLASH entry-only book: same 2-min cycle as Gemini (kicked from run_once, never awaited),
+        own 18 s mechanical-exit loop. Isolated: errors are logged; no other book is touched."""
+        from .deepseek import deepseek_cfg
+        if self.dry_run or not deepseek_cfg(self.cfg).get("enabled", False):
+            return
+        try:
+            from .deepseek import DeepSeekEngine, run_deepseek_exit_loop, set_engine
+            self.deepseek = DeepSeekEngine(self.cfg, io_lock=self.io_lock)
+            set_engine(self.deepseek)
+            self.deepseek_exit_task = asyncio.create_task(run_deepseek_exit_loop(self.deepseek),
+                                                          name="ds-flash-exit")
+            log.info("deepseek DS-FLASH on: model=%s effort=%s key %s",
+                     self.deepseek.cc["model"], self.deepseek.cc["effort"],
+                     "present" if self.deepseek._key() else "MISSING (waiting)")
+        except Exception:
+            log.exception("deepseek DS-FLASH failed to start (main loop unaffected)")
+            self.deepseek = None
+            try:
+                from .deepseek import set_engine
+                set_engine(None)
+            except Exception:
+                pass
+
+    async def stop_deepseek(self) -> None:
+        t, self.deepseek_exit_task = self.deepseek_exit_task, None
+        entry = getattr(self.deepseek, "entry_task", None) if self.deepseek else None
+        for task in (t, entry):
+            if task is None:
+                continue
+            task.cancel()
+            with contextlib.suppress(BaseException):
+                await asyncio.wait_for(task, 30)
+        try:
+            from .deepseek import set_engine
+            set_engine(None)
+        except Exception:
+            pass
+        self.deepseek = None
+
     async def shutdown(self, reason: str) -> None:
         await self.stop_exit_manager()
         await self.stop_claude()
         await self.stop_bracket()
         await self.stop_carbon()
+        await self.stop_deepseek()
         succ = L.read(self.data, L.SUCC)
         handed = succ.get("run_id") if (reason == "handoff" and succ) else None
         if reason == "stop-file":
@@ -461,6 +505,7 @@ async def run_gha_loop(cfg: dict, data: Path, run_id: str, role: str, **kw) -> s
         await loop.stop_claude()
         await loop.stop_bracket()
         await loop.stop_carbon()
+        await loop.stop_deepseek()
         log.error("lost the loop lock: %s -> exiting without further writes", e)
         return "lost-lock"
     finally:

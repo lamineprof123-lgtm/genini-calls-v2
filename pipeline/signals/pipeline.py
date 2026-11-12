@@ -20,6 +20,19 @@ from .firmtape import enrich_firmtape
 
 log = logging.getLogger("signals")
 
+
+def _kick_deepseek(cfg: dict, payloads: list[dict] | None, pngs: dict | None = None,
+                   skipped: str | None = None, now=None, dry_run: bool = False) -> None:
+    """Start a DS-FLASH entry cycle in the background. Never awaited, never raises."""
+    if dry_run or not payloads:
+        return
+    try:
+        from .deepseek import kick
+        kick(cfg, payloads, pngs=pngs, skipped=skipped, now=now)
+    except Exception:
+        log.exception("deepseek kick failed (Gemini loop unaffected)")
+
+
 # Lucid paper-sim symbols (BTCUSD is site-only). Session throttle is decided from these four;
 # they share the same America/New_York session clock.
 _DEFAULT_LUCID_SYMBOLS = ("XAUUSD", "EURUSD", "GBPUSD", "US100")
@@ -161,6 +174,7 @@ async def run_once(cfg: dict, dry_run: bool = False, force: bool = True, model: 
         record["in_position"] = sorted(busy)
         if busy:
             write_in_position_overlay(cfg, busy)
+        _kick_deepseek(cfg, payloads, skipped=THROTTLE_SKIP, now=now, dry_run=dry_run)
         return {"skipped": True, "skipped_reason": THROTTLE_SKIP, "last_bars": last_bars,
                 "scan_interval_minutes": interval, "session_blocked": True, "record": record,
                 "payloads": payloads}
@@ -176,6 +190,7 @@ async def run_once(cfg: dict, dry_run: bool = False, force: bool = True, model: 
             Path(record["run_dir"]).write_text(json.dumps(record, separators=(",", ":"), default=str))
         write_in_position_overlay(cfg, busy)
         _atomic_write(seen_path, last_bars)
+        _kick_deepseek(cfg, payloads, skipped=ALL_IN_POS_SKIP, now=now, dry_run=dry_run)
         return {"skipped": True, "skipped_reason": ALL_IN_POS_SKIP, "last_bars": last_bars,
                 "scan_interval_minutes": interval, "session_blocked": blocked, "record": record,
                 "payloads": payloads}
@@ -186,6 +201,8 @@ async def run_once(cfg: dict, dry_run: bool = False, force: bool = True, model: 
     render_ms = round((time.monotonic() - t_render0) * 1000, 1)
     log.info("timing render_total=%.1fms ready_for_gemini=%.1fms bytes=%s",
              render_ms, fetch_ms + render_ms, {s: len(b) for s, b in pngs.items()})
+    # DS-FLASH entry call starts now so it overlaps the Gemini request and cannot delay it.
+    _kick_deepseek(cfg, payloads, pngs=pngs, now=now, dry_run=dry_run)
 
     # 4. equity + circuit breaker (checked before the AI call; latched halt skips the paid call)
     equity = make_equity_source(cfg).get_equity()

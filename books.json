@@ -1,35 +1,35 @@
 {
-  "updated_at_utc": "2026-11-12T12:18:31.903633+00:00",
+  "updated_at_utc": "2026-11-12T12:20:20.483681+00:00",
   "paper_only": true,
   "note": "GEMINI EXITS + HARD STOP -$500 NET: same Lucid entries; books 1-strike / 2-strike exit on Gemini CLOSE or the -$500 net hard stop; shadow book nostop = same entries, Gemini CLOSE only (never stopped). No target, no max hold, no 16:45 flat; 3.5% breaker log-only. BASELINE = the main Lucid account (exit_mode=gemini_only: gemini = follows the 1-strike book's CLOSE) on the same entry ids.",
   "check_seconds": 18,
   "books": {
     "1-strike": {
-      "balance": 96814.45,
-      "net_pnl": -3183.8,
-      "trades": 13,
-      "wins": 7,
+      "balance": 97022.7,
+      "net_pnl": -2977.3,
+      "trades": 14,
+      "wins": 8,
       "losses": 6,
-      "win_rate": 0.538,
-      "avg_win": 278.87,
+      "win_rate": 0.571,
+      "avg_win": 269.82,
       "avg_loss": -855.98,
-      "commissions": 125.55,
-      "avg_hold_min": 11.8,
+      "commissions": 127.3,
+      "avg_hold_min": 11.1,
       "exit_reasons": {
-        "gemini_close": 12,
+        "gemini_close": 13,
         "hard_stop_500": 1
       },
-      "open_positions": 1,
-      "open_pnl": 236.0,
+      "open_positions": 0,
+      "open_pnl": 0,
       "hard_stop_net_usd": 500.0,
       "overlap_trades": 0,
       "overlap_net": 0.0,
-      "net_pnl_excl_overlap": -3183.8,
+      "net_pnl_excl_overlap": -2977.3,
       "cloned_from": null,
       "day": {
         "id": "2026-11-12",
         "start_balance": 100000.0,
-        "realized": -3183.8,
+        "realized": -2977.3,
         "halted": null,
         "breach_logged": {
           "t": "2026-11-12T10:59:39.148958+00:00",
@@ -39,31 +39,31 @@
       }
     },
     "2-strike": {
-      "balance": 96624.45,
-      "net_pnl": -3373.8,
-      "trades": 13,
-      "wins": 7,
+      "balance": 96652.7,
+      "net_pnl": -3347.3,
+      "trades": 14,
+      "wins": 8,
       "losses": 6,
-      "win_rate": 0.538,
-      "avg_win": 277.44,
+      "win_rate": 0.571,
+      "avg_win": 246.07,
       "avg_loss": -885.98,
-      "commissions": 125.55,
-      "avg_hold_min": 12.7,
+      "commissions": 127.3,
+      "avg_hold_min": 12.0,
       "exit_reasons": {
-        "gemini_close": 12,
+        "gemini_close": 13,
         "hard_stop_500": 1
       },
-      "open_positions": 1,
-      "open_pnl": 236.0,
+      "open_positions": 0,
+      "open_pnl": 0,
       "hard_stop_net_usd": 500.0,
       "overlap_trades": 0,
       "overlap_net": 0.0,
-      "net_pnl_excl_overlap": -3373.8,
+      "net_pnl_excl_overlap": -3347.3,
       "cloned_from": null,
       "day": {
         "id": "2026-11-12",
         "start_balance": 100000.0,
-        "realized": -3373.8,
+        "realized": -3347.3,
         "halted": null,
         "breach_logged": {
           "t": "2026-11-12T10:59:57.160769+00:00",
@@ -73,25 +73,25 @@
       }
     },
     "nostop": {
-      "balance": 97639.05,
-      "net_pnl": -2354.6,
-      "trades": 12,
-      "wins": 7,
+      "balance": 97847.3,
+      "net_pnl": -2148.1,
+      "trades": 13,
+      "wins": 8,
       "losses": 5,
-      "win_rate": 0.583,
-      "avg_win": 278.87,
+      "win_rate": 0.615,
+      "avg_win": 269.82,
       "avg_loss": -861.34,
-      "commissions": 120.95,
-      "avg_hold_min": 12.7,
+      "commissions": 122.7,
+      "avg_hold_min": 11.9,
       "exit_reasons": {
-        "gemini_close": 12
+        "gemini_close": 13
       },
-      "open_positions": 2,
-      "open_pnl": -606.0,
+      "open_positions": 1,
+      "open_pnl": -1018.0,
       "hard_stop_net_usd": null,
       "overlap_trades": 0,
       "overlap_net": 0.0,
-      "net_pnl_excl_overlap": -2354.6,
+      "net_pnl_excl_overlap": -2148.1,
       "cloned_from": {
         "book": "1-strike",
         "at": "2026-11-12T12:14:51.988645+00:00",
@@ -102,7 +102,7 @@
       "day": {
         "id": "2026-11-12",
         "start_balance": 100000.0,
-        "realized": -2354.6,
+        "realized": -2148.1,
         "halted": null,
         "breach_logged": {
           "t": "2026-11-12T10:59:39.148958+00:00",
@@ -113,14 +113,15 @@
     }
   },
   "baseline": {
-    "net_pnl": -2354.6,
-    "trades": 12,
-    "wins": 7,
-    "losses": 5,
-    "win_rate": 0.583,
-    "avg_hold_min": 12.4,
+    "net_pnl": -2977.3,
+    "trades": 14,
+    "wins": 8,
+    "losses": 6,
+    "win_rate": 0.571,
+    "avg_hold_min": 10.9,
     "exit_reasons": {
-      "gemini_close": 12
+      "gemini_close": 13,
+      "hard_stop_500": 1
     }
   }
 }

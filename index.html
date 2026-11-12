@@ -28,7 +28,6 @@
   .state.paused .dot { background: var(--amber); } .state.paused { color: var(--amber); }
   .state.live .dot { animation: pulse 2.4s ease-in-out infinite; }
   @keyframes pulse { 50% { opacity: .25; } }
-  .hero { text-align: center; margin: 14px auto 26px; }
   .eyebrow { font-size: 12px; letter-spacing: .24em; text-transform: uppercase; color: var(--muted); }
   .count { font-family: var(--mono); font-variant-numeric: tabular-nums; font-weight: 300;
            font-size: clamp(64px, 18vw, 128px); line-height: 1; letter-spacing: -.04em; margin: 14px 0 10px;
@@ -40,7 +39,7 @@
   @keyframes countGlow { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
   @media (prefers-reduced-motion: reduce) { .count { animation: none; background-position: 40% 50%; } }
   .sub { font-size: 13px; color: var(--muted); }
-  .wrap { max-width: 1240px; margin: 0 auto; }
+  .wrap { max-width: 1240px; margin: 18px auto 0; }
   .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 18px 18px 14px; margin-bottom: 18px; }
   .card h2 { font-size: 11px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase; color: var(--muted);
              display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
@@ -82,8 +81,7 @@
   @media (max-width: 699px) {
     body { padding: 16px 12px 24px; }
     .brand img { height: 44px; }
-    .hero { margin: 6px auto 16px; }
-    .count { font-size: clamp(56px, 20vw, 88px); }
+      .count { font-size: clamp(56px, 20vw, 88px); }
     .card { padding: 14px 12px 10px; border-radius: 14px; }
     .tw { display: none; }
     .cards { display: block; }
@@ -97,11 +95,6 @@
   <div class="state" id="state"><span class="dot"></span><span id="stateText">—</span></div>
 </header>
 
-<section class="hero">
-  <div class="eyebrow" id="countLabel">Next scan in</div>
-  <div class="count" id="count">--:--</div>
-  <div class="sub" id="countAt"></div>
-</section>
 
 <div class="wrap">
   <div class="banner" id="banner">Loading…</div>
@@ -145,12 +138,7 @@
   }
   const newer = (a, b) => !b || !(Date.parse(a.updated_at) < Date.parse(b.updated_at));
 
-  // ---- countdown (status.json) ----
-  function schedule(now) {
-    const step = (status.interval_minutes || 2) * 60000, off = (status.align_offset_seconds || 0) * 1000;
-    const prev = Math.floor((now - off) / step) * step + off;
-    return { prev, next: prev + step };
-  }
+  // ---- live / paused dot (status.json); no countdown ----
   function renderClock() {
     const now = Date.now();
     let m = 'live';
@@ -158,10 +146,6 @@
     else if (isNaN(Date.parse(status.updated_at)) || now - Date.parse(status.updated_at) > OFFLINE_AFTER_S * 1000) m = 'offline';
     $('state').className = 'state ' + (m === 'live' ? 'live' : 'paused');
     $('stateText').textContent = m === 'live' ? 'Live' : (m === 'offline' ? 'Offline' : 'Paused');
-    if (m !== 'live') { $('count').textContent = m === 'offline' ? 'OFFLINE' : 'PAUSED'; $('countAt').textContent = ''; return; }
-    const nxt = schedule(now).next;
-    $('count').textContent = mmss((nxt - now) / 1000);
-    $('countAt').textContent = `at ${hm(new Date(nxt).toISOString())} ${TZL}`;
   }
 
   // ---- panel.json ----
@@ -175,7 +159,7 @@
     $('perfUpd').textContent = `updated ${hm(P.updated_at)} ${TZL}`;
     // performance: grouped by model, one Lucid line + one Other-venue line per book
     let h = `<tr><th class="l">Book</th><th class="l">Venue</th><th>Balance</th><th>Net P&amp;L</th><th>Open P&amp;L</th>
-      <th>Trades</th><th>W / L</th><th>Win rate</th><th>Open</th></tr>`;
+      <th>Closed</th><th>W / L</th><th>Win rate</th><th>Open</th></tr>`;
     let lastModel = null;
     for (const p of P.performance || []) {
       if (p.model !== lastModel) { lastModel = p.model; h += `<tr class="model"><td class="l" colspan="9">${esc(MODEL_NAME[p.model] || p.model)}</td></tr>`; }
@@ -195,14 +179,14 @@
       if (p.model !== lm) { lm = p.model; pc += `<div class="mg">${esc(MODEL_NAME[p.model] || p.model)}</div>`; }
       const o = perfs.find(q => q.book === p.book && q.venue !== 'LUCID');
       pc += `<div class="mc"><div class="mc-h"><span class="mc-t">${esc(p.book)}</span>
-        <span class="mc-s">${p.open_positions} open</span></div>
+        <span class="mc-s">${p.open_positions + (o ? o.open_positions : 0)} open</span></div>
         <div class="mc-s">${esc(p.label || '')}</div>
         <div class="mc-g">${kv('Balance', bal(p.balance))}${kv('Net P&amp;L', usd(p.net_pnl_usd), cls(p.net_pnl_usd))}
         ${kv('Open P&amp;L', p.open_positions ? usd(p.open_pnl_usd) : '—', cls(p.open_pnl_usd))}
-        ${kv('Trades', p.trades)}${kv('W / L', p.wins + ' / ' + p.losses)}
+        ${kv('Closed', p.trades)}${kv('W / L', p.wins + ' / ' + p.losses)}
         ${kv('Win rate', p.win_rate == null ? '—' : (100 * p.win_rate).toFixed(0) + '%')}</div>
         ${o ? `<div class="mc-s" style="margin-top:8px">Other venue (BTC): ${bal(o.balance)} · net <span class="${cls(o.net_pnl_usd)}">${usd(o.net_pnl_usd)}</span>
-          · ${o.trades} trades (${o.wins}/${o.losses})${o.open_positions ? ` · ${o.open_positions} open <span class="${cls(o.open_pnl_usd)}">${usd(o.open_pnl_usd)}</span>` : ''}</div>` : ''}</div>`;
+          · ${o.trades} closed (${o.wins}/${o.losses})${o.open_positions ? ` · ${o.open_positions} open <span class="${cls(o.open_pnl_usd)}">${usd(o.open_pnl_usd)}</span>` : ''}</div>` : ''}</div>`;
     }
     $('perfCards').innerHTML = pc;
     // positions
@@ -249,7 +233,7 @@
   pollStatus(); pollPanel();
   setInterval(pollStatus, 5000);
   setInterval(pollPanel, 10000);
-  setInterval(renderClock, 250);
+  setInterval(renderClock, 1000);
 })();
 </script>
 </body>

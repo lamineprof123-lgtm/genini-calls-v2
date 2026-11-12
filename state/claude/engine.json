@@ -1,7 +1,7 @@
 {
   "reset_token": "claude-v2-1",
   "created_at": "2026-11-12T12:14:51.993423+00:00",
-  "last_entry_bar": "2026-11-12T17:00:00+00:00",
+  "last_entry_bar": "2026-11-12T17:15:00+00:00",
   "shadow": [
     {
       "vid": 41,
@@ -16,7 +16,7 @@
       "init_stop": 28470.0,
       "atr": 108.421,
       "entry_time": "2026-11-12T17:15:47.372188+00:00",
-      "scan_from": "2026-11-12T17:28:00+00:00",
+      "scan_from": "2026-11-12T17:29:00+00:00",
       "tick": 0.25,
       "comm_pts": 0.175,
       "mfe_pts": 67.28499999999985,
@@ -52,7 +52,7 @@
       "init_stop": 28330.72,
       "atr": 108.421,
       "entry_time": "2026-11-12T17:15:47.372188+00:00",
-      "scan_from": "2026-11-12T17:28:00+00:00",
+      "scan_from": "2026-11-12T17:29:00+00:00",
       "tick": 0.25,
       "comm_pts": 0.175,
       "mfe_pts": 4.548999999999069,
@@ -79,14 +79,14 @@
   "probes": [],
   "next_vid": 43,
   "last_entry": {
-    "bar": "2026-11-12T17:00:00+00:00",
-    "t": "2026-11-12T17:15:20.001532+00:00",
-    "render_ms": 371,
+    "bar": "2026-11-12T17:15:00+00:00",
+    "t": "2026-11-12T17:30:20.002948+00:00",
+    "render_ms": 0,
     "sims": {
       "C-OPUS": {
         "ok": true,
-        "latency_ms": 24732,
-        "cost_usd": 0.097528,
+        "latency_ms": 19563,
+        "cost_usd": 0.105348,
         "error": null,
         "signals": [
           {
@@ -115,18 +115,34 @@
           },
           {
             "symbol": "US100",
-            "action": "SELL",
-            "setup_type": "fade",
-            "score": 6,
-            "confidence": 0.55,
-            "decision": "skip: 1 NQ would risk $1,774 > $900"
+            "action": "HOLD",
+            "setup_type": "none",
+            "score": 0,
+            "confidence": 0.0,
+            "decision": "HOLD"
+          },
+          {
+            "symbol": "XAGUSD",
+            "action": "HOLD",
+            "setup_type": "none",
+            "score": 0,
+            "confidence": 0.0,
+            "decision": "HOLD"
+          },
+          {
+            "symbol": "BTCUSD",
+            "action": "HOLD",
+            "setup_type": "none",
+            "score": 0,
+            "confidence": 0.0,
+            "decision": "HOLD"
           }
         ]
       },
       "C-SONNET": {
         "ok": true,
-        "latency_ms": 8403,
-        "cost_usd": 0.034804,
+        "latency_ms": 11434,
+        "cost_usd": 0.047814,
         "error": null,
         "signals": [
           {
@@ -155,6 +171,22 @@
           },
           {
             "symbol": "US100",
+            "action": "HOLD",
+            "setup_type": "none",
+            "score": 0,
+            "confidence": 0.0,
+            "decision": "HOLD"
+          },
+          {
+            "symbol": "XAGUSD",
+            "action": "HOLD",
+            "setup_type": "none",
+            "score": 0,
+            "confidence": 0.0,
+            "decision": "HOLD"
+          },
+          {
+            "symbol": "BTCUSD",
             "action": "HOLD",
             "setup_type": "none",
             "score": 0,
@@ -163,7 +195,11 @@
           }
         ]
       }
-    }
+    },
+    "snapshot_id": "m15-20261112171500-036bbd5ccdf3",
+    "snapshot_hash": "036bbd5ccdf300a99d118721b696e03f7d9a68eec6e1a6758cd16d39e751897a",
+    "bar_close_ts": "2026-11-12T17:30:00+00:00",
+    "snapshot_ts": "2026-11-12T17:30:22.251735+00:00"
   },
   "live": {
     "GBPUSD": {
@@ -179,21 +215,9 @@
       "t": "2026-11-12T16:33:05.844639+00:00"
     },
     "US100": {
-      "price": 28376.832,
-      "t": "2026-11-12T17:29:59.650248+00:00"
+      "price": 28378.92,
+      "t": "2026-11-12T17:31:11.654357+00:00"
     }
   },
-  "fill_quotes": {
-    "US100": {
-      "symbol": "US100",
-      "price": 28381.67,
-      "ts": "2026-11-12T17:15:45+00:00",
-      "source": "firmtape:NQ",
-      "stale": false,
-      "fetched_at": "2026-11-12T17:15:47.370736+00:00",
-      "age_s": 2.37,
-      "firmtape_status": "ok",
-      "at": "2026-11-12T17:15:47.370736+00:00"
-    }
-  }
+  "fill_quotes": {}
 }

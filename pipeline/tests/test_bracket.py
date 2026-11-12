@@ -110,7 +110,7 @@ def test_fill_live_quote_plus_tick_and_target(cfg):
     r = asyncio.run(bk.tick(T0))
     p = bk.s["positions"][0]
     assert r["opened"] == [1]
-    assert p["entry"] == pytest.approx(3944.9)       # SELL: 3945.03 - 1 tick (0.10) -> 3944.93 -> tick 3944.9
+    assert p["entry"] == pytest.approx(3944.9)       # SELL: 3945.03 - 1 tick (0.10) = 3944.93 -> rounded DOWN 3944.9
     assert p["stop"] == pytest.approx(3949.9) and p["target"] == pytest.approx(3939.9)
     assert p["qty"] == 1 and p["contract"] == "GC"
     assert bk.s["balance"] == pytest.approx(100000 - 2.30)
@@ -247,3 +247,13 @@ def test_state_persists_and_reloads(cfg):
     assert len(bk2.s["positions"]) == 1 and bk2.s["positions"][0]["book"] == BOOK
     # the same cycle record is never taken twice
     assert bk2.intake(rec(sig()), T0) == []
+
+
+def test_slip_rounding_is_adverse(cfg):
+    from signals.bracket import round_adverse
+    # US100 short at a 27937.97 quote: 27937.72 must round DOWN to 27937.50, never up to 27937.75
+    assert round_adverse(27937.97 - 0.25, 0.25, -1, True) == 27937.5
+    assert round_adverse(27937.97 + 0.25, 0.25, 1, True) == 27938.25      # long entry rounds up
+    assert round_adverse(27937.97 + 0.25, 0.25, -1, False) == 27938.25    # short exit (buy) rounds up
+    assert round_adverse(27937.97 - 0.25, 0.25, 1, False) == 27937.5      # long exit (sell) rounds down
+    assert round_adverse(3944.9, 0.1, -1, True) == pytest.approx(3944.9)  # on-tick prices unchanged

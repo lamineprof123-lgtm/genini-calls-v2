@@ -110,6 +110,15 @@ def round_tick(x: float, tick: float) -> float:
     return round(round(x / tick) * tick, 10)
 
 
+def round_adverse(x: float, tick: float, side: int, entering: bool) -> float:
+    """Round a slipped fill to the tick AGAINST the position (buying rounds up, selling rounds down), so the
+    rounding never gives back part of the slippage tick."""
+    buying = (side > 0) == entering
+    n = x / tick
+    n = math.ceil(n - 1e-9) if buying else math.floor(n + 1e-9)
+    return round(n * tick, 10)
+
+
 class BracketBook:
     """Pure-ish accounting + I/O for the bracket shadow book. `quotes` is injectable for tests:
     async quotes(symbols, now) -> ({sym: quote dict}, {sym: M1 DataFrame})."""
@@ -296,7 +305,7 @@ class BracketBook:
             sp = self.spec(pe["contract"])
             tick = float(sp["tick"])
             n = int(self.b["slippage_ticks"])
-            entry = round_tick(float(q["price"]) + pe["side"] * n * tick, tick)
+            entry = round_adverse(float(q["price"]) + pe["side"] * n * tick, tick, pe["side"], True)
             ref = pe.get("signal_entry")
             if ref is not None and -pe["side"] * (float(ref) - entry) > float(self.b["max_chase_atr"]) * pe["atr"]:
                 self._skip("chase > max_chase_atr")
@@ -329,7 +338,7 @@ class BracketBook:
     # ------------------------------------------------------------------ exits
     def _slip(self, p: dict, price: float) -> float:
         tick = float(self.spec(p["contract"])["tick"])
-        return round_tick(float(price) - p["side"] * int(self.b["slippage_ticks"]) * tick, tick)
+        return round_adverse(float(price) - p["side"] * int(self.b["slippage_ticks"]) * tick, tick, p["side"], False)
 
     def scan_bars(self, p: dict, bars: pd.DataFrame | None) -> tuple[str, float, datetime] | None:
         """Walk M1 bars since the last scan (bars opening before the fill are skipped). Stop wins a bar that

@@ -28,6 +28,8 @@ from .claude_rules import (rules_cfg, clamp_stop, size_for, risk_per_contract, a
                            usd_group, us100_alignment, open_usd_groups, group_lock_until, set_group_lock,
                            m15_bars_closed_since_entry, phase_a_structure_reason)
 from .exit_versions import CLAUDE_EXIT_PROMPT_VERSION, CLAUDE_EXIT_PROMPT_VERSION_PRE
+from .uniform_exit import (uniform_exits_enabled, claude_exit_calls_enabled, arm_uniform,
+                           close_tag, UNIFORM_BANNER, UNIFORM_EXIT_VERSION, TIME_CAP_MINUTES)
 
 log = logging.getLogger("signals.claude")
 UTC = timezone.utc
@@ -146,6 +148,10 @@ class ClaudeEngine:
         self.cfg = cfg
         self.cc = claude_cfg(cfg)
         self.r = rules_cfg(self.cc)
+        if uniform_exits_enabled(self.cfg):
+            self.r["uniform_1atr"] = True
+            self.r["time_stop_minutes"] = TIME_CAP_MINUTES
+            self.r["time_stop_mfe_atr"] = 0.0
         self.L = cfg.get("lucid") or {}
         self.contracts = self.L.get("contracts") or {}
         self.symmap = self.L.get("symbols") or {}
@@ -551,10 +557,19 @@ class ClaudeEngine:
                 meta = {"setup_type": v["setup_type"], "score": v["score"], "confidence": v["confidence"],
                         "session": ctx.get("session"), "gated": v["gated"], "model": model, "bar": bar,
                         "stop_note": note}
-                self.eng["shadow"].append(self._vtrade("whatif", sid, sym, side, float(price), stop, atr, now, **meta))
-                tside = self.rng.choice((1, -1))
-                self.eng["shadow"].append(self._vtrade("twin", sid, sym, tside, float(price),
-                                                       float(price) - tside * dist, atr, now, **meta))
+                w = self._vtrade("whatif", sid, sym, side, float(price), stop, atr, now, **meta)
+                tw_side = self.rng.choice((1, -1))
+                tw = self._vtrade("twin", sid, sym, tw_side, float(price),
+                                  float(price) - tw_side * dist, atr, now, **meta)
+                if uniform_exits_enabled(self.cfg):
+                    for row in (w, tw):
+                        try:
+                            tick = float(self.spec(row["contract"])["tick"])
+                        except Exception:
+                            tick = None
+                        arm_uniform(row, now, late=False, tick=tick)
+                self.eng["shadow"].append(w)
+                self.eng["shadow"].append(tw)
         # real entries: one per cycle, highest score first
         cands = sorted([v for v in rows if v["gated"]], key=lambda v: (v["score"], v["confidence"]), reverse=True)
         opened = None
@@ -661,6 +676,8 @@ class ClaudeEngine:
         pos.update({"id": pid, "model_stop": v.get("stop_loss"), "take_profit": v.get("take_profit"),
                     "rationale": (v.get("rationale") or "")[:300], "risk_usd": round(new_risk, 2),
                     "signal_price": ref, "exit_fail": 0, "checks": 0, "server_only": False})
+        if uniform_exits_enabled(self.cfg):
+            arm_uniform(pos, fill_t, late=False, tick=float(sp["tick"]))
         sim["positions"].append(pos)
         sim.setdefault("last_price", {})[sym] = fill
         mech = copy.deepcopy(pos)
@@ -733,7 +750,8 @@ class ClaudeEngine:
                 "confidence": t.get("confidence"), "session": t.get("session"), "gated": t.get("gated"),
                 "model": t.get("model"), "bar": t.get("bar"), "hold_seconds": int(hold),
                 "fill_source": t.get("fill_source"), "fill_check": t.get("fill_check"),
-                "exit_prompt_version": CLAUDE_EXIT_PROMPT_VERSION, **(extra or {})}
+                "exit_prompt_version": close_tag(self.cfg) if uniform_exits_enabled(self.cfg) else CLAUDE_EXIT_PROMPT_VERSION,
+                "exit_mode": close_tag(self.cfg) if uniform_exits_enabled(self.cfg) else "haiku", **(extra or {})}
 
     # ---------------- exit tick (18 s)
     def has_work(self) -> bool:
@@ -770,6 +788,22 @@ class ClaudeEngine:
             if px is not None:
                 live[s] = {"price": float(px), "t": _iso(now)}
         out = {"shadow_closed": 0, "real_closed": 0, "checks": 0}
+        if uniform_exits_enabled(self.cfg):
+            for sim in self.sims.values():
+                for p in sim["positions"]:
+                    if p.get("uniform_exit") != UNIFORM_EXIT_VERSION:
+                        try:
+                            tick = float(self.spec(p["contract"])["tick"])
+                        except Exception:
+                            tick = None
+                        arm_uniform(p, now, late=True, tick=tick)
+            for trow in self.eng["shadow"]:
+                if trow.get("uniform_exit") != UNIFORM_EXIT_VERSION:
+                    try:
+                        tick = float(self.spec(trow["contract"])["tick"])
+                    except Exception:
+                        tick = None
+                    arm_uniform(trow, now, late=True, tick=tick)
         # shadow books
         keep = []
         for t in self.eng["shadow"]:
@@ -795,25 +829,27 @@ class ClaudeEngine:
                 if any(p["symbol"] == s for p in sim["positions"]):
                     sim.setdefault("last_price", {})[s] = v["price"]
             self._account_limits(sim, now)
-            for p in list(sim["positions"]):
-                snap = snaps.get(p["symbol"])
-                if not snap:
-                    continue
-                ctx = snap.get("context") or {}
-                mfe = max(float(p.get("mfe_pts") or 0), 0.0) / float(p["atr"])
-                reason = phase_a_structure_reason(p, ctx, now, phase_of(mfe, self.r))
-                if not reason:
-                    continue
-                sc = ctx.get("signal_candle") or {}
-                close = float(sc["close"])
-                sp = self.spec(p["contract"])
-                px = round_tick(close - p["side"] * int(self.r["slippage_ticks"]) * float(sp["tick"]),
-                                float(sp["tick"]))
-                self._close_real(sim, p, px, now, reason)
-                out["real_closed"] += 1
-            for p in sim["positions"]:
-                if p["symbol"] in snaps:
-                    calls.append(self._exit_check(sim, p, (snaps[p["symbol"]], m1s.get(p["symbol"])), now))
+            if not uniform_exits_enabled(self.cfg):
+                for p in list(sim["positions"]):
+                    snap = snaps.get(p["symbol"])
+                    if not snap:
+                        continue
+                    ctx = snap.get("context") or {}
+                    mfe = max(float(p.get("mfe_pts") or 0), 0.0) / float(p["atr"])
+                    reason = phase_a_structure_reason(p, ctx, now, phase_of(mfe, self.r))
+                    if not reason:
+                        continue
+                    sc = ctx.get("signal_candle") or {}
+                    close = float(sc["close"])
+                    sp = self.spec(p["contract"])
+                    px = round_tick(close - p["side"] * int(self.r["slippage_ticks"]) * float(sp["tick"]),
+                                    float(sp["tick"]))
+                    self._close_real(sim, p, px, now, reason)
+                    out["real_closed"] += 1
+            if claude_exit_calls_enabled(self.cfg) and not uniform_exits_enabled(self.cfg):
+                for p in sim["positions"]:
+                    if p["symbol"] in snaps:
+                        calls.append(self._exit_check(sim, p, (snaps[p["symbol"]], m1s.get(p["symbol"])), now))
         if calls:
             res = await asyncio.gather(*calls, return_exceptions=True)
             for r in res:
@@ -1126,7 +1162,7 @@ class ClaudeEngine:
                             "last": px, "unrealized": round(self.pnl(p, px), 2), "risk_usd": p.get("risk_usd"),
                             "phase": phase_of(mfe, self.r), "setup_type": p.get("setup_type"),
                             "score": p.get("score"), "server_only": p.get("server_only"),
-                            "target": p.get("take_profit")})
+                            "target": p.get("target") or p.get("take_profit"), "stop_live": p.get("stop")})
             recent = []
             for r in (s.get("recent") or [])[: int(self.cc.get("recent_trades", 15))]:
                 recent.append({**r, "held": held_str(r.get("hold_seconds"))})
@@ -1157,6 +1193,12 @@ class ClaudeEngine:
         return {"updated_at": _iso(now), "paper_only": True, "key_present": key,
                 "status": "running" if key else "waiting for key",
                 "exit_model": self.cc["exit_model"], "entry_models": self.cc["entry_models"],
+                "claude_exit_calls_enabled": claude_exit_calls_enabled(self.cfg) and not uniform_exits_enabled(self.cfg),
+                "uniform_1atr_exits": uniform_exits_enabled(self.cfg),
+                "exit_calls_note": (UNIFORM_BANNER if uniform_exits_enabled(self.cfg)
+                                    else ("Haiku exit calls paused — mechanical exits"
+                                          if not claude_exit_calls_enabled(self.cfg) else None)),
+                "exit_mode": close_tag(self.cfg) if uniform_exits_enabled(self.cfg) else None,
                 "last_entry_bar": self.eng.get("last_entry_bar"),
                 "last_entry_skipped": self.last_entry.get("skipped"),
                 "rules": ("Binding server rules: hard stop = model stop clamped 0.6-1.5 ATR; $900 risk sizing "

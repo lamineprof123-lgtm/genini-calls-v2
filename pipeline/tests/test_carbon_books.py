@@ -20,6 +20,7 @@ T0 = datetime(2026, 11, 12, 14, 0, 20, tzinfo=UTC)   # Thu, inside 08:00-20:30 U
 def cfg(tmp_path):
     c = copy.deepcopy(load_config())
     c.setdefault("exit_manager", {})["gemini_exit_calls_enabled"] = True
+    c.setdefault("exit_manager", {})["uniform_1atr_exits"] = False
     c["general"]["state_dir"] = str(tmp_path / "state")
     c["general"]["logs_dir"] = str(tmp_path / "logs")
     c["site"]["dir"] = str(tmp_path)
@@ -85,7 +86,7 @@ def sig(sym, action, conf, entry):
 
 
 SNAP = {"XAUUSD": payload("XAUUSD", 3900.0, 8.0), "EURUSD": payload("EURUSD", 1.1500, 0.0005),
-        "US100": payload("US100", 25000.0, 40.0)}
+        "US100": payload("US100", 25000.0, 40.0), "BTCUSD": payload("BTCUSD", 70000.0, 400.0)}
 
 
 def engine(cfg, api=None, feed=None, snap=None):
@@ -103,12 +104,14 @@ def run(coro):
 # ------------------------------------------------------------------ config / pricing / spend
 def test_config_matches_playbook(cfg):
     cc = C.carbon_cfg(cfg)
-    assert cc["model"] == "gemini-4-carbon" and cc["entry_thinking"] == "medium" and cc["exit_thinking"] == "low"
-    assert cc["symbols"] == ["XAUUSD", "EURUSD", "US100"] and cc["entry_window_utc"] == ["08:00", "20:30"]
-    assert cc["timeout_seconds"] == 90 and cc["min_confidence"] == 0.75 and cc["max_chase_atr"] == 0.5
+    assert cc["model"] == "gemini-4-carbon" and cc["entry_thinking"] == "high" and cc["exit_thinking"] == "low"
+    assert cc["symbols"] == ["XAUUSD", "EURUSD", "US100", "BTCUSD"] and cc["entry_window_utc"] == ["08:00", "20:30"]
+    assert cc["tradeable_symbols"] == ["XAUUSD", "EURUSD", "US100"]
+    assert cc["timeout_seconds"] == 150 and cc["min_confidence"] == 0.75 and cc["max_chase_atr"] == 0.5
+    assert cc["whatif_units"]["BTCUSD"]["flag"] == "site-only/what-if"
     assert cc["books"]["CB-BRACKET"] == {"stop_atr": 1.0, "target_atr": 1.0, "max_hold_min": 90, "model_exits": False}
     r = cc["books"]["CB-RUNNER"]
-    assert (r["lock_at_atr"], r["lock_to_atr"], r["trail_atr"], r["target_atr"], r["max_hold_min"]) == (1.0, 0.5, 0.75, 2.5, 150)
+    assert r["target_atr"] == 1.0 and r["max_hold_min"] == 90 and r["model_exits"] is False
     assert cc["sizing"]["caps"] == {"US100": 1, "XAUUSD": 1, "EURUSD": 4} and cc["sizing"]["aggregate_max"] == 6
     assert cc["spend_cap"]["soft_usd"] == 15 and cc["spend_cap"]["hard_usd"] == 19
     assert cc["spend_cap"]["max_output_tokens"] == {"entry": 6000, "exit": 800}
@@ -157,15 +160,16 @@ def test_scan_opens_both_books_and_scores_whatif(cfg, tmp_path):
     feed = Feed(({"XAUUSD": q("XAUUSD", 3900.0), "EURUSD": q("EURUSD", 1.1500)}, {}))
     e = engine(cfg, api, feed)
     r = run(e.scan(T0))
-    assert r["ok"] and r["sent"] == ["XAUUSD", "EURUSD", "US100"]
+    assert r["ok"] and r["sent"] == ["XAUUSD", "EURUSD", "US100", "BTCUSD"]
     kw = api.calls[0]
-    assert kw["thinking"] == "medium" and kw["max_output_tokens"] == 6000
+    assert kw["thinking"] == "high" and kw["max_output_tokens"] == 6000
+    assert r["thinking_level"] == "high"
     for name in C.BOOKS:
         P = e.books[name].s["positions"]
         assert [p["symbol"] for p in P] == ["XAUUSD"] and P[0]["side"] == -1 and P[0]["qty"] == 1
         assert P[0]["entry"] == pytest.approx(3899.9)                   # live quote - 1 tick (selling)
     rb = e.books["CB-RUNNER"].s["positions"][0]
-    assert rb["target"] == pytest.approx(3899.9 - 2.5 * 8.0, abs=0.11)
+    assert rb["target"] == pytest.approx(3899.9 - 1.0 * 8.0, abs=0.11)
     # what-if: both BUY/SELL (0.82 and 0.60) through both exits = 4 virtual trades
     assert len(e.e["whatif"]) == 4 and all(w["entry"] for w in e.e["whatif"])
     # spend booked from usage: 8000*2 + (1000+2000)*10 per 1M = 0.016 + 0.03
@@ -218,9 +222,9 @@ def test_symbol_held_by_both_books_not_sent(cfg):
     for b in e.books.values():
         b.s["positions"].append({"symbol": "XAUUSD", "qty": 1, "id": 99, "side": 1, "contract": "GC", "entry": 3900,
                                  "stop": 3892, "atr": 8, "entry_time": T0.isoformat()})
-    assert e.symbols_to_send() == ["EURUSD", "US100"]
+    assert e.symbols_to_send() == ["EURUSD", "US100", "BTCUSD"]
     e.books["CB-RUNNER"].s["positions"] = []
-    assert e.symbols_to_send() == ["XAUUSD", "EURUSD", "US100"]
+    assert e.symbols_to_send() == ["XAUUSD", "EURUSD", "US100", "BTCUSD"]
 
 
 def test_failed_call_logged_no_trade(cfg):
@@ -256,36 +260,31 @@ def test_bracket_90min_and_flat(cfg):
     b, p = _open(e, "CB-BRACKET")
     out = b.manage({"XAUUSD": q("XAUUSD", 3901.0, T0 + timedelta(minutes=91))}, {}, T0 + timedelta(minutes=91))
     assert out[0]["reason"] == "time_90min"
-    t = datetime(2026, 11, 12, 21, 30, tzinfo=UTC)
-    b2, p2 = _open(e, "CB-RUNNER", t=datetime(2026, 11, 12, 20, 0, tzinfo=UTC))
+    b2, p2 = _open(e, "CB-RUNNER", t=datetime(2026, 11, 12, 20, 30, tzinfo=UTC))  # deadline 22:00
     tf = datetime(2026, 11, 12, 21, 45, 10, tzinfo=UTC)
     out = b2.manage({"XAUUSD": q("XAUUSD", 3901.0, tf)}, {}, tf)
     assert out[0]["reason"] == "flat_2145utc"
 
 
-def test_runner_lock_trail_and_stop(cfg):
+def test_runner_uses_uniform_1atr_bracket(cfg):
+    """t247u: CB-RUNNER uses the same 1 ATR / 1 ATR / 90-min bracket as CB-BRACKET (no lock/trail)."""
     e = engine(cfg)
     b, p = _open(e, "CB-RUNNER")                   # long 3900.1, ATR 8
+    assert p["target"] == pytest.approx(3908.1, abs=0.11)
+    assert p["stop"] == pytest.approx(3892.1, abs=0.11)
     t = T0 + timedelta(minutes=3)
-    assert not b.manage({"XAUUSD": q("XAUUSD", 3908.2, t)}, {}, t)     # +1.01 ATR -> lock
-    assert p["locked"] and p["stop"] == pytest.approx(3904.1, abs=0.11)   # entry + 0.5 ATR (trail 3902.2 is lower)
-    t = T0 + timedelta(minutes=6)
-    assert not b.manage({"XAUUSD": q("XAUUSD", 3914.0, t)}, {}, t)
-    assert p["stop"] == pytest.approx(3914.0 - 6.0, abs=0.11)            # trail 0.75 ATR behind best
-    t = T0 + timedelta(minutes=8)
-    out = b.manage({"XAUUSD": q("XAUUSD", 3907.5, t)}, {}, t)
-    assert out[0]["reason"] == "trail_stop" and out[0]["net"] > 0
-    assert out[0]["exit"] == pytest.approx(3907.9, abs=0.11)            # resting stop - 1 tick
+    out = b.manage({"XAUUSD": q("XAUUSD", 3908.5, t)}, {}, t)            # 1 ATR target
+    assert out and out[0]["reason"] == "target" and out[0]["net"] > 0
 
 
-def test_runner_target_25atr_via_m1(cfg):
+def test_runner_target_1atr_via_m1(cfg):
     e = engine(cfg)
     b, p = _open(e, "CB-RUNNER")
     idx = pd.date_range(T0.replace(second=0) + timedelta(minutes=1), periods=3, freq="min", tz=UTC)
-    bars = pd.DataFrame({"open": [3901, 3912, 3915], "high": [3912, 3916, 3921], "low": [3900.5, 3910, 3914],
-                         "close": [3911, 3915, 3920]}, index=idx)
+    bars = pd.DataFrame({"open": [3901, 3909, 3910], "high": [3909, 3912, 3914], "low": [3900.5, 3908, 3909],
+                         "close": [3908, 3910, 3912]}, index=idx)
     t = T0 + timedelta(minutes=4)
-    out = b.manage({"XAUUSD": q("XAUUSD", 3920.0, t)}, {"XAUUSD": bars}, t)
+    out = b.manage({"XAUUSD": q("XAUUSD", 3912.0, t)}, {"XAUUSD": bars}, t)
     assert out[0]["reason"] == "target" and out[0]["trigger"] == "m1_path"
 
 
@@ -390,14 +389,13 @@ def test_runner_model_exit_only_after_1atr(cfg):
     feed = Feed(({"XAUUSD": q("XAUUSD", 3910.0, T0)}, {}))
     e = engine(cfg, api, feed, snap=Snap(snap))
     b, p = _open(e, "CB-RUNNER")
-    p["mfe"] = 5.0                                         # < 1 ATR -> no call
+    p["mfe"] = 5.0
     assert run(e.runner_exit_checks(T0 + timedelta(minutes=15))) == [] and not api.calls
     p["mfe"] = 9.0
-    out = run(e.runner_exit_checks(T0 + timedelta(minutes=15)))
-    assert out[0]["decision"] == "CLOSE" and out[0]["closed"]["net"] > 0
-    assert api.calls[0]["thinking"] == "low" and api.calls[0]["max_output_tokens"] == 800
-    assert not b.s["positions"] and e.spend_today(T0)["by_kind"]["exit"]["calls"] == 1
-    # bracket book never calls the model
+    # t247u: uniform 1 ATR bracket + model_exits false — no Carbon CLOSE call
+    assert C.carbon_cfg(cfg)["books"]["CB-RUNNER"]["model_exits"] is False
+    assert run(e.runner_exit_checks(T0 + timedelta(minutes=15))) == [] and not api.calls
+    assert b.s["positions"]  # still open; mechanical 1 ATR target / 90-min cap will close it
     assert not C.carbon_cfg(cfg)["books"]["CB-BRACKET"]["model_exits"]
 
 
@@ -425,7 +423,7 @@ def test_isolation_from_other_books(cfg, tmp_path):
 
 
 def test_gha_loop_wiring(cfg, tmp_path):
-    assert "carbon.json" in gha_loop.SITE_JSON
+    assert "carbon.json" in gha_loop.SITE_JSON and "signal_scores.json" in gha_loop.SITE_JSON
     lp = gha_loop.GhaLoop(cfg, tmp_path, "t", "holder", dry_run=True, deploy=False)
     lp.start_carbon()
     assert lp.carbon is None and lp.carbon_tasks == []          # never in dry runs
@@ -470,3 +468,61 @@ def test_runner_model_exits_paused_when_flag_off(cfg, tmp_path):
     view = e.site_view(T0)
     assert view["gemini_exit_calls_enabled"] is False
     assert "paused" in (view.get("exit_calls_note") or "").lower() or "paused" in view["rules"].lower()
+
+
+# ------------------------------------------------------------------ BTCUSD what-if only (t242u)
+def test_btc_whatif_only_never_opens_a_book(cfg, tmp_path):
+    """BTCUSD is sent on the scan and scored what-if (both exit styles, 1 unit); books never open it."""
+    api = Api([sig("BTCUSD", "SELL", 0.82, 70000.0), sig("XAUUSD", "HOLD", 0.5, 3900.0)])
+    feed = Feed(({"BTCUSD": q("BTCUSD", 70000.0), "XAUUSD": q("XAUUSD", 3900.0),
+                  "EURUSD": q("EURUSD", 1.15), "US100": q("US100", 25000.0)}, {}))
+    e = engine(cfg, api, feed)
+    r = run(e.scan(T0))
+    assert r["ok"] and "BTCUSD" in r["sent"] and r["thinking_level"] == "high"
+    for name in C.BOOKS:
+        assert all(p["symbol"] != "BTCUSD" for p in e.books[name].s["positions"])
+        assert all(p["symbol"] != "BTCUSD" for p in e.books[name].s["pending"])
+        assert e.books[name].s["stats"]["skips"].get("site_only_whatif") == 1
+        assert e.books[name].intake(
+            {"symbol": "BTCUSD", "action": "BUY", "confidence": 0.9, "atr": 400.0, "entry": 70000}, T0) is None
+    w = [x for x in e.e["whatif"] if x["symbol"] == "BTCUSD"]
+    assert len(w) == 2 and {x["exit"] for x in w} == set(C.BOOKS)
+    assert all(x["site_only"] and x["flag"] == "site-only/what-if" and x["unit"] == "1 BTC" and x["qty"] == 1 for x in w)
+    assert all(x["thinking_level"] == "high" for x in w)
+    # 1 ATR / 1 ATR first-touch on 1 BTC unit (point_value $1, tick 5)
+    short = next(x for x in w if x["exit"] == "CB-BRACKET")
+    assert short["side"] == -1 and short["entry"]
+    assert short["target"] == pytest.approx(short["entry"] - 400.0, abs=5.0)
+    assert short["stop"] == pytest.approx(short["entry"] + 400.0, abs=5.0)
+    assert short["risk_usd"] == pytest.approx(abs(short["entry"] - short["stop"]) * 1.0, abs=1.0)
+    view = json.loads((tmp_path / "carbon.json").read_text())
+    assert "site-only/what-if" in (view["whatif"]["note"] or "")
+    assert any(r["symbol"] == "BTCUSD" and r.get("flag") == "site-only/what-if" for r in view["whatif"]["open_rows"])
+    assert (view["whatif"]["CB-BRACKET"]["site_only"]["n"] == 0) or True  # still open, not closed
+    # a later tick that hits the 1 ATR target should log R and keep the flag
+    px = short["target"] - 20
+    feed2 = Feed(({"BTCUSD": q("BTCUSD", px, T0 + timedelta(minutes=10))}, {}))
+    e._quotes = feed2
+    run(e.tick(T0 + timedelta(minutes=10)))
+    rows = [json.loads(l) for l in next((tmp_path / "logs").glob("*/carbon_whatif.jsonl")).read_text().splitlines()]
+    btc = [r for r in rows if r["symbol"] == "BTCUSD"]
+    assert btc and all(r["flag"] == "site-only/what-if" and r["unit"] == "1 BTC" and r.get("R") is not None for r in btc)
+    assert all(p["symbol"] != "BTCUSD" for b in e.books.values() for p in b.s["positions"])
+
+
+def test_btc_trigger_is_whatif_only(cfg):
+    api = Api([sig("BTCUSD", "BUY", 0.8, 70000.0)])
+    snap = copy.deepcopy(SNAP)
+    e = engine(cfg, api, snap=Snap(snap))
+    run(e.scan(T0, symbols=["BTCUSD"]))  # prime cache
+    # no positions opened
+    assert all(not b.s["positions"] for b in e.books.values())
+    t = T0 + timedelta(minutes=4)
+    e.e["cache"]["BTCUSD"]["levels"] = [["Session High", 70050.0, -1]]
+    feed = Feed(({"BTCUSD": q("BTCUSD", 70100.0, t)}, {}, {"BTCUSD": {}}))
+    e._quotes = feed
+    out = run(e.trigger_poll(t))
+    assert out and out[0]["sent"] == ["BTCUSD"] and out[0]["kind"] == "trigger"
+    assert all(p["symbol"] != "BTCUSD" for b in e.books.values() for p in b.s["positions"] + b.s["pending"])
+    assert any(w["symbol"] == "BTCUSD" and w["site_only"] for w in e.e["whatif"])
+

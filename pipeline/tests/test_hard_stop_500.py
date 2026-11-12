@@ -21,6 +21,7 @@ T0 = datetime(2026, 11, 11, 14, 0, tzinfo=UTC)      # Wed 09:00 New York (in ses
 def cfg():
     c = copy.deepcopy(load_config())
     c.setdefault("exit_manager", {})["gemini_exit_calls_enabled"] = True
+    c.setdefault("exit_manager", {})["uniform_1atr_exits"] = False
     assert c["lucid"]["exit_mode"] == "gemini_only" and c["lucid"]["hard_stop_net_usd"] == 500.0
     assert c["lucid"]["slippage_ticks"] == 1
     assert c["exit_manager"]["books"] == [BOOK_1, BOOK_NOSTOP]      # 2-strike killed live (t210u)

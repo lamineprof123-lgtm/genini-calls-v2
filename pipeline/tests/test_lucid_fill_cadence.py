@@ -24,6 +24,7 @@ PX = 28500.0
 @pytest.fixture
 def cfg(tmp_path):
     c = copy.deepcopy(load_config())
+    c.setdefault("exit_manager", {})["uniform_1atr_exits"] = False
     c["lucid"]["slippage_ticks"] = 0
     c["general"]["state_dir"] = str(tmp_path / "state")
     c["general"]["logs_dir"] = str(tmp_path / "logs")

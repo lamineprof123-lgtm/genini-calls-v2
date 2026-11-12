@@ -3,10 +3,11 @@
 Source: the "Blue Bird: Gemini 4 Carbon side books" playbook (user t221u/t222u, 12 Nov 2026).
 
   Entries  gemini-4-carbon, thinking_level "medium", the CURRENT live entry prompt (templates/system_prompt.j2) and
-           SignalBatch schema unchanged; XAUUSD / EURUSD / US100 only. Called at every M15 close + 20 s inside
+           SignalBatch schema unchanged; XAUUSD / EURUSD / US100 are tradeable, BTCUSD is scan + what-if only
+           (no Lucid contract; CB books never open it). Called at every M15 close + 20 s inside
            08:00-20:30 UTC, plus triggered one-symbol checks while a bar forms (labelled level crossed by >= 0.1 ATR,
-           forming range >= 1.5 ATR, forming RVOL > 2.0; max 1 per symbol per bar, 40 per day). 90 s timeout, ONE
-           attempt, no fallback model. Symbols in ASIAN_SESSION_CHOP / LOW_LIQUIDITY_DEADZONE are not sent.
+           forming range >= 1.5 ATR, forming RVOL > 2.0; max 1 per symbol per bar, 40 per day). 150 s timeout, ONE
+           attempt, no fallback model. Entry/trigger thinking_level is "high". Symbols in ASIAN_SESSION_CHOP / LOW_LIQUIDITY_DEADZONE are not sent.
            Symbols held by BOTH books are not sent (a book skips a symbol it already holds).
   Filter   BUY/SELL and confidence >= 0.75. Every BUY/SELL (any confidence) is also scored through both exits as a
            what-if (server rules only, no account rules) -> carbon_whatif.jsonl.
@@ -33,6 +34,7 @@ import pandas as pd
 
 from .risk import _atomic_write
 from .exit_versions import gemini_exit_calls_enabled, gemini_close_tag
+from .uniform_exit import close_tag, uniform_exits_enabled, UNIFORM_BANNER, UNIFORM_EXIT_VERSION
 
 log = logging.getLogger("signals.carbon")
 UTC = timezone.utc
@@ -40,20 +42,23 @@ ET = ZoneInfo("America/New_York")
 DUBAI = ZoneInfo("Asia/Dubai")
 BOOKS = ("CB-BRACKET", "CB-RUNNER")
 BOOK_LABELS = {"CB-BRACKET": "CB-BRACKET (Carbon entries, 1 ATR / 1 ATR)",
-               "CB-RUNNER": "CB-RUNNER (Carbon entries, lock +0.5 / trail 0.75 ATR)"}
+               "CB-RUNNER": "CB-RUNNER (Carbon entries, 1 ATR / 1 ATR)"}
 
 DEFAULTS = {
     "enabled": True,
     "model": "gemini-4-carbon",
-    "entry_thinking": "medium",
+    "entry_thinking": "high",
     "exit_thinking": "low",
-    "symbols": ["XAUUSD", "EURUSD", "US100"],
+    "symbols": ["XAUUSD", "EURUSD", "US100", "BTCUSD"],
+    "tradeable_symbols": ["XAUUSD", "EURUSD", "US100"],
+    "whatif_units": {"BTCUSD": {"tick": 5.0, "point_value": 1.0, "commission": 0.0,
+                                "unit": "1 BTC", "flag": "site-only/what-if"}},
     "entry_window_utc": ["08:00", "20:30"],
     "flat_utc": "21:45",
     "reopen_utc": "23:00",
     "scan": "m15_close_plus_20s",
     "scan_offset_seconds": 20,
-    "timeout_seconds": 90,
+    "timeout_seconds": 150,
     "triggered_checks": {"level_cross_atr": 0.1, "bar_range_atr": 1.5, "rvol_gt": 2.0,
                          "max_per_symbol_per_bar": 1, "max_per_day": 40, "poll_seconds": 30},
     "min_confidence": 0.75,
@@ -62,8 +67,8 @@ DEFAULTS = {
                "caps": {"US100": 1, "XAUUSD": 1, "EURUSD": 4}, "aggregate_max": 6},
     "books": {
         "CB-BRACKET": {"stop_atr": 1.0, "target_atr": 1.0, "max_hold_min": 90, "model_exits": False},
-        "CB-RUNNER": {"stop_atr": 1.0, "lock_at_atr": 1.0, "lock_to_atr": 0.5, "trail_atr": 0.75,
-                      "target_atr": 2.5, "max_hold_min": 150, "model_exits": "m15_close_only_when_mfe_ge_1atr"},
+        "CB-RUNNER": {"stop_atr": 1.0, "target_atr": 1.0, "max_hold_min": 90, "model_exits": False,
+                      "lock_at_atr": 1.0, "lock_to_atr": 0.5, "trail_atr": 0.75},
     },
     "risk": {"daily_stop_usd": -1500, "mll_buffer_usd": 300, "one_per_symbol": True,
              "reentry_lock": "next_m15_close", "after_loss_lock_min": 30, "mll_usd": 3000.0,
@@ -91,6 +96,35 @@ def _merge(a: dict, b: dict) -> dict:
 
 def carbon_cfg(cfg: dict) -> dict:
     return _merge(DEFAULTS, cfg.get("carbon_books") or {})
+
+
+SITE_ONLY_FLAG = "site-only/what-if"
+
+
+def tradeable_symbols(cc: dict) -> list[str]:
+    return list(cc.get("tradeable_symbols") or [s for s in cc["symbols"] if s != "BTCUSD"])
+
+
+def is_tradeable(cc: dict, sym: str) -> bool:
+    return sym in tradeable_symbols(cc)
+
+
+def whatif_spec(cfg: dict, cc: dict, sym: str) -> dict | None:
+    """Lucid full-size contract, or a site-only what-if unit (BTCUSD). None if the symbol cannot be scored."""
+    L = cfg.get("lucid") or {}
+    cs = ((L.get("symbols") or {}).get(sym) or {}).get("contracts") or []
+    cs = [c for c in cs if c in (L.get("contracts") or {}) and not L["contracts"][c].get("micro")]
+    if cs:
+        sp = L["contracts"][cs[0]]
+        return {"contract": cs[0], "tick": float(sp["tick"]), "point_value": float(sp["point_value"]),
+                "commission": float(sp["commission"]), "site_only": False, "flag": None,
+                "unit": f"1 {cs[0]}"}
+    u = (cc.get("whatif_units") or {}).get(sym)
+    if not u:
+        return None
+    return {"contract": sym, "tick": float(u["tick"]), "point_value": float(u["point_value"]),
+            "commission": float(u.get("commission") or 0.0), "site_only": True,
+            "flag": u.get("flag") or SITE_ONLY_FLAG, "unit": u.get("unit") or "1 unit"}
 
 
 # ---------------------------------------------------------------------------------------------- small helpers
@@ -194,7 +228,7 @@ def spend_day(t: datetime) -> str:
 
 # ---------------------------------------------------------------------------------------------- Carbon API call
 async def carbon_generate(cc: dict, *, system_text: str, contents, schema, thinking: str, max_output_tokens: int) -> dict:
-    """ONE request to the Carbon model (no retry, no fallback), hard 90 s timeout. Never raises."""
+    """ONE request to the Carbon model (no retry, no fallback), hard timeout (cc['timeout_seconds'], default 150 s). Never raises."""
     t0 = time.monotonic()
     key = os.environ.get("GEMINI_API_KEY")
     if not key:
@@ -329,7 +363,8 @@ def skip_key(why: str) -> str:
     for pre, k in (("confidence", "confidence<min"), ("no ATR", "no_atr"), ("held", "held_in_book"),
                    ("daily_stop", "daily_stop"), ("window", "window"), ("reentry_lock", "reentry_lock"),
                    ("no same-side", "same_side_after_loss"), ("risk>max", "risk>1200"), ("aggregate", "aggregate_6"),
-                   ("trailing", "trailing_guard"), ("no full-size", "no_contract")):
+                   ("trailing", "trailing_guard"), ("no full-size", "no_contract"),
+                   ("site-only", "site_only_whatif")):
         if why.startswith(pre):
             return k
     return why[:30]
@@ -462,6 +497,8 @@ class CarbonBook:
             why = "window: outside the entry window / session"
         if why is None:
             why = self.lock_reason(sym, side, now)
+        if why is None and not is_tradeable(self.cc, sym):
+            why = f"site-only/what-if: {sym} is not a Lucid contract (what-if only)"
         contract = self.eng.contract_for(sym)
         q, per = None, 0.0
         if why is None:
@@ -576,9 +613,8 @@ class CarbonBook:
                "mfe_atr": round(p.get("mfe", 0) / atr, 3) if atr else None,
                "mae_atr": round(p.get("mae", 0) / atr, 3) if atr else None,
                "checks": p.get("checks", 0), "model": self.cc["model"], **(extra or {})}
-        if self.name == "CB-RUNNER" and not gemini_exit_calls_enabled(self.eng.cfg):
-            rec["exit_prompt_version"] = gemini_close_tag(self.eng.cfg)
-            rec["exit_mode"] = "mechanical"
+        rec["exit_prompt_version"] = close_tag(self.eng.cfg)
+        rec["exit_mode"] = close_tag(self.eng.cfg)
         self.eng.jsonl("carbon_trades.jsonl", t, rec)
         return rec
 
@@ -932,6 +968,7 @@ class CarbonEngine:
                 ref = m.get("entry") or ctx.get("live_price") or ctx.get("last_close")
                 sig = {"symbol": sym, "action": act if act in ("BUY", "SELL", "HOLD") else "HOLD", "confidence": conf,
                        "entry": float(ref) if ref else None, "atr": ctx.get("atr"), "kind": kind,
+                       "thinking_level": self.cc["entry_thinking"],
                        "signal_at": _iso(t_done), "bar": ctx.get("last_closed_bar_utc"), "session": ctx.get("session"),
                        "rationale": m.get("rationale"), "level_event": m.get("level_event"),
                        "live_price_at_chart": ctx.get("live_price"), "missing": not m}
@@ -943,7 +980,8 @@ class CarbonEngine:
                     for b in self.books.values():
                         b.intake(sig, t_done)
             await self._persist(t_done)
-        out["signals"] = [{k: s[k] for k in ("symbol", "action", "confidence")} for s in sigs]
+        out["signals"] = [{k: s[k] for k in ("symbol", "action", "confidence", "thinking_level")} for s in sigs]
+        out["thinking_level"] = self.cc["entry_thinking"]
         self.e["last_scan"] = out
         if any(b.s["pending"] for b in self.books.values()) or any(not w.get("entry") for w in self.e["whatif"]):
             await self.tick(t_done)
@@ -951,22 +989,30 @@ class CarbonEngine:
 
     # ---- what-if (every BUY/SELL, any confidence, server exits only, no account rules)
     def add_whatif(self, sig: dict, now: datetime) -> None:
-        c = self.contract_for(sig["symbol"])
-        if c is None or not sig.get("atr"):
+        sp = whatif_spec(self.cfg, self.cc, sig["symbol"])
+        if sp is None or not sig.get("atr"):
             return
         for b in BOOKS:
             self.e["whatif"].append({"vid": self.e["next_vid"], "exit": b, "symbol": sig["symbol"],
-                                     "side": 1 if sig["action"] == "BUY" else -1, "contract": c,
+                                     "side": 1 if sig["action"] == "BUY" else -1, "contract": sp["contract"],
+                                     "tick": sp["tick"], "point_value": sp["point_value"],
+                                     "commission": sp["commission"], "site_only": bool(sp["site_only"]),
+                                     "flag": sp["flag"], "unit": sp["unit"],
                                      "atr": float(sig["atr"]), "confidence": sig.get("confidence"),
                                      "signal_entry": sig.get("entry"), "signal_at": sig.get("signal_at"),
-                                     "kind": sig.get("kind"), "queued_at": _iso(now), "entry": None})
+                                     "kind": sig.get("kind"), "thinking_level": sig.get("thinking_level"),
+                                     "queued_at": _iso(now), "entry": None})
             self.e["next_vid"] += 1
 
     def _whatif_step(self, quotes: dict, m1: dict, now: datetime) -> None:
         keep = []
         in_sess = self.in_session(now)
         for w in self.e["whatif"]:
-            sp = self.L["contracts"][w["contract"]]
+            sp = whatif_spec(self.cfg, self.cc, w["symbol"]) or {
+                "tick": w.get("tick"), "point_value": w.get("point_value"),
+                "commission": w.get("commission") or 0.0, "contract": w.get("contract")}
+            if sp.get("tick") is None or sp.get("point_value") is None:
+                continue
             tick = float(sp["tick"])
             rules = exit_rules(self.cc, w["exit"])
             q = quotes.get(w["symbol"])
@@ -1006,22 +1052,41 @@ class CarbonEngine:
                 "kind": w.get("kind"), "signal_at": w.get("signal_at"), "entry_time": w["entry_time"],
                 "entry": w["entry"], "exit": px, "reason": res[0], "net_1c": net,
                 "R": round(net / w["risk_usd"], 3) if w.get("risk_usd") else None, "atr": w["atr"],
-                "chase_atr": w.get("chase_atr"), "mfe_atr": round(w["mfe"] / w["atr"], 3) if w["atr"] else None})
+                "chase_atr": w.get("chase_atr"), "mfe_atr": round(w["mfe"] / w["atr"], 3) if w["atr"] else None,
+                "site_only": bool(w.get("site_only")), "flag": w.get("flag"), "unit": w.get("unit"),
+                "thinking_level": w.get("thinking_level")})
         self.e["whatif"] = keep
 
     def whatif_summary(self) -> dict:
         rows = self.read_logs("carbon_whatif.jsonl")
-        out = {}
-        for b in BOOKS:
-            for flt in ("all", "conf>=min", "conf<min"):
-                rs = [r for r in rows if r.get("exit_rules") == b and (
-                    flt == "all" or (flt == "conf>=min") == bool(r.get("passes_filter")))]
-                Rs = [r["R"] for r in rs if r.get("R") is not None]
-                out.setdefault(b, {})[flt] = {
-                    "n": len(rs), "r_avg": round(sum(Rs) / len(Rs), 3) if Rs else None,
+
+        def pack(rs: list[dict]) -> dict:
+            Rs = [r["R"] for r in rs if r.get("R") is not None]
+            return {"n": len(rs), "r_avg": round(sum(Rs) / len(Rs), 3) if Rs else None,
                     "r_total": round(sum(Rs), 3), "net_1c": round(sum(r.get("net_1c") or 0 for r in rs), 2),
                     "win_rate": round(sum(1 for r in rs if (r.get("net_1c") or 0) > 0) / len(rs), 3) if rs else None}
+
+        out = {}
+        for b in BOOKS:
+            bb = [r for r in rows if r.get("exit_rules") == b]
+            out[b] = {
+                "all": pack(bb),
+                "conf>=min": pack([r for r in bb if r.get("passes_filter")]),
+                "conf<min": pack([r for r in bb if not r.get("passes_filter")]),
+                "site_only": pack([r for r in bb if r.get("site_only") or r.get("flag") == SITE_ONLY_FLAG]),
+                "tradeable": pack([r for r in bb if not (r.get("site_only") or r.get("flag") == SITE_ONLY_FLAG)]),
+            }
         out["open"] = len(self.e["whatif"])
+        out["open_rows"] = [{"vid": w["vid"], "exit": w["exit"], "symbol": w["symbol"],
+                             "side": _side_word(w["side"]), "entry": w.get("entry"),
+                             "stop": w.get("stop"), "target": w.get("target"),
+                             "confidence": w.get("confidence"), "site_only": bool(w.get("site_only")),
+                             "flag": w.get("flag"), "unit": w.get("unit"),
+                             "thinking_level": w.get("thinking_level")}
+                            for w in self.e["whatif"]]
+        out["recent"] = rows[-30:][::-1]
+        out["note"] = ("BTCUSD is scored site-only/what-if (1 BTC unit, both exit styles); "
+                       "CB-BRACKET and CB-RUNNER never open it (no Lucid contract).")
         return out
 
     # ---- exits: 18 s server loop
@@ -1226,10 +1291,14 @@ class CarbonEngine:
                 "calls_total": self.e.get("calls_total", 0), "last_scan": self.e.get("last_scan"),
                 "books": [b.view(now) for b in self.books.values()], "whatif": self.whatif_summary(),
                 "gemini_exit_calls_enabled": gemini_exit_calls_enabled(self.cfg),
-                "exit_calls_note": ("Gemini exit calls paused — mechanical exits"
-                                    if not gemini_exit_calls_enabled(self.cfg) else None),
-                "rules": ("gemini-4-carbon entries (thinking medium, live entry prompt unchanged) on XAUUSD / EURUSD / "
-                          "US100 at every M15 close +20 s in 08:00-20:30 UTC + triggered one-symbol checks; conf >= "
+                "uniform_1atr_exits": uniform_exits_enabled(self.cfg),
+                "exit_mode": close_tag(self.cfg) if uniform_exits_enabled(self.cfg) else None,
+                "exit_calls_note": (UNIFORM_BANNER if uniform_exits_enabled(self.cfg)
+                                    else ("Gemini exit calls paused — mechanical exits"
+                                          if not gemini_exit_calls_enabled(self.cfg) else None)),
+                "rules": ("gemini-4-carbon entries (thinking high, live entry prompt unchanged) on XAUUSD / EURUSD / "
+                          "US100 / BTCUSD at every M15 close +20 s in 08:00-20:30 UTC + triggered one-symbol checks; "
+                          "BTCUSD is site-only/what-if (1 BTC unit, both exit styles) — books never open it. conf >= "
                           f"{self.cc['min_confidence']}; chase <= {self.cc['max_chase_atr']} ATR. Size floor($900 / 1 ATR"
                           " risk), caps NQ 1 / GC 1 / 6E 4, skip if 1 contract > $1,200, 6 aggregate, one per symbol; "
                           "re-entry after the next M15 close (after a loss 30 min, no same-side re-entry this session); "
@@ -1238,7 +1307,7 @@ class CarbonEngine:
                           + (" CB-BRACKET unchanged (1 ATR / 1 ATR / 90 min). CB-RUNNER keeps mechanical stop/lock/"
                              "trail / 2.5 ATR target / 150-min cap; Carbon exit-model checks are paused."
                              if not gemini_exit_calls_enabled(self.cfg) else
-                             " CB-RUNNER may CLOSE at an M15 close once MFE >= 1 ATR (thinking low)."))}
+                             " Both Carbon books use the uniform 1 ATR / 1 ATR / 90-min bracket; no model exits."))}
 
     async def _persist(self, now: datetime) -> None:
         view = self.site_view(now)

@@ -13,9 +13,13 @@ def _now() -> str:
 def write_status(cfg: dict, state: str, interval: int | None = None, **extra) -> dict:
     """state: running (waiting for next_run_at) | analyzing (cycle in progress) | paused | stopped."""
     p = Path(cfg["site"]["dir"]) / "status.json"
+    from .uniform_exit import UNIFORM_BANNER, uniform_exits_enabled
     st = {"state": state, "interval_minutes": interval or cfg["scheduler"]["interval_minutes"],
           "align_offset_seconds": cfg["scheduler"]["align_offset_seconds"], "tz": cfg["general"]["session_tz"],
           "next_run_at": None, "updated_at": _now(), **extra}
+    if uniform_exits_enabled(cfg):
+        st["uniform_1atr_exits"] = True
+        st["exit_calls_note"] = UNIFORM_BANNER
     _atomic_write(p, st)
     return st
 

@@ -35,6 +35,7 @@ def cfg(tmp_path):
     c["site"]["dir"] = str(tmp_path)
     c.setdefault("deepseek", {})["enabled"] = True
     c.setdefault("exit_manager", {})["gemini_exit_calls_enabled"] = True  # DS must still be mechanical
+    c.setdefault("exit_manager", {})["uniform_1atr_exits"] = False
     return c
 
 

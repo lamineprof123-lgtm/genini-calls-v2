@@ -17,6 +17,7 @@ def test_live_config_has_no_2strike():
 
 def test_retired_book_archived_and_never_checked(tmp_path):
     cfg = copy.deepcopy(load_config())
+    cfg.setdefault("exit_manager", {})["uniform_1atr_exits"] = False
     cfg["lucid"]["reset_token"] = None
     old_cfg = copy.deepcopy(cfg); old_cfg["exit_manager"]["books"] = [BOOK_1, BOOK_2, BOOK_NOSTOP]
     old = Books(old_cfg)

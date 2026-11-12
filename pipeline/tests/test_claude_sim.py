@@ -176,6 +176,8 @@ def _cfg(tmp):
     cfg["general"]["state_dir"] = str(tmp / "state")
     cfg["general"]["logs_dir"] = str(tmp / "logs")
     cfg["site"]["dir"] = str(tmp)
+    cfg.setdefault("exit_manager", {})["uniform_1atr_exits"] = False
+    cfg.setdefault("claude", {})["exit_calls_enabled"] = True
     return cfg
 
 

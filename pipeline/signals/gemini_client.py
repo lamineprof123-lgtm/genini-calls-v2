@@ -132,8 +132,9 @@ def _gen_config(cfg: dict, model: str, payloads: list[dict]):
     kw = dict(system_instruction=system_prompt(cfg, [p["symbol"] for p in payloads]),
               response_mime_type="application/json", response_schema=SignalBatch)
     if model.startswith("gemini-3"):
-        if g.get("thinking_level"):
-            kw["thinking_config"] = types.ThinkingConfig(thinking_level=g["thinking_level"])
+        level = g.get("entry_thinking_level") or g.get("thinking_level")
+        if level:
+            kw["thinking_config"] = types.ThinkingConfig(thinking_level=level)
     elif g.get("temperature") is not None:
         kw["temperature"] = g["temperature"]
     return types.GenerateContentConfig(**kw)

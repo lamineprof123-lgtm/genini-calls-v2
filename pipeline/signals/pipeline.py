@@ -292,7 +292,12 @@ async def run_once(cfg: dict, dry_run: bool = False, force: bool = True, model: 
         "market_summary": (obj or {}).get("market_summary"), "signals": validated,
         "in_position": sorted(busy),
         "entry_symbols": [p["symbol"] for p in entry_payloads],
+        "thinking_level": (cfg.get("gemini") or {}).get("entry_thinking_level")
+                          or (cfg.get("gemini") or {}).get("thinking_level"),
     }
+    if record["thinking_level"]:
+        for v in validated:
+            v["thinking_level"] = record["thinking_level"]
     if compact:
         record["run_dir"] = str(run_dir / f"{local.strftime('%H%M%S')}.json")
         record["gemini_raw_text"] = resp.get("raw_text")

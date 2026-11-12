@@ -51,6 +51,7 @@ def gld(**kw):
 def cfg():
     c = copy.deepcopy(load_config())
     c.setdefault("exit_manager", {})["gemini_exit_calls_enabled"] = True
+    c.setdefault("exit_manager", {})["uniform_1atr_exits"] = False
     return c
 
 

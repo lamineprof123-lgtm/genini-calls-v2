@@ -22,7 +22,7 @@ from .site import write_status
 
 log = logging.getLogger("signals.gha")
 SITE_JSON = ("status.json", "latest_signal.json", "history.json", "lucid.json", "claude.json", "bracket.json",
-             "carbon.json", "deepseek.json")
+             "carbon.json", "deepseek.json", "signal_scores.json")
 DATA_JSON = ("books.json",)  # committed to the data branch only (not deployed to Pages)
 CYCLE_LOG_KEEP_DAYS = 14
 
@@ -63,6 +63,8 @@ class GhaLoop:
         self.carbon_tasks: list[asyncio.Task] = []
         self.deepseek = None                 # DS-FLASH DeepSeek entry-only book (signals/deepseek.py)
         self.deepseek_exit_task: asyncio.Task | None = None
+        self.scorer = None
+        self.scorer_task: asyncio.Task | None = None
         for sub in ("state", "logs"):
             (data / sub).mkdir(parents=True, exist_ok=True)
 
@@ -203,6 +205,7 @@ class GhaLoop:
         self.start_bracket()
         self.start_carbon()
         self.start_deepseek()
+        self.start_scorer()
         while True:
             # The job still wakes every `self.interval` (2 min). The site countdown uses
             # scan_interval (2 active / 15 during ASIAN / DEADZONE) so it matches the next Gemini call.
@@ -459,12 +462,53 @@ class GhaLoop:
             pass
         self.deepseek = None
 
+    def start_scorer(self) -> None:
+        """Universal signal scorer (t248u): backfill logs, then score ready rows on a 60 s loop. No model calls."""
+        if self.dry_run:
+            return
+        try:
+            from .signal_score import SignalScorer
+
+            async def _loop(sc: SignalScorer):
+                try:
+                    n = sc.ingest_logs()
+                    log.info("signal_score backfill enqueued %s new rows (%s pending)", n, len(sc.s["queue"]))
+                    sc._write_summary()
+                    sc.save()
+                except Exception:
+                    log.exception("signal_score backfill failed")
+                while True:
+                    try:
+                        sc.ingest_logs()
+                        r = await sc.tick()
+                        if r.get("scored"):
+                            log.info("signal_score tick %s", r)
+                    except Exception:
+                        log.exception("signal_score tick failed")
+                    await asyncio.sleep(60)
+
+            self.scorer = SignalScorer(self.cfg, state_dir=self.data / "state",
+                                       logs_dir=self.data / "logs", site_dir=self.data)
+            self.scorer_task = asyncio.create_task(_loop(self.scorer), name="signal-score")
+        except Exception:
+            log.exception("signal scorer failed to start (main loop unaffected)")
+            self.scorer = None
+
+    async def stop_scorer(self) -> None:
+        t, self.scorer_task = self.scorer_task, None
+        if t:
+            t.cancel()
+            with contextlib.suppress(BaseException):
+                await asyncio.wait_for(t, 30)
+        self.scorer = None
+
     async def shutdown(self, reason: str) -> None:
         await self.stop_exit_manager()
         await self.stop_claude()
         await self.stop_bracket()
         await self.stop_carbon()
         await self.stop_deepseek()
+        await self.stop_scorer()
         succ = L.read(self.data, L.SUCC)
         handed = succ.get("run_id") if (reason == "handoff" and succ) else None
         if reason == "stop-file":
@@ -506,6 +550,7 @@ async def run_gha_loop(cfg: dict, data: Path, run_id: str, role: str, **kw) -> s
         await loop.stop_bracket()
         await loop.stop_carbon()
         await loop.stop_deepseek()
+        await loop.stop_scorer()
         log.error("lost the loop lock: %s -> exiting without further writes", e)
         return "lost-lock"
     finally:

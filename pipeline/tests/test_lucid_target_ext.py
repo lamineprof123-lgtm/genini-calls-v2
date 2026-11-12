@@ -19,6 +19,7 @@ T_NY = datetime(2026, 11, 11, 16, 0, tzinfo=UTC)      # Wed 11:00 New York (RTH)
 @pytest.fixture
 def cfg():
     c = copy.deepcopy(load_config())
+    c.setdefault("exit_manager", {})["uniform_1atr_exits"] = False
     c["lucid"]["slippage_ticks"] = 0
     c["lucid"]["exit_mode"] = "server"; c["lucid"].pop("reset_archive", None)  # legacy server-target sim
     return c

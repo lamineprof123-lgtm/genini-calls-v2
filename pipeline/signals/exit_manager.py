@@ -35,6 +35,7 @@ from .config import ROOT
 from .risk import _atomic_write
 from .exit_versions import (GEMINI_EXIT_PROMPT_VERSION, GEMINI_MECH_EXIT_VERSION,
                             gemini_exit_calls_enabled, gemini_close_tag)
+from .uniform_exit import uniform_exits_enabled, UNIFORM_BANNER, arm_uniform, UNIFORM_EXIT_VERSION, close_tag
 from .hard_stop import (book_has_stop, beyond as stop_beyond, hard_stop_level, hard_stop_reason, hard_stop_usd,
                         shadow_books)
 
@@ -527,12 +528,16 @@ class Books:
         return book_has_stop(self.cfg, name)
 
     def arm_mech_exits(self, name: str, p: dict, now: datetime, *, late: bool = False) -> None:
-        """1 ATR target on every book; 1 ATR stop on shadow (nostop) books. Late-arm so currently open
-        positions pick the rules up from `now` without a retroactive stop/target on earlier M1 bars."""
+        """Uniform 1 ATR stop + 1 ATR target on every book (or the older nostop-only stop). Late-arm from now."""
         atr = float(p.get("atr") or 0)
         if atr <= 0:
             return
         tick = self.tick(p)
+        if uniform_exits_enabled(self.cfg):
+            if late and p.get("uniform_exit") == UNIFORM_EXIT_VERSION and p.get("stop") is not None and p.get("target") is not None:
+                return
+            arm_uniform(p, now, late=late, tick=tick)
+            return
         tgt_mult = float(self.e.get("mech_target_atr", 1.0))
         if p.get("target") is None:
             p["target"] = self._round_tick(p["entry"] + p["side"] * tgt_mult * atr, tick)
@@ -547,9 +552,8 @@ class Books:
                 p["mech_stop_armed_at"] = now.isoformat()
 
     def arm_hard_stop(self, name: str, p: dict, now: datetime) -> float | None:
-        """Attach the -$N NET hard stop to a book position (no-op for shadow books / stop off). Positions that were
-        open before the stop existed are armed NOW (no retroactive stop-out from old M1 bars)."""
-        if not self.has_stop(name) or p.get("stop") is not None:
+        """Attach the -$N NET hard stop to a book position (no-op for shadow books / stop off / uniform 1 ATR)."""
+        if uniform_exits_enabled(self.cfg) or not self.has_stop(name) or p.get("stop") is not None:
             return None
         if p.get("hard_stop_px") is None:
             p["hard_stop_px"] = hard_stop_level(self.cfg, p)
@@ -669,7 +673,7 @@ class Books:
                 hit = (l <= level) if sd > 0 else (h >= level)
                 if hit:
                     gap = (o <= level) if sd > 0 else (o >= level)
-                    why = "stop_1atr" if p.get("stop_note") == "mech_1atr" else (
+                    why = "stop_1atr" if p.get("stop_note") in ("mech_1atr", "uniform_1atr") else (
                         "hard_stop" if p.get("stop") is not None else "hs")
                     return self.slip_exit(p, o if gap else level), ts.to_pydatetime(), why
             if target is not None and (mech_arm is None or ts >= mech_arm):
@@ -1028,8 +1032,14 @@ class ExitManager:
         ids = set(self.books.s["seen_ids"])
 
         mech = not gemini_exit_calls_enabled(self.cfg)
+        uni = uniform_exits_enabled(self.cfg)
         hs = hard_stop_usd(self.cfg)
-        if mech:
+        if uni:
+            note = (UNIFORM_BANNER + " Same Lucid entries. Every book (main, 1-strike, nostop, bracket, "
+                    "CB-BRACKET, CB-RUNNER, Claude, DS-FLASH) closes only on a 1 ATR stop / 1 ATR target / "
+                    "90-min cap. No model exit calls. Open positions armed from now. "
+                    f"New closes tagged {UNIFORM_EXIT_VERSION}.")
+        elif mech:
             note = ("Gemini exit calls paused — mechanical exits. Same Lucid entries. "
                     f"Main + 1-strike: {f'-${hs:g} net hard stop' if hs else 'no $ hard stop'}, "
                     f"{self.e.get('mech_target_atr', 1.0):g} ATR (M15 at entry) target, "
@@ -1056,8 +1066,13 @@ class ExitManager:
         return {"updated_at_utc": datetime.now(UTC).isoformat(), "paper_only": True,
                 "note": note,
                 "gemini_exit_calls_enabled": not mech,
-                "exit_calls_note": "Gemini exit calls paused — mechanical exits" if mech else None,
-                "exit_rules": ({
+                "uniform_1atr_exits": uni,
+                "exit_calls_note": (UNIFORM_BANNER if uni else
+                                    ("Gemini exit calls paused — mechanical exits" if mech else None)),
+                "exit_rules": ({k: "1 ATR stop · 1 ATR target · 90-min cap"
+                                for k in ("main", "1-strike", "nostop", "bracket",
+                                          "CB-BRACKET", "CB-RUNNER", "C-OPUS", "C-SONNET", "DS-FLASH")}
+                               if uni else ({
                     "main": (f"−${hs:g} net hard stop · 1 ATR target · 90-min cap" if hs else
                              "1 ATR target · 90-min cap"),
                     "1-strike": (f"−${hs:g} net hard stop · 1 ATR target · 90-min cap" if hs else
@@ -1066,7 +1081,7 @@ class ExitManager:
                     "bracket": "unchanged (1 ATR stop / 1 ATR target / 90 min)",
                     "CB-BRACKET": "unchanged (1 ATR stop / 1 ATR target / 90 min)",
                     "CB-RUNNER": "mechanical stop/lock/trail / 2.5 ATR target / 150-min cap (model exits paused)",
-                } if mech else None),
+                } if mech else None)),
                 "check_seconds": self.e["check_seconds"], "books": self.books.summary(),
                 "baseline": baseline_summary(self.logs_dir, ids, self.books.s.get("created_at"))}
 

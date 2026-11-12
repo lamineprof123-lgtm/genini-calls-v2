@@ -17,6 +17,7 @@ T = datetime(2026, 11, 11, 18, 16, 30, tzinfo=UTC)      # Wed 13:16 New York (RT
 @pytest.fixture
 def sim(tmp_path):
     cfg = copy.deepcopy(load_config())
+    cfg.setdefault("exit_manager", {})["uniform_1atr_exits"] = False
     cfg["lucid"]["slippage_ticks"] = 0
     cfg["lucid"]["exit_mode"] = "server"; cfg["lucid"].pop("reset_archive", None)  # legacy server-target sim
     s = LucidSim(cfg, tmp_path / "state", tmp_path / "logs")

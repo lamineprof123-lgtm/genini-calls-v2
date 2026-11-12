@@ -151,7 +151,11 @@ def advance(t: dict, bars: pd.DataFrame | None, r: dict, *, flat_et: str = "16:4
         o, h, l, c = float(row["open"]), float(row["high"]), float(row["low"]), float(row["close"])
         fav, adv = (h, l) if sd > 0 else (l, h)
         stop = effective_stop(t)
-        hit = (l <= stop) if sd > 0 else (h >= stop)
+        armed = t.get("mech_stop_armed_at") or t.get("mech_armed_at")
+        apply_stop = True
+        if armed:
+            apply_stop = ts >= pd.Timestamp(datetime.fromisoformat(str(armed).replace("Z", "+00:00"))).ceil("min")
+        hit = apply_stop and ((l <= stop) if sd > 0 else (h >= stop))
         if hit:
             gap = (o <= stop) if sd > 0 else (o >= stop)
             px = (o if gap else stop) - sd * slip
@@ -165,20 +169,37 @@ def advance(t: dict, bars: pd.DataFrame | None, r: dict, *, flat_et: str = "16:4
         t["mae_pts"] = max(float(t.get("mae_pts") or 0.0), -sd * (adv - t["entry"]), 0.0)
         if t.get("reach_05") is None and t["mfe_pts"] >= 0.5 * atr:
             t["reach_05"] = True
-        f, lbl = floor_for(sd, t["entry"], t["mfe_pts"], atr, float(t.get("comm_pts") or 0.0), r)
-        if f is not None:
-            old = t.get("floor")
-            if old is None or (sd > 0 and f > old) or (sd < 0 and f < old):
-                t["floor"], t["floor_label"] = (round_tick(f, tick) if tick else f), lbl
+        tgt = t.get("target")
+        if tgt is not None:
+            armed = t.get("mech_armed_at") or t.get("mech_stop_armed_at")
+            apply_tgt = True
+            if armed:
+                apply_tgt = ts >= pd.Timestamp(datetime.fromisoformat(str(armed).replace("Z", "+00:00")))
+            if apply_tgt:
+                tgt_hit = (h >= float(tgt)) if sd > 0 else (l <= float(tgt))
+                if tgt_hit:
+                    gap = (o >= float(tgt)) if sd > 0 else (o <= float(tgt))
+                    px = (o if gap else float(tgt)) - sd * slip
+                    return {"reason": "target_1atr", "price": round_tick(px, tick) if tick else px,
+                            "t": ts.to_pydatetime().isoformat()}
+        if not r.get("uniform_1atr"):
+            f, lbl = floor_for(sd, t["entry"], t["mfe_pts"], atr, float(t.get("comm_pts") or 0.0), r)
+            if f is not None:
+                oldf = t.get("floor")
+                if oldf is None or (sd > 0 and f > oldf) or (sd < 0 and f < oldf):
+                    t["floor"], t["floor_label"] = (round_tick(f, tick) if tick else f), lbl
         bar_end = ts + pd.Timedelta(minutes=1)
         last_ts = ts
         if bar_end > now_ts:
             break                                   # forming bar: no time-based exits yet
         mins = (bar_end - entry_t).total_seconds() / 60.0
-        if mins >= r["time_stop_minutes"] and t["mfe_pts"] < r["time_stop_mfe_atr"] * atr:
-            return {"reason": "time_stop_45m", "price": round_tick(c - sd * slip, tick) if tick else c,
+        gate = r.get("time_stop_mfe_atr")
+        always = r.get("uniform_1atr") or gate in (None, 0, 0.0)
+        if mins >= r["time_stop_minutes"] and (always or t["mfe_pts"] < float(gate) * atr):
+            reason = f"max_hold_{int(r['time_stop_minutes'])}m" if always else "time_stop_45m"
+            return {"reason": reason, "price": round_tick(c - sd * slip, tick) if tick else c,
                     "t": bar_end.to_pydatetime().isoformat()}
-        if not in_session(bar_end.to_pydatetime(), flat_et, open_et):
+        if not r.get("uniform_1atr") and not in_session(bar_end.to_pydatetime(), flat_et, open_et):
             return {"reason": "flat_16:45_ET", "price": round_tick(c - sd * slip, tick) if tick else c,
                     "t": bar_end.to_pydatetime().isoformat()}
     if last_ts is not None:

@@ -14,6 +14,7 @@ from signals.gemini_client import system_prompt, chart_user_text
 
 def _cfg(tmp_path: Path):
     cfg = copy.deepcopy(load_config())
+    cfg.setdefault("exit_manager", {})["uniform_1atr_exits"] = False
     cfg["general"]["state_dir"] = str(tmp_path / "state")
     cfg["general"]["logs_dir"] = str(tmp_path / "logs")
     cfg["site"]["dir"] = str(tmp_path / "site")

@@ -26,6 +26,7 @@ MARKET = 3947.0                 # Dukascopy bid at 12:17:05
 @pytest.fixture
 def cfg(tmp_path):
     c = copy.deepcopy(load_config())
+    c.setdefault("exit_manager", {})["uniform_1atr_exits"] = False
     c["general"]["state_dir"] = str(tmp_path / "state")
     c["general"]["logs_dir"] = str(tmp_path / "logs")
     c["site"]["dir"] = str(tmp_path)

@@ -280,6 +280,10 @@
   <div class="lu-grid" id="cbSpend"></div>
   <div class="lu-note" id="cbCall"></div>
   <div id="cbBooks"></div>
+  <h3>What-if <small>1 unit · 1 ATR stop / 1 ATR first-touch target · both exit styles</small></h3>
+  <div class="lu-note" id="cbWhatifNote"></div>
+  <div class="lu-grid" id="cbWhatifSum"></div>
+  <div class="lu-wrap" id="cbWhatif"></div>
   <div class="lu-note" id="cbNote"></div>
 </section>
 
@@ -298,7 +302,12 @@
   <h2><span>Gemini vs Claude vs Carbon vs DeepSeek</span><small id="cmpUpd"></small></h2>
   <div class="lu-wrap" id="cmpT"></div>
   <div class="lu-note">Paper sims only. R per signal = average R of every BUY/SELL signal played 1 contract under the
-    server rules (what-if book); Gemini trades without a fixed stop, so it has no R.</div>
+    uniform 1 ATR / 1 ATR / 90-min bracket (see Signal scorer).</div>
+</section>
+<section class="lucid" id="scores" hidden aria-label="Universal signal scorer">
+  <h2><span>Signal scorer</span> · every model · 1 ATR / 1 ATR / 90-min + coin-flip twin + MFE/MAE 2–4h <small id="scUpd"></small></h2>
+  <div class="lu-note" id="scNote"></div>
+  <div class="lu-wrap" id="scT"></div>
 </section>
 <div id="clSims"></div>
 
@@ -571,12 +580,12 @@
     const cell = (k, v, c) => `<div><div class="lu-k">${k}</div><div class="lu-v ${c || ''}">${v}</div></div>`;
     const ban = $('luExitBanner');
     if (ban) {
-      if (L.gemini_exit_calls_enabled === false) {
+      const note = L.exit_calls_note || (status && status.exit_calls_note) || '';
+      if (L.uniform_1atr_exits || L.gemini_exit_calls_enabled === false || note) {
         const ru = L.exit_rules || {};
-        const bits = ['main', '1-strike', 'nostop', 'bracket', 'CB-BRACKET', 'CB-RUNNER']
-          .filter(k => ru[k]).map(k => `${k}: ${ru[k]}`);
+        const bits = Object.keys(ru).filter(k => ru[k]).map(k => `${k}: ${ru[k]}`);
         ban.hidden = false;
-        ban.innerHTML = `<b>${esc(L.exit_calls_note || 'Gemini exit calls paused — mechanical exits')}</b>` +
+        ban.innerHTML = `<b>${esc(note || 'All books: 1 ATR / 1 ATR bracket, no model exits')}</b>` +
           (bits.length ? `<small>${bits.map(esc).join(' · ')}</small>` : '');
       } else {
         ban.hidden = true;
@@ -827,6 +836,36 @@
       return `<h3>${esc(B.label || B.book)}</h3><div class="lu-grid">${grid}</div><h3>Open positions</h3><div class="lu-wrap">${pos}</div>
         <h3>Recent trades</h3><div class="lu-wrap">${trs}</div>`;
     }).join('');
+    const W = K.whatif || {};
+    if ($('cbWhatifNote')) {
+      $('cbWhatifNote').textContent = W.note || 'Every Carbon BUY/SELL (any confidence) is scored 1 unit through both exit books.';
+      const sumCell = (k, v, c) => `<div><div class="lu-k">${k}</div><div class="lu-v ${c || ''}">${v}</div></div>`;
+      const blk = (label, s) => sumCell(label, `${rr(s && s.r_avg)} <small>(${(s && s.n) || 0} · ${usd((s && s.net_1c) || 0, true)})</small>`, cls(s && s.r_avg));
+      $('cbWhatifSum').innerHTML = (K.books || []).map(B => {
+        const wi = W[B.book] || {};
+        return [
+          sumCell(esc(B.book) + ' all', `${rr((wi.all || {}).r_avg)} <small>(${(wi.all || {}).n || 0})</small>`, cls((wi.all || {}).r_avg)),
+          blk('Tradeable', wi.tradeable || {}),
+          blk('Site-only / what-if (BTC)', wi.site_only || {}),
+        ].join('');
+      }).join('');
+      const open = W.open_rows || [];
+      const recent = W.recent || [];
+      const flag = r => r.site_only || r.flag ? `<b>${esc(r.flag || 'site-only/what-if')}</b>` : '—';
+      const row = r => `<tr><td>${dayhm(r.t_exit || r.signal_at)}</td><td>${esc(r.symbol)}</td>
+        <td>${esc(r.exit_rules || r.exit || '')}</td><td>${esc(r.side || '')}</td>
+        <td>${r.confidence != null ? Number(r.confidence).toFixed(2) : '—'}</td>
+        <td>${esc(r.reason || (r.entry ? 'open' : 'queued'))}</td>
+        <td class="${cls(r.R)}">${r.R != null ? rr(r.R) : '—'}</td>
+        <td class="${cls(r.net_1c)}">${r.net_1c != null ? usd(r.net_1c, true) : '—'}</td>
+        <td>${flag(r)}</td><td>${esc(r.unit || '')}</td>
+        <td>${esc(r.thinking_level || '')}</td></tr>`;
+      const head = `<table class="lu-t"><tr><th>When</th><th>Symbol</th><th>Exit book</th><th>Side</th><th>Conf</th>
+        <th>Result</th><th>R</th><th>Net (1 unit)</th><th>Flag</th><th>Unit</th><th>Thinking</th></tr>`;
+      const openHtml = open.length ? head + open.map(row).join('') + '</table>' : '<div class="lu-note">No open what-if rows.</div>';
+      const recHtml = recent.length ? head + recent.map(row).join('') + '</table>' : '<div class="lu-note">No closed what-if rows yet.</div>';
+      $('cbWhatif').innerHTML = `<h3>Open what-if (${open.length})</h3>${openHtml}<h3>Recent what-if closes</h3>${recHtml}`;
+    }
     $('cbUpd').textContent = K.updated_at ? `updated ${hm(K.updated_at)} ${city()}` : '';
     const since = (K.books[0] || {}).since;
     $('cbNote').textContent = `${K.exit_calls_note ? K.exit_calls_note + ' · ' : ''}Paper trading only · two fresh $100,000 accounts${since ? ` since ${dayhm(since)} ${city()}` : ''} · ${K.rules || ''}`;
@@ -838,6 +877,47 @@
   }
   pollCarbon();
   setInterval(pollCarbon, 15000);
+  let scores = null;
+  function renderScores() {
+    const S = scores; const box = $('scores'); if (!box) return;
+    if (!S || !S.models) { box.hidden = true; return; }
+    box.hidden = false;
+    $('scNote').textContent = (S.note || '') + (S.pending ? ` · ${S.pending} rows waiting for the 4h window` : '');
+    $('scUpd').textContent = S.updated_at ? `updated ${hm(S.updated_at)} ${city()}` : '';
+    const models = Object.entries(S.models);
+    if (!models.length) { $('scT').innerHTML = '<div class="lu-note">No scored signals yet (4h window).</div>'; return; }
+    const bandKeys = ['<0.55','0.55-0.75','0.75-0.90','0.90-1.00','none'];
+    const rows = models.map(([m, x]) => {
+      const bands = bandKeys.map(b => {
+        const z = (x.by_band || {})[b];
+        return z ? `${b} n=${z.n} R=${z.avg_R ?? '—'} edge=${z.edge_R ?? '—'}` : '';
+      }).filter(Boolean).join(' · ');
+      const ex = x.excursions || {};
+      const exs = ['2h','3h','4h'].map(h => {
+        const e = ex[h] || {};
+        return `${h} MFE ${e.avg_mfe_atr ?? '—'} / MAE ${e.avg_mae_atr ?? '—'}`;
+      }).join(' · ');
+      return `<tr><td>${esc(m)}</td><td>${x.n}</td>
+        <td>${x.win_pct != null ? (x.win_pct*100).toFixed(1)+'%' : '—'}</td>
+        <td class="${cls(x.avg_R)}">${x.avg_R ?? '—'}</td>
+        <td class="${cls(x.twin_avg_R)}">${x.twin_avg_R ?? '—'}</td>
+        <td class="${cls(x.edge_R)}">${x.edge_R ?? '—'}</td>
+        <td><small>${esc(exs)}</small></td>
+        <td><small>${esc(bands)}</small></td></tr>`;
+    }).join('');
+    $('scT').innerHTML = `<table class="lu-t"><tr><th>Model</th><th>n</th><th>Win% vs bracket</th>
+      <th>Avg R</th><th>Coin-flip avg R</th><th>Edge (R−twin)</th><th>Avg MFE/MAE 2–4h (ATR)</th>
+      <th>By confidence</th></tr>${rows}</table>`;
+  }
+  async function pollScores() {
+    const j = await getJSON('signal_scores.json');
+    if (j && !(scores && Date.parse(j.updated_at) < Date.parse(scores.updated_at))) {
+      scores = j; renderScores();
+    }
+  }
+  pollScores();
+  setInterval(pollScores, 15000);
+
   function renderDeepseek() {
     const D = deepseek; if (!D || !D.account) return;
     const a = D.account;

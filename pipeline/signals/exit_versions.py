@@ -37,4 +37,15 @@ def gemini_exit_calls_enabled(cfg: dict | None) -> bool:
 
 
 def gemini_close_tag(cfg: dict | None = None) -> str:
+    try:
+        from .uniform_exit import uniform_exits_enabled, UNIFORM_EXIT_VERSION as _U
+        if uniform_exits_enabled(cfg):
+            return _U
+    except Exception:
+        pass
     return GEMINI_EXIT_PROMPT_VERSION if gemini_exit_calls_enabled(cfg) else GEMINI_MECH_EXIT_VERSION
+
+
+# t247u: every book uses the same 1 ATR / 1 ATR / 90-min mechanical bracket.
+# close_tag() lives in uniform_exit.py and returns this when uniform_1atr_exits is on.
+UNIFORM_EXIT_VERSION = "uniform-1atr-v1"

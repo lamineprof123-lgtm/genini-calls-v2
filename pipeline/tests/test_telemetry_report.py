@@ -19,6 +19,7 @@ ATR = 40.0
 
 def _cfg(tmp):
     cfg = copy.deepcopy(load_config())
+    cfg.setdefault("exit_manager", {})["uniform_1atr_exits"] = False
     cfg["lucid"]["slippage_ticks"] = 0
     cfg["lucid"]["exit_mode"] = "server"; cfg["lucid"].pop("reset_archive", None)  # legacy server-target sim
     return cfg

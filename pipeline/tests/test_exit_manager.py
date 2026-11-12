@@ -22,6 +22,7 @@ T0 = datetime(2026, 11, 11, 14, 0, tzinfo=UTC)  # Wed 09:00 New York -> in Lucid
 def cfg():
     c = copy.deepcopy(load_config())
     c.setdefault("exit_manager", {})["gemini_exit_calls_enabled"] = True
+    c.setdefault("exit_manager", {})["uniform_1atr_exits"] = False
     c["lucid"]["slippage_ticks"] = 0
     c["exit_manager"]["enabled"] = True
     c["lucid"]["exit_mode"] = "gemini"          # legacy books with hard stop / max hold / breaker
@@ -327,6 +328,7 @@ def test_lucid_fill_feeds_books(tmp_path):
     from signals.lucid import LucidSim
     c = copy.deepcopy(load_config())
     c.setdefault("exit_manager", {})["gemini_exit_calls_enabled"] = True
+    c.setdefault("exit_manager", {})["uniform_1atr_exits"] = False
     sim = LucidSim(c, tmp_path / "state", tmp_path / "logs")
     sim.s["pending"].append({"symbol": "EURUSD", "side": -1, "created": T0.isoformat(),
                              "fill_after": T0.isoformat(), "expires": (T0 + timedelta(minutes=10)).isoformat(),
@@ -538,6 +540,7 @@ def _mech_cfg():
     c["lucid"]["exit_mode"] = "gemini_only"
     c["exit_manager"]["enabled"] = True
     c["exit_manager"]["gemini_exit_calls_enabled"] = False
+    c["exit_manager"]["uniform_1atr_exits"] = False
     c["exit_manager"]["books"] = [BOOK_1, BOOK_NOSTOP]
     c["exit_manager"]["shadow_books"] = [BOOK_NOSTOP]
     return c

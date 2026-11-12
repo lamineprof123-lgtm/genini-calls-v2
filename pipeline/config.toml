@@ -99,11 +99,12 @@ model = "gemini-3.8-flash"            # 15-min / batched entry scans (ALWAYS kep
 exit_model = "gemini-3.8-flash"       # 18s exit checks (used only when exit_calls are enabled)
 fallback_models = []                  # entry: no cross-model fallback
 exit_fallback_models = []             # exit: no cross-model fallback
-thinking_level = "low"                # Gemini 3.x: "minimal" | "low" | "medium" | "high" (low = faster)
+thinking_level = "low"                # exit-manager Gemini calls (currently paused); leave low
+entry_thinking_level = "high"         # flash 2-min entry scans only (t244u); tagged on each signal
 temperature = 0.2                     # sent ONLY to pre-3.x models (3.6+ deprecate sampling params)
-timeout_seconds = 45                  # per request
+timeout_seconds = 90                  # per entry request; raised for thinking=high, must finish inside the 2-min cadence
 max_attempts_per_model = 2
-retry_budget_seconds = 60             # per model, incl. request time
+retry_budget_seconds = 100            # per model, incl. request time (keeps a slow high-thinking call + one short retry under 2 min)
 backoff_base_seconds = 1.5
 backoff_max_seconds = 5.0
 
@@ -364,12 +365,15 @@ GBPUSD = { contracts = ["6B"],        m1 = "gbpusd" }
 # exit-model checks. New closes are tagged exit_prompt_version=mech-exit-v1. Claude Haiku exits are unchanged.
 [exit_manager]
 enabled = true
-# USER RULE (2026-11-12 t233u): pause every Gemini CLOSE / exit-model API call (~93% of Gemini usage).
-# Entry calls stay on (flash 2-min scans, Carbon M15 scans + triggers). Reversible: set true to resume model exits.
+# USER RULE (2026-11-12 t247u): ONE uniform exit for every book — 1 ATR stop / 1 ATR target / 90-min cap.
+# Replaces the -$500 net hard stop on main/1-strike and CB-RUNNER's lock/trail/2.5 ATR / 150-min cap.
+# No model exit calls (Gemini flag stays false; Claude Haiku exits also paused). Reversible.
+# Open positions are armed from now (no account reset). New closes tagged exit_mode=uniform-1atr-v1.
+uniform_1atr_exits = true
 gemini_exit_calls_enabled = false
-mech_target_atr = 1.0              # main + 1-strike + nostop take-profit, M15 ATR at entry
-mech_time_cap_minutes = 90         # mechanical time cap (main / 1-strike / nostop)
-mech_nostop_stop_atr = 1.0         # nostop shadow only (main/1-strike keep the -$500 net hard stop)
+mech_target_atr = 1.0
+mech_time_cap_minutes = 90
+mech_nostop_stop_atr = 1.0         # kept as alias; under uniform every book uses 1 ATR stop
 check_seconds = 18              # exit check cadence while any book position is open (runs beside the 2-min loop)
 runner_mfe_atr = 0.8            # MFE (in M15 ATR14 at entry) where rule 2 "milk the expansion" starts / 2-strike off
 wall_reject_atr = 0.10          # "within 0.10 ATR of the target wall"
@@ -432,6 +436,7 @@ chart_margin_pct = 15           # draw GEX lines only within the visible candle 
 enabled = true
 entry_models = ["claude-opus-5-5", "claude-sonnet-5-5"]   # one sim per entry model
 exit_model   = "claude-haiku-5-5"
+exit_calls_enabled = false           # t247u: pause Haiku (and shadow/what-if exit) API calls; reversible
 entry_effort = "medium"
 exit_effort  = "low"
 timeout_seconds_entry = 60
@@ -462,8 +467,8 @@ lock1_trigger_atr = 1.0
 lock1_pct = 0.50
 lock2_trigger_atr = 1.5
 lock2_pct = 0.60
-time_stop_minutes = 45
-time_stop_mfe_atr = 0.25
+time_stop_minutes = 90               # t247u: uniform 90-min cap (was 45-min / 0.25 ATR gate)
+time_stop_mfe_atr = 0.0              # cap always fires at 90 min (no MFE gate)
 daily_loss_usd = 1500.0
 trail_buffer_usd = 300.0
 loss_lock_minutes = 30
@@ -512,19 +517,24 @@ reset_token = "bracket-v1"
 # Source: the "Blue Bird: Gemini 4 Carbon side books" playbook (user t221u/t222u, 12 Nov 2026). Separate asyncio
 # tasks (own M15-close+20 s scan, own triggered checks, own 18 s server exits); separate state (state/carbon/),
 # logs (logs/<day>/carbon_*.jsonl) and site file (carbon.json). Main / 1-strike / nostop / bracket / Claude untouched.
-# Entries: gemini-4-carbon, thinking_level medium, the live entry prompt + SignalBatch schema unchanged, 90 s
-# timeout, one attempt, no fallback. Risk rules below are BINDING in these two books only.
+# Entries: gemini-4-carbon, thinking_level high (t244u; was medium), the live entry prompt + SignalBatch schema
+# unchanged, 150 s timeout (raised from 90 s for high thinking + a 4th chart), one attempt, no fallback.
+# Symbols: XAUUSD / EURUSD / US100 are tradeable in CB-BRACKET / CB-RUNNER. BTCUSD (t242u) is included in every
+# M15+20 s scan and in triggered checks, but is scored what-if only (1 BTC unit, both exit styles) — the books
+# never open a BTC position (not a Lucid contract). Flagged "site-only/what-if" on the panel.
+# Risk rules below are BINDING in these two books only. Spend caps unchanged ($15 soft / $19 hard).
 [carbon_books]
 enabled = true
 model = "gemini-4-carbon"
-entry_thinking = "medium"
-exit_thinking = "low"
-symbols = ["XAUUSD", "EURUSD", "US100"]
+entry_thinking = "high"              # M15 scans + triggered checks (t244u)
+exit_thinking = "low"                # CB-RUNNER model exits (currently paused)
+symbols = ["XAUUSD", "EURUSD", "US100", "BTCUSD"]
+tradeable_symbols = ["XAUUSD", "EURUSD", "US100"]   # books may open; BTCUSD is scan/what-if only
 entry_window_utc = ["08:00", "20:30"]
 flat_utc = "21:45"
 scan = "m15_close_plus_20s"
 scan_offset_seconds = 20
-timeout_seconds = 90
+timeout_seconds = 150                # raised for thinking=high + BTCUSD 4th chart; one attempt, no fallback
 min_confidence = 0.75
 max_chase_atr = 0.5
 start_balance = 100000.0
@@ -548,6 +558,15 @@ skip_if_one_contract_risk_gt = 1200
 caps = { US100 = 1, XAUUSD = 1, EURUSD = 4 }
 aggregate_max = 6
 
+# BTCUSD has no Lucid contract. What-if only: 1 unit = 1 BTC, $1 per $1, tick 5 (same as the public site scalp tick).
+# CB-BRACKET / CB-RUNNER must never open this symbol.
+[carbon_books.whatif_units.BTCUSD]
+tick = 5.0
+point_value = 1.0
+commission = 0.0
+unit = "1 BTC"
+flag = "site-only/what-if"
+
 [carbon_books.books.CB-BRACKET]
 stop_atr = 1.0
 target_atr = 1.0
@@ -555,13 +574,14 @@ max_hold_min = 90
 model_exits = false
 
 [carbon_books.books.CB-RUNNER]
+# t247u: same 1 ATR / 1 ATR / 90-min bracket as every other book (trail / 2.5 ATR / 150 min retired).
 stop_atr = 1.0
-lock_at_atr = 1.0
+target_atr = 1.0
+max_hold_min = 90
+model_exits = false
+lock_at_atr = 1.0                  # unused while uniform exits are on (kept for a flag flip)
 lock_to_atr = 0.5
 trail_atr = 0.75
-target_atr = 2.5
-max_hold_min = 150
-model_exits = "m15_close_only_when_mfe_ge_1atr"
 
 [carbon_books.risk]
 daily_stop_usd = -1500
@@ -584,7 +604,7 @@ max_output_tokens = { entry = 6000, exit = 800 }
 # Own fresh $100k Lucid-style account. Same 2-min batched entry cycle, charts, system prompt and numeric
 # context as Gemini flash. Model: deepseek-flash (DeepSeek-V4.1-Flash, text+image, effort low). Timeout 60 s,
 # one attempt, never blocks the Gemini call (runs concurrently). No model exit calls. Mechanical exits match
-# main's paused-exit rules: -$500 net hard stop, 1 ATR (M15 at entry) target, 90-min cap. Same fill logic and
+# main's uniform exits (t247u): 1 ATR stop / 1 ATR target / 90-min cap, no model exits. Same fill logic and
 # full-size NQ/GC/6E/6B sizing as main. BTCUSD is site-only and is not traded.
 # Key: env DEEPSEEK_API_KEY only (repo secret). Missing key -> idle, panel shows "waiting for key".
 # Daily spend (Dubai day) soft-stops new entry calls once estimated cost exceeds $5. Official pricing

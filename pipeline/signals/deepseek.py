@@ -26,6 +26,7 @@ from zoneinfo import ZoneInfo
 
 import httpx
 
+from .uniform_exit import close_tag, uniform_exits_enabled, UNIFORM_BANNER, UNIFORM_EXIT_VERSION
 from .exit_versions import GEMINI_MECH_EXIT_VERSION
 from .gemini_client import SignalBatch, _image_mime, chart_user_text, system_prompt
 from .lucid import (LucidSim, _fetch_and_replay, apply_due_fills, due_pendings,
@@ -164,8 +165,14 @@ class DeepSeekLucid(LucidSim):
             name = "deepseek_events.jsonl"
         elif name == "lucid_trades.jsonl":
             name = "deepseek_trades.jsonl"
-            obj = {**obj, "model": MODEL, "exit_mode": "mech", "book": BOOK,
-                   "exit_prompt_version": GEMINI_MECH_EXIT_VERSION}
+            tag = close_tag(self.cfg) if hasattr(self, "cfg") else UNIFORM_EXIT_VERSION
+            # DS-FLASH never makes model exit calls.
+            if not (hasattr(self, "cfg") and uniform_exits_enabled(self.cfg)):
+                tag_mode, tag_ver = "mech", GEMINI_MECH_EXIT_VERSION
+            else:
+                tag_mode, tag_ver = tag, tag
+            obj = {**obj, "model": MODEL, "exit_mode": tag_mode,
+                   "book": BOOK, "exit_prompt_version": tag_ver}
         super()._jsonl(name, t, obj)
 
     def post_reset_trades(self) -> list[dict]:
@@ -184,7 +191,7 @@ class DeepSeekLucid(LucidSim):
     def stamp_positions(self) -> None:
         for p in list(self.s.get("positions") or []) + list(self.s.get("pending") or []):
             p["model"] = MODEL
-            p["exit_mode"] = "mech"
+            p["exit_mode"] = UNIFORM_EXIT_VERSION
             p["book"] = BOOK
 
 
@@ -578,12 +585,20 @@ class DeepSeekEngine:
         cap = float(self.cc["soft_spend_usd"])
         state = "soft_cap" if float(sp["usd"]) > cap else ("waiting_for_key" if not self._key() else "ok")
         hs = self.sim.hard_stop_usd
-        rules = (f"deepseek-flash entries (effort low), same 2-min cycle / charts / numbers as Gemini flash; "
-                 f"no model exits; −${hs:,.0f} net hard stop · 1 ATR target · 90-min cap; "
-                 f"same fill and full-size sizing as main; spend soft-stop ${cap:g}/day Dubai")
-        payload["card"] = (f"Hard stop −${hs:,.0f} net · 1 ATR target · 90-min cap · no model exits"
-                           if hs else "1 ATR target · 90-min cap · no model exits")
-        payload["exit_calls_note"] = "No DeepSeek exit calls — mechanical exits"
+        if uniform_exits_enabled(self.ds_cfg if hasattr(self, "ds_cfg") else self.sim.cfg):
+            rules = (f"deepseek-flash entries (effort low), same 2-min cycle / charts / numbers as Gemini flash; "
+                     f"no model exits; {UNIFORM_BANNER}; same fill and full-size sizing as main; "
+                     f"spend soft-stop ${cap:g}/day Dubai")
+            payload["card"] = UNIFORM_BANNER
+            payload["exit_calls_note"] = UNIFORM_BANNER
+            payload["stop_txt"] = "1 ATR stop · 1 ATR target · 90 min"
+        else:
+            rules = (f"deepseek-flash entries (effort low), same 2-min cycle / charts / numbers as Gemini flash; "
+                     f"no model exits; −${hs:,.0f} net hard stop · 1 ATR target · 90-min cap; "
+                     f"same fill and full-size sizing as main; spend soft-stop ${cap:g}/day Dubai")
+            payload["card"] = (f"Hard stop −${hs:,.0f} net · 1 ATR target · 90-min cap · no model exits"
+                               if hs else "1 ATR target · 90-min cap · no model exits")
+            payload["exit_calls_note"] = "No DeepSeek exit calls — mechanical exits"
         payload["exit_rules"] = None
         payload["comparison"] = None
         payload["gemini_exit_calls_enabled"] = False

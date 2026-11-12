@@ -20,6 +20,7 @@ T0 = datetime(2026, 11, 12, 14, 0, 20, tzinfo=UTC)   # Thu 09:00 New York, in se
 @pytest.fixture
 def cfg(tmp_path):
     c = copy.deepcopy(load_config())
+    c.setdefault("exit_manager", {})["uniform_1atr_exits"] = False
     c["general"]["state_dir"] = str(tmp_path / "state")
     c["general"]["logs_dir"] = str(tmp_path / "logs")
     c["site"]["dir"] = str(tmp_path)

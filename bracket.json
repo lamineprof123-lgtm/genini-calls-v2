@@ -1,29 +1,29 @@
 {
-  "updated_at": "2026-11-12T15:56:37.139737+00:00",
+  "updated_at": "2026-11-12T15:58:36.807526+00:00",
   "paper_only": true,
   "book": "bracket",
   "label": "Bracket shadow (conf>=0.75, 1 ATR / 1 ATR)",
   "account": {
     "start_balance": 100000.0,
-    "balance": 99468.7,
-    "equity": 98123.95,
-    "net_pnl": -517.0,
-    "open_pnl": -1344.75,
-    "trades": 17,
+    "balance": 98925.45,
+    "equity": 98109.45,
+    "net_pnl": -1072.25,
+    "open_pnl": -816.0,
+    "trades": 18,
     "wins": 8,
-    "losses": 9,
-    "win_rate": 0.471,
+    "losses": 10,
+    "win_rate": 0.444,
     "avg_win": 1087.55,
-    "avg_loss": -1024.16,
+    "avg_loss": -977.26,
     "max_drawdown": -4167.4,
     "peak_balance": 101199.6,
-    "commissions": 118.8,
+    "commissions": 130.8,
     "exit_reasons": {
-      "stop_1atr": 9,
+      "stop_1atr": 10,
       "target_1atr": 8
     },
-    "stopped": 9,
-    "open_positions": 2,
+    "stopped": 10,
+    "open_positions": 1,
     "pending": 0,
     "signals_seen": 88,
     "signals_taken": 19,
@@ -36,7 +36,7 @@
     "missed_scans_main_held": {
       "XAUUSD": 9,
       "EURUSD": 8,
-      "US100": 13
+      "US100": 14
     }
   },
   "open_positions": [
@@ -54,28 +54,46 @@
       "risk_usd": 1314.6,
       "target_usd": 1305.4,
       "side": "SHORT",
-      "last_price": 3869.11,
-      "unrealized": -901.0
-    },
+      "last_price": 3868.26,
+      "unrealized": -816.0
+    }
+  ],
+  "recent_trades": [
     {
+      "event": "close",
+      "book": "bracket",
+      "t_exit": "2026-11-12T15:58:17.846581+00:00",
+      "t_exit_dubai": "2026-11-12T19:58:17.846581+04:00",
       "id": 19,
       "symbol": "EURUSD",
       "contract": "6E",
       "qty": 5,
-      "entry": 1.1058,
+      "side": "SHORT",
       "entry_time": "2026-11-12T15:18:38.794407+00:00",
+      "entry": 1.1058,
       "stop": 1.1066,
       "target": 1.105,
-      "deadline": "2026-11-12T16:48:38.794407+00:00",
-      "confidence": 0.81,
+      "exit": 1.10665,
+      "reason": "stop_1atr",
+      "stopped": true,
+      "gross": -531.25,
+      "commission": 24.0,
+      "net": -555.25,
+      "hold_seconds": 2379,
+      "balance_after": 98925.45,
       "risk_usd": 524.0,
       "target_usd": 476.0,
-      "side": "SHORT",
-      "last_price": 1.10651,
-      "unrealized": -443.75
-    }
-  ],
-  "recent_trades": [
+      "confidence": 0.81,
+      "atr": 0.000799,
+      "signal_at": "2026-11-12T15:18:20.250100+00:00",
+      "R": -1.06,
+      "mfe_atr": 0.588,
+      "mae_atr": 1.039,
+      "checks": 133,
+      "exit_prompt_version": "gemini-profit-lock-reset6",
+      "trigger": "live_price",
+      "live_price": 1.10663
+    },
     {
       "event": "close",
       "book": "bracket",

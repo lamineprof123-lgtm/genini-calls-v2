@@ -1,0 +1,184 @@
+{
+  "updated_at": "2026-11-12T15:30:53.247242+00:00",
+  "paper_only": true,
+  "model": "gemini-4-carbon",
+  "entry_thinking": "medium",
+  "exit_thinking": "low",
+  "symbols": [
+    "XAUUSD",
+    "EURUSD",
+    "US100"
+  ],
+  "entry_window_utc": [
+    "08:00",
+    "20:30"
+  ],
+  "min_confidence": 0.75,
+  "spend": {
+    "day_dubai": "2026-11-12",
+    "usd": 0.0,
+    "soft_usd": 15,
+    "hard_usd": 19,
+    "state": "ok",
+    "calls": 0,
+    "failed": 0,
+    "by_kind": {},
+    "tokens": {
+      "input": 0,
+      "output": 0,
+      "thoughts": 0
+    },
+    "price_per_mtok": [
+      2.0,
+      10.0
+    ],
+    "history": {
+      "2026-11-12": 0.0
+    }
+  },
+  "triggers_today": 0,
+  "max_triggers_per_day": 40,
+  "next_scan_at": "2026-11-12T15:45:20+00:00",
+  "in_window": true,
+  "last_call": null,
+  "first_call": null,
+  "calls_total": 0,
+  "last_scan": null,
+  "books": [
+    {
+      "book": "CB-BRACKET",
+      "label": "CB-BRACKET (Carbon entries, 1 ATR / 1 ATR)",
+      "since": "2026-11-12T15:30:53.246638+00:00",
+      "rules": {
+        "stop_atr": 1.0,
+        "target_atr": 1.0,
+        "max_hold_min": 90,
+        "model_exits": false
+      },
+      "account": {
+        "start_balance": 100000.0,
+        "balance": 100000.0,
+        "equity": 100000.0,
+        "net_pnl": 0.0,
+        "open_pnl": 0,
+        "trades": 0,
+        "wins": 0,
+        "losses": 0,
+        "win_rate": null,
+        "profit_factor": null,
+        "r_total": 0.0,
+        "r_avg": null,
+        "max_drawdown": 0.0,
+        "day_realized": 0.0,
+        "day_flattened": false,
+        "mll_floor": 97000.0,
+        "mll_room": 3000.0,
+        "stopped": 0,
+        "exit_reasons": {},
+        "open_positions": 0,
+        "pending": 0,
+        "signals_seen": 0,
+        "signals_taken": 0,
+        "skips": {},
+        "model_exit_checks": 0,
+        "commissions": 0.0
+      },
+      "open_positions": [],
+      "recent_trades": []
+    },
+    {
+      "book": "CB-RUNNER",
+      "label": "CB-RUNNER (Carbon entries, lock +0.5 / trail 0.75 ATR)",
+      "since": "2026-11-12T15:30:53.246671+00:00",
+      "rules": {
+        "stop_atr": 1.0,
+        "lock_at_atr": 1.0,
+        "lock_to_atr": 0.5,
+        "trail_atr": 0.75,
+        "target_atr": 2.5,
+        "max_hold_min": 150,
+        "model_exits": "m15_close_only_when_mfe_ge_1atr"
+      },
+      "account": {
+        "start_balance": 100000.0,
+        "balance": 100000.0,
+        "equity": 100000.0,
+        "net_pnl": 0.0,
+        "open_pnl": 0,
+        "trades": 0,
+        "wins": 0,
+        "losses": 0,
+        "win_rate": null,
+        "profit_factor": null,
+        "r_total": 0.0,
+        "r_avg": null,
+        "max_drawdown": 0.0,
+        "day_realized": 0.0,
+        "day_flattened": false,
+        "mll_floor": 97000.0,
+        "mll_room": 3000.0,
+        "stopped": 0,
+        "exit_reasons": {},
+        "open_positions": 0,
+        "pending": 0,
+        "signals_seen": 0,
+        "signals_taken": 0,
+        "skips": {},
+        "model_exit_checks": 0,
+        "commissions": 0.0
+      },
+      "open_positions": [],
+      "recent_trades": []
+    }
+  ],
+  "whatif": {
+    "CB-BRACKET": {
+      "all": {
+        "n": 0,
+        "r_avg": null,
+        "r_total": 0,
+        "net_1c": 0,
+        "win_rate": null
+      },
+      "conf>=min": {
+        "n": 0,
+        "r_avg": null,
+        "r_total": 0,
+        "net_1c": 0,
+        "win_rate": null
+      },
+      "conf<min": {
+        "n": 0,
+        "r_avg": null,
+        "r_total": 0,
+        "net_1c": 0,
+        "win_rate": null
+      }
+    },
+    "CB-RUNNER": {
+      "all": {
+        "n": 0,
+        "r_avg": null,
+        "r_total": 0,
+        "net_1c": 0,
+        "win_rate": null
+      },
+      "conf>=min": {
+        "n": 0,
+        "r_avg": null,
+        "r_total": 0,
+        "net_1c": 0,
+        "win_rate": null
+      },
+      "conf<min": {
+        "n": 0,
+        "r_avg": null,
+        "r_total": 0,
+        "net_1c": 0,
+        "win_rate": null
+      }
+    },
+    "open": 0
+  },
+  "rules": "gemini-4-carbon entries (thinking medium, live entry prompt unchanged) on XAUUSD / EURUSD / US100 at every M15 close +20 s in 08:00-20:30 UTC + triggered one-symbol checks; conf >= 0.75; chase <= 0.5 ATR. Size floor($900 / 1 ATR risk), caps NQ 1 / GC 1 / 6E 4, skip if 1 contract > $1,200, 6 aggregate, one per symbol; re-entry after the next M15 close (after a loss 30 min, no same-side re-entry this session); day P&L <= -$1,500 flattens; trailing guard $300; flat 21:45 UTC. Spend cap $15 soft / $19 hard per Dubai day."
+}

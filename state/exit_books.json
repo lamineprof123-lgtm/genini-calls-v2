@@ -69,52 +69,17 @@
   "last_price": {
     "US100": 28176.49,
     "XAUUSD": 3855.7,
-    "EURUSD": 1.10618,
+    "EURUSD": 1.10603,
     "GBPUSD": 1.32294
   },
   "books": {
     "1-strike": {
-      "balance": 98812.2,
-      "positions": [
-        {
-          "id": 63,
-          "symbol": "EURUSD",
-          "contract": "6E",
-          "qty": 6,
-          "side": -1,
-          "entry": 1.1057,
-          "stop": null,
-          "target": null,
-          "entry_time": "2026-11-12T15:27:13.533385+00:00",
-          "risk_usd": null,
-          "atr": 0.000799,
-          "candle": {
-            "high": 1.10754,
-            "low": 1.10643
-          },
-          "gemini_run_at_utc": "2026-11-12T15:26:20.241814+00:00",
-          "gemini_confidence": 0.76,
-          "hard_stop_px": 1.10635,
-          "hard_stop_armed_at": "2026-11-12T15:27:13.533385+00:00",
-          "fill_source": "live_quote:dukascopy:tick",
-          "book": "1-strike",
-          "strikes": 0,
-          "mfe": 0.0,
-          "mae": 0.0004300000000001525,
-          "scan_from": "2026-11-12T15:28:00+00:00",
-          "checks": 12,
-          "opened_at": "2026-11-12T15:27:13.622315+00:00",
-          "hard_stop_ok_t": "2026-11-12T15:30:27.883231+00:00",
-          "giveback_hist": [
-            0.0,
-            0.0
-          ]
-        }
-      ],
+      "balance": 98272.8,
+      "positions": [],
       "day": {
         "id": "2026-11-12",
         "start_balance": 100000.0,
-        "realized": -1173.4,
+        "realized": -1727.2,
         "halted": null,
         "breach_logged": {
           "t": "2026-11-12T10:59:39.148958+00:00",
@@ -123,17 +88,17 @@
         }
       },
       "stats": {
-        "trades": 62,
+        "trades": 63,
         "wins": 29,
-        "losses": 33,
+        "losses": 34,
         "gross_win": 11534.45,
-        "gross_loss": -12707.85,
-        "net_pnl": -1173.4,
-        "commissions": 640.3,
-        "hold_seconds": 24094,
+        "gross_loss": -13261.65,
+        "net_pnl": -1727.2,
+        "commissions": 654.7,
+        "hold_seconds": 24320,
         "exit_reasons": {
           "gemini_close": 49,
-          "hard_stop_500": 13
+          "hard_stop_500": 14
         }
       }
     },
@@ -162,9 +127,9 @@
           "book": "nostop",
           "strikes": 0,
           "mfe": 0.0,
-          "mae": 0.0004300000000001525,
-          "scan_from": "2026-11-12T15:28:00+00:00",
-          "checks": 12,
+          "mae": 0.0006500000000000394,
+          "scan_from": "2026-11-12T15:31:00+00:00",
+          "checks": 18,
           "opened_at": "2026-11-12T15:27:13.622315+00:00",
           "giveback_hist": [
             0.0,
@@ -302,55 +267,16 @@
     },
     {
       "book": "1-strike",
-      "id": 60,
-      "symbol": "GBPUSD",
-      "contract": "6B",
-      "qty": 5,
+      "id": 63,
+      "symbol": "EURUSD",
+      "contract": "6E",
+      "qty": 6,
       "side": "SHORT",
-      "exit": 1.323,
-      "t_exit": "2026-11-12T15:26:34.586024+00:00",
-      "reason": "gemini_close",
-      "net": 351.0,
-      "due": "2026-11-12T15:31:34.586024+00:00"
-    },
-    {
-      "book": "nostop",
-      "id": 60,
-      "symbol": "GBPUSD",
-      "contract": "6B",
-      "qty": 5,
-      "side": "SHORT",
-      "exit": 1.323,
-      "t_exit": "2026-11-12T15:26:34.586024+00:00",
-      "reason": "gemini_close",
-      "net": 351.0,
-      "due": "2026-11-12T15:31:34.586024+00:00"
-    },
-    {
-      "book": "baseline",
-      "id": 60,
-      "symbol": "GBPUSD",
-      "contract": "6B",
-      "qty": 5,
-      "side": "SHORT",
-      "exit": 1.323,
-      "t_exit": "2026-11-12T15:26:00+00:00",
-      "reason": "gemini_close",
-      "net": 351.0,
-      "due": "2026-11-12T15:31:00+00:00"
-    },
-    {
-      "book": "baseline",
-      "id": 62,
-      "symbol": "XAUUSD",
-      "contract": "GC",
-      "qty": 1,
-      "side": "SHORT",
-      "exit": 3855.8,
-      "t_exit": "2026-11-12T15:26:00+00:00",
-      "reason": "gemini_close",
-      "net": 375.4,
-      "due": "2026-11-12T15:31:00+00:00"
+      "exit": 1.1064,
+      "t_exit": "2026-11-12T15:31:00.000000+00:00",
+      "reason": "hard_stop_500",
+      "net": -553.8,
+      "due": "2026-11-12T15:36:00+00:00"
     }
   ],
   "retired_books": {

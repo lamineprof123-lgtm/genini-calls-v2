@@ -2,7 +2,7 @@
 
 Post-reset account only (pre-reset trades listed separately); paper trades only; net P&L after round-trip commission
 
-Updated: 2026-11-12 17:52:36 (Dubai UTC+4)
+Updated: 2026-11-12 17:54:38 (Dubai UTC+4)
 
 **Every bucket with n < 20 is LOW CONFIDENCE. Descriptive only; no proven edge.**
 
@@ -10,9 +10,9 @@ Account reset at 2026-11-12T10:14:47.081605+00:00 (reset6: profit-lock exit rule
 
 | Group | n | Win rate | Net P&L | Avg win | Avg loss | Expectancy | Sample |
 |---|---:|---:|---:|---:|---:|---:|---|
-| Post-reset (since 2026-11-12T10:14Z) | 35 | 45.7% | $-3,136.05 | $354.28 | $-463.39 | $-89.60 | n >= 20 |
+| Post-reset (since 2026-11-12T10:14Z) | 38 | 47.4% | $-1,758.35 | $395.30 | $-443.69 | $-46.27 | n >= 20 |
 | Pre-reset (archived account history) | 18 | 27.8% | $-4,581.95 | $618.31 | $-590.27 | $-254.55 | LOW CONFIDENCE |
-| All closed trades (both) | 53 | 39.6% | $-7,718.00 | $417.14 | $-514.94 | $-145.62 | n >= 20 |
+| All closed trades (both) | 56 | 41.1% | $-6,340.30 | $443.78 | $-501.43 | $-113.22 | n >= 20 |
 
 ## Pre-reset history by symbol
 
@@ -29,7 +29,7 @@ Pre-reset entry skips: 498
 
 | Group | n | Win rate | Net P&L | Avg win | Avg loss | Expectancy | Sample |
 |---|---:|---:|---:|---:|---:|---:|---|
-| LONDON_NY_OVERLAP | 11 | 27.3% | $-1,453.50 | $311.25 | $-298.41 | $-132.14 | LOW CONFIDENCE |
+| LONDON_NY_OVERLAP | 14 | 35.7% | $-75.80 | $476.13 | $-272.94 | $-5.41 | LOW CONFIDENCE |
 | LONDON_SESSION | 24 | 54.2% | $-1,682.55 | $364.21 | $-583.39 | $-70.11 | n >= 20 |
 
 ## Value Area Position
@@ -37,21 +37,21 @@ Pre-reset entry skips: 498
 | Group | n | Win rate | Net P&L | Avg win | Avg loss | Expectancy | Sample |
 |---|---:|---:|---:|---:|---:|---:|---|
 | above_vah | 3 | 33.3% | $-2,146.10 | $213.00 | $-1,179.55 | $-715.37 | LOW CONFIDENCE |
-| below_val | 21 | 42.9% | $-2,006.80 | $448.81 | $-503.84 | $-95.56 | n >= 20 |
-| inside | 11 | 54.5% | $1,016.85 | $236.03 | $-79.87 | $92.44 | LOW CONFIDENCE |
+| below_val | 23 | 47.8% | $-559.90 | $498.74 | $-503.84 | $-24.34 | n >= 20 |
+| inside | 12 | 50.0% | $947.65 | $236.03 | $-78.09 | $78.97 | LOW CONFIDENCE |
 
 ## Cvd Agrees
 
 | Group | n | Win rate | Net P&L | Avg win | Avg loss | Expectancy | Sample |
 |---|---:|---:|---:|---:|---:|---:|---|
 | no | 1 | 100.0% | $206.50 | $206.50 | n/a | $206.50 | LOW CONFIDENCE |
-| yes | 34 | 44.1% | $-3,342.55 | $364.13 | $-463.39 | $-98.31 | n >= 20 |
+| yes | 37 | 45.9% | $-1,964.85 | $406.40 | $-443.69 | $-53.10 | n >= 20 |
 
 ## Rvol Spike
 
 | Group | n | Win rate | Net P&L | Avg win | Avg loss | Expectancy | Sample |
 |---|---:|---:|---:|---:|---:|---:|---|
-| no | 27 | 48.1% | $-2,234.15 | $366.95 | $-500.32 | $-82.75 | n >= 20 |
+| no | 30 | 50.0% | $-856.45 | $414.49 | $-471.58 | $-28.55 | n >= 20 |
 | yes | 8 | 37.5% | $-901.90 | $299.35 | $-359.99 | $-112.74 | LOW CONFIDENCE |
 
 ## Vwap Aligned
@@ -59,43 +59,43 @@ Pre-reset entry skips: 498
 | Group | n | Win rate | Net P&L | Avg win | Avg loss | Expectancy | Sample |
 |---|---:|---:|---:|---:|---:|---:|---|
 | no | 2 | 50.0% | $-98.00 | $5.80 | $-103.80 | $-49.00 | LOW CONFIDENCE |
-| yes | 33 | 45.5% | $-3,038.05 | $377.51 | $-483.37 | $-92.06 | n >= 20 |
+| yes | 36 | 47.2% | $-1,660.35 | $418.21 | $-461.57 | $-46.12 | n >= 20 |
 
 ## Ema50 Aligned
 
 | Group | n | Win rate | Net P&L | Avg win | Avg loss | Expectancy | Sample |
 |---|---:|---:|---:|---:|---:|---:|---|
-| yes | 35 | 45.7% | $-3,136.05 | $354.28 | $-463.39 | $-89.60 | n >= 20 |
+| yes | 38 | 47.4% | $-1,758.35 | $395.30 | $-443.69 | $-46.27 | n >= 20 |
 
 ## Vwap Ema50 Aligned
 
 | Group | n | Win rate | Net P&L | Avg win | Avg loss | Expectancy | Sample |
 |---|---:|---:|---:|---:|---:|---:|---|
 | no | 2 | 50.0% | $-98.00 | $5.80 | $-103.80 | $-49.00 | LOW CONFIDENCE |
-| yes | 33 | 45.5% | $-3,038.05 | $377.51 | $-483.37 | $-92.06 | n >= 20 |
+| yes | 36 | 47.2% | $-1,660.35 | $418.21 | $-461.57 | $-46.12 | n >= 20 |
 
 ## Confidence Band
 
 | Group | n | Win rate | Net P&L | Avg win | Avg loss | Expectancy | Sample |
 |---|---:|---:|---:|---:|---:|---:|---|
 | 0.6-0.7 | 2 | 0.0% | $-598.40 | n/a | $-299.20 | $-299.20 | LOW CONFIDENCE |
-| 0.7-0.8 | 26 | 46.2% | $-2,183.85 | $368.60 | $-471.93 | $-83.99 | n >= 20 |
-| >=0.8 | 7 | 57.1% | $-353.80 | $311.31 | $-533.02 | $-50.54 | LOW CONFIDENCE |
+| 0.7-0.8 | 28 | 46.4% | $-1,221.55 | $419.59 | $-445.08 | $-43.63 | n >= 20 |
+| >=0.8 | 8 | 62.5% | $61.60 | $332.13 | $-533.02 | $7.70 | LOW CONFIDENCE |
 
 ## Symbol
 
 | Group | n | Win rate | Net P&L | Avg win | Avg loss | Expectancy | Sample |
 |---|---:|---:|---:|---:|---:|---:|---|
 | EURUSD | 4 | 25.0% | $-921.55 | $2.90 | $-308.15 | $-230.39 | LOW CONFIDENCE |
-| GBPUSD | 9 | 22.2% | $-488.20 | $3.62 | $-70.78 | $-54.24 | LOW CONFIDENCE |
-| US100 | 10 | 70.0% | $-1,130.50 | $281.93 | $-1,034.67 | $-113.05 | LOW CONFIDENCE |
-| XAUUSD | 12 | 50.0% | $-595.80 | $614.13 | $-713.43 | $-49.65 | LOW CONFIDENCE |
+| GBPUSD | 10 | 20.0% | $-557.40 | $3.62 | $-70.58 | $-55.74 | LOW CONFIDENCE |
+| US100 | 11 | 72.7% | $-99.00 | $375.62 | $-1,034.67 | $-9.00 | LOW CONFIDENCE |
+| XAUUSD | 13 | 53.8% | $-180.40 | $585.74 | $-713.43 | $-13.88 | LOW CONFIDENCE |
 
 ## Exit Reason
 
 | Group | n | Win rate | Net P&L | Avg win | Avg loss | Expectancy | Sample |
 |---|---:|---:|---:|---:|---:|---:|---|
-| gemini_close | 28 | 57.1% | $838.40 | $354.28 | $-402.50 | $29.94 | n >= 20 |
+| gemini_close | 31 | 58.1% | $2,216.10 | $395.30 | $-376.87 | $71.49 | n >= 20 |
 | hard_stop_500 | 7 | 0.0% | $-3,974.45 | n/a | $-567.78 | $-567.78 | LOW CONFIDENCE |
 
 ## Top combinations: Session × Value area × CVD agreement
@@ -106,9 +106,9 @@ Ranked by net P&L; small samples are not a strategy recommendation.
 |---|---:|---:|---:|---:|---:|---:|---|
 | LONDON_SESSION × inside × CVD yes | 9 | 55.6% | $896.85 | $241.94 | $-78.21 | $99.65 | LOW CONFIDENCE |
 | LONDON_SESSION × inside × CVD no | 1 | 100.0% | $206.50 | $206.50 | n/a | $206.50 | LOW CONFIDENCE |
-| LONDON_NY_OVERLAP × inside × CVD yes | 1 | 0.0% | $-86.50 | n/a | $-86.50 | $-86.50 | LOW CONFIDENCE |
+| LONDON_NY_OVERLAP × below_val × CVD yes | 12 | 41.7% | $79.90 | $476.13 | $-328.68 | $6.66 | LOW CONFIDENCE |
+| LONDON_NY_OVERLAP × inside × CVD yes | 2 | 0.0% | $-155.70 | n/a | $-77.85 | $-77.85 | LOW CONFIDENCE |
 | LONDON_SESSION × below_val × CVD yes | 11 | 54.5% | $-639.80 | $517.58 | $-749.06 | $-58.16 | LOW CONFIDENCE |
-| LONDON_NY_OVERLAP × below_val × CVD yes | 10 | 30.0% | $-1,367.00 | $311.25 | $-328.68 | $-136.70 | LOW CONFIDENCE |
 | LONDON_SESSION × above_vah × CVD yes | 3 | 33.3% | $-2,146.10 | $213.00 | $-1,179.55 | $-715.37 | LOW CONFIDENCE |
 
 ## DLL / MLL / breaker breaches (log-only, 2)

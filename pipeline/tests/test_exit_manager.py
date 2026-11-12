@@ -324,3 +324,31 @@ def test_lucid_fill_feeds_books(tmp_path):
     sim._try_fill(sim.s["pending"][0], (1.1145, 1.1146, 1.1144, 1.1145), T0)
     assert sim.s["positions"] and sim.s["book_feed"][0]["id"] == sim.s["positions"][0]["id"]
     assert sim.s["book_feed"][0]["stop"] == sim.s["positions"][0]["stop"]
+
+
+def test_exit_books_reset_persists_when_flat(cfg, tmp_path):
+    """A token change must write fresh $100k books to disk even with no open positions (idle tick would not)."""
+    st = tmp_path / "state"
+    st.mkdir(parents=True)
+    old = {"version": 1, "reset_token": "old-tok", "account_token": "old-tok", "seen_ids": [1, 2],
+           "created_at": "2026-11-11T19:18:40+00:00", "books": {
+               BOOK_1: {"balance": 98382.7, "positions": [], "day": {},
+                        "stats": {"trades": 2, "wins": 0, "losses": 2, "net_pnl": -1617.3,
+                                  "commissions": 0, "gross_win": 0, "gross_loss": 0, "hold_seconds": 0,
+                                  "exit_reasons": {}}},
+               BOOK_2: {"balance": 94657.7, "positions": [], "day": {},
+                        "stats": {"trades": 2, "wins": 0, "losses": 2, "net_pnl": -5342.3,
+                                  "commissions": 0, "gross_win": 0, "gross_loss": 0, "hold_seconds": 0,
+                                  "exit_reasons": {}}}}}
+    (st / "exit_books.json").write_text(json.dumps(old))
+    cfg["lucid"]["reset_token"] = "2026-11-12-exit-prompt-v2"
+    cfg["lucid"]["exit_books_archive"] = "exit_books_pre_reset4_{day}.json"
+    mgr = ExitManager(cfg, state_dir=st, logs_dir=tmp_path / "logs", site_dir=tmp_path)
+    on_disk = json.loads((st / "exit_books.json").read_text())
+    assert on_disk["reset_token"] == "2026-11-12-exit-prompt-v2"
+    assert on_disk["seen_ids"] == []
+    assert all(b["balance"] == 100000.0 and b["stats"]["trades"] == 0 and b["positions"] == []
+               for b in on_disk["books"].values())
+    assert list((st.glob("exit_books_pre_reset4_*.json")))
+    arch = json.loads(next(st.glob("exit_books_pre_reset4_*.json")).read_text())
+    assert arch["seen_ids"] == [1, 2] and arch["books"][BOOK_1]["balance"] == 98382.7

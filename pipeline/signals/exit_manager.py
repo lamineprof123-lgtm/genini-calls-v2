@@ -691,6 +691,7 @@ class ExitManager:
         self.tz = ZoneInfo(cfg["general"]["session_tz"])
         st = json.loads(self.path.read_text()) if self.path.exists() else None
         tok = (cfg.get("lucid") or {}).get("reset_token")
+        reset_books = False
         if st is not None and tok and st.get("reset_token") != tok:
             # Lucid account reset: position ids restart at 1, so the books start fresh too (old state archived).
             day = datetime.now(UTC).astimezone(ZoneInfo(cfg["general"]["session_tz"])).strftime("%Y-%m-%d")
@@ -698,9 +699,14 @@ class ExitManager:
             _atomic_write(self.state_dir / arch.format(day=day, token=tok), st)
             log.info("exit books: reset for Lucid reset_token %s (archived)", tok)
             st = None
+            reset_books = True
         self.books = Books(cfg, st)
         if tok:
             self.books.s["reset_token"] = tok
+        # Persist immediately: with no open trades, tick() is idle and would not write, leaving the old
+        # balances on disk (reset4 live miss).
+        if reset_books:
+            _atomic_write(self.path, self.books.s)
         # injectable for tests / dry runs
         self._snapshot = snapshot or market_snapshot
         self._render = render or self._render_default
@@ -746,6 +752,7 @@ class ExitManager:
                 log.info("exit books: fresh start for Lucid account token %s", acct_tok)
             self.books.s["account_token"] = acct_tok
             adopt = {p["id"] for p in acct.get("positions") or []}
+            _atomic_write(self.path, self.books.s)
         return self.books.sync_feed(acct.get("book_feed") or [], now, adopt_ids=adopt)
 
     def _jsonl(self, name: str, t: datetime, obj: dict) -> None:

@@ -24,7 +24,9 @@ import pandas as pd
 from .risk import _atomic_write
 from . import claude_client as CC
 from .claude_rules import (rules_cfg, clamp_stop, size_for, risk_per_contract, advance, trade_result, floor_for,
-                           effective_stop, phase_of, m5_summary, h1_context, lucid_day, in_session, round_tick, pctl)
+                           effective_stop, phase_of, m5_summary, h1_context, lucid_day, in_session, round_tick, pctl,
+                           usd_group, us100_alignment, open_usd_groups, group_lock_until, set_group_lock,
+                           m15_bars_closed_since_entry, phase_a_structure_reason)
 from .exit_versions import CLAUDE_EXIT_PROMPT_VERSION, CLAUDE_EXIT_PROMPT_VERSION_PRE
 
 log = logging.getLogger("signals.claude")
@@ -38,7 +40,7 @@ CLAUDE_DEFAULTS = {
     "timeout_seconds_entry": 60, "timeout_seconds_exit": 5, "max_attempts": 2,
     "entry_max_tokens": 8000, "exit_max_tokens": 200,
     "check_seconds": 18, "start_balance": 100000.0, "reset_token": "claude-v2-1",
-    "skip_blocked_sessions": True, "m5_chart": False, "recent_trades": 15,
+    "skip_blocked_sessions": True, "m5_chart": True, "scan_offset_seconds": 20, "recent_trades": 15,
     "sims": {"claude-opus-5-5": ["C-OPUS", "Claude Opus"], "claude-sonnet-5-5": ["C-SONNET", "Claude Sonnet"]},
 }
 LOG_FILES = ("claude_calls.jsonl", "claude_signals.jsonl", "claude_trades.jsonl", "claude_exit_checks.jsonl",
@@ -200,7 +202,7 @@ class ClaudeEngine:
                 "balance": sb, "highest_close": sb, "mll_floor": sb - float(self.L.get("mll", 3000.0)),
                 "blown": None, "positions": [], "next_id": 1,
                 "day": {"id": str(lucid_day(now, self.open_et)), "realized": 0.0, "flattened": False},
-                "locks": {}, "last_price": {}, "trades": 0, "wins": 0, "losses": 0, "realized_pnl": 0.0,
+                "locks": {}, "group_locks": {}, "last_price": {}, "trades": 0, "wins": 0, "losses": 0, "realized_pnl": 0.0,
                 "r_total": 0.0, "recent": []}
 
     def _load_sim(self, sid: str, label: str, model: str) -> dict:
@@ -214,6 +216,7 @@ class ClaudeEngine:
                 _atomic_write(self.root / "sims" / f"{sid}_pre_{self.cc['reset_token']}.json", st)
             st = self._new_sim(sid, label, model)
         st["label"] = label
+        st.setdefault("group_locks", {})
         return st
 
     def _save(self) -> None:
@@ -359,6 +362,18 @@ class ClaudeEngine:
         except Exception:
             log.exception("claude entry cycle failed (Claude sims only; Gemini unaffected)")
             return {"error": True}
+
+    async def fetch_entry_payloads(self, now: datetime) -> list[dict]:
+        """Own M15+live snapshots for the +20s entry scan. Does not use the Gemini cycle payloads."""
+        out = []
+        rs = await asyncio.gather(*[self._snapshot(s, self.cfg, now) for s in self.symbols], return_exceptions=True)
+        for s, r in zip(self.symbols, rs):
+            if isinstance(r, Exception):
+                log.warning("claude scan snapshot %s failed: %s", s, r)
+                continue
+            if r and r[0]:
+                out.append(r[0])
+        return out
 
     async def _htf(self, sym: str, now: datetime) -> dict:
         key = now.strftime("%Y%m%d%H")
@@ -574,6 +589,24 @@ class ClaudeEngine:
         lr = self.lock_reason(sim, sym, side, now, payload)
         if lr:
             return lr
+        grp = usd_group(sym, side)
+        if grp:
+            until = group_lock_until(sim, grp, now)
+            if until is not None:
+                why = f"USD group {grp} locked until {until.isoformat()} (after a stop-out)"
+                self._jsonl("claude_events.jsonl", {"t": _iso(now), "sim": sim["sim"], "event": "skip_usd_group_lock",
+                                                    "symbol": sym, "side": _side_word(side), "group": grp,
+                                                    "until": _iso(until)}, now)
+                return why
+            held = next((p for p in sim["positions"] if usd_group(p["symbol"], p["side"]) == grp), None)
+            if held is not None:
+                why = (f"USD group {grp} already has an open position "
+                       f"({held['symbol']} {_side_word(held['side'])} #{held['id']})")
+                self._jsonl("claude_events.jsonl", {"t": _iso(now), "sim": sim["sim"], "event": "skip_usd_group",
+                                                    "symbol": sym, "side": _side_word(side), "group": grp,
+                                                    "open_id": held["id"], "open_symbol": held["symbol"],
+                                                    "open_side": _side_word(held["side"])}, now)
+                return why
         ref = float(ctx.get("live_price") or ctx.get("last_close"))
         # Fill at the fresh live quote taken when the answer arrived (same feed as the exit checks / stop).
         from .live_price import FILL_QUOTE_MAX_AGE_S, FILL_QUOTE_SOURCES, fill_quote_problem
@@ -585,8 +618,18 @@ class ClaudeEngine:
         if bad:
             return f"no fresh live quote at fill time: {bad}"
         fill_ref, fill_t = float(q["price"]), _dt(q["at"])
-        if side * (fill_ref - ref) > self.r["max_chase_atr"] * atr:
-            return f"price ran {side * (fill_ref - ref) / atr:.2f} ATR past the signal (> {self.r['max_chase_atr']})"
+        adverse = side * (fill_ref - ref)
+        lim = float(self.r.get("fill_max_adverse_atr", 0.3)) * atr
+        if adverse > lim:
+            why = (f"live quote {adverse / atr:.2f} ATR worse than chart_live_price "
+                   f"(> {self.r.get('fill_max_adverse_atr', 0.3)} ATR)")
+            self._jsonl("claude_events.jsonl", {"t": _iso(now), "sim": sim["sim"], "event": "fill_skip_adverse",
+                                                "symbol": sym, "side": _side_word(side), "quote": fill_ref,
+                                                "chart_live_price": ref, "adverse_atr": round(adverse / atr, 4),
+                                                "limit_atr": float(self.r.get("fill_max_adverse_atr", 0.3))}, now)
+            return why
+        if adverse > self.r["max_chase_atr"] * atr:
+            return f"price ran {adverse / atr:.2f} ATR past the signal (> {self.r['max_chase_atr']})"
         tick = float(sp["tick"])
         fill = round_tick(fill_ref + side * int(self.r["slippage_ticks"]) * tick, tick)
         fill_source = f"live_quote:{q.get('source')}"
@@ -624,12 +667,20 @@ class ClaudeEngine:
         mech.update({"book": "mech", "vid": self.eng.get("next_vid", 1), "real_id": pid})
         self.eng["next_vid"] = mech["vid"] + 1
         self.eng["shadow"].append(mech)
-        self._jsonl("claude_events.jsonl", {"t": _iso(now), "sim": sim["sim"], "event": "open", "id": pid,
-                                            "symbol": sym, "side": _side_word(side), "qty": qty, "contract": c,
-                                            "entry": fill, "stop": stop, "stop_note": note,
-                                            "risk_usd": round(new_risk, 2), "score": v["score"],
-                                            "setup_type": v["setup_type"], "fill_source": fill_source,
-                                            "fill_check": fill_check}, now)
+        ev = {"t": _iso(now), "sim": sim["sim"], "event": "open", "id": pid,
+              "symbol": sym, "side": _side_word(side), "qty": qty, "contract": c,
+              "entry": fill, "stop": stop, "stop_note": note,
+              "risk_usd": round(new_risk, 2), "score": v["score"],
+              "setup_type": v["setup_type"], "fill_source": fill_source,
+              "fill_check": fill_check, "usd_group": grp}
+        if sym == "US100":
+            al = us100_alignment(side, open_usd_groups([x for x in sim["positions"] if x["id"] != pid]))
+            ev["us100_usd_alignment"] = al
+            self._jsonl("claude_events.jsonl", {"t": _iso(now), "sim": sim["sim"], "event": "us100_usd_alignment",
+                                                "id": pid, "side": _side_word(side), "alignment": al,
+                                                "usd_groups": sorted(open_usd_groups(
+                                                    [x for x in sim["positions"] if x["id"] != pid]))}, now)
+        self._jsonl("claude_events.jsonl", ev, now)
         log.info("claude %s OPEN #%d %s %s %d %s @ %s stop %s (%s) risk $%.0f", sim["sim"], pid, sym,
                  _side_word(side), qty, c, fill, stop, note, new_risk)
         return None
@@ -650,6 +701,15 @@ class ClaudeEngine:
             until = max(until, t + timedelta(minutes=int(self.r["loss_lock_minutes"])))
         sim.setdefault("locks", {})[pos["symbol"]] = {"until": _iso(until), "loss": loss, "side": pos["side"],
                                                       "level": pos["init_stop"], "retested": False, "exit_t": _iso(t)}
+        if str(reason).startswith("hard_stop"):
+            g = usd_group(pos["symbol"], pos["side"])
+            if g:
+                mins = int(self.r.get("group_lock_minutes", 30))
+                set_group_lock(sim, g, t, mins)
+                self._jsonl("claude_events.jsonl", {"t": _iso(t), "sim": sim["sim"], "event": "usd_group_lock",
+                                                    "group": g, "symbol": pos["symbol"], "id": pos.get("id"),
+                                                    "until": (sim.get("group_locks") or {}).get(g),
+                                                    "reason": reason}, t)
         hold = (t - _dt(pos["entry_time"])).total_seconds()
         row = self._trade_row(pos, price, t, reason, res, sim=sim, extra=extra)
         row["balance_after"] = sim["balance"]
@@ -735,6 +795,22 @@ class ClaudeEngine:
                 if any(p["symbol"] == s for p in sim["positions"]):
                     sim.setdefault("last_price", {})[s] = v["price"]
             self._account_limits(sim, now)
+            for p in list(sim["positions"]):
+                snap = snaps.get(p["symbol"])
+                if not snap:
+                    continue
+                ctx = snap.get("context") or {}
+                mfe = max(float(p.get("mfe_pts") or 0), 0.0) / float(p["atr"])
+                reason = phase_a_structure_reason(p, ctx, now, phase_of(mfe, self.r))
+                if not reason:
+                    continue
+                sc = ctx.get("signal_candle") or {}
+                close = float(sc["close"])
+                sp = self.spec(p["contract"])
+                px = round_tick(close - p["side"] * int(self.r["slippage_ticks"]) * float(sp["tick"]),
+                                float(sp["tick"]))
+                self._close_real(sim, p, px, now, reason)
+                out["real_closed"] += 1
             for p in sim["positions"]:
                 if p["symbol"] in snaps:
                     calls.append(self._exit_check(sim, p, (snaps[p["symbol"]], m1s.get(p["symbol"])), now))
@@ -787,6 +863,7 @@ class ClaudeEngine:
         return {
             "symbol": p["symbol"], "side": _side_word(p["side"]), "phase": phase_of(mfe, self.r),
             "minutes": f"{(now - _dt(p['entry_time'])).total_seconds() / 60:.1f}", "session": ctx.get("session"),
+            "m15_bars_closed_since_entry": m15_bars_closed_since_entry(p["entry_time"], now),
             "entry": _fmt(p["entry"], d), "price": _fmt(price, d), "pnl_atr": f"{pnl_atr:+.2f}",
             "mfe_atr": f"{mfe:.2f}", "mae_atr": f"{mae:.2f}", "setup_type": p.get("setup_type"),
             "entry_rationale_short": (p.get("rationale") or "n/a")[:160],
@@ -824,13 +901,23 @@ class ClaudeEngine:
         price = vals.pop("_price")
         rec.update({"live_price": price, "phase": vals["phase"], "pnl_atr": vals.pop("_pnl_atr"),
                     "mfe_atr": vals.pop("_mfe_atr"), "mae_atr": vals.pop("_mae_atr"),
-                    "minutes": float(vals["minutes"])})
+                    "minutes": float(vals["minutes"]),
+                    "m15_bars_closed_since_entry": vals.get("m15_bars_closed_since_entry")})
         user = CC.render_exit_user(vals, self.prompts)
-        system = CC.exit_system_prompt(bool(self.cc.get("m5_chart")), self.prompts)
+        m5_ok = False
+        q = dict(payload)
+        if self.cc.get("m5_chart", True):
+            m5p = build_m5_exit_payload(payload, m1, now)
+            if m5p is not None:
+                q = m5p
+                m5_ok = True
+        if not m5_ok:
+            user = "CHART NOTE: M5 render unavailable; the image is M15.\n" + user
+        system = CC.exit_system_prompt(m5_ok, self.prompts)
+        rec["m5_chart"] = m5_ok
         png = None
         try:
-            q = dict(payload)
-            q["page_key"] = f"cx-{sim['sim']}-{p['symbol']}"
+            q["page_key"] = f"cx-m5-{sim['sim']}-{p['symbol']}" if m5_ok else f"cx-{sim['sim']}-{p['symbol']}"
             q["entry_line"] = {"price": p["entry"], "color": "#FFFFFF", "title": f"ENTRY {_side_word(p['side'])}"}
             q["position_header"] = (f"POSITION {_side_word(p['side'])} @ {_fmt(p['entry'], int(ctx.get('digits') or 5))}"
                                     f"  |  now {rec['pnl_atr']:+.2f} ATR  |  best {rec['mfe_atr']:.2f} ATR")
@@ -867,7 +954,16 @@ class ClaudeEngine:
                                    "price": price, "atr": p["atr"], "t": _iso(now), "confidence": conf,
                                    "decision": dec["decision"], "phase": rec["phase"]})
         if dec["decision"] == "CLOSE":
-            if in_exit_grace(p["entry_time"], now):
+            if rec["phase"] == "A":
+                rec["ignored"] = "close_ignored_phase_a"
+                self._jsonl("claude_events.jsonl", {"t": _iso(now), "sim": sim["sim"],
+                                                    "event": "close_ignored_phase_a",
+                                                    "id": p["id"], "symbol": p["symbol"],
+                                                    "entry_time": p["entry_time"],
+                                                    "exit_reason_text": dec.get("reason"),
+                                                    "exit_structure": dec.get("structure"),
+                                                    "exit_confidence": conf, "exit_phase": rec["phase"]}, now)
+            elif in_exit_grace(p["entry_time"], now):
                 rec["ignored"] = "close_ignored_grace"
                 rec["grace_until"] = _iso(next_m15_close(_dt(p["entry_time"])))
                 self._jsonl("claude_events.jsonl", {"t": _iso(now), "sim": sim["sim"], "event": "close_ignored_grace",
@@ -1066,9 +1162,12 @@ class ClaudeEngine:
                 "rules": ("Binding server rules: hard stop = model stop clamped 0.6-1.5 ATR; $900 risk sizing "
                           "(NQ 1, GC 1, 6E/6B up to 4, 6 max); break-even at +0.5 ATR; profit lock 50% of best at "
                           "+1.0 ATR, 60% at +1.5 ATR; 45-min time stop; daily -$1,500; trailing $300 buffer; "
-                          "re-entry lock; one entry per M15 close (score >= 5). Until the first M15 bar close "
-                          "after entry, a Haiku CLOSE is ignored (hard stop and account limits still apply). "
-                          "Exit model every 18 s."),
+                          "re-entry lock; USD-group cap (one open per long-USD / short-USD group; 30-min lock "
+                          "after a stop-out); skip fill if the live quote is >0.3 ATR worse than the chart; "
+                          "one entry per M15 close +20s (score >= 5). Phase A (never +0.25 ATR): Haiku CLOSE is "
+                          "ignored; server exits on a closed M15 after entry beyond invalidation or wrong-side "
+                          "of both VWAP and EMA20. Phases B/C ignore a CLOSE until the first M15 close after "
+                          "entry. Exit confidence is logged, never acted on. Exit model every 18 s."),
                 "reset": {"at": self.eng.get("created_at"), "token": self.cc["reset_token"]},
                 "sims": sims}
 
@@ -1091,6 +1190,84 @@ class ClaudeEngine:
             log.exception("claude publish failed")
 
 
+
+
+def _unix_ts(ts) -> int:
+    t = pd.Timestamp(ts)
+    if t.tzinfo is None:
+        t = t.tz_localize("UTC")
+    else:
+        t = t.tz_convert("UTC")
+    return int(t.timestamp())
+
+
+def build_m5_exit_payload(payload_m15: dict, m1: pd.DataFrame | None, now: datetime, n: int = 80) -> dict | None:
+    """Resample live M1 into an M5 chart (closed bars + paler forming bar), same style as the M15 entry chart.
+
+    VWAP / EMA20 (mid) / EMA50 are drawn as M15 context levels (the prompt legend is "M15 EMA20 / EMA50").
+    S/R and GEX levels are copied from the M15 payload. Returns None if M1 cannot form a chart.
+    """
+    if m1 is None or not len(m1):
+        return None
+    df = m1.sort_index()
+    if "volume" not in df.columns:
+        df = df.copy()
+        df["volume"] = 0.0
+    agg = df.resample("5min", label="left", closed="left").agg(
+        {"open": "first", "high": "max", "low": "min", "close": "last", "volume": "sum"}
+    ).dropna(subset=["open", "high", "low", "close"])
+    if not len(agg):
+        return None
+    nt = pd.Timestamp(now)
+    if nt.tzinfo is None:
+        nt = nt.tz_localize("UTC")
+    closed = agg[agg.index + pd.Timedelta(minutes=5) <= nt]
+    forming = agg[agg.index + pd.Timedelta(minutes=5) > nt]
+    view = closed.tail(n)
+    digits = int(payload_m15.get("digits") or (payload_m15.get("context") or {}).get("digits") or 2)
+
+    def rnd(x):
+        return None if pd.isna(x) else round(float(x), digits + 1)
+
+    candles, volume = [], []
+    for ts, row in view.iterrows():
+        ti = _unix_ts(ts)
+        o, h, l, c = rnd(row["open"]), rnd(row["high"]), rnd(row["low"]), rnd(row["close"])
+        candles.append({"time": ti, "open": o, "high": h, "low": l, "close": c})
+        volume.append({"time": ti, "value": float(row["volume"] or 0),
+                       "up": bool(float(row["close"]) >= float(row["open"])), "rvol": None})
+    forming_candle = None
+    if len(forming):
+        f = forming.iloc[-1]
+        forming_candle = {"time": _unix_ts(forming.index[-1]), "open": rnd(f["open"]), "high": rnd(f["high"]),
+                          "low": rnd(f["low"]), "close": rnd(f["close"])}
+    if not candles and forming_candle is None:
+        return None
+    ctx = payload_m15.get("context") or {}
+    times = [c["time"] for c in candles]
+    if forming_candle is not None:
+        times = times + [forming_candle["time"]]
+
+    def const_line(val):
+        if val is None or not times:
+            return []
+        v = float(val)
+        return [{"time": t, "value": v} for t in times]
+
+    out = dict(payload_m15)
+    out["timeframe"] = "M5"
+    out["candles"] = candles
+    out["volume"] = volume
+    out["forming_candle"] = forming_candle
+    out["visible"] = min(int(payload_m15.get("visible") or 60), max(len(candles) + (1 if forming_candle else 0), 1))
+    out["vwap"] = const_line(ctx.get("vwap"))
+    out["mid"] = const_line(ctx.get("ema20_baseline") if ctx.get("ema20_baseline") is not None else ctx.get("ema20"))
+    out["ema50"] = const_line(ctx.get("ema50"))
+    out["upper"] = []
+    out["lower"] = []
+    return out
+
+
 async def run_claude_exit_loop(eng: ClaudeEngine, stop: asyncio.Event | None = None) -> None:
     """18 s cadence like the Gemini exit loop; idle ticks are an in-memory check. Never raises."""
     period = float(eng.cc.get("check_seconds", 18))
@@ -1107,3 +1284,28 @@ async def run_claude_exit_loop(eng: ClaudeEngine, stop: asyncio.Event | None = N
         if nxt < now:
             nxt += math.ceil((now - nxt) / period) * period
         await asyncio.sleep(nxt - now)
+
+async def run_claude_scan_loop(eng: ClaudeEngine, stop: asyncio.Event | None = None) -> None:
+    """Own task: Claude entry calls at M15 close +20s. Isolated from the Gemini cycle so it cannot delay it.
+
+    schedule_entry remains as a same-bar fallback if this scan is missed; on_cycle dedupes on last_entry_bar.
+    """
+    from .pipeline import next_boundary
+    offset = int(eng.cc.get("scan_offset_seconds", 20))
+    while not (stop and stop.is_set()):
+        wake = next_boundary(datetime.now(UTC), 15, offset)
+        await asyncio.sleep(max(0.0, (wake - datetime.now(UTC)).total_seconds()))
+        if stop and stop.is_set():
+            return
+        try:
+            now = datetime.now(UTC)
+            payloads = await eng.fetch_entry_payloads(now)
+            if payloads:
+                r = await eng.on_cycle(payloads, now=now)
+                log.info("claude scan: %s", {k: r.get(k) for k in ("bar", "t", "skipped", "error", "render_ms")
+                                             if isinstance(r, dict) and k in r})
+        except asyncio.CancelledError:
+            raise
+        except Exception:
+            log.exception("claude scan loop iteration failed (Gemini loop unaffected)")
+

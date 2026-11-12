@@ -26,6 +26,7 @@ RULE_DEFAULTS = {
     "loss_lock_minutes": 30, "exit_fail_limit": 3, "stale_price_seconds": 60,
     "max_chase_atr": 0.5, "min_score": 5, "slippage_ticks": 1,
     "phase_b_atr": 0.25, "phase_c_atr": 0.75,
+    "fill_max_adverse_atr": 0.3, "group_lock_minutes": 30,
 }
 
 
@@ -218,6 +219,116 @@ def m5_summary(m1: pd.DataFrame | None, now: datetime) -> dict:
         f = forming.iloc[-1]
         out.update({"m5_o": float(f["open"]), "m5_h": float(f["high"]), "m5_l": float(f["low"])})
     return out
+
+
+
+
+USD_GROUP_SYMS = ("XAUUSD", "EURUSD", "GBPUSD")
+
+
+def usd_group(symbol: str, side: int) -> str | None:
+    """long-USD = short XAU/EUR/GBP; short-USD = long those. US100 and others are None."""
+    if symbol not in USD_GROUP_SYMS:
+        return None
+    return "long_usd" if int(side) < 0 else "short_usd"
+
+
+def us100_alignment(us100_side: int, open_groups: set[str] | list[str]) -> str:
+    """US100 is its own book; log how it sits vs any open USD-group position."""
+    gs = {g for g in open_groups if g}
+    if not gs:
+        return "no_usd_group"
+    aligned = ("long_usd" in gs and int(us100_side) < 0) or ("short_usd" in gs and int(us100_side) > 0)
+    divergent = ("long_usd" in gs and int(us100_side) > 0) or ("short_usd" in gs and int(us100_side) < 0)
+    if aligned and not divergent:
+        return "aligned"
+    if divergent and not aligned:
+        return "divergent"
+    return "mixed"
+
+
+def open_usd_groups(positions) -> set[str]:
+    return {g for p in (positions or []) if (g := usd_group(p["symbol"], p["side"]))}
+
+
+def group_lock_until(sim: dict, group: str | None, now: datetime):
+    if not group:
+        return None
+    until = (sim.get("group_locks") or {}).get(group)
+    if not until:
+        return None
+    t = until if isinstance(until, datetime) else datetime.fromisoformat(str(until))
+    if t.tzinfo is None:
+        t = t.replace(tzinfo=timezone.utc)
+    return t if t > now else None
+
+
+def set_group_lock(sim: dict, group: str | None, now: datetime, minutes: int = 30) -> None:
+    if not group:
+        return
+    sim.setdefault("group_locks", {})[group] = (now + timedelta(minutes=int(minutes))).isoformat()
+
+
+def m15_bars_closed_since_entry(entry_time, now: datetime) -> int:
+    """Count of completed M15 bars whose close is strictly after entry."""
+    t0 = entry_time if isinstance(entry_time, datetime) else datetime.fromisoformat(str(entry_time))
+    if t0.tzinfo is None:
+        t0 = t0.replace(tzinfo=timezone.utc)
+    n = now if isinstance(now, datetime) else datetime.fromisoformat(str(now))
+    if n.tzinfo is None:
+        n = n.replace(tzinfo=timezone.utc)
+    floored = t0.replace(second=0, microsecond=0)
+    first = floored.replace(minute=(floored.minute // 15) * 15) + timedelta(minutes=15)
+    if first <= t0:
+        first += timedelta(minutes=15)
+    if n < first:
+        return 0
+    return int((n - first).total_seconds() // 900) + 1
+
+
+def last_closed_m15_end(ctx: dict):
+    bar = (ctx or {}).get("last_closed_bar_utc")
+    if not bar:
+        return None
+    t = datetime.fromisoformat(str(bar).replace("Z", "+00:00"))
+    if t.tzinfo is None:
+        t = t.replace(tzinfo=timezone.utc)
+    return t + timedelta(minutes=15)
+
+
+def phase_a_structure_reason(pos: dict, ctx: dict, now: datetime, phase: str) -> str | None:
+    """Phase A only: a CLOSED M15 after entry beyond invalidation, or wrong side of BOTH VWAP and EMA20."""
+    if phase != "A":
+        return None
+    end = last_closed_m15_end(ctx)
+    if end is None:
+        return None
+    t0 = pos.get("entry_time")
+    t0 = t0 if isinstance(t0, datetime) else datetime.fromisoformat(str(t0))
+    if t0.tzinfo is None:
+        t0 = t0.replace(tzinfo=timezone.utc)
+    if end <= t0:
+        return None
+    sc = (ctx or {}).get("signal_candle") or {}
+    if sc.get("close") is None:
+        return None
+    close = float(sc["close"])
+    side = int(pos["side"])
+    inv = pos.get("init_stop")
+    if inv is None:
+        inv = pos.get("stop")
+    if inv is not None and side * (close - float(inv)) < 0:
+        return "closed_m15_invalidation"
+    vwap = (ctx or {}).get("vwap")
+    ema20 = (ctx or {}).get("ema20_baseline")
+    if ema20 is None:
+        ema20 = (ctx or {}).get("ema20")
+    if vwap is not None and ema20 is not None:
+        vwap, ema20 = float(vwap), float(ema20)
+        wrong = (close < vwap and close < ema20) if side > 0 else (close > vwap and close > ema20)
+        if wrong:
+            return "closed_m15_vwap_ema20"
+    return None
 
 
 def h1_context(h1: pd.DataFrame | None, now: datetime, anchor: str = "utc_day") -> dict:

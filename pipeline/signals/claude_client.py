@@ -48,7 +48,7 @@ def _split(text: str) -> list[tuple[str, str]]:
 
 def load_prompts() -> dict:
     e = _split((PROMPT_DIR / "entry_prompt_v2.txt").read_text())
-    x = _split((PROMPT_DIR / "exit_prompt_v2.txt").read_text())
+    x = _split((PROMPT_DIR / "exit_prompt_v3.txt").read_text())
     entry = next(b for h, b in e if "ENTRY SYSTEM PROMPT" in h)
     exit_sys = next(b for h, b in x if "EXIT SYSTEM PROMPT" in h)
     tmpl = next(b for h, b in x if "EXIT USER MESSAGE TEMPLATE" in h)

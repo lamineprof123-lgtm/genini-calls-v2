@@ -8,8 +8,11 @@ import pytest
 
 from signals import claude_client as CC
 from signals.claude_rules import (rules_cfg, clamp_stop, size_for, advance, trade_result, floor_for, m5_summary,
-                                  h1_context, phase_of, risk_per_contract)
-from signals.claude_sim import ClaudeEngine, claude_cfg, next_m15_close, in_exit_grace
+                                  h1_context, phase_of, risk_per_contract, usd_group, us100_alignment,
+                                  m15_bars_closed_since_entry, phase_a_structure_reason)
+from signals.claude_sim import (ClaudeEngine, claude_cfg, next_m15_close, in_exit_grace,
+                                build_m5_exit_payload, run_claude_scan_loop)
+from signals.exit_versions import CLAUDE_EXIT_PROMPT_VERSION
 from signals.config import load_config, ROOT
 
 UTC = timezone.utc
@@ -28,8 +31,12 @@ def test_prompts_verbatim_and_substitution():
     sp = CC.entry_system_prompt(["XAUUSD", "EURUSD"], p)
     assert "You receive 2 chart images" in sp and "in this order: XAUUSD, EURUSD." in sp
     assert "{n}" not in sp and "{symbol_order}" not in sp
-    xr = (ATT / "exit_prompt_v2.txt").read_text()
+    xr = (ATT / "exit_prompt_v3.txt").read_text()
     assert p["exit"] in xr and p["exit"].startswith("You are watching one open futures position")
+    assert "0.45" not in p["exit"] and "below 0.45" not in xr
+    assert "m15_bars_closed_since_entry" in p["exit_user"]
+    assert "never +0.25 ATR" in p["exit"] or "Phase A" in p["exit"]
+    assert "does not act on it" in p["exit"] or "never changes the server" in p["exit"]
     assert CC.M5_LINE in CC.exit_system_prompt(True, p)
     fb = CC.exit_system_prompt(False, p)
     assert CC.M15_LINE in fb and CC.M5_LINE not in fb
@@ -41,7 +48,7 @@ def test_exit_user_template_all_placeholders_filled():
     p = CC.load_prompts()
     keys = re.findall(r"\{([a-z0-9_]+)\}", p["exit_user"])
     assert {"phase", "mae_atr", "floor_price", "floor_label", "m5_c1", "m5_o", "entry_stop", "setup_type",
-            "entry_rationale_short"} <= set(keys)
+            "entry_rationale_short", "m15_bars_closed_since_entry", "m5_c3", "m5_c2", "m5_h", "m5_l"} <= set(keys)
     txt = CC.render_exit_user({k: "1" for k in keys}, p)
     assert "{" not in txt
     assert "n/a" in CC.render_exit_user({}, p)
@@ -245,6 +252,16 @@ def _stamp_entry(eng, t=T0):
         pos["scan_from"] = iso
 
 
+def _phase_b(eng):
+    """Model CLOSE is ignored in Phase A; give the position enough MFE to be in Phase B."""
+    for sim in eng.sims.values():
+        for pos in sim["positions"]:
+            pos["mfe_pts"] = 0.25 * float(pos["atr"])
+    for pos in eng.eng.get("shadow") or []:
+        if pos.get("book") == "mech":
+            pos["mfe_pts"] = 0.25 * float(pos["atr"])
+
+
 
 OPUS, SON = "claude-opus-5-5", "claude-sonnet-5-5"
 
@@ -338,14 +355,16 @@ def test_exit_tick_close_and_failure_fallback(tmp_path):
     assert p["exit_fail"] == 3 and p["server_only"] is True
     user = [c[1] for c in calls if c[0] == "exit"][0]
     assert "XAUUSD LONG | phase A" in user and "server floor now:" in user and "$" not in user
+    assert "M15 bars closed since entry" in user
     eng._exit_api = lambda *a: _ret({"ok": True, "parsed": {"structure": "momentum_stall", "reason": "stall",
                                                             "decision": "CLOSE", "confidence": 0.3},
                                      "latency_ms": 900, "cost_usd": 0.0002, "thinking_tokens": 0})
-    # after the first M15 close (15:15); a CLOSE at now+2m (15:07) would now be ignored by the grace rule
+    # after the first M15 close (15:15); Phase B so a model CLOSE is not server-ignored
+    _phase_b(eng)
     asyncio.run(eng.exit_tick(T0 + timedelta(minutes=16)))
     s = eng.sims["C-OPUS"]
     assert s["positions"] == [] and s["trades"] == 1 and s["recent"][0]["reason"] == "claude_close"
-    assert s["recent"][0]["exit_prompt_version"] == "v2-grace"
+    assert s["recent"][0]["exit_prompt_version"] == "v3"
     assert eng.eng["probes"] and any(t["book"] == "mech" for t in eng.eng["shadow"])
     rep = eng.build_report()
     assert rep["sims"]["C-OPUS"]["real"]["n"] == 1 and rep["sims"]["C-OPUS"]["ops"]["exit"]["failed"] == 3
@@ -409,6 +428,7 @@ def test_claude_close_ignored_during_grace(tmp_path):
     eng, _ = _engine(tmp_path, _xau_buy(), exit_answer=_close_ans(), now=now)
     asyncio.run(eng.on_cycle(PAYLOADS, now=T0))
     _stamp_entry(eng, T0)
+    _phase_b(eng)
     assert eng.sims["C-OPUS"]["positions"]
     out = asyncio.run(eng.exit_tick(now))
     assert out.get("real_closed", 0) == 0
@@ -426,13 +446,14 @@ def test_claude_close_honored_after_first_m15_close(tmp_path):
     eng, _ = _engine(tmp_path, _xau_buy(), exit_answer=_close_ans(), now=now)
     asyncio.run(eng.on_cycle(PAYLOADS, now=T0))
     _stamp_entry(eng, T0)
+    _phase_b(eng)
     asyncio.run(eng.exit_tick(now))
     s = eng.sims["C-OPUS"]
     assert s["positions"] == [] and s["trades"] == 1 and s["recent"][0]["reason"] == "claude_close"
-    assert s["recent"][0]["exit_prompt_version"] == "v2-grace"
+    assert s["recent"][0]["exit_prompt_version"] == "v3"
     site = eng.site_payload(eng.build_report())
     opus = next(x for x in site["sims"] if x["id"] == "C-OPUS")
-    assert opus["since_fix"]["n"] == 1 and opus["exit_prompt_version"] == "v2-grace"
+    assert opus["since_fix"]["n"] == 1 and opus["exit_prompt_version"] == "v3"
 
 
 def test_hard_stop_and_daily_flatten_still_work_during_grace(tmp_path):
@@ -466,7 +487,7 @@ def test_hard_stop_and_daily_flatten_still_work_during_grace(tmp_path):
     sim["last_price"] = {sim["positions"][0]["symbol"]: sim["positions"][0]["entry"]}
     eng2._account_limits(sim, T0 + timedelta(minutes=3))
     assert sim["positions"] == [] and sim["recent"][0]["reason"] == "daily_flatten_-1500"
-    assert sim["recent"][0]["exit_prompt_version"] == "v2-grace"
+    assert sim["recent"][0]["exit_prompt_version"] == "v3"
 
 
 def test_backfill_tags_pre_grace_and_since_fix_excludes_them(tmp_path):
@@ -549,3 +570,182 @@ def test_claude_default_quote_path_is_the_exit_check_snapshot(tmp_path):
     asyncio.run(eng.on_cycle(PAYLOADS, now=T0))
     p = eng.sims["C-OPUS"]["positions"][0]
     assert p["fill_source"] == "live_quote:dukascopy:tick" and p["fill_check"]["quote_price"] == 1.1
+
+
+# ------------------------------------------------------------------ v3 rules: fill skip, USD group, Phase A server exits, M5 chart
+def test_m15_bars_closed_since_entry_count():
+    assert m15_bars_closed_since_entry(T0, T0) == 0
+    assert m15_bars_closed_since_entry(T0, T0 + timedelta(minutes=14, seconds=59)) == 0
+    assert m15_bars_closed_since_entry(T0, T0 + timedelta(minutes=15)) == 1
+    assert m15_bars_closed_since_entry(T0, T0 + timedelta(minutes=30)) == 2
+    mid = datetime(2026, 11, 11, 15, 1, tzinfo=UTC)
+    assert m15_bars_closed_since_entry(mid, datetime(2026, 11, 11, 15, 14, 59, tzinfo=UTC)) == 0
+    assert m15_bars_closed_since_entry(mid, datetime(2026, 11, 11, 15, 15, tzinfo=UTC)) == 1
+
+
+def test_usd_group_sides():
+    assert usd_group("XAUUSD", -1) == "long_usd" and usd_group("EURUSD", -1) == "long_usd"
+    assert usd_group("GBPUSD", 1) == "short_usd" and usd_group("US100", -1) is None
+    assert us100_alignment(-1, {"long_usd"}) == "aligned"
+    assert us100_alignment(1, {"long_usd"}) == "divergent"
+    assert us100_alignment(1, {"short_usd"}) == "aligned"
+    assert us100_alignment(-1, set()) == "no_usd_group"
+
+
+def test_fill_skip_when_quote_worse_than_03_atr(tmp_path):
+    eng, _ = _engine(tmp_path, {OPUS: [_sig("XAUUSD", "BUY", 6, "trend", 0.6, stop=1996.0),
+                                      _sig("EURUSD"), _sig("GBPUSD"), _sig("US100")],
+                                SON: [_sig(s) for s in ("XAUUSD", "EURUSD", "GBPUSD", "US100")]})
+
+    async def quotes(syms, cfg, t):
+        # chart_live_price is 2000; 0.32 ATR worse for a long
+        return {"XAUUSD": {"price": 2001.60, "ts": t.isoformat(), "fetched_at": t.isoformat(),
+                           "source": "dukascopy:tick", "age_s": 0.4, "stale": False}}
+    eng._quote_fetch = quotes
+    asyncio.run(eng.on_cycle(PAYLOADS, now=T0))
+    assert eng.sims["C-OPUS"]["positions"] == []
+    sig = [json.loads(l) for l in open(next((tmp_path / "logs").glob("*/claude_signals.jsonl")))]
+    xau = [s for s in sig if s["symbol"] == "XAUUSD" and s["sim"] == "C-OPUS"][0]
+    assert "worse than chart_live_price" in xau["decision"]
+    evs = [json.loads(l) for f in (tmp_path / "logs").glob("*/claude_events.jsonl") for l in open(f)]
+    assert [e for e in evs if e.get("event") == "fill_skip_adverse"]
+
+
+def test_usd_group_skips_second_ticket_and_locks_after_stop(tmp_path):
+    eng, _ = _engine(tmp_path, _eur_sell_answers())
+    asyncio.run(eng.on_cycle(PAYLOADS, now=T0))
+    sim = eng.sims["C-OPUS"]
+    assert sim["positions"][0]["symbol"] == "EURUSD" and sim["positions"][0]["side"] == -1
+    eng.eng.setdefault("fill_quotes", {})["XAUUSD"] = {
+        "price": 2000.0, "ts": T0.isoformat(), "fetched_at": T0.isoformat(),
+        "source": "dukascopy:tick", "age_s": 0.4, "stale": False, "at": T0.isoformat()}
+    v = {"symbol": "XAUUSD", "action": "SELL", "stop_loss": 2006.0, "setup_type": "trend",
+         "score": 8, "confidence": 0.7, "model": OPUS, "bar": "x", "rationale": "t", "take_profit": None}
+    why = eng._try_open(sim, v, PAYLOADS[0], T0)
+    assert why and "USD group long_usd" in why
+    evs = [json.loads(l) for f in (tmp_path / "logs").glob("*/claude_events.jsonl") for l in open(f)]
+    assert [e for e in evs if e.get("event") == "skip_usd_group"]
+
+    pos = sim["positions"][0]
+    eng._close_real(sim, pos, pos["init_stop"], T0 + timedelta(minutes=5), "hard_stop")
+    assert "long_usd" in (sim.get("group_locks") or {})
+    why = eng._try_open(sim, v, PAYLOADS[0], T0 + timedelta(minutes=10))
+    assert why and "locked" in why
+    evs = [json.loads(l) for f in (tmp_path / "logs").glob("*/claude_events.jsonl") for l in open(f)]
+    assert [e for e in evs if e.get("event") == "skip_usd_group_lock"]
+    # after 30 minutes the group lock expires (symbol lock is only on EURUSD)
+    later = T0 + timedelta(minutes=40)
+    eng.eng["fill_quotes"]["XAUUSD"] = {
+        "price": 2000.0, "ts": later.isoformat(), "fetched_at": later.isoformat(),
+        "source": "dukascopy:tick", "age_s": 0.4, "stale": False, "at": later.isoformat()}
+    why = eng._try_open(sim, v, PAYLOADS[0], later)
+    assert why is None
+    assert sim["positions"][0]["symbol"] == "XAUUSD"
+
+
+def test_us100_alignment_logged(tmp_path):
+    eng, _ = _engine(tmp_path, _eur_sell_answers())
+    asyncio.run(eng.on_cycle(PAYLOADS, now=T0))
+    sim = eng.sims["C-OPUS"]
+    eng.eng.setdefault("fill_quotes", {})["US100"] = {
+        "price": 20000.0, "ts": T0.isoformat(), "fetched_at": T0.isoformat(),
+        "source": "dukascopy:tick", "age_s": 0.4, "stale": False, "at": T0.isoformat()}
+    v = {"symbol": "US100", "action": "SELL", "stop_loss": 20040.0, "setup_type": "trend",
+         "score": 8, "confidence": 0.7, "model": OPUS, "bar": "x", "rationale": "t", "take_profit": None}
+    why = eng._try_open(sim, v, PAYLOADS[3], T0)
+    assert why is None
+    evs = [json.loads(l) for f in (tmp_path / "logs").glob("*/claude_events.jsonl") for l in open(f)]
+    al = [e for e in evs if e.get("event") == "us100_usd_alignment"]
+    assert al and al[0]["alignment"] == "aligned"   # long-USD (EUR short) + US100 short
+
+
+def test_phase_a_ignores_model_close_even_after_first_m15(tmp_path):
+    now = T0 + timedelta(minutes=16)
+    eng, _ = _engine(tmp_path, _xau_buy(), exit_answer=_close_ans(), now=now)
+    asyncio.run(eng.on_cycle(PAYLOADS, now=T0))
+    _stamp_entry(eng, T0)
+    # still Phase A (no MFE bump)
+    out = asyncio.run(eng.exit_tick(now))
+    assert out.get("real_closed", 0) == 0
+    assert eng.sims["C-OPUS"]["positions"] and eng.sims["C-OPUS"]["trades"] == 0
+    evs = [json.loads(l) for f in (tmp_path / "logs").glob("*/claude_events.jsonl") for l in open(f)]
+    ign = [e for e in evs if e.get("event") == "close_ignored_phase_a"]
+    assert ign and ign[0].get("exit_confidence") == 0.3
+    checks = [json.loads(l) for f in (tmp_path / "logs").glob("*/claude_exit_checks.jsonl") for l in open(f)]
+    assert checks[-1]["ignored"] == "close_ignored_phase_a" and "closed" not in checks[-1]
+
+
+def test_phase_a_closed_m15_invalidation_and_vwap_ema(tmp_path):
+    eng, _ = _engine(tmp_path, _xau_buy(), now=T0 + timedelta(minutes=16))
+    asyncio.run(eng.on_cycle(PAYLOADS, now=T0))
+    _stamp_entry(eng, T0)
+    p = eng.sims["C-OPUS"]["positions"][0]
+    stop = p["init_stop"]
+    now = T0 + timedelta(minutes=16)
+
+    async def snap_inv(sym, cfg, n):
+        pl = json.loads(json.dumps({x["symbol"]: x for x in PAYLOADS}[sym]))
+        if sym == "XAUUSD":
+            pl["context"]["last_closed_bar_utc"] = "2026-11-11T15:00:00+00:00"
+            pl["context"]["signal_candle"] = {"open": 2000.0, "high": 2000.5, "low": stop - 0.4, "close": stop - 0.2}
+        return pl, await eng._m1(sym, cfg, n)
+
+    eng._snapshot = snap_inv
+    asyncio.run(eng.exit_tick(now))
+    assert eng.sims["C-OPUS"]["positions"] == []
+    assert eng.sims["C-OPUS"]["recent"][0]["reason"] == "closed_m15_invalidation"
+    assert eng.sims["C-OPUS"]["recent"][0]["exit_prompt_version"] == "v3"
+
+    eng2, _ = _engine(tmp_path / "vwap", _xau_buy(), now=now)
+    asyncio.run(eng2.on_cycle(PAYLOADS, now=T0))
+    _stamp_entry(eng2, T0)
+    p2 = eng2.sims["C-OPUS"]["positions"][0]
+    assert p2["init_stop"] < 1999.0   # close 1999 is still above the stop
+
+    async def snap_vw(sym, cfg, n):
+        pl = json.loads(json.dumps({x["symbol"]: x for x in PAYLOADS}[sym]))
+        if sym == "XAUUSD":
+            pl["context"]["last_closed_bar_utc"] = "2026-11-11T15:00:00+00:00"
+            pl["context"]["vwap"] = 2000.0
+            pl["context"]["ema20_baseline"] = 2000.2
+            pl["context"]["signal_candle"] = {"open": 2000.0, "high": 2000.4, "low": 1998.8, "close": 1999.0}
+        return pl, await eng2._m1(sym, cfg, n)
+
+    eng2._snapshot = snap_vw
+    asyncio.run(eng2.exit_tick(now))
+    assert eng2.sims["C-OPUS"]["positions"] == []
+    assert eng2.sims["C-OPUS"]["recent"][0]["reason"] == "closed_m15_vwap_ema20"
+
+
+def test_phase_b_honors_close_after_grace(tmp_path):
+    now = T0 + timedelta(minutes=16)
+    eng, _ = _engine(tmp_path, _xau_buy(), exit_answer=_close_ans(), now=now)
+    asyncio.run(eng.on_cycle(PAYLOADS, now=T0))
+    _stamp_entry(eng, T0)
+    _phase_b(eng)
+    asyncio.run(eng.exit_tick(now))
+    assert eng.sims["C-OPUS"]["recent"][0]["reason"] == "claude_close"
+    rows = [json.loads(l) for f in (tmp_path / "logs").glob("*/claude_trades.jsonl") for l in open(f)]
+    real = [r for r in rows if r.get("book") == "real" and r.get("reason") == "claude_close"]
+    assert real and real[0]["exit_confidence"] == 0.3
+
+
+def test_build_m5_exit_payload_from_m1():
+    idx = pd.date_range("2026-11-11 14:00", periods=50, freq="1min", tz="UTC")
+    df = pd.DataFrame({"open": [2000.0] * 50, "high": [2001.0] * 50, "low": [1999.0] * 50,
+                       "close": [2000.5] * 50, "volume": [10.0] * 50}, index=idx)
+    now = datetime(2026, 11, 11, 14, 47, 30, tzinfo=UTC)
+    p = build_m5_exit_payload(PAYLOADS[0], df, now)
+    assert p is not None and p["timeframe"] == "M5" and p["forming_candle"]
+    assert p["forming_candle"]["time"] == int(pd.Timestamp("2026-11-11 14:45:00", tz="UTC").timestamp())
+    assert p["candles"]  # at least some closed M5s
+    assert p["vwap"] and p["mid"] and "entry_line" not in p  # entry line is applied later
+    assert build_m5_exit_payload(PAYLOADS[0], None, now) is None
+
+
+def test_claude_scan_offset_is_m15_plus_20s():
+    from signals.pipeline import next_boundary
+    t = datetime(2026, 11, 11, 15, 0, 10, tzinfo=UTC)
+    assert next_boundary(t, 15, 20) == datetime(2026, 11, 11, 15, 0, 20, tzinfo=UTC)
+    t2 = datetime(2026, 11, 11, 15, 0, 21, tzinfo=UTC)
+    assert next_boundary(t2, 15, 20) == datetime(2026, 11, 11, 15, 15, 20, tzinfo=UTC)

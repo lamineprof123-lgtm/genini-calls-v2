@@ -55,6 +55,7 @@ class GhaLoop:
         self.exit_task: asyncio.Task | None = None
         self.claude = None                   # Claude parallel paper sims (signals/claude_sim.py)
         self.claude_exit_task: asyncio.Task | None = None
+        self.claude_scan_task: asyncio.Task | None = None
         self.bracket = None                  # 'bracket' Gemini shadow book (signals/bracket.py)
         self.bracket_task: asyncio.Task | None = None
         self.bracket_cycle_task: asyncio.Task | None = None
@@ -321,10 +322,11 @@ class GhaLoop:
         if self.dry_run or not (self.cfg.get("claude") or {}).get("enabled", False):
             return
         try:
-            from .claude_sim import ClaudeEngine, run_claude_exit_loop
+            from .claude_sim import ClaudeEngine, run_claude_exit_loop, run_claude_scan_loop
             self.claude = ClaudeEngine(self.cfg, io_lock=self.io_lock)
             self.claude_exit_task = asyncio.create_task(run_claude_exit_loop(self.claude), name="claude-exit")
-            log.info("claude sims on: %s, exits %s, key %s", list(self.claude.sims),
+            self.claude_scan_task = asyncio.create_task(run_claude_scan_loop(self.claude), name="claude-scan")
+            log.info("claude sims on: %s, exits %s, scan M15+20s, key %s", list(self.claude.sims),
                      self.claude.cc["exit_model"], "present" if self.claude._key() else "MISSING (waiting)")
         except Exception:
             log.exception("claude sims failed to start (Gemini loop unaffected)")
@@ -339,13 +341,14 @@ class GhaLoop:
             log.exception("claude schedule failed (Gemini loop unaffected)")
 
     async def stop_claude(self) -> None:
-        for t in (self.claude_exit_task, getattr(self.claude, "entry_task", None)):
+        for t in (self.claude_exit_task, self.claude_scan_task, getattr(self.claude, "entry_task", None)):
             if t is None:
                 continue
             t.cancel()
             with contextlib.suppress(BaseException):
                 await asyncio.wait_for(t, 30)
         self.claude_exit_task = None
+        self.claude_scan_task = None
 
     def start_bracket(self) -> None:
         """'bracket' shadow book: consumes the same validated Gemini signals after each cycle (no extra Gemini

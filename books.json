@@ -1,5 +1,5 @@
 {
-  "updated_at_utc": "2026-11-12T19:42:16.156811+00:00",
+  "updated_at_utc": "2026-11-12T19:47:03.354503+00:00",
   "paper_only": true,
   "note": "All books: 1 ATR / 1 ATR bracket, no model exits Same Lucid entries. Every book (main, 1-strike, nostop, bracket, CB-BRACKET, CB-RUNNER, Claude, DS-FLASH) closes only on a 1 ATR stop / 1 ATR target / 90-min cap. No model exit calls. Open positions armed from now. New closes tagged uniform-1atr-v1.",
   "gemini_exit_calls_enabled": false,
@@ -77,12 +77,14 @@
     }
   },
   "baseline": {
-    "net_pnl": 0,
-    "trades": 0,
+    "net_pnl": -1903.5,
+    "trades": 1,
     "wins": 0,
-    "losses": 0,
-    "win_rate": null,
-    "avg_hold_min": null,
-    "exit_reasons": {}
+    "losses": 1,
+    "win_rate": 0.0,
+    "avg_hold_min": 28.7,
+    "exit_reasons": {
+      "stop_1atr": 1
+    }
   }
 }

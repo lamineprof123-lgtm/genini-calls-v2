@@ -104,7 +104,7 @@ def _lucid_cfg(cfg: dict, cc: dict) -> dict:
     L["eval_fee"] = 0.0
     L["reset_token"] = cc["reset_token"]
     L["reset_reason"] = cc.get("reset_reason") or DEFAULTS["reset_reason"]
-    L["reset_archive"] = "account_pre_opus_b_{day}.json"
+    L["reset_archive"] = cc.get("reset_archive") or "account_pre_opus_b_{day}.json"
     L["start_balance"] = float(cc.get("start_balance") or 100000.0)
     # Keep the 0.3 ATR fill check even if main's max_chase is 0.5.
     L["fill_max_adverse_atr"] = float(cc.get("fill_max_adverse_atr") or B.FILL_MAX_ADVERSE_ATR)

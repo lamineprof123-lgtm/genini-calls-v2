@@ -164,6 +164,13 @@ class OtherVenueHub:
             raw = json.loads(self.path.read_text()) if self.path.exists() else None
         except Exception:
             raw = None
+        tok = self.cc.get("reset_token")
+        reset_at = (raw or {}).get("reset_at") if isinstance(raw, dict) else None
+        if isinstance(raw, dict) and tok and raw.get("reset_token") != tok:
+            # Shared reset: archive every OTHER-VENUE sub-account and start each at a fresh $100k.
+            _atomic_write(self.root / f"books_pre_reset_{tok}.json", raw)
+            raw, reset_at = None, _iso(datetime.now(UTC))
+            log.info("other-venue: reset to fresh $%.0f books for token %s (archived)", start, tok)
         books = {}
         if isinstance(raw, dict):
             for k, v in (raw.get("books") or {}).items():
@@ -171,7 +178,11 @@ class OtherVenueHub:
         for name in want:
             if name not in books:
                 books[name] = _fresh_book(name, start)
-        return {"venue": VENUE, "version": VERSION, "books": books}
+        out = {"venue": VENUE, "version": VERSION, "books": books}
+        if tok:
+            out["reset_token"] = tok
+            out["reset_at"] = reset_at or (raw or {}).get("reset_at") or _iso(datetime.now(UTC))
+        return out
 
     def persist(self, now: datetime | None = None) -> None:
         now = now or datetime.now(UTC)

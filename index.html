@@ -10,1106 +10,246 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <style>
   :root {
-    --bg: #0E1117; --fg: #E6EDF3; --muted: #7D8590; --faint: #3B424C; --line: #1C2129;
+    --bg: #0E1117; --fg: #E6EDF3; --muted: #7D8590; --faint: #4B535E; --line: #1C2129; --card: #121722;
     --buy: #26A69A; --sell: #EF5350; --amber: #F5A524;
     --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
     --sans: Inter, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { height: 100%; background: var(--bg); color: var(--fg); font-family: var(--sans);
-               -webkit-font-smoothing: antialiased; }
-  body { display: flex; flex-direction: column; min-height: 100dvh; padding: 28px 24px 20px; }
+  html, body { background: var(--bg); color: var(--fg); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+  body { min-height: 100dvh; padding: 24px 20px 32px; }
   header { display: flex; justify-content: space-between; align-items: center; font-size: 12px;
-           letter-spacing: .22em; text-transform: uppercase; color: var(--muted); }
-  .brand { display: inline-flex; align-items: center; line-height: 0; text-decoration: none;
-           flex-shrink: 0; }
+           letter-spacing: .22em; text-transform: uppercase; color: var(--muted); max-width: 1240px; margin: 0 auto; }
+  .brand { display: inline-flex; align-items: center; line-height: 0; text-decoration: none; }
   .brand img { height: 56px; width: auto; display: block; }
-  @media (min-width: 900px) {
-    .brand img { height: 68px; }
-  }
+  @media (min-width: 900px) { .brand img { height: 68px; } }
   .state { display: inline-flex; align-items: center; gap: 8px; letter-spacing: .16em; }
   .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--buy); }
-  .state.paused .dot { background: var(--amber); }
-  .state.paused { color: var(--amber); }
+  .state.paused .dot { background: var(--amber); } .state.paused { color: var(--amber); }
   .state.live .dot { animation: pulse 2.4s ease-in-out infinite; }
   @keyframes pulse { 50% { opacity: .25; } }
-  main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
-         width: 100%; max-width: 520px; margin: 0 auto; padding: 40px 0; }
-  .view { width: 100%; display: none; flex-direction: column; align-items: center; text-align: center;
-          animation: fade .5s ease; }
-  .view.on { display: flex; }
-  @keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
-  .eyebrow { font-size: 13px; letter-spacing: .24em; text-transform: uppercase; color: var(--muted); }
+  .hero { text-align: center; margin: 14px auto 26px; }
+  .eyebrow { font-size: 12px; letter-spacing: .24em; text-transform: uppercase; color: var(--muted); }
   .count { font-family: var(--mono); font-variant-numeric: tabular-nums; font-weight: 300;
-           font-size: clamp(88px, 27vw, 176px); line-height: 1; letter-spacing: -.04em; margin: 22px 0 18px;
-           background: linear-gradient(100deg,
-             #7DD3FC 0%, #00B4FF 18%, #22D3EE 36%, #00E676 55%, #00B4FF 72%, #7DD3FC 88%, #00E676 100%);
-           background-size: 220% 100%;
-           -webkit-background-clip: text; background-clip: text;
+           font-size: clamp(64px, 18vw, 128px); line-height: 1; letter-spacing: -.04em; margin: 14px 0 10px;
+           background: linear-gradient(100deg, #7DD3FC 0%, #00B4FF 18%, #22D3EE 36%, #00E676 55%, #00B4FF 72%, #7DD3FC 88%, #00E676 100%);
+           background-size: 220% 100%; -webkit-background-clip: text; background-clip: text;
            color: transparent; -webkit-text-fill-color: transparent;
-           filter: drop-shadow(0 0 10px rgba(0, 180, 255, 0.28))
-                   drop-shadow(0 0 22px rgba(0, 230, 118, 0.16));
+           filter: drop-shadow(0 0 10px rgba(0,180,255,.28)) drop-shadow(0 0 22px rgba(0,230,118,.16));
            animation: countGlow 7.5s ease-in-out infinite; }
-  @keyframes countGlow {
-    0%   { background-position: 0% 50%; }
-    50%  { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+  @keyframes countGlow { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+  @media (prefers-reduced-motion: reduce) { .count { animation: none; background-position: 40% 50%; } }
+  .sub { font-size: 13px; color: var(--muted); }
+  .wrap { max-width: 1240px; margin: 0 auto; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 18px 18px 14px; margin-bottom: 18px; }
+  .card h2 { font-size: 11px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase; color: var(--muted);
+             display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+  .card h2 small { font-weight: 400; letter-spacing: .04em; text-transform: none; color: var(--faint); }
+  .banner { font-size: 12px; color: var(--muted); line-height: 1.5; margin-bottom: 18px; text-align: center; }
+  .banner b { color: var(--fg); font-weight: 600; }
+  .tw { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 12.5px; font-variant-numeric: tabular-nums; }
+  th, td { padding: 7px 8px; border-top: 1px solid var(--line); text-align: right; white-space: nowrap; }
+  th { font-family: var(--sans); font-weight: 500; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--faint); border-top: 0; }
+  td.l, th.l { text-align: left; }
+  td.book { font-family: var(--sans); color: var(--fg); }
+  tr.model td { font-family: var(--sans); font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: var(--muted);
+                padding-top: 14px; border-top: 1px solid #262c36; }
+  tr.ov td { color: var(--muted); }
+  tr.ov td.book { color: var(--muted); padding-left: 22px; }
+  .pos { color: var(--buy); } .neg { color: var(--sell); } .dim { color: var(--faint); }
+  .st { font-family: var(--sans); font-size: 10.5px; letter-spacing: .08em; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--line); }
+  .st.OPEN { color: #7DD3FC; border-color: rgba(125,211,252,.35); }
+  .st.stop { color: var(--sell); border-color: rgba(239,83,80,.35); }
+  .st.target { color: var(--buy); border-color: rgba(38,166,154,.4); }
+  .st.time { color: var(--amber); border-color: rgba(245,165,36,.35); }
+  .side.LONG { color: var(--buy); } .side.SHORT { color: var(--sell); }
+  .empty { color: var(--faint); font-size: 13px; padding: 14px 4px; font-family: var(--sans); }
+  .note { margin-top: 10px; font-size: 11px; color: var(--faint); line-height: 1.5; }
+  .cards { display: none; }
+  .mc { border-top: 1px solid var(--line); padding: 11px 2px; }
+  .mc:first-child { border-top: 0; }
+  .mc-h { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+  .mc-t { font-size: 15px; font-weight: 600; color: var(--fg); }
+  .mc-t .side { font-size: 13px; margin-left: 6px; }
+  .mc-s { font-size: 12px; color: var(--muted); margin-top: 3px; line-height: 1.4; overflow-wrap: anywhere; }
+  .mc-g { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px 10px; margin-top: 9px; }
+  .mc-k { font-size: 9.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--faint); }
+  .mc-v { font-family: var(--mono); font-variant-numeric: tabular-nums; font-size: 13.5px; color: var(--fg); margin-top: 1px; overflow-wrap: anywhere; }
+  .mc-v.pos { color: var(--buy); } .mc-v.neg { color: var(--sell); }
+  .mg { font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); margin: 16px 0 4px; }
+  .mg:first-child { margin-top: 0; }
+  @media (max-width: 699px) {
+    body { padding: 16px 12px 24px; }
+    .brand img { height: 44px; }
+    .hero { margin: 6px auto 16px; }
+    .count { font-size: clamp(56px, 20vw, 88px); }
+    .card { padding: 14px 12px 10px; border-radius: 14px; }
+    .tw { display: none; }
+    .cards { display: block; }
+    .banner { font-size: 12px; text-align: left; overflow-wrap: anywhere; }
   }
-  @media (prefers-reduced-motion: reduce) {
-    .count { animation: none; background-position: 40% 50%; }
-  }
-  .sub { font-size: 15px; color: var(--muted); }
-  .sub-meta { margin-top: 14px; font-size: 12px; color: var(--faint); letter-spacing: .06em; }
-  .sub-meta.warn { color: var(--amber); }
-  .analyzing { font-size: clamp(34px, 9vw, 52px); font-weight: 300; letter-spacing: -.01em; margin: 6px 0 18px; }
-  .analyzing i { font-style: normal; animation: blink 1.4s infinite; }
-  .analyzing i:nth-child(2) { animation-delay: .2s; } .analyzing i:nth-child(3) { animation-delay: .4s; }
-  @keyframes blink { 0%, 80%, 100% { opacity: .15; } 40% { opacity: 1; } }
-  #trades { width: 100%; display: grid; gap: 20px; grid-template-columns: 1fr; }
-  .trade { width: 100%; padding: 8px 0 4px; display: flex; flex-direction: column; align-items: center; }
-  #trades.multi .trade { background: #121722; border: 1px solid var(--line); border-radius: 18px;
-                         padding: 30px 26px 24px; }
-  .sym { font-size: clamp(22px, 6.2vw, 28px); font-weight: 700; letter-spacing: .12em; color: var(--fg); }
-  .sym em { font-style: normal; font-weight: 500; color: var(--muted); }
-  .act { font-size: clamp(76px, 22vw, 128px); font-weight: 800; letter-spacing: -.035em; line-height: 1;
-         margin: 12px 0 30px; }
-  #trades.multi .act { font-size: clamp(68px, 19vw, 96px); margin: 10px 0 24px; }
-  .act.BUY { color: var(--buy); } .act.SELL { color: var(--sell); }
-  .act.INPOS { color: var(--amber); font-size: clamp(28px, 7vw, 42px); letter-spacing: .04em; font-weight: 600; }
-  #trades.multi .act.INPOS { font-size: clamp(22px, 5vw, 32px); }
-  .levels { width: 100%; }
-  .row { display: flex; justify-content: space-between; align-items: baseline; padding: 15px 2px;
-         border-top: 1px solid var(--line); }
-  .row:last-child { border-bottom: 1px solid var(--line); }
-  #trades.multi .row:last-child { border-bottom: 0; }
-  .row span { font-size: 13px; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); }
-  .row b { font-family: var(--mono); font-variant-numeric: tabular-nums; font-weight: 500;
-           font-size: clamp(24px, 7vw, 32px); letter-spacing: -.01em; }
-  .row.stop b { color: #F28B87; } .row.target b { color: #5CC8BC; }
-  @media (min-width: 900px) {
-    main.wide { max-width: 1180px; }
-    #trades.n2 { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }
-    #trades.n3, #trades.n4, #trades.n5 { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; }
-    #trades.multi .row b { font-size: 28px; }
-    #trades.n1 .trade { background: #121722; border: 1px solid var(--line); border-radius: 22px;
-                        padding: 40px 44px 30px; }
-    #trades.n1 .row:last-child { border-bottom: 0; }
-    #trades.n1 .act { font-size: 140px; }
-    #trades.n1 .sym { font-size: 30px; }
-  }
-  .rr { margin-top: 16px; font-size: 13px; color: var(--muted); letter-spacing: .06em; }
-  .quiet { margin-top: 40px; font-size: 13px; color: var(--faint); letter-spacing: .04em; line-height: 1.6; }
-  .view.out { opacity: 0; transition: opacity .6s ease; }
-  .pausedBig { font-size: clamp(44px, 12vw, 72px); font-weight: 300; letter-spacing: -.02em; color: var(--amber);
-               margin-bottom: 18px; }
-  .notrade { font-size: clamp(44px, 12vw, 72px); font-weight: 300; letter-spacing: -.02em; color: var(--muted); }
-
-  .hdr-right { display: inline-flex; align-items: center; gap: 14px; }
-  .sound-btn {
-    appearance: none; border: 0; background: transparent; color: var(--muted);
-    width: 34px; height: 34px; border-radius: 10px; display: inline-flex;
-    align-items: center; justify-content: center; cursor: pointer;
-    transition: color .2s ease, background .2s ease;
-  }
-  .sound-btn:hover { color: var(--fg); background: rgba(255,255,255,.04); }
-  .sound-btn.on { color: #7DD3FC; }
-  .sound-btn svg { width: 18px; height: 18px; display: block; }
-  .sound-btn .ico-off { display: none; }
-  .sound-btn:not(.on) .ico-on { display: none; }
-  .sound-btn:not(.on) .ico-off { display: block; }
-
-  #fx-lights {
-    position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
-    opacity: 0; transition: opacity .7s ease;
-  }
-  body.fx-on #fx-lights { opacity: 1; }
-  body.fx-out #fx-lights { opacity: 0; transition: opacity .6s ease; }
-  header, main { position: relative; z-index: 1; }
-  .fx-blob {
-    position: absolute; width: 52vmax; height: 52vmax; border-radius: 50%;
-    filter: blur(82px); opacity: .72; will-change: transform;
-    mix-blend-mode: screen;
-  }
-  .fx-blob.b1 {
-    background: radial-gradient(circle, rgba(0,196,255,.98) 0%, rgba(0,180,255,.55) 38%, rgba(0,180,255,0) 70%);
-    top: -16%; left: -20%; animation: fxDrift1 16s ease-in-out infinite;
-  }
-  .fx-blob.b2 {
-    background: radial-gradient(circle, rgba(0,255,140,.95) 0%, rgba(0,230,118,.55) 40%, rgba(0,230,118,0) 70%);
-    bottom: -18%; right: -16%; animation: fxDrift2 18s ease-in-out infinite;
-  }
-  .fx-blob.b3 {
-    background: radial-gradient(circle, rgba(56,224,255,.92) 0%, rgba(34,211,238,.5) 42%, rgba(34,211,238,0) 72%);
-    top: 26%; right: -24%; width: 44vmax; height: 44vmax;
-    animation: fxDrift3 14s ease-in-out infinite; opacity: .62;
-  }
-  .fx-blob.b4 {
-    background: radial-gradient(circle, rgba(0,196,255,.75) 0%, rgba(0,230,118,.55) 42%, transparent 72%);
-    bottom: 6%; left: -18%; width: 46vmax; height: 46vmax;
-    animation: fxDrift4 20s ease-in-out infinite; opacity: .58;
-  }
-  @keyframes fxDrift1 { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(12vw, 10vh) scale(1.12); } }
-  @keyframes fxDrift2 { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-10vw, -12vh) scale(1.1); } }
-  @keyframes fxDrift3 { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-14vw, 8vh) scale(1.15); } }
-  @keyframes fxDrift4 { 0%,100% { transform: translate(0,0) scale(1.05); } 50% { transform: translate(10vw, -8vh) scale(1); } }
-
-  #v-signal.fx-trade { animation: none; }
-  #v-signal.fx-trade.on.pop { animation: sigPop .72s cubic-bezier(.2,1.15,.35,1) both; }
-  #v-signal.fx-trade.on.pop #trades {
-    filter: drop-shadow(0 0 0 rgba(0,180,255,0));
-    animation: sigGlowPulse .72s ease-out both;
-  }
-  @keyframes sigPop {
-    0%   { opacity: 0; transform: scale(.9); }
-    55%  { opacity: 1; transform: scale(1.04); }
-    100% { opacity: 1; transform: scale(1); }
-  }
-  @keyframes sigGlowPulse {
-    0%   { filter: drop-shadow(0 0 0 rgba(0,180,255,0)); }
-    40%  { filter: drop-shadow(0 0 28px rgba(0,180,255,.35)) drop-shadow(0 0 48px rgba(0,230,118,.22)); }
-    100% { filter: drop-shadow(0 0 12px rgba(0,180,255,.12)); }
-  }
-  #v-signal.fx-trade #trades.n1 .trade,
-  #v-signal.fx-trade #trades.multi .trade {
-    background: rgba(14, 17, 23, 0.90);
-    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(28, 33, 41, 0.95);
-  }
-  .lucid { position: relative; z-index: 1; width: 100%; max-width: 720px; margin: 8px auto 0; padding: 18px 20px 16px;
-           background: #121722; border: 1px solid var(--line); border-radius: 16px; font-size: 13px; color: var(--muted); }
-  .lucid[hidden] { display: none; }
-  .lucid h2 { font-size: 11px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase; color: var(--muted);
-              display: flex; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
-  .lucid h2 small { font-weight: 400; letter-spacing: .04em; text-transform: none; color: var(--faint); }
-  .lu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(118px, 1fr)); gap: 10px 14px; }
-  .lu-k { font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: var(--faint); }
-  .lu-v { font-family: var(--mono); font-variant-numeric: tabular-nums; font-size: 17px; color: var(--fg); margin-top: 2px; }
-  .lu-v.pos { color: var(--buy); } .lu-v.neg { color: var(--sell); }
-  .lucid h3 { font-size: 10px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: var(--faint);
-              margin: 16px 0 6px; }
-  .lu-t { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 12px; font-variant-numeric: tabular-nums; }
-  .lu-t td, .lu-t th { padding: 5px 4px; border-top: 1px solid var(--line); text-align: right; white-space: nowrap; }
-  .lu-t th { font-family: var(--sans); font-weight: 500; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--faint); }
-  .lu-t td:first-child, .lu-t th:first-child { text-align: left; }
-  .lu-t .pos { color: var(--buy); } .lu-t .neg { color: var(--sell); }
-  .lu-wrap { overflow-x: auto; }
-  .lu-note { margin-top: 12px; font-size: 11px; color: var(--faint); line-height: 1.5; }
-  .lu-banner { margin: 8px 0 12px; padding: 8px 12px; font-size: 12px; line-height: 1.45;
-    color: #d6c48a; background: rgba(214,196,138,0.08); border: 1px solid rgba(214,196,138,0.25); border-radius: 8px; }
-  .lu-banner b { color: #f0e0a8; font-weight: 650; }
-  .lu-banner small { display: block; margin-top: 4px; color: var(--faint); }
-  .lucid .who { display: inline-block; font-size: 9px; letter-spacing: .14em; padding: 2px 7px; border-radius: 999px;
-                border: 1px solid var(--line); color: var(--fg); margin-right: 8px; }
-  .who.g { background: rgba(66,133,244,.16); } .who.o { background: rgba(217,119,87,.20); } .who.s { background: rgba(204,153,102,.16); } .who.d { background: rgba(80,200,180,.20); }
-  .cmp-t td:first-child { font-family: var(--sans); }
 </style>
 </head>
 <body>
-<div id="fx-lights" aria-hidden="true">
-  <div class="fx-blob b1"></div>
-  <div class="fx-blob b2"></div>
-  <div class="fx-blob b3"></div>
-  <div class="fx-blob b4"></div>
-</div>
 <header>
-  <a class="brand" href="./" aria-label="Project Blue Bird">
-    <img src="logo-bluebird.png" alt="Project Blue Bird" width="82" height="68">
-  </a>
-  <div class="hdr-right">
-    <button type="button" class="sound-btn" id="soundBtn" aria-label="Enable signal sound" aria-pressed="false" title="Sound off">
-      <svg class="ico-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <path d="M11 5 6 9H3v6h3l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/>
-      </svg>
-      <svg class="ico-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <path d="M11 5 6 9H3v6h3l5 4V5z"/><path d="m22 9-6 6"/><path d="m16 9 6 6"/>
-      </svg>
-    </button>
-    <div class="state" id="state"><span class="dot"></span><span id="stateText">—</span></div>
-  </div>
+  <a class="brand" href="./" aria-label="Project Blue Bird"><img src="logo-bluebird.png" alt="Project Blue Bird" width="82" height="68"></a>
+  <div class="state" id="state"><span class="dot"></span><span id="stateText">—</span></div>
 </header>
 
-<main>
-  <section class="view" id="v-countdown">
-    <div class="eyebrow">Next signal in</div>
-    <div class="count" id="count">--:--</div>
-    <div class="sub" id="countAt"></div>
-    <div class="sub-meta" id="lastMeta"></div>
+<section class="hero">
+  <div class="eyebrow" id="countLabel">Next scan in</div>
+  <div class="count" id="count">--:--</div>
+  <div class="sub" id="countAt"></div>
+</section>
+
+<div class="wrap">
+  <div class="banner" id="banner">Loading…</div>
+
+  <section class="card" aria-label="Performance since reset">
+    <h2><span>Performance since reset</span><small id="perfUpd"></small></h2>
+    <div class="tw"><table id="perf"></table></div>
+    <div class="cards" id="perfCards"></div>
   </section>
 
-  <section class="view" id="v-analyzing">
-    <div class="eyebrow">Signal time</div>
-    <div class="analyzing">Reading The Market<i>.</i><i>.</i><i>.</i></div>
+  <section class="card" aria-label="Positions since reset">
+    <h2><span>Every position since reset</span><small id="posCount"></small></h2>
+    <div class="tw"><table id="pos"></table></div>
+    <div class="cards" id="posCards"></div>
+    <div class="note" id="posNote"></div>
   </section>
-
-  <section class="view" id="v-signal">
-    <div id="trades"></div>
-    <div class="quiet" id="sigQuiet"></div>
-  </section>
-
-  <section class="view" id="v-paused">
-    <div class="pausedBig">Paused</div>
-    <div class="sub" id="pausedLast"></div>
-  </section>
-</main>
-
-<section class="lucid" id="lucid" hidden aria-label="Lucid paper account">
-  <h2><span><span class="who g">Gemini</span>Lucid paper account</span><small id="luUpd"></small></h2>
-  <div class="lu-banner" id="luExitBanner" hidden></div>
-  <div class="lu-grid" id="luGrid"></div>
-  <h3>Open positions</h3>
-  <div class="lu-wrap" id="luPos"></div>
-  <h3>Recent trades since reset</h3>
-  <div class="lu-wrap" id="luTrades"></div>
-  <h3>Stop vs no-stop · same entries</h3>
-  <div class="lu-wrap" id="luCmp"></div>
-  <div class="lu-note" id="luNote"></div>
-</section>
-
-<section class="lucid" id="bracket" hidden aria-label="Bracket shadow book">
-  <h2><span><span class="who g">Gemini</span>Bracket shadow · conf ≥ 0.75 · 1 ATR / 1 ATR</span><small id="brUpd"></small></h2>
-  <div class="lu-grid" id="brGrid"></div>
-  <h3>Open positions</h3>
-  <div class="lu-wrap" id="brPos"></div>
-  <h3>Recent trades</h3>
-  <div class="lu-wrap" id="brTrades"></div>
-  <div class="lu-note" id="brNote"></div>
-</section>
-
-<section class="lucid" id="carbon" hidden aria-label="Gemini 4 Carbon side books">
-  <h2><span><span class="who g">Carbon</span>gemini-4-carbon side books · CB-BRACKET / CB-RUNNER</span><small id="cbUpd"></small></h2>
-  <div class="lu-grid" id="cbSpend"></div>
-  <div class="lu-note" id="cbCall"></div>
-  <div id="cbBooks"></div>
-  <h3>What-if <small>1 unit · 1 ATR stop / 1 ATR first-touch target · both exit styles</small></h3>
-  <div class="lu-note" id="cbWhatifNote"></div>
-  <div class="lu-grid" id="cbWhatifSum"></div>
-  <div class="lu-wrap" id="cbWhatif"></div>
-  <div class="lu-note" id="cbNote"></div>
-</section>
-
-<section class="lucid" id="deepseek" hidden aria-label="DeepSeek DS-FLASH paper book">
-  <h2><span><span class="who d">DeepSeek</span>DS-FLASH · bracket-v1 · M15+20s · effort low</span><small id="dsUpd"></small></h2>
-  <div class="lu-grid" id="dsGrid"></div>
-  <div class="lu-note" id="dsCall"></div>
-  <h3>Open positions</h3>
-  <div class="lu-wrap" id="dsPos"></div>
-  <h3>Recent trades</h3>
-  <div class="lu-wrap" id="dsTrades"></div>
-  <div class="lu-note" id="dsNote"></div>
-</section>
-
-<section class="lucid" id="opusb" hidden aria-label="C-OPUS-B paper book">
-  <h2><span><span class="who o">Claude</span>C-OPUS-B · bracket-v1 · M15+20s · effort high</span><small id="obUpd"></small></h2>
-  <div class="lu-grid" id="obGrid"></div>
-  <div class="lu-note" id="obCall"></div>
-  <h3>Open positions</h3>
-  <div class="lu-wrap" id="obPos"></div>
-  <h3>Recent trades</h3>
-  <div class="lu-wrap" id="obTrades"></div>
-  <div class="lu-note" id="obNote"></div>
-</section>
-
-<section class="lucid" id="cmp" hidden aria-label="Gemini vs Claude comparison">
-  <h2><span>Gemini vs Claude vs Carbon vs DeepSeek vs C-OPUS-B</span><small id="cmpUpd"></small></h2>
-  <div class="lu-wrap" id="cmpT"></div>
-  <div class="lu-note">Paper sims only. R per signal = average R of every BUY/SELL signal played 1 contract under the
-    uniform 1 ATR / 1 ATR / 90-min bracket (see Signal scorer).</div>
-</section>
-<section class="lucid" id="scores" hidden aria-label="Universal signal scorer">
-  <h2><span>Signal scorer</span> · every model · 1 ATR / 1 ATR / 90-min + coin-flip twin + MFE/MAE 2–4h <small id="scUpd"></small></h2>
-  <div class="lu-note" id="scNote"></div>
-  <div class="lu-wrap" id="scT"></div>
-</section>
-<div id="clSims"></div>
+</div>
 
 <script>
 (() => {
-  const SIGNAL_VISIBLE_MS = 18000;
-  const POLL_MS = 3000;
-  const ANALYZE_MAX_S = 45;      // Cap "Reading The Market" at 45s max instead of 4.5 mins
-  const OFFLINE_AFTER_S = 1800;  // GitHub cron runs every 5 min and can lag; 30 min without a heartbeat = offline
-  let status = null, sig = null, seenKey = null, showUntil = 0, lastSigTs = 0;
-  const previewForce = new URLSearchParams(location.search).get('preview');
   const $ = id => document.getElementById(id);
-  const SOUND_KEY = 'bb_sound';
-  let soundOn = localStorage.getItem(SOUND_KEY) === '1';
-  let audioCtx = null, lastChimeKey = null, popArmed = false;
-
-  function syncSoundBtn() {
-    const btn = $('soundBtn');
-    if (!btn) return;
-    btn.classList.toggle('on', soundOn);
-    btn.setAttribute('aria-pressed', soundOn ? 'true' : 'false');
-    btn.setAttribute('aria-label', soundOn ? 'Mute signal sound' : 'Enable signal sound');
-    btn.title = soundOn ? 'Sound on' : 'Sound off';
-  }
-  function ensureAudio() {
-    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    if (audioCtx.state === 'suspended') audioCtx.resume();
-    return audioCtx;
-  }
-  function playChime() {
-    if (!soundOn) return;
-    try {
-      const ctx = ensureAudio();
-      const now = ctx.currentTime;
-      const notes = [[1046.5, 0.0, 0.42], [1318.5, 0.08, 0.36]];
-      const chimeLen = 0.55, gap = 0.20, reps = 4;
-      for (let r = 0; r < reps; r++) {
-        const t0 = now + r * (chimeLen + gap);
-        const master = ctx.createGain();
-        master.gain.setValueAtTime(0.0001, t0);
-        master.gain.exponentialRampToValueAtTime(0.22, t0 + 0.02);
-        master.gain.exponentialRampToValueAtTime(0.0001, t0 + chimeLen);
-        master.connect(ctx.destination);
-        notes.forEach(([freq, delay, dur]) => {
-          const o = ctx.createOscillator();
-          const g = ctx.createGain();
-          o.type = 'sine';
-          o.frequency.setValueAtTime(freq, t0 + delay);
-          g.gain.setValueAtTime(0.0001, t0 + delay);
-          g.gain.exponentialRampToValueAtTime(0.9, t0 + delay + 0.015);
-          g.gain.exponentialRampToValueAtTime(0.0001, t0 + delay + dur);
-          o.connect(g); g.connect(master);
-          o.start(t0 + delay); o.stop(t0 + delay + dur + 0.02);
-        });
-      }
-    } catch (e) {}
-  }
-  $('soundBtn').addEventListener('click', () => {
-    soundOn = !soundOn;
-    localStorage.setItem(SOUND_KEY, soundOn ? '1' : '0');
-    syncSoundBtn();
-    if (soundOn) { ensureAudio(); playChime(); }
-  });
-  syncSoundBtn();
-
-  function setFx(active, fadingOut) {
-    document.body.classList.toggle('fx-on', !!active && !fadingOut);
-    document.body.classList.toggle('fx-out', !!fadingOut);
-    $('v-signal').classList.toggle('fx-trade', !!active || !!fadingOut);
-  }
+  const TZ = 'Asia/Dubai', TZL = 'Dubai';
+  const OFFLINE_AFTER_S = 1800;
+  let status = null, panel = null;
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const usd = (v, sign = true) => v == null ? '—' : (sign && v > 0 ? '+' : (v < 0 ? '−' : '')) + '$' +
+    Math.abs(Number(v)).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const bal = v => v == null ? '—' : '$' + Number(v).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const cls = v => v > 0 ? 'pos' : (v < 0 ? 'neg' : '');
+  const fmt = (iso, opt) => { const d = new Date(iso); return isNaN(d) ? '—' : d.toLocaleString('en-GB', { timeZone: TZ, hour12: false, ...opt }); };
+  const hm = iso => fmt(iso, { hour: '2-digit', minute: '2-digit' });
+  const dhm = iso => fmt(iso, { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
+  const dhms = iso => fmt(iso, { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  const mmss = s => { s = Math.max(0, Math.ceil(s)); return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0'); };
+  const px = v => v == null ? '—' : Number(v).toLocaleString('en-US', { maximumFractionDigits: 5 });
+  const qty = v => v == null ? '—' : (Number(v) % 1 ? Number(v).toFixed(3) : String(v));
 
   async function getJSON(path) {
-    try {
-      const r = await fetch(path + '?t=' + Date.now(), { cache: 'no-store' });
-      return r.ok ? await r.json() : null;
-    } catch { return null; }
+    try { const r = await fetch(path + '?t=' + Date.now(), { cache: 'no-store' }); return r.ok ? await r.json() : null; }
+    catch { return null; }
   }
-  async function poll() {
-    const [s, l] = await Promise.all([getJSON('status.json'), getJSON('latest_signal.json')]);
-    // GitHub's CDN can hand back an older copy of a file; never let state go backwards.
-    if (s && !(status && Date.parse(s.updated_at) < Date.parse(status.updated_at))) status = s;
-    if (l) onSignal(l);
-    render();
-  }
-  function onSignal(l) {
-    const key = l.signal_at + '|' + (l.written_at || '');
-    if (key === seenKey) return;
-    const ts = Date.parse(l.written_at || l.signal_at);
-    if (!isNaN(ts) && ts <= lastSigTs) return;           // older copy than what we already have: ignore
-    if (!isNaN(ts)) lastSigTs = ts;
-    const first = seenKey === null;
-    seenKey = key; sig = l;
-    // Only pop/chime for the scan that belongs to the current cycle; anything that arrives late updates quietly.
-    const stepMs = ((status && status.interval_minutes) || 5) * 60000;
-    const sigAge = Date.now() - Date.parse(l.signal_at);
-    const current = !isNaN(sigAge) && sigAge < Math.min(stepMs, 90000);
-    if (first) {
-      const age = Date.now() - ts; // NaN -> no replay
-      showUntil = age >= 0 && age < SIGNAL_VISIBLE_MS ? Date.now() + (SIGNAL_VISIBLE_MS - age) : 0;
-    } else {
-      showUntil = current ? Date.now() + SIGNAL_VISIBLE_MS : 0;
-    }
-    const n = l.trades ? l.trades.length : 0;
-    const inp = l.in_position || [];
-    const nCards = n + inp.length;
-    if (nCards) {
-      $('trades').innerHTML = (n ? tradesHTML(l) : '') + inPosHTML(inp);
-    } else {
-      $('trades').innerHTML = '<div class="notrade">No trade</div>';
-    }
-    $('trades').className = 'n' + nCards + (nCards > 1 ? ' multi' : '');
-    const quiet = [];
-    if (l.no_trade && l.no_trade.length) quiet.push('No trade · ' + l.no_trade.join(', '));
-    if (inp.length) quiet.push('In position · ' + inp.join(', '));
-    $('sigQuiet').textContent = quiet.join('   ');
-    if (n && !first && current) {
-      popArmed = true;
-      if (key !== lastChimeKey) { lastChimeKey = key; playChime(); }
-    } else if (n && first && showUntil > Date.now()) {
-      popArmed = true;
-    }
-  }
+  const newer = (a, b) => !b || !(Date.parse(a.updated_at) < Date.parse(b.updated_at));
 
-  const tz = () => (sig && sig.tz) || (status && status.tz) || undefined;
-  const city = () => (tz() || '').split('/').pop().replace(/_/g, ' ');
-  const fmt = (iso, o) => { const d = new Date(iso); if (isNaN(d)) return '—';
-    try { return new Intl.DateTimeFormat('en-GB', { timeZone: tz(), ...o }).format(d); } catch { return '—'; } };
-  const hm = iso => fmt(iso, { hour: '2-digit', minute: '2-digit' });
-  const dayhm = iso => fmt(iso, { weekday: 'short', hour: '2-digit', minute: '2-digit' });
-  const mmss = s => { s = Math.max(0, Math.ceil(s)); const m = Math.floor(s / 60); return String(m).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0'); };
-  const fmtHeld = s => {
-    s = Math.max(0, Math.round(Number(s)));
-    if (!Number.isFinite(s)) return '—';
-    const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), sec = s % 60;
-    if (h) return h + 'h ' + String(m).padStart(2, '0') + 'm';
-    if (m) return m + 'm ' + String(sec).padStart(2, '0') + 's';
-    return sec + 's';
-  };
-  const heldOf = t => {
-    if (t.held) return t.held;
-    if (t.hold_seconds != null && t.hold_seconds !== '') return fmtHeld(t.hold_seconds);
-    const a = Date.parse(t.entry_time), b = Date.parse(t.t_exit);
-    if (Number.isFinite(a) && Number.isFinite(b)) return fmtHeld((b - a) / 1000);
-    return '—';
-  };
-  const heldSince = iso => {
-    const a = Date.parse(iso);
-    if (!Number.isFinite(a)) return '—';
-    return fmtHeld((Date.now() - a) / 1000);
-  };
-  const tickOpenHeld = () => {
-    document.querySelectorAll('#luPos [data-entry-time], #brPos [data-entry-time], #clSims [data-entry-time]').forEach(el => {
-      el.textContent = heldSince(el.getAttribute('data-entry-time'));
-    });
-  };
-  const px = (v, d) => v == null ? '—' : Number(v).toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d });
-
+  // ---- countdown (status.json) ----
   function schedule(now) {
-    const step = (status.interval_minutes || 5) * 60000, off = (status.align_offset_seconds || 0) * 1000;
+    const step = (status.interval_minutes || 2) * 60000, off = (status.align_offset_seconds || 0) * 1000;
     const prev = Math.floor((now - off) / step) * step + off;
     return { prev, next: prev + step };
   }
-  function signalForCycle(prev) { return sig && Date.parse(sig.signal_at) >= prev - 10000; }
-  function cycleFinished(prev) {
-    if (!status || !status.last_cycle_finished_at) return false;
-    return Date.parse(status.last_cycle_finished_at) >= prev;
-  }
-
-  function mode() {
+  function renderClock() {
     const now = Date.now();
-    if (!status || status.state === 'paused' || status.state === 'stopped') return 'paused';
-    const upd = Date.parse(status.updated_at);
-    if (isNaN(upd) || now - upd > OFFLINE_AFTER_S * 1000) return 'offline';
-    const { prev } = schedule(now);
-    if (status.state === 'analyzing') return 'analyzing';
-    // Only show "Reading The Market" if the current cycle hasn't finished yet AND we are within 45s of the boundary
-    if (now - prev < ANALYZE_MAX_S * 1000 && !signalForCycle(prev) && !cycleFinished(prev)) {
-      return 'analyzing';
+    let m = 'live';
+    if (!status || status.state === 'paused' || status.state === 'stopped') m = 'paused';
+    else if (isNaN(Date.parse(status.updated_at)) || now - Date.parse(status.updated_at) > OFFLINE_AFTER_S * 1000) m = 'offline';
+    $('state').className = 'state ' + (m === 'live' ? 'live' : 'paused');
+    $('stateText').textContent = m === 'live' ? 'Live' : (m === 'offline' ? 'Offline' : 'Paused');
+    if (m !== 'live') { $('count').textContent = m === 'offline' ? 'OFFLINE' : 'PAUSED'; $('countAt').textContent = ''; return; }
+    const nxt = schedule(now).next;
+    $('count').textContent = mmss((nxt - now) / 1000);
+    $('countAt').textContent = `at ${hm(new Date(nxt).toISOString())} ${TZL}`;
+  }
+
+  // ---- panel.json ----
+  const MODEL_NAME = { 'gemini-3.8-flash': 'Gemini 3.8 Flash', 'gemini-4-carbon': 'Gemini 4 Carbon',
+    'claude-opus-5-5': 'Claude Opus', 'claude-sonnet-5-5': 'Claude Sonnet', 'deepseek-flash': 'DeepSeek Flash' };
+  function renderPanel() {
+    const P = panel; if (!P) return;
+    const r = P.reset || {};
+    $('banner').innerHTML = `Paper only · all accounts reset to <b>$100,000</b> at <b>${esc(dhms(r.at))} ${TZL}</b>` +
+      ` (token <b>${esc(r.token || '—')}</b>) · ${esc(P.exit_rule || '')}`;
+    $('perfUpd').textContent = `updated ${hm(P.updated_at)} ${TZL}`;
+    // performance: grouped by model, one Lucid line + one Other-venue line per book
+    let h = `<tr><th class="l">Book</th><th class="l">Venue</th><th>Balance</th><th>Net P&amp;L</th><th>Open P&amp;L</th>
+      <th>Trades</th><th>W / L</th><th>Win rate</th><th>Open</th></tr>`;
+    let lastModel = null;
+    for (const p of P.performance || []) {
+      if (p.model !== lastModel) { lastModel = p.model; h += `<tr class="model"><td class="l" colspan="9">${esc(MODEL_NAME[p.model] || p.model)}</td></tr>`; }
+      const ov = p.venue !== 'LUCID';
+      h += `<tr class="${ov ? 'ov' : ''}"><td class="l book">${ov ? '↳ ' : ''}${esc(p.book)}</td>
+        <td class="l">${ov ? 'Other venue (BTC)' : 'Lucid'}</td>
+        <td>${bal(p.balance)}</td><td class="${cls(p.net_pnl_usd)}">${usd(p.net_pnl_usd)}</td>
+        <td class="${cls(p.open_pnl_usd)}">${p.open_positions ? usd(p.open_pnl_usd) : '—'}</td>
+        <td>${p.trades}</td><td>${p.wins} / ${p.losses}</td>
+        <td>${p.win_rate == null ? '—' : (100 * p.win_rate).toFixed(0) + '%'}</td><td>${p.open_positions}</td></tr>`;
     }
-    return 'waiting';
-  }
-
-  function show(id) {
-    for (const v of ['v-countdown', 'v-analyzing', 'v-signal', 'v-paused']) {
-      const el = $(v), on = v === id;
-      if (on && !el.classList.contains('on')) el.classList.remove('out');
-      el.classList.toggle('on', on);
+    $('perf').innerHTML = h;
+    const kv = (k, v, c = '') => `<div><div class="mc-k">${k}</div><div class="mc-v ${c}">${v}</div></div>`;
+    let pc = '', lm = null;
+    const perfs = P.performance || [];
+    for (const p of perfs.filter(q => q.venue === 'LUCID')) {
+      if (p.model !== lm) { lm = p.model; pc += `<div class="mg">${esc(MODEL_NAME[p.model] || p.model)}</div>`; }
+      const o = perfs.find(q => q.book === p.book && q.venue !== 'LUCID');
+      pc += `<div class="mc"><div class="mc-h"><span class="mc-t">${esc(p.book)}</span>
+        <span class="mc-s">${p.open_positions} open</span></div>
+        <div class="mc-s">${esc(p.label || '')}</div>
+        <div class="mc-g">${kv('Balance', bal(p.balance))}${kv('Net P&amp;L', usd(p.net_pnl_usd), cls(p.net_pnl_usd))}
+        ${kv('Open P&amp;L', p.open_positions ? usd(p.open_pnl_usd) : '—', cls(p.open_pnl_usd))}
+        ${kv('Trades', p.trades)}${kv('W / L', p.wins + ' / ' + p.losses)}
+        ${kv('Win rate', p.win_rate == null ? '—' : (100 * p.win_rate).toFixed(0) + '%')}</div>
+        ${o ? `<div class="mc-s" style="margin-top:8px">Other venue (BTC): ${bal(o.balance)} · net <span class="${cls(o.net_pnl_usd)}">${usd(o.net_pnl_usd)}</span>
+          · ${o.trades} trades (${o.wins}/${o.losses})${o.open_positions ? ` · ${o.open_positions} open <span class="${cls(o.open_pnl_usd)}">${usd(o.open_pnl_usd)}</span>` : ''}</div>` : ''}</div>`;
     }
-  }
-
-  function inPosHTML(syms) {
-    return (syms || []).map(s => `
-      <div class="trade inpos">
-        <div class="sym">${s}</div>
-        <div class="act INPOS">IN POSITION</div>
-      </div>`).join('');
-  }
-  function tradesHTML(l) {
-    return l.trades.map(t => `
-      <div class="trade">
-        <div class="sym">${t.symbol}${t.name ? ` <em>· ${t.name}</em>` : ''}</div>
-        <div class="act ${t.action}">${t.action}</div>
-        <div class="levels">
-          <div class="row"><span>Entry</span><b>${px(t.entry, t.digits)}</b></div>
-          <div class="row stop"><span>Stop</span><b>${t.stop_loss == null && t.exit ? 'none' : px(t.stop_loss, t.digits)}</b></div>
-          ${t.exit ? (t.card ? `<div class="row target"><span>Target</span><b>none</b></div>` : '') + `<div class="row target"><span>Exit</span><b>${t.exit}</b></div>`
-                   : `<div class="row target"><span>Target</span><b>${px(t.take_profit, t.digits)}</b></div>`}
-        </div>
-        <div class="rr">${t.card ? t.card : t.exit ? (lucid && lucid.gemini_exit_calls_enabled === false ? 'Mechanical exits (Gemini CLOSE paused)' : 'Hard stop · exit on Gemini CLOSE') : `R:R 1 : ${t.rr != null ? Number(t.rr).toFixed(2) : '—'}`}</div>
-      </div>`).join('');
-  }
-
-  function render() {
-    const m = mode(), live = m === 'waiting' || m === 'analyzing', now = Date.now();
-    $('state').className = 'state ' + (live ? 'live' : 'paused');
-    $('stateText').textContent = live ? 'Live' : (m === 'offline' ? 'Offline' : 'Paused');
-    let view;
-    if (!live) {
-      view = 'v-paused';
-      $('pausedLast').textContent = sig ? `Last signal · ${dayhm(sig.signal_at)} ${city()}` : '';
-      document.querySelector('#v-paused .pausedBig').textContent = m === 'offline' ? 'Offline' : 'Paused';
-    } else if (now < showUntil) {
-      view = 'v-signal';
-      $('v-signal').classList.toggle('out', showUntil - now < 600);
-    } else if (m === 'analyzing') {
-      view = 'v-analyzing';
+    $('perfCards').innerHTML = pc;
+    // positions
+    const rows = P.positions || [];
+    $('posCount').textContent = `${rows.length} position${rows.length === 1 ? '' : 's'} · ${rows.filter(x => x.status === 'OPEN').length} open`;
+    if (!rows.length) {
+      $('pos').innerHTML = `<tr><td class="empty l">No positions since the reset yet.</td></tr>`;
+      $('posCards').innerHTML = `<div class="empty">No positions since the reset yet.</div>`;
     } else {
-      view = 'v-countdown';
-      const nxt = schedule(now).next;
-      $('count').textContent = mmss((nxt - now) / 1000);
-      $('countAt').textContent = `at ${hm(new Date(nxt).toISOString())} ${city()}`;
-      if (sig && sig.analysis_failed) {
-        $('lastMeta').className = 'sub-meta warn';
-        $('lastMeta').textContent = `Last scan failed (${dayhm(sig.signal_at)}): ${sig.error || 'analysis_failed'}`;
-      } else if (status && status.last_cycle_finished_at) {
-        $('lastMeta').className = 'sub-meta';
-        $('lastMeta').textContent = `Last scan completed · ${hm(status.last_cycle_finished_at)} ${city()} (No trade)`;
+      let t = `<tr><th class="l">Book</th><th class="l">Model</th><th class="l">Symbol</th><th class="l">Side</th><th>Size</th>
+        <th class="l">Entry (${TZL})</th><th>Entry px</th><th>Max $ P&amp;L</th><th>Lowest $ P&amp;L</th><th class="l">Status</th>
+        <th>Now / exit px</th><th>P&amp;L at close</th></tr>`;
+      for (const x of rows) {
+        const st = x.status || 'OPEN', k = st === 'OPEN' ? 'OPEN' : st.replace('CLOSED-', '');
+        const label = st === 'OPEN' ? 'OPEN' : st;
+        const book = x.venue === 'LUCID' ? x.book : `${x.book} · other venue`;
+        t += `<tr><td class="l book">${esc(book)}</td><td class="l dim">${esc(MODEL_NAME[x.model] || x.model || '')}</td>
+          <td class="l">${esc(x.symbol)}${x.contract ? ` <span class="dim">${esc(x.contract)}</span>` : ''}</td>
+          <td class="l side ${esc(x.side)}">${esc(x.side)}</td><td>${qty(x.qty)}</td>
+          <td class="l">${esc(dhm(x.entry_time))}</td><td>${px(x.entry)}</td>
+          <td class="${cls(x.max_pnl_usd)}">${usd(x.max_pnl_usd)}</td><td class="${cls(x.min_pnl_usd)}">${usd(x.min_pnl_usd)}</td>
+          <td class="l"><span class="st ${esc(k)}">${esc(label)}</span>${st === 'OPEN' && x.last_pnl_usd != null ? ` <span class="${cls(x.last_pnl_usd)}">${usd(x.last_pnl_usd)}</span>` : ''}</td>
+          <td>${st === 'OPEN' ? px(x.last_price) : px(x.exit)}</td>
+          <td class="${cls(x.net_at_close_usd)}">${st === 'OPEN' ? '—' : usd(x.net_at_close_usd)}</td></tr>`;
       }
-    }
-    if (previewForce === 'countdown') view = 'v-countdown';
-    else if (previewForce === 'signal') view = 'v-signal';
-    else if (previewForce === 'analyzing') view = 'v-analyzing';
-    else if (previewForce === 'paused') view = 'v-paused';
-    show(view);
-    const n = sig && sig.trades ? sig.trades.length : 0;
-    document.querySelector('main').classList.toggle('wide', view === 'v-signal' && n > 1);
-
-    const tradeSignal = view === 'v-signal' && n > 0;
-    const fading = tradeSignal && $('v-signal').classList.contains('out');
-    setFx(tradeSignal, fading);
-    const vs = $('v-signal');
-    if (tradeSignal && popArmed) {
-      vs.classList.remove('pop');
-      void vs.offsetWidth;
-      vs.classList.add('pop');
-      popArmed = false;
-    }
-    if (view !== 'v-signal') vs.classList.remove('pop');
-  }
-
-  // ---- Lucid paper account (lucid.json, written each cycle; paper trading only) ----
-  let lucid = null, bracket = null, carbon = null, deepseek = null, opusb = null, otherVenue = null;
-  const usd = (v, sign) => v == null ? '—' : (sign && v > 0 ? '+' : (v < 0 ? '−' : '')) + '$' +
-    Math.abs(Number(v)).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  const cls = v => v > 0 ? 'pos' : (v < 0 ? 'neg' : '');
-  const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-  function renderLucid() {
-    const L = lucid; if (!L || !L.account) return;
-    const a = L.account;
-    const cell = (k, v, c) => `<div><div class="lu-k">${k}</div><div class="lu-v ${c || ''}">${v}</div></div>`;
-    const ban = $('luExitBanner');
-    if (ban) {
-      const note = L.exit_calls_note || (status && status.exit_calls_note) || '';
-      if (L.uniform_1atr_exits || L.gemini_exit_calls_enabled === false || note) {
-        const ru = L.exit_rules || {};
-        const bits = Object.keys(ru).filter(k => ru[k]).map(k => `${k}: ${ru[k]}`);
-        ban.hidden = false;
-        ban.innerHTML = `<b>${esc(note || 'All books: 1 ATR / 1 ATR bracket, no model exits')}</b>` +
-          (bits.length ? `<small>${bits.map(esc).join(' · ')}</small>` : '');
-      } else {
-        ban.hidden = true;
-        ban.innerHTML = '';
-      }
-    }
-    $('luGrid').innerHTML = [
-      cell('Balance', usd(a.balance)), cell('Equity', usd(a.equity)),
-      cell('Realized P&amp;L', usd(a.realized_pnl_since_reset, true), cls(a.realized_pnl_since_reset)),
-      cell('Open P&L', usd(a.open_pnl, true), cls(a.open_pnl)),
-      cell('Trades', `${a.trades_since_reset}${a.trades_since_reset ? ` <small>(${a.wins}W/${a.losses}L)</small>` : ''}`),
-      cell('MLL floor', usd(a.mll_floor)), cell('Room to MLL', usd(a.mll_room), a.mll_room < 1000 ? 'neg' : ''),
-      cell('Hard stop', L.hard_stop_net_usd ? `−$${Number(L.hard_stop_net_usd).toLocaleString('en-US')} <small>net</small>` : 'none'),
-    ].join('');
-    const P = L.open_positions || [];
-    $('luPos').innerHTML = P.length ? `<table class="lu-t"><tr><th>Symbol</th><th>Size</th><th>Side</th><th>Opened</th><th>Held</th><th>Entry</th>
-      <th>Stop</th><th>Exit</th><th>Open P&amp;L</th></tr>${P.map(p => `<tr><td>${esc(p.symbol)}</td>
-      <td>${p.qty} ${esc(p.contract)}</td><td>${esc(p.side)}</td><td>${dayhm(p.entry_time)}</td>
-      <td data-entry-time="${esc(p.entry_time)}">${esc(heldSince(p.entry_time))}</td>
-      <td>${px(p.entry, 2)}</td><td>${p.stop != null ? px(p.stop, 2) : p.hard_stop_px != null ? `${px(p.hard_stop_px, 2)} <small>(−$${Number(L.hard_stop_net_usd || 500).toLocaleString('en-US')})</small>` : 'none'}</td>
-      <td>${p.target != null ? px(p.target, 2) : (L.gemini_exit_calls_enabled === false ? '—' : 'Gemini')}</td><td class="${cls(p.unrealized)}">${usd(p.unrealized, true)}</td></tr>`).join('')}</table>`
-      : `<div class="lu-note">None${L.pending ? ` · ${L.pending} pending entry` : ''}</div>`;
-    const T = L.recent_trades || [];
-    $('luTrades').innerHTML = T.length ? `<table class="lu-t"><tr><th>Closed</th><th>Opened</th><th>Symbol</th><th>Size</th><th>Side</th>
-      <th>Held</th><th>Exit</th><th>Net</th></tr>${T.map(t => `<tr><td>${dayhm(t.t_exit)}</td><td>${dayhm(t.entry_time)}</td><td>${esc(t.symbol)}</td>
-      <td>${t.qty} ${esc(t.contract)}</td><td>${esc(t.side)}</td><td>${esc(heldOf(t))}</td><td>${t.stopped ? '<b class="neg">STOPPED</b> ' : ''}${esc(t.reason)}</td>
-      <td class="${cls(t.net)}">${usd(t.net, true)}</td></tr>`).join('')}</table>`
-      : '<div class="lu-note">No closed trades since the reset yet.</div>';
-    const C = (L.comparison || []).slice();
-    if (bracket && bracket.account) {
-      const ba = bracket.account;
-      C.push({ label: bracket.label || 'Bracket shadow (conf>=0.75, 1 ATR / 1 ATR)', stop_txt: '1 ATR · tgt 1 ATR',
-               balance: ba.balance, net_pnl: ba.net_pnl, open_pnl: ba.open_pnl, trades: ba.trades, wins: ba.wins,
-               losses: ba.losses, stopped: ba.stopped, open_positions: ba.open_positions });
-    }
-    for (const K of (carbon && carbon.books) || []) {
-      const ka = K.account || {};
-      C.push({ label: K.label || K.book, stop_txt: K.book === 'CB-RUNNER' ? '1 ATR · lock/trail · tgt 2.5 ATR' : '1 ATR · tgt 1 ATR',
-               balance: ka.balance, net_pnl: ka.net_pnl, open_pnl: ka.open_pnl, trades: ka.trades, wins: ka.wins,
-               losses: ka.losses, stopped: ka.stopped, open_positions: ka.open_positions });
-    }
-    if (deepseek && deepseek.account) {
-      const da = deepseek.account;
-      C.push({ label: deepseek.label || 'DS-FLASH (deepseek-flash, bracket-v1)',
-               stop_txt: deepseek.stop_txt || '1 ATR stop · 1 ATR target · 90 min',
-               balance: da.balance, net_pnl: da.net_pnl ?? da.realized_pnl_since_reset,
-               open_pnl: da.open_pnl, trades: da.trades ?? da.trades_since_reset, wins: da.wins,
-               losses: da.losses, stopped: da.stopped, open_positions: (deepseek.open_positions || []).length });
-    }
-    if (opusb && opusb.account) {
-      const oa = opusb.account;
-      C.push({ label: opusb.label || 'C-OPUS-B (claude-opus-5-5, bracket-v1, effort high)',
-               stop_txt: opusb.stop_txt || '1 ATR stop · 1 ATR target · 90 min',
-               balance: oa.balance, net_pnl: oa.net_pnl ?? oa.realized_pnl_since_reset,
-               open_pnl: oa.open_pnl, trades: oa.trades ?? oa.trades_since_reset, wins: oa.wins,
-               losses: oa.losses, stopped: oa.stopped, open_positions: (opusb.open_positions || []).length });
-    }
-    const ovNames = ['MAIN','1-strike','nostop','bracket','CB-BRACKET','CB-RUNNER','C-OPUS','C-SONNET','C-OPUS-B','DS-FLASH'];
-    for (const name of ovNames) {
-      const o = ovRow(name, name === 'MAIN' ? 'Gemini' : name, /OPUS/.test(name) ? 'o' : (name === 'DS-FLASH' ? 'd' : 'g'));
-      if (o) C.push(o);
-    }
-    $('luCmp').innerHTML = C.length ? `<table class="lu-t"><tr><th>Book</th><th>Stop</th><th>Balance</th><th>Net P&amp;L</th>
-      <th>Open P&amp;L</th><th>Trades</th><th>Stopped</th><th>Open</th></tr>${C.map(c => `<tr><td>${esc(c.label || c.book)}</td>
-      <td>${c.stop_txt ? esc(c.stop_txt) : c.hard_stop_net_usd ? '−$' + Number(c.hard_stop_net_usd).toLocaleString('en-US') : 'none'}</td><td>${usd(c.balance)}</td>
-      <td class="${cls(c.net_pnl)}">${usd(c.net_pnl, true)}</td><td class="${cls(c.open_pnl)}">${usd(c.open_pnl, true)}</td>
-      <td>${c.trades}${c.trades ? ` <small>(${c.wins}W/${c.losses}L)</small>` : ''}</td><td>${c.stopped || 0}</td>
-      <td>${c.open_positions || 0}</td></tr>`).join('')}</table>`
-      : '<div class="lu-note">No comparison yet.</div>';
-    const B = L.breaches || [];
-    const brk = B.length ? ` · BREACHES (log-only): ` + B.map(b => `${b.kind} ${dayhm(b.t)} eq ${usd(b.equity)} vs ${usd(b.level)}`).join('; ') : '';
-    const r = L.reset || {};
-    $('luUpd').textContent = L.updated_at ? `updated ${hm(L.updated_at)} ${city()}` : '';
-    $('luNote').textContent = `Paper trading only · ${L.card ? L.card + ' · ' : ''}${L.sizing_rule || ''}${brk}` +
-      (r.at ? ` · fresh $${Number(a.start_balance).toLocaleString('en-US')} account since ${dayhm(r.at)} ${city()}` +
-       (r.reason ? ` (${r.reason})` : '') : '');
-    $('lucid').hidden = false;
-    renderCmp();
-  }
-
-  // ---- Claude paper sims (claude.json; paper trading only, separate $100k accounts) ----
-  let claude = null;
-  const rr = v => v == null ? '—' : (v > 0 ? '+' : (v < 0 ? '−' : '')) + Math.abs(Number(v)).toFixed(2) + 'R';
-  const whoCls = id => /OPUS/.test(id) ? 'o' : 's';
-
-  function ovBook(name) {
-    if (!otherVenue || !otherVenue.books) return null;
-    return otherVenue.books.find(b => b.book === name) || null;
-  }
-  function ovRow(book, who, c) {
-    const b = ovBook(book); if (!b) return null;
-    const a = b.account || {};
-    return { who: (who || book) + ' · Other venue', c: c || 'g',
-             bal: a.balance, net: a.net_pnl ?? a.realized_pnl, w: a.wins, l: a.losses,
-             rps: null, n: a.trades, ov: true,
-             balance: a.balance, net_pnl: a.net_pnl ?? a.realized_pnl, open_pnl: a.open_pnl,
-             trades: a.trades, wins: a.wins, losses: a.losses, stopped: a.stopped,
-             open_positions: (b.open_positions || []).length,
-             label: (who || book) + ' · Other venue',
-             stop_txt: 'Other venue · 1 ATR / 1 ATR · $900/ATR · 0.05%/side' };
-  }
-
-  function renderCmp() {
-    const rows = [];
-    if (lucid && lucid.account) {
-      const a = lucid.account;
-      rows.push({ who: 'Gemini', c: 'g', bal: a.balance, net: a.realized_pnl_since_reset, w: a.wins, l: a.losses, rps: null, n: a.trades_since_reset });
-      const o = ovRow('MAIN', 'Gemini', 'g'); if (o) rows.push(o);
-    }
-    for (const S of (claude && claude.sims) || []) {
-      const a = S.account || {}, wi = (S.books || {}).whatif || {};
-      rows.push({ who: S.label, c: whoCls(S.id), bal: a.balance, net: a.realized_pnl, w: a.wins, l: a.losses,
-                  rps: wi.r_avg, n: a.trades, sig: wi.n, wait: !claude.key_present });
-      const o = ovRow(S.id || S.book, S.label || S.id, whoCls(S.id)); if (o) rows.push(o);
-    }
-    for (const K of (carbon && carbon.books) || []) {
-      const ka = K.account || {}, wi = (((carbon.whatif || {})[K.book]) || {})['all'] || {};
-      rows.push({ who: K.book, c: 'g', bal: ka.balance, net: ka.net_pnl, w: ka.wins, l: ka.losses, rps: wi.r_avg, n: ka.trades, sig: wi.n, carbon: true });
-      const o = ovRow(K.book, K.book, 'g'); if (o) rows.push(o);
-    }
-    if (deepseek && deepseek.account) {
-      const da = deepseek.account;
-      rows.push({ who: deepseek.book || 'DS-FLASH', c: 'd', bal: da.balance,
-                  net: da.net_pnl ?? da.realized_pnl_since_reset, w: da.wins, l: da.losses, rps: null,
-                  n: da.trades ?? da.trades_since_reset, wait: deepseek.key_present === false, ds: true });
-      const o = ovRow('DS-FLASH', deepseek.book || 'DS-FLASH', 'd'); if (o) rows.push(o);
-    }
-    if (opusb && opusb.account) {
-      const oa = opusb.account;
-      rows.push({ who: opusb.book || 'C-OPUS-B', c: 'o', bal: oa.balance,
-                  net: oa.net_pnl ?? oa.realized_pnl_since_reset, w: oa.wins, l: oa.losses, rps: null,
-                  n: oa.trades ?? oa.trades_since_reset, wait: opusb.key_present === false });
-      const o = ovRow('C-OPUS-B', opusb.book || 'C-OPUS-B', 'o'); if (o) rows.push(o);
-    }
-    for (const extra of ['1-strike', 'nostop', 'bracket']) {
-      if (!rows.some(r => (r.who || '').startsWith(extra) || (r.who || '').includes(extra))) {
-        const o = ovRow(extra, extra, 'g'); if (o) rows.push(o);
-      }
-    }
-    if (!rows.length) return;
-    $('cmpT').innerHTML = `<table class="lu-t cmp-t"><tr><th>Sim</th><th>Balance</th><th>Net</th><th>Trades</th><th>W/L</th><th>R / signal</th></tr>` +
-      rows.map(r => `<tr><td><span class="who ${r.c}">${esc(r.who)}</span>${r.wait ? '<small>waiting for key</small>' : ''}</td>
-        <td>${usd(r.bal)}</td><td class="${cls(r.net)}">${usd(r.net, true)}</td><td>${r.n ?? 0}</td><td>${r.w ?? 0}/${r.l ?? 0}</td>
-        <td class="${cls(r.rps)}">${r.c === 'g' && !r.carbon ? 'n/a' : rr(r.rps) + (r.sig ? ` <small>(${r.sig})</small>` : '')}</td></tr>`).join('') + '</table>';
-    const u = [lucid && lucid.updated_at, claude && claude.updated_at, carbon && carbon.updated_at, deepseek && deepseek.updated_at, opusb && opusb.updated_at, otherVenue && otherVenue.updated_at].filter(Boolean).sort().pop();
-    $('cmpUpd').textContent = u ? `updated ${hm(u)} ${city()}` : '';
-    $('cmp').hidden = false;
-  }
-  function renderClaude() {
-    const C = claude; if (!C || !C.sims) return;
-    const cell = (k, v, c) => `<div><div class="lu-k">${k}</div><div class="lu-v ${c || ''}">${v}</div></div>`;
-    $('clSims').innerHTML = C.sims.map(S => {
-      const a = S.account || {}, P = S.open_positions || [], T = S.recent_trades || [], le = S.last_entry_call || {};
-      const ops = S.ops || {}, oe = ops.entry || {}, ox = ops.exit || {};
-      const status = !C.key_present ? 'waiting for key' : (a.blown ? `account breached ${dayhm(a.blown)}` :
-        (a.day_flattened ? 'flat for the day (daily loss limit)' : 'running'));
-      const grid = [
-        cell('Balance', usd(a.balance)), cell('Equity', usd(a.equity)),
-        cell('Realized P&amp;L', usd(a.realized_pnl, true), cls(a.realized_pnl)),
-        cell('Open P&amp;L', usd(a.open_pnl, true), cls(a.open_pnl)),
-        cell('Trades', `${a.trades || 0}${a.trades ? ` <small>(${a.wins}W/${a.losses}L)</small>` : ''}`),
-        cell('R total', rr(a.r_total), cls(a.r_total)),
-        (() => {
-          const sf = S.since_fix || {};
-          const n = sf.n || 0;
-          if (!n) return cell('Since v3', 'no post-v3 trades yet');
-          return cell('Since v3', `${usd(sf.net, true)} <small>(${n} · ${sf.wins || 0}W/${sf.losses || 0}L · ${rr(sf.r_total)})</small>`, cls(sf.net));
-        })(),
-        cell('MLL floor', usd(a.mll_floor)), cell('Room to MLL', usd(a.mll_room), a.mll_room < 1000 ? 'neg' : ''),
-      ].join('');
-      const pos = P.length ? `<table class="lu-t"><tr><th>Symbol</th><th>Size</th><th>Side</th><th>Opened</th><th>Held</th><th>Entry</th>
-        <th>Stop</th><th>Floor</th><th>Phase</th><th>Open P&amp;L</th></tr>${P.map(p => `<tr><td>${esc(p.symbol)}</td>
-        <td>${p.qty} ${esc(p.contract)}</td><td>${esc(p.side)}</td><td>${dayhm(p.entry_time)}</td>
-        <td data-entry-time="${esc(p.entry_time)}">${esc(heldSince(p.entry_time))}</td>
-        <td>${px(p.entry, p.entry < 10 ? 5 : 2)}</td><td>${px(p.stop, p.stop < 10 ? 5 : 2)}</td>
-        <td>${p.floor != null ? px(p.floor, p.floor < 10 ? 5 : 2) : '—'}</td><td>${esc(p.phase)}${p.server_only ? ' <small>server</small>' : ''}</td>
-        <td class="${cls(p.unrealized)}">${usd(p.unrealized, true)}</td></tr>`).join('')}</table>`
-        : '<div class="lu-note">None</div>';
-      const trs = T.length ? `<table class="lu-t"><tr><th>Closed</th><th>Opened</th><th>Symbol</th><th>Size</th><th>Side</th>
-        <th>Held</th><th>Exit</th><th>R</th><th>Net</th></tr>${T.map(t => `<tr><td>${dayhm(t.t_exit)}</td><td>${dayhm(t.entry_time)}</td>
-        <td>${esc(t.symbol)}</td><td>${t.qty} ${esc(t.contract)}</td><td>${esc(t.side)}</td><td>${esc(t.held || heldOf(t))}</td>
-        <td>${esc(t.reason)}${t.exit_prompt_version && t.exit_prompt_version !== 'v3' ? ' <small>pre-v3</small>' : ''}</td><td class="${cls(t.R)}">${rr(t.R)}</td><td class="${cls(t.net)}">${usd(t.net, true)}</td></tr>`).join('')}</table>`
-        : '<div class="lu-note">No closed trades yet.</div>';
-      const sigs = (le.signals || []).map(g => `${esc(g.symbol)} ${esc(g.action)}${g.action !== 'HOLD' ? ` ${esc(g.setup_type)} s${g.score}` : ''}` +
-        (g.decision && g.decision !== 'HOLD' && g.decision !== g.action ? ` (${esc(g.decision)})` : '')).join(' · ');
-      const lastCall = le.t ? `Last entry call ${dayhm(le.t)} ${city()}${le.ok === false ? ` failed: ${esc(le.error)}` :
-        ` · ${(le.latency_ms / 1000).toFixed(1)} s · $${Number(le.cost_usd || 0).toFixed(4)}`}${sigs ? ` · ${sigs}` : ''}` : 'No entry call yet.';
-      const opsTxt = `Entry ${esc(S.entry_model)}: ${oe.calls || 0} calls, p50 ${oe.latency_p50_ms != null ? (oe.latency_p50_ms / 1000).toFixed(1) + ' s' : '—'}, ` +
-        `$${Number(oe.cost_usd || 0).toFixed(2)} · Exit ${esc(S.exit_model)}: ${ox.calls || 0} calls, p50 ${ox.latency_p50_ms != null ? (ox.latency_p50_ms / 1000).toFixed(1) + ' s' : '—'}, ` +
-        `$${Number(ox.cost_usd || 0).toFixed(2)}`;
-      return `<section class="lucid" aria-label="${esc(S.label)} paper sim">
-        <h2><span><span class="who ${whoCls(S.id)}">${esc(S.label)}</span>paper sim · ${esc(status)}</span><small>${C.updated_at ? `updated ${hm(C.updated_at)} ${city()}` : ''}</small></h2>
-        <div class="lu-grid">${grid}</div><h3>Open positions</h3><div class="lu-wrap">${pos}</div>
-        <h3>Recent trades</h3><div class="lu-wrap">${trs}</div>
-        <div class="lu-note">${lastCall}<br>${opsTxt}<br>Paper trading only · fresh $${Number(a.start_balance || 100000).toLocaleString('en-US')} account` +
-        `${C.reset && C.reset.at ? ` since ${dayhm(C.reset.at)} ${city()}` : ''} · ${esc(C.rules || '')}</div></section>`;
-    }).join('');
-    renderCmp();
-  }
-  async function pollClaude() {
-    const j = await getJSON('claude.json');
-    if (j && !(claude && Date.parse(j.updated_at) < Date.parse(claude.updated_at))) { claude = j; renderClaude(); }
-  }
-  pollClaude();
-  setInterval(pollClaude, 15000);
-  // ---- Bracket shadow book (bracket.json; paper only, own $100k, same Gemini entry signals) ----
-  function renderBracket() {
-    const B = bracket; if (!B || !B.account) return;
-    const a = B.account;
-    const cell = (k, v, c) => `<div><div class="lu-k">${k}</div><div class="lu-v ${c || ''}">${v}</div></div>`;
-    $('brGrid').innerHTML = [
-      cell('Balance', usd(a.balance)), cell('Equity', usd(a.equity)),
-      cell('Net P&amp;L', usd(a.net_pnl, true), cls(a.net_pnl)),
-      cell('Open P&amp;L', usd(a.open_pnl, true), cls(a.open_pnl)),
-      cell('Trades', `${a.trades}${a.trades ? ` <small>(${a.wins}W/${a.losses}L)</small>` : ''}`),
-      cell('Max DD', usd(a.max_drawdown, true), cls(a.max_drawdown)),
-      cell('Signals', `${a.signals_taken}<small> / ${a.signals_seen} seen</small>`),
-    ].join('');
-    const P = B.open_positions || [];
-    const d = v => v != null && Math.abs(v) < 10 ? 5 : 2;
-    $('brPos').innerHTML = P.length ? `<table class="lu-t"><tr><th>Symbol</th><th>Size</th><th>Side</th><th>Opened</th><th>Held</th>
-      <th>Entry</th><th>Stop</th><th>Target</th><th>Conf</th><th>Open P&amp;L</th></tr>${P.map(p => `<tr><td>${esc(p.symbol)}</td>
-      <td>${p.qty} ${esc(p.contract)}</td><td>${esc(p.side)}</td><td>${dayhm(p.entry_time)}</td>
-      <td data-entry-time="${esc(p.entry_time)}">${esc(heldSince(p.entry_time))}</td>
-      <td>${px(p.entry, d(p.entry))}</td><td>${px(p.stop, d(p.stop))}</td><td>${px(p.target, d(p.target))}</td>
-      <td>${p.confidence != null ? Number(p.confidence).toFixed(2) : '—'}</td>
-      <td class="${cls(p.unrealized)}">${usd(p.unrealized, true)}</td></tr>`).join('')}</table>`
-      : `<div class="lu-note">None${a.pending ? ` · ${a.pending} pending entry` : ''}</div>`;
-    const T = B.recent_trades || [];
-    $('brTrades').innerHTML = T.length ? `<table class="lu-t"><tr><th>Closed</th><th>Opened</th><th>Symbol</th><th>Size</th><th>Side</th>
-      <th>Held</th><th>Exit</th><th>Net</th></tr>${T.map(t => `<tr><td>${dayhm(t.t_exit)}</td><td>${dayhm(t.entry_time)}</td><td>${esc(t.symbol)}</td>
-      <td>${t.qty} ${esc(t.contract)}</td><td>${esc(t.side)}</td><td>${esc(heldOf(t))}</td><td>${t.stopped ? '<b class="neg">STOPPED</b>' : esc(t.reason)}</td>
-      <td class="${cls(t.net)}">${usd(t.net, true)}</td></tr>`).join('')}</table>`
-      : '<div class="lu-note">No closed trades yet.</div>';
-    const ms = a.missed_scans_main_held || {};
-    const mtxt = Object.keys(ms).length ? ' · scans missed while main held: ' + Object.entries(ms).map(([k, v]) => `${k} ${v}`).join(', ') : '';
-    $('brUpd').textContent = B.updated_at ? `updated ${hm(B.updated_at)} ${city()}` : '';
-    $('brNote').textContent = `Paper trading only · fresh $${Number(a.start_balance || 100000).toLocaleString('en-US')} account since ` +
-      `${dayhm(B.since)} ${city()} · ${B.rules || ''} · ${B.limitation || ''}${mtxt}`;
-    $('bracket').hidden = false;
-  }
-  async function pollBracket() {
-    const j = await getJSON('bracket.json');
-    if (j && !(bracket && Date.parse(j.updated_at) < Date.parse(bracket.updated_at))) { bracket = j; renderBracket(); renderLucid(); }
-  }
-  pollBracket();
-  setInterval(pollBracket, 15000);
-  // ---- Carbon side books (carbon.json; paper only, two own $100k accounts, gemini-4-carbon entries) ----
-  function renderCarbon() {
-    const K = carbon; if (!K || !K.books) return;
-    const cell = (k, v, c) => `<div><div class="lu-k">${k}</div><div class="lu-v ${c || ''}">${v}</div></div>`;
-    const sp = K.spend || {}, tk = sp.tokens || {}, bk = sp.by_kind || {};
-    const capCls = sp.state === 'hard_cap' ? 'neg' : (sp.state === 'soft_cap' ? 'neg' : '');
-    const kinds = ['entry', 'trigger', 'exit'].map(k => `${k} ${(bk[k] || {}).calls || 0}`).join(' · ');
-    $('cbSpend').innerHTML = [
-      cell(`Spend today <small>(${esc(sp.day_dubai || '')} Dubai)</small>`, `$${Number(sp.usd || 0).toFixed(2)} <small>/ $${sp.soft_usd} soft · $${sp.hard_usd} hard</small>`, capCls),
-      cell('Cap state', esc(sp.state || 'ok'), capCls),
-      cell('Carbon calls today', `${sp.calls || 0}${sp.failed ? ` <small>(${sp.failed} failed)</small>` : ''} <small>${kinds}</small>`),
-      cell('Triggered checks', `${K.triggers_today || 0} <small>/ ${K.max_triggers_per_day} today</small>`),
-      cell('Tokens today', `<small>in ${Number(tk.input || 0).toLocaleString('en-US')} · out ${Number(tk.output || 0).toLocaleString('en-US')} · thoughts ${Number(tk.thoughts || 0).toLocaleString('en-US')}</small>`),
-      cell('Next M15 scan', K.in_window ? hm(K.next_scan_at) + ' ' + city() : `outside ${esc((K.entry_window_utc || []).join('-'))} UTC`),
-    ].join('');
-    const lc = K.last_call;
-    $('cbCall').textContent = lc ? `Last Carbon call ${dayhm(lc.t)} ${city()} · ${lc.kind} · ${lc.ok ? 'OK' : 'FAILED: ' + (lc.error || '')} · ` +
-      `${Number(lc.latency_s || 0).toFixed(1)} s · thinking ${lc.thinking} (${lc.thoughts_token_count} thought tokens) · $${Number(lc.cost_usd || 0).toFixed(4)}` +
-      ((K.last_scan && K.last_scan.signals) ? ' · ' + K.last_scan.signals.map(g => `${g.symbol} ${g.action}${g.confidence != null ? ' ' + Number(g.confidence).toFixed(2) : ''}`).join(' · ') : '')
-      : 'No Carbon call yet.';
-    const d = v => v != null && Math.abs(v) < 10 ? 5 : 2;
-    $('cbBooks').innerHTML = K.books.map(B => {
-      const a = B.account || {}, P = B.open_positions || [], T = B.recent_trades || [];
-      const wi = ((K.whatif || {})[B.book]) || {};
-      const grid = [
-        cell('Balance', usd(a.balance)), cell('Equity', usd(a.equity)),
-        cell('Net P&amp;L', usd(a.net_pnl, true), cls(a.net_pnl)), cell('Open P&amp;L', usd(a.open_pnl, true), cls(a.open_pnl)),
-        cell('Trades', `${a.trades || 0}${a.trades ? ` <small>(${a.wins}W/${a.losses}L)</small>` : ''}`),
-        cell('R total', rr(a.r_total), cls(a.r_total)), cell('Max DD', usd(a.max_drawdown, true), cls(a.max_drawdown)),
-        cell('Day', `${usd(a.day_realized, true)}${a.day_flattened ? ' <small class="neg">flat (daily stop)</small>' : ''}`, cls(a.day_realized)),
-        cell('Room to MLL', usd(a.mll_room), a.mll_room < 1000 ? 'neg' : ''),
-        cell('What-if R / signal', `${rr((wi.all || {}).r_avg)} <small>(${(wi.all || {}).n || 0} all · ${rr((wi['conf>=min'] || {}).r_avg)} conf≥${K.min_confidence})</small>`, cls((wi.all || {}).r_avg)),
-      ].join('');
-      const pos = P.length ? `<table class="lu-t"><tr><th>Symbol</th><th>Size</th><th>Side</th><th>Opened</th><th>Held</th><th>Entry</th>
-        <th>Stop</th><th>Target</th><th>Conf</th><th>Open R</th><th>Open P&amp;L</th></tr>${P.map(p => `<tr><td>${esc(p.symbol)}</td>
-        <td>${p.qty} ${esc(p.contract)}</td><td>${esc(p.side)}</td><td>${dayhm(p.entry_time)}</td>
-        <td data-entry-time="${esc(p.entry_time)}">${esc(heldSince(p.entry_time))}</td><td>${px(p.entry, d(p.entry))}</td>
-        <td>${px(p.stop, d(p.stop))}${p.locked ? ' <small>trail</small>' : ''}</td><td>${px(p.target, d(p.target))}</td>
-        <td>${p.confidence != null ? Number(p.confidence).toFixed(2) : '—'}</td><td class="${cls(p.open_R)}">${rr(p.open_R)}</td>
-        <td class="${cls(p.unrealized)}">${usd(p.unrealized, true)}</td></tr>`).join('')}</table>`
-        : `<div class="lu-note">None${a.pending ? ` · ${a.pending} pending entry` : ''}</div>`;
-      const trs = T.length ? `<table class="lu-t"><tr><th>Closed</th><th>Opened</th><th>Symbol</th><th>Size</th><th>Side</th>
-        <th>Held</th><th>Exit</th><th>R</th><th>Net</th></tr>${T.map(t => `<tr><td>${dayhm(t.t_exit)}</td><td>${dayhm(t.entry_time)}</td>
-        <td>${esc(t.symbol)}</td><td>${t.qty} ${esc(t.contract)}</td><td>${esc(t.side)}</td><td>${esc(t.held || heldOf(t))}</td>
-        <td>${t.stopped ? '<b class="neg">' + esc(t.reason) + '</b>' : esc(t.reason)}</td><td class="${cls(t.R)}">${rr(t.R)}</td>
-        <td class="${cls(t.net)}">${usd(t.net, true)}</td></tr>`).join('')}</table>`
-        : '<div class="lu-note">No closed trades yet.</div>';
-      return `<h3>${esc(B.label || B.book)}</h3><div class="lu-grid">${grid}</div><h3>Open positions</h3><div class="lu-wrap">${pos}</div>
-        <h3>Recent trades</h3><div class="lu-wrap">${trs}</div>`;
-    }).join('');
-    const W = K.whatif || {};
-    if ($('cbWhatifNote')) {
-      $('cbWhatifNote').textContent = W.note || 'Every Carbon BUY/SELL (any confidence) is scored 1 unit through both exit books.';
-      const sumCell = (k, v, c) => `<div><div class="lu-k">${k}</div><div class="lu-v ${c || ''}">${v}</div></div>`;
-      const blk = (label, s) => sumCell(label, `${rr(s && s.r_avg)} <small>(${(s && s.n) || 0} · ${usd((s && s.net_1c) || 0, true)})</small>`, cls(s && s.r_avg));
-      $('cbWhatifSum').innerHTML = (K.books || []).map(B => {
-        const wi = W[B.book] || {};
-        return [
-          sumCell(esc(B.book) + ' all', `${rr((wi.all || {}).r_avg)} <small>(${(wi.all || {}).n || 0})</small>`, cls((wi.all || {}).r_avg)),
-          blk('Tradeable', wi.tradeable || {}),
-          blk('Site-only / what-if (BTC)', wi.site_only || {}),
-        ].join('');
+      $('pos').innerHTML = t;
+      const kv = (k, v, c = '') => `<div><div class="mc-k">${k}</div><div class="mc-v ${c}">${v}</div></div>`;
+      $('posCards').innerHTML = rows.map(x => {
+        const st = x.status || 'OPEN', k = st === 'OPEN' ? 'OPEN' : st.replace('CLOSED-', '');
+        return `<div class="mc"><div class="mc-h"><span class="mc-t">${esc(x.symbol)}<span class="side ${esc(x.side)}">${esc(x.side)} ${qty(x.qty)}</span></span>
+          <span class="st ${esc(k)}">${esc(st)}</span></div>
+          <div class="mc-s">${esc(x.book)}${x.venue === 'LUCID' ? '' : ' · other venue'} · ${esc(MODEL_NAME[x.model] || x.model || '')}${x.contract ? ' · ' + esc(x.contract) : ''}</div>
+          <div class="mc-g">${kv('Entry ' + TZL, esc(dhm(x.entry_time)))}${kv('Entry px', px(x.entry))}
+          ${kv(st === 'OPEN' ? 'Now' : 'Exit px', st === 'OPEN' ? px(x.last_price) : px(x.exit))}
+          ${kv('Max $', usd(x.max_pnl_usd), cls(x.max_pnl_usd))}${kv('Lowest $', usd(x.min_pnl_usd), cls(x.min_pnl_usd))}
+          ${st === 'OPEN' ? kv('Open P&amp;L', usd(x.last_pnl_usd), cls(x.last_pnl_usd)) : kv('Close P&amp;L', usd(x.net_at_close_usd), cls(x.net_at_close_usd))}</div></div>`;
       }).join('');
-      const open = W.open_rows || [];
-      const recent = W.recent || [];
-      const flag = r => r.site_only || r.flag ? `<b>${esc(r.flag || 'site-only/what-if')}</b>` : '—';
-      const row = r => `<tr><td>${dayhm(r.t_exit || r.signal_at)}</td><td>${esc(r.symbol)}</td>
-        <td>${esc(r.exit_rules || r.exit || '')}</td><td>${esc(r.side || '')}</td>
-        <td>${r.confidence != null ? Number(r.confidence).toFixed(2) : '—'}</td>
-        <td>${esc(r.reason || (r.entry ? 'open' : 'queued'))}</td>
-        <td class="${cls(r.R)}">${r.R != null ? rr(r.R) : '—'}</td>
-        <td class="${cls(r.net_1c)}">${r.net_1c != null ? usd(r.net_1c, true) : '—'}</td>
-        <td>${flag(r)}</td><td>${esc(r.unit || '')}</td>
-        <td>${esc(r.thinking_level || '')}</td></tr>`;
-      const head = `<table class="lu-t"><tr><th>When</th><th>Symbol</th><th>Exit book</th><th>Side</th><th>Conf</th>
-        <th>Result</th><th>R</th><th>Net (1 unit)</th><th>Flag</th><th>Unit</th><th>Thinking</th></tr>`;
-      const openHtml = open.length ? head + open.map(row).join('') + '</table>' : '<div class="lu-note">No open what-if rows.</div>';
-      const recHtml = recent.length ? head + recent.map(row).join('') + '</table>' : '<div class="lu-note">No closed what-if rows yet.</div>';
-      $('cbWhatif').innerHTML = `<h3>Open what-if (${open.length})</h3>${openHtml}<h3>Recent what-if closes</h3>${recHtml}`;
     }
-    $('cbUpd').textContent = K.updated_at ? `updated ${hm(K.updated_at)} ${city()}` : '';
-    const since = (K.books[0] || {}).since;
-    $('cbNote').textContent = `${K.exit_calls_note ? K.exit_calls_note + ' · ' : ''}Paper trading only · two fresh $100,000 accounts${since ? ` since ${dayhm(since)} ${city()}` : ''} · ${K.rules || ''}`;
-    $('carbon').hidden = false;
-  }
-  async function pollCarbon() {
-    const j = await getJSON('carbon.json');
-    if (j && !(carbon && Date.parse(j.updated_at) < Date.parse(carbon.updated_at))) { carbon = j; renderCarbon(); renderLucid(); renderCmp(); }
-  }
-  pollCarbon();
-  setInterval(pollCarbon, 15000);
-  let scores = null;
-  function renderScores() {
-    const S = scores; const box = $('scores'); if (!box) return;
-    if (!S || !S.models) { box.hidden = true; return; }
-    box.hidden = false;
-    $('scNote').textContent = (S.note || '') + (S.pending ? ` · ${S.pending} rows waiting for the 4h window` : '');
-    $('scUpd').textContent = S.updated_at ? `updated ${hm(S.updated_at)} ${city()}` : '';
-    const models = Object.entries(S.models);
-    if (!models.length) { $('scT').innerHTML = '<div class="lu-note">No scored signals yet (4h window).</div>'; return; }
-    const bandKeys = ['<0.55','0.55-0.75','0.75-0.90','0.90-1.00','none'];
-    const rows = models.map(([m, x]) => {
-      const bands = bandKeys.map(b => {
-        const z = (x.by_band || {})[b];
-        return z ? `${b} n=${z.n} R=${z.avg_R ?? '—'} edge=${z.edge_R ?? '—'}` : '';
-      }).filter(Boolean).join(' · ');
-      const ex = x.excursions || {};
-      const exs = ['2h','3h','4h'].map(h => {
-        const e = ex[h] || {};
-        return `${h} MFE ${e.avg_mfe_atr ?? '—'} / MAE ${e.avg_mae_atr ?? '—'}`;
-      }).join(' · ');
-      return `<tr><td>${esc(m)}</td><td>${x.n}</td>
-        <td>${x.win_pct != null ? (x.win_pct*100).toFixed(1)+'%' : '—'}</td>
-        <td class="${cls(x.avg_R)}">${x.avg_R ?? '—'}</td>
-        <td class="${cls(x.twin_avg_R)}">${x.twin_avg_R ?? '—'}</td>
-        <td class="${cls(x.edge_R)}">${x.edge_R ?? '—'}</td>
-        <td><small>${esc(exs)}</small></td>
-        <td><small>${esc(bands)}</small></td></tr>`;
-    }).join('');
-    $('scT').innerHTML = `<table class="lu-t"><tr><th>Model</th><th>n</th><th>Win% vs bracket</th>
-      <th>Avg R</th><th>Coin-flip avg R</th><th>Edge (R−twin)</th><th>Avg MFE/MAE 2–4h (ATR)</th>
-      <th>By confidence</th></tr>${rows}</table>`;
-  }
-  async function pollScores() {
-    const j = await getJSON('signal_scores.json');
-    if (j && !(scores && Date.parse(j.updated_at) < Date.parse(scores.updated_at))) {
-      scores = j; renderScores();
-    }
-  }
-  pollScores();
-  setInterval(pollScores, 15000);
-
-  function renderDeepseek() {
-    const D = deepseek; if (!D || !D.account) return;
-    const a = D.account;
-    const cell = (k, v, c) => `<div><div class="lu-k">${k}</div><div class="lu-v ${c || ''}">${v}</div></div>`;
-    const sp = D.spend || {}, tk = sp.tokens || {};
-    const capCls = sp.state === 'soft_cap' ? 'neg' : '';
-    const d = v => v != null && Math.abs(v) < 10 ? 5 : 2;
-    $('dsGrid').innerHTML = [
-      cell('Balance', usd(a.balance)), cell('Equity', usd(a.equity)),
-      cell('Net P&amp;L', usd(a.net_pnl ?? a.realized_pnl_since_reset, true), cls(a.net_pnl ?? a.realized_pnl_since_reset)),
-      cell('Open P&amp;L', usd(a.open_pnl, true), cls(a.open_pnl)),
-      cell('Trades', `${a.trades ?? a.trades_since_reset ?? 0}${(a.trades ?? a.trades_since_reset) ? ` <small>(${a.wins}W/${a.losses}L)</small>` : ''}`),
-      cell('Hard stop', D.hard_stop_net_usd ? `−$${Number(D.hard_stop_net_usd).toLocaleString('en-US')} <small>net</small>` : 'none'),
-      cell(`Spend today <small>(${esc(sp.day_dubai || '')} Dubai)</small>`, `$${Number(sp.usd || 0).toFixed(4)} <small>/ $${sp.soft_usd} soft</small>`, capCls),
-      cell('Cap state', esc(!D.key_present ? 'waiting for key' : (sp.state || 'ok')), !D.key_present || capCls ? 'neg' : ''),
-      cell('Calls today', `${sp.calls || 0}${sp.failed ? ` <small>(${sp.failed} failed)</small>` : ''}`),
-      cell('Tokens today', `<small>in ${Number(tk.prompt || 0).toLocaleString('en-US')} · out ${Number(tk.completion || 0).toLocaleString('en-US')} · cache hit ${Number(tk.cache_hit || 0).toLocaleString('en-US')}</small>`),
-    ].join('');
-    const lc = D.last_call;
-    const sigs = (D.last_signals || []).map(g => `${g.symbol} ${g.action}${g.confidence != null ? ' ' + Number(g.confidence).toFixed(2) : ''}`).join(' · ');
-    $('dsCall').textContent = !D.key_present ? 'Waiting for DEEPSEEK_API_KEY (repo secret).' :
-      (lc ? `Last DeepSeek call ${dayhm(lc.t)} ${city()} · ${lc.ok ? 'OK' : 'FAILED: ' + (lc.error || lc.skipped || '')} · ` +
-        `${Number(lc.latency_s || 0).toFixed(1)} s · ${esc(lc.band || '')} · $${Number(lc.cost_usd || 0).toFixed(5)}` +
-        (sigs ? ' · ' + sigs : '')
-        : 'No DeepSeek call yet.');
-    const P = D.open_positions || [];
-    $('dsPos').innerHTML = P.length ? `<table class="lu-t"><tr><th>Symbol</th><th>Size</th><th>Side</th><th>Opened</th><th>Held</th>
-      <th>Entry</th><th>Stop</th><th>Target</th><th>Open P&amp;L</th></tr>${P.map(p => `<tr><td>${esc(p.symbol)}</td>
-      <td>${p.qty} ${esc(p.contract)}</td><td>${esc(p.side)}</td><td>${dayhm(p.entry_time)}</td>
-      <td data-entry-time="${esc(p.entry_time)}">${esc(heldSince(p.entry_time))}</td>
-      <td>${px(p.entry, d(p.entry))}</td>
-      <td>${p.stop != null ? px(p.stop, d(p.stop)) : p.hard_stop_px != null ? `${px(p.hard_stop_px, d(p.hard_stop_px))} <small>(−$${Number(D.hard_stop_net_usd || 500).toLocaleString('en-US')})</small>` : 'none'}</td>
-      <td>${p.target != null ? px(p.target, d(p.target)) : '—'}</td>
-      <td class="${cls(p.unrealized)}">${usd(p.unrealized, true)}</td></tr>`).join('')}</table>`
-      : `<div class="lu-note">None${D.pending ? ` · ${D.pending} pending entry` : ''}</div>`;
-    const T = D.recent_trades || [];
-    $('dsTrades').innerHTML = T.length ? `<table class="lu-t"><tr><th>Closed</th><th>Opened</th><th>Symbol</th><th>Size</th><th>Side</th>
-      <th>Held</th><th>Exit</th><th>Net</th></tr>${T.map(t => `<tr><td>${dayhm(t.t_exit)}</td><td>${dayhm(t.entry_time)}</td><td>${esc(t.symbol)}</td>
-      <td>${t.qty} ${esc(t.contract)}</td><td>${esc(t.side)}</td><td>${esc(t.held || heldOf(t))}</td>
-      <td>${t.stopped ? '<b class="neg">STOPPED</b> ' : ''}${esc(t.reason)}</td>
-      <td class="${cls(t.net)}">${usd(t.net, true)}</td></tr>`).join('')}</table>`
-      : '<div class="lu-note">No closed trades yet.</div>';
-    $('dsUpd').textContent = D.updated_at ? `updated ${hm(D.updated_at)} ${city()}` : '';
-    const r = D.reset || {};
-    $('dsNote').textContent = `Paper trading only · ${D.rules || ''} ` +
-      (r.at ? `· fresh $${Number(a.start_balance || 100000).toLocaleString('en-US')} account since ${dayhm(r.at)} ${city()}` : '');
-    $('deepseek').hidden = false;
-  }
-  async function pollDeepseek() {
-    const j = await getJSON('deepseek.json');
-    if (j && !(deepseek && Date.parse(j.updated_at) < Date.parse(deepseek.updated_at))) {
-      deepseek = j; renderDeepseek(); renderLucid(); renderCmp();
-    }
-  }
-  pollDeepseek();
-  setInterval(pollDeepseek, 15000);
-
-  function renderOpusB() {
-    const D = opusb; if (!D || !D.account) return;
-    const a = D.account;
-    const cell = (k, v, c) => `<div><div class="lu-k">${k}</div><div class="lu-v ${c || ''}">${v}</div></div>`;
-    const lc = D.last_call || {};
-    const d = v => v != null && Math.abs(v) < 10 ? 5 : 2;
-    $('obGrid').innerHTML = [
-      cell('Balance', usd(a.balance)), cell('Equity', usd(a.equity)),
-      cell('Net P&amp;L', usd(a.net_pnl ?? a.realized_pnl_since_reset, true), cls(a.net_pnl ?? a.realized_pnl_since_reset)),
-      cell('Open P&amp;L', usd(a.open_pnl, true), cls(a.open_pnl)),
-      cell('Trades', `${a.trades ?? a.trades_since_reset ?? 0}${(a.trades ?? a.trades_since_reset) ? ` <small>(${a.wins}W/${a.losses}L)</small>` : ''}`),
-      cell('Model', esc(D.model || 'claude-opus-5-5')),
-      cell('Effort', esc(D.effort || 'high')),
-      cell('Prompt', esc(D.prompt_version || 'bracket-v1')),
-      cell('Thinking tokens (last)', lc.thinking_tokens != null ? Number(lc.thinking_tokens).toLocaleString('en-US') : '—'),
-      cell('Last cost', lc.cost_usd != null ? '$' + Number(lc.cost_usd).toFixed(4) : '—'),
-    ].join('');
-    const sigs = (D.last_signals || []).map(g => `${g.symbol} ${g.action}${g.confidence != null ? ' ' + Number(g.confidence).toFixed(2) : ''}${g.score != null ? ' s' + g.score : ''}`).join(' · ');
-    $('obCall').textContent = !D.key_present ? 'Waiting for ANTHROPIC_API_KEY (repo secret).' :
-      (lc.t ? `Last C-OPUS-B call ${dayhm(lc.t)} ${city()} · ${lc.ok ? 'OK' : 'FAILED: ' + (lc.error || lc.skipped || '')} · ` +
-        `${Number((lc.latency_ms || 0)/1000).toFixed(1)} s · $${Number(lc.cost_usd || 0).toFixed(4)}` +
-        (lc.thinking_tokens != null ? ` · thinking ${Number(lc.thinking_tokens).toLocaleString('en-US')}` : '') +
-        (lc.snapshot_id ? ` · ${lc.snapshot_id}` : '') +
-        (sigs ? ' · ' + sigs : '')
-        : 'No C-OPUS-B call yet.');
-    const P = D.open_positions || [];
-    $('obPos').innerHTML = P.length ? `<table class="lu-t"><tr><th>Symbol</th><th>Size</th><th>Side</th><th>Opened</th><th>Held</th>
-      <th>Entry</th><th>Stop</th><th>Target</th><th>Open P&amp;L</th></tr>${P.map(p => `<tr><td>${esc(p.symbol)}</td>
-      <td>${p.qty} ${esc(p.contract)}</td><td>${esc(p.side)}</td><td>${dayhm(p.entry_time)}</td>
-      <td data-entry-time="${esc(p.entry_time)}">${esc(heldSince(p.entry_time))}</td>
-      <td>${px(p.entry, d(p.entry))}</td>
-      <td>${p.stop != null ? px(p.stop, d(p.stop)) : '—'}</td>
-      <td>${p.target != null ? px(p.target, d(p.target)) : '—'}</td>
-      <td class="${cls(p.unrealized)}">${usd(p.unrealized, true)}</td></tr>`).join('')}</table>`
-      : `<div class="lu-note">None${D.pending ? ` · ${D.pending} pending entry` : ''}</div>`;
-    const T = D.recent_trades || [];
-    $('obTrades').innerHTML = T.length ? `<table class="lu-t"><tr><th>Closed</th><th>Opened</th><th>Symbol</th><th>Size</th><th>Side</th>
-      <th>Held</th><th>Exit</th><th>Net</th></tr>${T.map(t => `<tr><td>${dayhm(t.t_exit)}</td><td>${dayhm(t.entry_time)}</td><td>${esc(t.symbol)}</td>
-      <td>${t.qty} ${esc(t.contract)}</td><td>${esc(t.side)}</td><td>${esc(t.held || heldOf(t))}</td>
-      <td>${esc(t.reason)}</td>
-      <td class="${cls(t.net)}">${usd(t.net, true)}</td></tr>`).join('')}</table>`
-      : '<div class="lu-note">No closed trades yet.</div>';
-    $('obUpd').textContent = D.updated_at ? `updated ${hm(D.updated_at)} ${city()}` : '';
-    const r = D.reset || {};
-    $('obNote').textContent = `Paper trading only · ${D.rules || ''} ` +
-      (r.at ? `· fresh $${Number(a.start_balance || 100000).toLocaleString('en-US')} account since ${dayhm(r.at)} ${city()}` : '');
-    $('opusb').hidden = false;
+    $('posNote').textContent = (P.pnl_note || '') + ' Status: OPEN, or CLOSED-stop / CLOSED-target / CLOSED-time by the mechanical 1 ATR bracket.';
   }
 
-  async function pollOtherVenue() {
-    const j = await getJSON('other_venue.json');
-    if (j && !(otherVenue && Date.parse(j.updated_at) < Date.parse(otherVenue.updated_at))) {
-      otherVenue = j; renderLucid(); renderCmp();
-    }
-  }
-
-  async function pollOpusB() {
-    const j = await getJSON('opus_b.json');
-    if (j && !(opusb && Date.parse(j.updated_at) < Date.parse(opusb.updated_at))) {
-      opusb = j; renderOpusB(); renderLucid(); renderCmp();
-    }
-  }
-  pollOpusB();
-  setInterval(pollOpusB, 15000);
-  pollOtherVenue();
-  setInterval(pollOtherVenue, 15000);
-  async function pollLucid() {
-    const j = await getJSON('lucid.json');
-    if (j && !(lucid && Date.parse(j.updated_at) < Date.parse(lucid.updated_at))) { lucid = j; renderLucid(); }
-  }
-  pollLucid();
-  setInterval(pollLucid, 15000);
-  setInterval(tickOpenHeld, 1000);
-
-  poll();
-  setInterval(poll, POLL_MS);
-  setInterval(render, 100);
+  async function pollStatus() { const s = await getJSON('status.json'); if (s && newer(s, status)) status = s; }
+  async function pollPanel() { const p = await getJSON('panel.json'); if (p && newer(p, panel)) { panel = p; renderPanel(); } }
+  pollStatus(); pollPanel();
+  setInterval(pollStatus, 5000);
+  setInterval(pollPanel, 10000);
+  setInterval(renderClock, 250);
 })();
 </script>
 </body>

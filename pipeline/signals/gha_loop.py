@@ -22,7 +22,8 @@ from .site import write_status
 
 log = logging.getLogger("signals.gha")
 SITE_JSON = ("status.json", "latest_signal.json", "history.json", "lucid.json", "claude.json", "bracket.json",
-             "carbon.json", "deepseek.json", "signal_scores.json", "opus_b.json", "m15_scan.json", "other_venue.json")
+             "carbon.json", "deepseek.json", "signal_scores.json", "opus_b.json", "m15_scan.json", "other_venue.json",
+             "panel.json")
 DATA_JSON = ("books.json",)  # committed to the data branch only (not deployed to Pages)
 CYCLE_LOG_KEEP_DAYS = 14
 
@@ -206,6 +207,7 @@ class GhaLoop:
         # data checkout may have been reset during acquire: make sure we start from the newest state
         reason = "max-runtime"
         await self._verify_models_once()
+        self.write_reset_marker()
         self.start_other_venue()
         self.start_exit_manager()
         self.start_claude()
@@ -215,7 +217,7 @@ class GhaLoop:
         self.start_opus_b()
         self.start_scorer()
         self.start_m15_scan()
-        self.start_other_venue()
+        self.start_panel()
         while True:
             # The job still wakes every `self.interval` (2 min). The site countdown uses
             # scan_interval (2 active / 15 during ASIAN / DEADZONE) so it matches the next Gemini call.
@@ -596,6 +598,38 @@ class GhaLoop:
             log.exception("signal scorer failed to start (main loop unaffected)")
             self.scorer = None
 
+    def write_reset_marker(self) -> None:
+        """Shared reset (t255u): stamp state/reset.json with the token + exact time before any book loads."""
+        if self.dry_run:
+            return
+        try:
+            from .panel import write_reset_marker
+            m = write_reset_marker(self.cfg, self.data / "state")
+            if m:
+                log.info("shared reset marker: token=%s at=%s", m.get("token"), m.get("at"))
+        except Exception:
+            log.exception("reset marker write failed")
+
+    def start_panel(self) -> None:
+        """Clean panel ledger (t252u): per-book performance + every position since the reset, live MFE/MAE $."""
+        if self.dry_run or (self.cfg.get("panel") or {}).get("enabled", True) is False:
+            return
+        try:
+            from .panel import PanelLedger, run_panel_loop
+            self.panel = PanelLedger(self.cfg, state_dir=self.data / "state", logs_dir=self.data / "logs",
+                                     site_dir=self.data)
+            self.panel_task = asyncio.create_task(run_panel_loop(self.panel), name="panel")
+        except Exception:
+            log.exception("panel ledger failed to start (books unaffected)")
+            self.panel = None
+
+    async def stop_panel(self) -> None:
+        t, self.panel_task = getattr(self, "panel_task", None), None
+        if t:
+            t.cancel()
+            with contextlib.suppress(BaseException):
+                await asyncio.wait_for(t, 30)
+
     async def stop_scorer(self) -> None:
         t, self.scorer_task = self.scorer_task, None
         if t:
@@ -614,6 +648,7 @@ class GhaLoop:
         await self.stop_opus_b()
         await self.stop_other_venue()
         await self.stop_scorer()
+        await self.stop_panel()
         succ = L.read(self.data, L.SUCC)
         handed = succ.get("run_id") if (reason == "handoff" and succ) else None
         if reason == "stop-file":
@@ -659,6 +694,7 @@ async def run_gha_loop(cfg: dict, data: Path, run_id: str, role: str, **kw) -> s
         await loop.stop_opus_b()
         await loop.stop_other_venue()
         await loop.stop_scorer()
+        await loop.stop_panel()
         log.error("lost the loop lock: %s -> exiting without further writes", e)
         return "lost-lock"
     finally:

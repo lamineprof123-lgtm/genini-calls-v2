@@ -32,7 +32,7 @@ jobs:
           mkdir -p _site
           find . -maxdepth 1 -type f ! -name '*.py' ! -name '*.md' ! -name '.git*' -exec cp {} _site/ \;
           if git fetch -q --depth 1 origin pipeline-data; then
-            for f in status.json latest_signal.json history.json lucid.json; do
+            for f in status.json latest_signal.json history.json lucid.json panel.json; do
               git show "FETCH_HEAD:$f" > "/tmp/$f" 2>/dev/null && mv "/tmp/$f" "_site/$f" || true
             done
           fi

@@ -143,7 +143,7 @@ def _ds_lucid_cfg(cfg: dict) -> dict:
     L["eval_fee"] = 0.0
     L["reset_token"] = cc["reset_token"]
     L["reset_reason"] = cc.get("reset_reason") or "DS-FLASH fresh $100k paper book"
-    L["reset_archive"] = "account_pre_ds_flash_{day}.json"
+    L["reset_archive"] = cc.get("reset_archive") or "account_pre_ds_flash_{day}.json"
     L["start_balance"] = float(cc.get("start_balance") or L.get("start_balance") or 100000.0)
     out["lucid"] = L
     return out

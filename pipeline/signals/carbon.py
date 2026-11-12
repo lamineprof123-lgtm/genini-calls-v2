@@ -776,9 +776,10 @@ class CarbonEngine:
         except Exception:
             st = None
         if st is None or st.get("reset_token") != self.cc["reset_token"]:
+            keep_spend = (st or {}).get("spend") or {}     # daily spend caps survive an account reset
             if st is not None:
                 _atomic_write(self.root / f"engine_pre_{self.cc['reset_token']}.json", st)
-            st = {"reset_token": self.cc["reset_token"], "created_at": _iso(datetime.now(UTC)), "spend": {},
+            st = {"reset_token": self.cc["reset_token"], "created_at": _iso(datetime.now(UTC)), "spend": keep_spend,
                   "last_scan_bar": None, "triggers": {"day": None, "n": 0, "per_bar": {}}, "cache": {},
                   "whatif": [], "next_vid": 1, "last_call": None, "first_call": None, "calls_total": 0,
                   "last_scan": None}

@@ -263,8 +263,8 @@ def test_site_open_positions_include_entry_time(cfg, tmp_path):
 
 
 def test_panel_open_positions_show_live_held():
+    """t252u clean panel: no signal views; performance + every position since reset from panel.json."""
     html = Path(__file__).resolve().parents[2].joinpath("index.html").read_text()
-    assert html.count("<th>Opened</th>") >= 2 and html.count("<th>Held</th>") >= 2
-    assert "data-entry-time" in html and "heldSince(p.entry_time)" in html
-    assert "tickOpenHeld" in html and "setInterval(tickOpenHeld, 1000)" in html
-    assert "$('luPos')" in html
+    assert "panel.json" in html and "logo-bluebird.png" in html and 'id="count"' in html
+    assert "latest_signal.json" not in html and "v-signal" not in html
+    assert "Max $ P&amp;L" in html and "Lowest $ P&amp;L" in html and "P&amp;L at close" in html

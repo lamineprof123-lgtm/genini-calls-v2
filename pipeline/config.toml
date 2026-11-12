@@ -1,5 +1,16 @@
 # Gemini Signals configuration. SIGNALS ONLY: this project never places orders.
 
+# t255u SHARED RESET: one token for every account (main Lucid, exit books, bracket, Carbon, Claude, C-OPUS-B,
+# DS-FLASH, every OTHER-VENUE sub-account). The loop stamps state/reset.json with the exact time; the clean panel
+# (signals/panel.py -> panel.json) shows performance and positions since then. Signal scorer data is separate.
+[reset]
+token = "2026-11-12-uniform-reset"
+reason = "reset all accounts to 100k after the last model change was made (t255u)"
+
+[panel]
+enabled = true
+poll_seconds = 15
+
 [general]
 symbols = ["XAUUSD", "EURUSD", "GBPUSD", "US100", "XAGUSD", "BTCUSD"]
 timeframe_minutes = 15
@@ -262,10 +273,10 @@ enabled = true
 plan = "LucidPro 100K (DLL on)"
 # One-shot reset: when this token differs from the one stored in state/lucid/account.json, the sim archives the
 # state (account_pre_reset_<day>.json), starts a fresh account and logs a "reset" event. Logs are kept.
-reset_token = "2026-11-12-profit-lock"
-reset_reason = "reset6: profit-lock exit rules"
-reset_archive = "account_pre_reset6_{day}.json"
-exit_books_archive = "exit_books_pre_reset6_{day}.json"
+reset_token = "2026-11-12-uniform-reset"     # t255u shared reset: every account fresh $100k after the last model change
+reset_reason = "t255u: reset all accounts to $100k after the last model change (uniform 1 ATR bracket)"
+reset_archive = "account_pre_reset_2026-11-12-uniform-reset.json"
+exit_books_archive = "exit_books_pre_reset_2026-11-12-uniform-reset.json"
 # USER RULE (2026-11-11): "take the entry signal and the exit signal". exit_mode = "gemini": Gemini's entry opens,
 # the exit manager's Gemini CLOSE (book gemini_exit_book, checks every [exit_manager].check_seconds) closes.
 # No server target, no 2-bar time cut, no VWAP/EMA50 cross exits, no $381 NET-target floor (there is no target).
@@ -460,7 +471,7 @@ entry_max_tokens = 8000
 exit_max_tokens = 200
 check_seconds = 18
 start_balance = 100000.0
-reset_token = "claude-v2-1"       # change to start both Claude accounts fresh (old state archived)
+reset_token = "2026-11-12-uniform-reset"       # was claude-v2-1; change to start both Claude accounts fresh (old state archived)
 skip_blocked_sessions = true      # no entry call when all 4 symbols are in ASIAN_SESSION_CHOP / DEADZONE (prompt HOLDs)
 m5_chart = true                   # Claude exit image is an M5 chart (same style as entry); falls back to M15 if M1 is missing
 scan_offset_seconds = 20          # own entry task at M15 close +20s; Gemini loop is not delayed
@@ -524,7 +535,7 @@ pending_expiry_seconds = 180    # no usable live quote for this long -> the sign
 max_chase_atr = 0.5
 fill_quote_max_age_s = 60
 gap_seconds = 180
-reset_token = "bracket-v1"
+reset_token = "2026-11-12-uniform-reset"   # was bracket-v1
 
 # ---------------------------------------------------------------------------------------------------------------
 # GEMINI 4 CARBON SIDE BOOKS CB-BRACKET / CB-RUNNER (signals/carbon.py). PAPER ONLY, each its own $100k account.
@@ -554,7 +565,7 @@ max_chase_atr = 0.5
 start_balance = 100000.0
 check_seconds = 18
 slippage_ticks = 1
-reset_token = "carbon-v1"        # change to start both Carbon accounts fresh (old state archived)
+reset_token = "2026-11-12-uniform-reset"        # was carbon-v1; change to start both Carbon accounts fresh (old state archived)
 
 [carbon_books.triggered_checks]
 level_cross_atr = 0.1
@@ -635,8 +646,9 @@ timeout_seconds = 60
 max_output_tokens = 4000
 book = "DS-FLASH"
 start_balance = 100000.0
-reset_token = "2026-11-12-ds-flash"
-reset_reason = "DS-FLASH fresh $100k paper book"
+reset_token = "2026-11-12-uniform-reset"   # was 2026-11-12-ds-flash
+reset_reason = "t255u shared reset: DS-FLASH fresh $100k"
+reset_archive = "account_pre_reset_2026-11-12-uniform-reset.json"
 soft_spend_usd = 5.0
 check_seconds = 18
 prompt_version = "bracket-v1"
@@ -671,8 +683,9 @@ max_tokens = 8000
 max_attempts = 2
 book = "C-OPUS-B"
 start_balance = 100000.0
-reset_token = "c-opus-b-v1"
-reset_reason = "C-OPUS-B fresh $100k paper book (bracket-v1, high effort)"
+reset_token = "2026-11-12-uniform-reset"   # was c-opus-b-v1
+reset_reason = "t255u shared reset: C-OPUS-B fresh $100k (bracket-v1, high effort)"
+reset_archive = "account_pre_reset_2026-11-12-uniform-reset.json"
 fill_max_adverse_atr = 0.3
 symbols = ["XAUUSD", "EURUSD", "US100", "XAGUSD", "BTCUSD"]
 prompt_version = "bracket-v1"
@@ -692,6 +705,7 @@ effort = "high"
 # bracket. Panel shows an "Other venue" line per model.
 [other_venue]
 enabled = true
+reset_token = "2026-11-12-uniform-reset"   # t255u: every OTHER-VENUE sub-account fresh $100k (old books archived)
 start_balance = 100000.0
 risk_usd = 900.0
 fee_rate = 0.0005

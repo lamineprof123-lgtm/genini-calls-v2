@@ -1,11 +1,11 @@
 {
-  "updated_at_utc": "2026-11-12T15:02:19.883276+00:00",
+  "updated_at_utc": "2026-11-12T15:04:25.681298+00:00",
   "paper_only": true,
   "note": "GEMINI EXITS + HARD STOP -$500 NET: same Lucid entries; books 1-strike / 2-strike exit on Gemini CLOSE or the -$500 net hard stop; shadow book nostop = same entries, Gemini CLOSE only (never stopped). No target, no max hold, no 16:45 flat; 3.5% breaker log-only. BASELINE = the main Lucid account (exit_mode=gemini_only: gemini = follows the 1-strike book's CLOSE) on the same entry ids.",
   "check_seconds": 18,
   "books": {
     "1-strike": {
-      "balance": 97737.1,
+      "balance": 97722.7,
       "net_pnl": -2262.9,
       "trades": 57,
       "wins": 26,
@@ -13,14 +13,14 @@
       "win_rate": 0.456,
       "avg_win": 385.87,
       "avg_loss": -396.63,
-      "commissions": 560.4,
+      "commissions": 574.8,
       "avg_hold_min": 6.4,
       "exit_reasons": {
         "gemini_close": 44,
         "hard_stop_500": 13
       },
-      "open_positions": 0,
-      "open_pnl": 0,
+      "open_positions": 1,
+      "open_pnl": 22.5,
       "hard_stop_net_usd": 500.0,
       "overlap_trades": 0,
       "overlap_net": 0.0,
@@ -39,7 +39,7 @@
       }
     },
     "nostop": {
-      "balance": 105073.85,
+      "balance": 105059.45,
       "net_pnl": 5075.6,
       "trades": 56,
       "wins": 31,
@@ -47,13 +47,13 @@
       "win_rate": 0.554,
       "avg_win": 465.55,
       "avg_loss": -374.25,
-      "commissions": 558.65,
+      "commissions": 573.05,
       "avg_hold_min": 8.0,
       "exit_reasons": {
         "gemini_close": 56
       },
-      "open_positions": 1,
-      "open_pnl": -506.2,
+      "open_positions": 2,
+      "open_pnl": -482.1,
       "hard_stop_net_usd": null,
       "overlap_trades": 6,
       "overlap_net": 3260.7,
@@ -79,15 +79,15 @@
     }
   },
   "baseline": {
-    "net_pnl": -1754.4,
-    "trades": 56,
+    "net_pnl": -2262.9,
+    "trades": 57,
     "wins": 26,
-    "losses": 30,
-    "win_rate": 0.464,
-    "avg_hold_min": 6.5,
+    "losses": 31,
+    "win_rate": 0.456,
+    "avg_hold_min": 6.4,
     "exit_reasons": {
       "gemini_close": 44,
-      "hard_stop_500": 12
+      "hard_stop_500": 13
     }
   }
 }

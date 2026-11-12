@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-12T14:56:41.889177+00:00",
+  "updated_at": "2026-11-12T14:58:40.881304+00:00",
   "paper_only": true,
   "key_present": true,
   "status": "running",
@@ -24,16 +24,16 @@
       "account": {
         "start_balance": 100000.0,
         "balance": 99137.8,
-        "equity": 99152.8,
+        "equity": 99310.3,
         "realized_pnl": -862.2,
-        "open_pnl": 15.0,
+        "open_pnl": 172.5,
         "trades": 4,
         "wins": 0,
         "losses": 4,
         "r_total": -2.356,
         "r_per_trade": -0.589,
         "mll_floor": 97000.0,
-        "mll_room": 2152.8,
+        "mll_room": 2310.3,
         "day_realized": -862.2,
         "day_flattened": false,
         "blown": null
@@ -47,12 +47,12 @@
           "entry_time": "2026-11-12T14:47:06.400113+00:00",
           "entry": 1.3254,
           "stop": 1.3263,
-          "floor": null,
-          "floor_label": null,
-          "last": 1.32534,
-          "unrealized": 15.0,
+          "floor": 1.3253,
+          "floor_label": "break-even + commission",
+          "last": 1.32471,
+          "unrealized": 172.5,
           "risk_usd": 244.2,
-          "phase": "B",
+          "phase": "C",
           "setup_type": "trend",
           "score": 5,
           "server_only": false,
@@ -143,25 +143,25 @@
           "r_avg": -0.47
         },
         "whatif": {
-          "n": 8,
-          "wins": 2,
+          "n": 9,
+          "wins": 3,
           "losses": 6,
-          "net": -3750.92,
-          "r_total": -5.42,
-          "r_avg": -0.677
+          "net": -3734.47,
+          "r_total": -5.085,
+          "r_avg": -0.565
         },
         "twin": {
-          "n": 8,
-          "wins": 3,
+          "n": 9,
+          "wins": 4,
           "losses": 5,
-          "net": -1809.98,
-          "r_total": -1.675,
-          "r_avg": -0.209
+          "net": -1793.53,
+          "r_total": -1.34,
+          "r_avg": -0.149
         },
         "whatif_gated": {
-          "n": 8,
-          "r_total": -5.42,
-          "r_avg": -0.677
+          "n": 9,
+          "r_total": -5.085,
+          "r_avg": -0.565
         }
       },
       "signals": {
@@ -188,17 +188,17 @@
           }
         },
         "exit": {
-          "calls": 28,
+          "calls": 66,
           "failed": 0,
-          "latency_p50_ms": 1669.0,
-          "latency_p95_ms": 2798.8,
-          "cost_usd": 0.0104,
+          "latency_p50_ms": 1562.5,
+          "latency_p95_ms": 2644.0,
+          "cost_usd": 0.0246,
           "by_utc_day": {
             "2026-11-12": {
-              "calls": 28,
-              "cost_usd": 0.0112,
-              "input_tokens": 93222,
-              "output_tokens": 2214,
+              "calls": 66,
+              "cost_usd": 0.0264,
+              "input_tokens": 219976,
+              "output_tokens": 5278,
               "thinking_tokens": 0
             }
           }

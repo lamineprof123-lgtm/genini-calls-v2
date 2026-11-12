@@ -4,42 +4,11 @@
   "reset_token": "bracket-v1",
   "created_at": "2026-11-12T13:12:49.149672+00:00",
   "start_balance": 100000.0,
-  "balance": 100835.95,
+  "balance": 99813.65,
   "peak_balance": 101199.6,
   "max_drawdown": -1467.3,
   "next_id": 11,
   "positions": [
-    {
-      "symbol": "XAUUSD",
-      "side": -1,
-      "contract": "GC",
-      "qty": 1,
-      "atr": 10.093,
-      "confidence": 0.85,
-      "signal_entry": 3885.3,
-      "signal_at": "2026-11-12T13:54:20.012204+00:00",
-      "queued_at": "2026-11-12T13:54:38.341924+00:00",
-      "level_event": "acceptance below session low 3900.80",
-      "session": "LONDON_NY_OVERLAP",
-      "rationale": "Price is trading well below VAL (3948.58) and POC (3979.43), indicating aggressive value migration lower. CVD is -7.92 with a steep negative slope (-3.14), agreeing with strong bearish pressure. Active LONDON_NY_OVERLAP session. Price is extended far below both VWAP (3963.10) and EMA50 (3955.51). Th",
-      "id": 9,
-      "book": "bracket",
-      "entry": 3885.7,
-      "entry_time": "2026-11-12T13:54:41.272587+00:00",
-      "quote_price": 3885.84,
-      "quote_source": "dukascopy:tick",
-      "quote_age_s": 2.76,
-      "stop": 3895.8,
-      "target": 3875.6,
-      "deadline": "2026-11-12T15:24:41.272587+00:00",
-      "risk_usd": 1014.6,
-      "target_usd": 1005.4,
-      "mfe": 0.0,
-      "mae": 6.039999999999964,
-      "scan_from": "2026-11-12T13:58:00+00:00",
-      "checks": 20,
-      "last_check_at": "2026-11-12T14:00:31.832597+00:00"
-    },
     {
       "symbol": "US100",
       "side": -1,
@@ -67,16 +36,16 @@
       "target_usd": 1296.5,
       "mfe": 25.924999999999272,
       "mae": 29.598000000001775,
-      "scan_from": "2026-11-12T13:59:00+00:00",
-      "checks": 20,
-      "last_check_at": "2026-11-12T14:00:31.832597+00:00"
+      "scan_from": "2026-11-12T14:01:00+00:00",
+      "checks": 27,
+      "last_check_at": "2026-11-12T14:02:37.840706+00:00"
     }
   ],
   "pending": [],
   "last_price": {
-    "US100": 28012.44,
+    "US100": 28012.22,
     "EURUSD": 1.10909,
-    "XAUUSD": 3891.74
+    "XAUUSD": 3893.43
   },
   "seen_cycles": [
     "2026-11-12T13:14:20.285273+00:00",
@@ -102,30 +71,31 @@
     "2026-11-12T13:54:20.012204+00:00",
     "2026-11-12T13:56:21.145353+00:00",
     "2026-11-12T13:58:20.230864+00:00",
-    "2026-11-12T14:00:20.283181+00:00"
+    "2026-11-12T14:00:20.283181+00:00",
+    "2026-11-12T14:02:20.898464+00:00"
   ],
   "stats": {
-    "trades": 8,
+    "trades": 9,
     "wins": 4,
-    "losses": 4,
+    "losses": 5,
     "gross_win": 3882.7,
-    "gross_loss": -3042.7,
-    "net_pnl": 840.0,
-    "commissions": 71.55,
-    "hold_seconds": 5057,
+    "gross_loss": -4067.3,
+    "net_pnl": -184.6,
+    "commissions": 73.85,
+    "hold_seconds": 5375,
     "exit_reasons": {
-      "stop_1atr": 4,
+      "stop_1atr": 5,
       "target_1atr": 4
     },
-    "signals_seen": 34,
+    "signals_seen": 36,
     "signals_taken": 10,
     "skips": {
-      "symbol": 16,
+      "symbol": 17,
       "held_in_bracket": 5,
-      "confidence<min": 3
+      "confidence<min": 4
     },
     "missed_scans": {
-      "XAUUSD": 6,
+      "XAUUSD": 7,
       "EURUSD": 2,
       "US100": 2
     }

@@ -3,40 +3,39 @@
   "created_at": "2026-11-12T16:52:53.616485+00:00",
   "spend": {
     "2026-11-12": {
-      "usd": 0.014782,
-      "calls": 5,
+      "usd": 0.020106,
+      "calls": 7,
       "failed": 0,
       "tokens": {
-        "prompt": 47810,
-        "cache_hit": 11264,
-        "cache_miss": 36546,
-        "completion": 15444,
-        "reasoning": 6927
+        "prompt": 65438,
+        "cache_hit": 14080,
+        "cache_miss": 51358,
+        "completion": 20600,
+        "reasoning": 8692
       }
     }
   },
   "last_call": {
-    "t": "2026-11-12T17:02:20.017096+00:00",
+    "t": "2026-11-12T17:06:20.017333+00:00",
     "ok": true,
-    "cost_usd": 0.0024728,
-    "spend_today_usd": 0.0148,
+    "cost_usd": 0.00242625,
+    "spend_today_usd": 0.0201,
     "band": "off_peak",
     "tokens": {
-      "prompt": 9597,
-      "cache_hit": 2816,
-      "cache_miss": 6781,
-      "completion": 2412,
-      "reasoning": 751,
-      "total": 12009
+      "prompt": 8031,
+      "cache_hit": 0,
+      "cache_miss": 8031,
+      "completion": 2036,
+      "reasoning": 619,
+      "total": 10067
     },
-    "latency_s": 13.072,
+    "latency_s": 11.949,
     "error": null,
     "model": "deepseek-flash",
     "symbols": [
       "XAUUSD",
       "EURUSD",
-      "GBPUSD",
-      "US100"
+      "GBPUSD"
     ],
     "http_status": 200
   },
@@ -44,30 +43,23 @@
     {
       "symbol": "XAUUSD",
       "action": "HOLD",
-      "confidence": 0.4,
-      "entry": 3876.05,
-      "rationale": "Value area: price below VAL 3905.62 and below POC 3978.13 (below_val) \u2014 bearish but price is already deep in the discount zone, so chasing here is poor. CVD -7.90 BEARISH but cvd_slope +1.15 shows fading downside pressure / mild divergence "
+      "confidence": 0.55,
+      "entry": 3874.72,
+      "rationale": "XAUUSD is below_val (VAL 3905.62) and below POC 3978.13 \u2014 price outside the value area to the downside after a persistent selloff. CVD -7.90 BEARISH but cvd_slope +1.15 shows the down-pressure fading slightly; CVD is only mildly diverging f"
     },
     {
       "symbol": "EURUSD",
       "action": "HOLD",
-      "confidence": 0.4,
-      "entry": 1.10574,
-      "rationale": "Value area: price below VAL 1.10740 and below POC 1.10943 (below_val) \u2014 bearish bias but price is at the bottom of the range. CVD -2,011 NEUTRAL with cvd_slope +843 (positive) \u2014 no bearish conviction, divergence vs price weakness. SESSION N"
+      "confidence": 0.55,
+      "entry": 1.10569,
+      "rationale": "EURUSD is below_val (VAL 1.10740) and below POC 1.10943 \u2014 price rejected out of the value area. CVD -2,011 NEUTRAL with cvd_slope +843.38 (short-term buying pressure returning), so CVD is not confirming further downside and mildly diverges "
     },
     {
       "symbol": "GBPUSD",
       "action": "HOLD",
-      "confidence": 0.4,
-      "entry": 1.32369,
-      "rationale": "Value area: price below VAL 1.32533 and below POC 1.32731 (below_val) \u2014 bearish context but at the lower extreme. CVD -8,172 BEARISH but cvd_slope +2,959 shows strong positive acceleration, i.e. downside pressure fading (divergence). SESSIO"
-    },
-    {
-      "symbol": "US100",
-      "action": "HOLD",
-      "confidence": 0.5,
-      "entry": 28423.71,
-      "rationale": "Value area: price above VAH 28231.55 and above POC 28122.95 (above_vah) \u2014 strong trend expansion, but with RVOL only 0.995 (US100 caveat: no yellow bar, tick-volume rarely spikes) there is no definitive volume confirmation. CVD +1.65 NEUTRA"
+      "confidence": 0.55,
+      "entry": 1.3238,
+      "rationale": "GBPUSD is below_val (VAL 1.32533) and below POC 1.32731 \u2014 price outside the value area to the downside. CVD -8,172 BEARISH, but cvd_slope +2,959 shows selling decelerating, a mild divergence from the extended drop. SESSION NEW_YORK_SESSION "
     }
   ],
   "last_bars": {

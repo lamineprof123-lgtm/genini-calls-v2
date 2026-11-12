@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-12T09:08:33.162640+00:00",
+  "updated_at": "2026-11-12T09:10:34.355514+00:00",
   "paper_only": true,
   "plan": "LucidPro 100K (DLL on)",
   "exit_mode": "gemini_only",
@@ -16,37 +16,22 @@
     "no": 1,
     "phase": "eval",
     "start_balance": 100000.0,
-    "balance": 99937.8,
-    "equity": 100110.8,
-    "realized_pnl_since_reset": 0.0,
-    "open_pnl": 173.0,
-    "commission_on_open": 62.2,
-    "trades_since_reset": 0,
-    "wins": 0,
+    "balance": 100053.2,
+    "equity": 100653.2,
+    "realized_pnl_since_reset": 110.8,
+    "open_pnl": 600.0,
+    "commission_on_open": 57.6,
+    "trades_since_reset": 1,
+    "wins": 1,
     "losses": 0,
     "mll_floor": 97000.0,
-    "mll_room": 3110.8,
+    "mll_room": 3653.2,
     "dll": 1800.0,
-    "day_realized": 0.0,
+    "day_realized": 110.8,
     "day_locked": null,
-    "to_target": 6062.2
+    "to_target": 5946.8
   },
   "open_positions": [
-    {
-      "symbol": "XAUUSD",
-      "contract": "GC",
-      "qty": 2,
-      "side": "SHORT",
-      "entry_time": "2026-11-12T09:03:00+00:00",
-      "entry": 3930.6,
-      "stop": null,
-      "target": null,
-      "last": 3928.385,
-      "unrealized": 443.0,
-      "risk_usd": null,
-      "target_usd_net": null,
-      "target_source": "none (gemini_only)"
-    },
     {
       "symbol": "EURUSD",
       "contract": "6E",
@@ -56,14 +41,28 @@
       "entry": 1.1093,
       "stop": null,
       "target": null,
-      "last": 1.10921,
-      "unrealized": -270.0,
+      "last": 1.1095,
+      "unrealized": 600.0,
       "risk_usd": null,
       "target_usd_net": null,
       "target_source": "none (gemini_only)"
     }
   ],
   "pending": 0,
-  "recent_trades": [],
-  "last_processed": "2026-11-12T09:08:00+00:00"
+  "recent_trades": [
+    {
+      "t_exit": "2026-11-12T09:09:00+00:00",
+      "symbol": "XAUUSD",
+      "contract": "GC",
+      "qty": 2,
+      "side": "SHORT",
+      "entry_time": "2026-11-12T09:03:00+00:00",
+      "entry": 3930.6,
+      "exit": 3930.0,
+      "reason": "gemini_close",
+      "net": 110.8,
+      "balance_after": 100053.2
+    }
+  ],
+  "last_processed": "2026-11-12T09:10:00+00:00"
 }

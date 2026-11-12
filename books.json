@@ -1,46 +1,50 @@
 {
-  "updated_at_utc": "2026-11-12T09:08:15.273308+00:00",
+  "updated_at_utc": "2026-11-12T09:10:21.545266+00:00",
   "paper_only": true,
   "note": "GEMINI ONLY: same Lucid entries; books A (1-strike) / B (2-strike) exit on Gemini CLOSE only - no stop, no target, no max hold, no 16:45 flat; 3.5% breaker log-only. BASELINE = the main Lucid account (exit_mode=gemini_only: gemini = follows the 1-strike book's CLOSE) on the same entry ids.",
   "check_seconds": 18,
   "books": {
     "1-strike": {
-      "balance": 99937.8,
-      "net_pnl": 0.0,
-      "trades": 0,
-      "wins": 0,
+      "balance": 100053.2,
+      "net_pnl": 110.8,
+      "trades": 1,
+      "wins": 1,
       "losses": 0,
-      "win_rate": null,
-      "avg_win": null,
+      "win_rate": 1.0,
+      "avg_win": 110.8,
       "avg_loss": null,
-      "commissions": 62.2,
-      "avg_hold_min": null,
-      "exit_reasons": {},
-      "open_positions": 2,
+      "commissions": 66.8,
+      "avg_hold_min": 6.1,
+      "exit_reasons": {
+        "gemini_close": 1
+      },
+      "open_positions": 1,
       "day": {
         "id": "2026-11-12",
         "start_balance": 100000.0,
-        "realized": 0.0,
+        "realized": 110.8,
         "halted": null
       }
     },
     "2-strike": {
-      "balance": 99937.8,
-      "net_pnl": 0.0,
-      "trades": 0,
-      "wins": 0,
+      "balance": 100093.2,
+      "net_pnl": 150.8,
+      "trades": 1,
+      "wins": 1,
       "losses": 0,
-      "win_rate": null,
-      "avg_win": null,
+      "win_rate": 1.0,
+      "avg_win": 150.8,
       "avg_loss": null,
-      "commissions": 62.2,
-      "avg_hold_min": null,
-      "exit_reasons": {},
-      "open_positions": 2,
+      "commissions": 66.8,
+      "avg_hold_min": 6.4,
+      "exit_reasons": {
+        "gemini_close": 1
+      },
+      "open_positions": 1,
       "day": {
         "id": "2026-11-12",
         "start_balance": 100000.0,
-        "realized": 0.0,
+        "realized": 150.8,
         "halted": null
       }
     }

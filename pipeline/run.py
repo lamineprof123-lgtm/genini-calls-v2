@@ -23,6 +23,7 @@ def main():
     ap.add_argument("--model", help="override [gemini].model (entry scans only)")
     ap.add_argument("--exit-model", help="override [gemini].exit_model (18s exit checks only)")
     ap.add_argument("--probe", help="models command: comma-separated IDs to probe (default: configured entry,exit)")
+    ap.add_argument("--thinking", help="models command: thinking level to send with each probe (e.g. medium)")
     ap.add_argument("--interval", type=int, help="loop interval minutes (15 = align to M15 closes)")
     ap.add_argument("--max-cycles", type=int)
     ap.add_argument("--config")
@@ -53,7 +54,7 @@ def main():
     if a.cmd == "models":
         from signals.model_verify import verify_models, format_report
         probe = [x.strip() for x in (a.probe or "").split(",") if x.strip()] or None
-        res = verify_models(cfg, probe)
+        res = verify_models(cfg, probe, getattr(a, "thinking", None))
         print(format_report(res))
         if not res.get("ok"):
             sys.exit(1)

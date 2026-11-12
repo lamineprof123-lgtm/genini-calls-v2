@@ -34,27 +34,40 @@ def closest_ids(target: str, pool: Iterable[str], k: int = 10) -> list[str]:
     return [p for s, p in scored if s > 0][:k]
 
 
-def probe_model(client, mid: str) -> dict:
+def probe_model(client, mid: str, thinking: str | None = None) -> dict:
+    """thinking: optional thinking level ("minimal" | "low" | "medium" | "high") sent as
+    ThinkingConfig(thinking_level=...); the response's thoughts_token_count is reported."""
     t0 = time.monotonic()
     try:
-        resp = client.models.generate_content(model=mid, contents="Reply with the single word pong.")
+        kw = {}
+        if thinking:
+            from google.genai import types
+            kw["config"] = types.GenerateContentConfig(
+                thinking_config=types.ThinkingConfig(thinking_level=thinking), max_output_tokens=2000)
+        resp = client.models.generate_content(
+            model=mid, contents=("Think briefly: which is larger, 9.11 or 9.9? Then reply with the single word pong."
+                                 if thinking else "Reply with the single word pong."), **kw)
         usage = None
         if getattr(resp, "usage_metadata", None):
             try:
                 usage = resp.usage_metadata.model_dump(exclude_none=True)
             except Exception:
                 usage = str(resp.usage_metadata)
-        return {"id": mid, "ok": True, "latency_s": round(time.monotonic() - t0, 3),
+        thoughts = None
+        if getattr(resp, "usage_metadata", None) is not None:
+            thoughts = getattr(resp.usage_metadata, "thoughts_token_count", None)
+        return {"id": mid, "ok": True, "latency_s": round(time.monotonic() - t0, 3), "thinking": thinking,
+                "thoughts_token_count": thoughts,
                 "model_version": getattr(resp, "model_version", None),
                 "text": (getattr(resp, "text", None) or "")[:80], "usage": usage,
                 "error": None}
     except Exception as e:
-        return {"id": mid, "ok": False, "latency_s": round(time.monotonic() - t0, 3),
+        return {"id": mid, "ok": False, "latency_s": round(time.monotonic() - t0, 3), "thinking": thinking,
                 "model_version": None, "text": None, "usage": None,
                 "error": f"{type(e).__name__}: {str(e)[:500]}"}
 
 
-def verify_models(cfg: dict | None = None, probe: list[str] | None = None) -> dict:
+def verify_models(cfg: dict | None = None, probe: list[str] | None = None, thinking: str | None = None) -> dict:
     """List models, then probe each ID. Does not swap a rejected ID for a neighbour."""
     from google import genai
     from .config import entry_model, exit_model
@@ -83,7 +96,7 @@ def verify_models(cfg: dict | None = None, probe: list[str] | None = None) -> di
             seen.add(m); ids.append(m)
     probes = []
     for mid in ids:
-        r = probe_model(client, mid)
+        r = probe_model(client, mid, thinking)
         r["exact_in_list"] = mid in listed if listed else None
         r["closest"] = closest_ids(mid, listed) if listed else []
         probes.append(r)
@@ -102,10 +115,10 @@ def format_report(res: dict) -> str:
                      f"gemini 3/4: {', '.join(res.get('listed_gemini3_or_4') or []) or 'none'}")
     for p in res.get("probes") or []:
         if p["ok"]:
-            lines.append(f"PROBE OK  {p['id']}  latency={p['latency_s']}s  "
+            lines.append(f"PROBE OK  {p['id']}  thinking={p.get('thinking')}  thoughts_token_count={p.get('thoughts_token_count')}  latency={p['latency_s']}s  "
                          f"version={p.get('model_version')}  usage={p.get('usage')}")
         else:
-            lines.append(f"PROBE FAIL  {p['id']}  latency={p['latency_s']}s  error={p['error']}")
+            lines.append(f"PROBE FAIL  {p['id']}  thinking={p.get('thinking')}  latency={p['latency_s']}s  error={p['error']}")
             if p.get("closest"):
                 lines.append(f"  closest valid IDs: {', '.join(p['closest'])}")
     return "\n".join(lines)

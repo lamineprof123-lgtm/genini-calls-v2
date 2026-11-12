@@ -7,6 +7,9 @@ on:
       models:
         description: 'Comma-separated model IDs to probe'
         default: 'gemini-3.8-pro,gemini-3.8-flash'
+      thinking:
+        description: 'Optional thinking level sent with each probe (minimal|low|medium|high); blank = none'
+        default: ''
 
 jobs:
   verify:
@@ -28,9 +31,10 @@ jobs:
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           PYTHONUNBUFFERED: '1'
+          THINKING: ${{ inputs.thinking }}
         run: |
           set +e
-          python run.py models --probe "${{ inputs.models }}" | tee /tmp/model_verify.txt
+          python run.py models --probe "${{ inputs.models }}" ${THINKING:+--thinking "$THINKING"} | tee /tmp/model_verify.txt
           status=${PIPESTATUS[0]}
           echo '## Gemini model verification' >> "$GITHUB_STEP_SUMMARY"
           echo '```' >> "$GITHUB_STEP_SUMMARY"

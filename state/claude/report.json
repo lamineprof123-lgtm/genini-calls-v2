@@ -1,20 +1,65 @@
 {
-  "generated_at": "2026-11-12T12:26:37.034948+00:00",
+  "generated_at": "2026-11-12T12:31:52.670257+00:00",
   "since": "2026-11-12T12:14:51.993423+00:00",
   "sims": {
     "C-OPUS": {
       "real": {
-        "n": 0,
+        "n": 1,
         "wins": 0,
-        "losses": 0,
-        "net": 0,
-        "r_total": 0,
-        "r_avg": null,
-        "by_symbol": {},
-        "by_side": {},
-        "by_setup_type": {},
-        "by_session": {},
-        "by_reason": {}
+        "losses": 1,
+        "net": -69.2,
+        "r_total": -0.283,
+        "r_avg": -0.283,
+        "by_symbol": {
+          "GBPUSD": {
+            "n": 1,
+            "wins": 0,
+            "losses": 1,
+            "net": -69.2,
+            "r_total": -0.283,
+            "r_avg": -0.283
+          }
+        },
+        "by_side": {
+          "SHORT": {
+            "n": 1,
+            "wins": 0,
+            "losses": 1,
+            "net": -69.2,
+            "r_total": -0.283,
+            "r_avg": -0.283
+          }
+        },
+        "by_setup_type": {
+          "trend": {
+            "n": 1,
+            "wins": 0,
+            "losses": 1,
+            "net": -69.2,
+            "r_total": -0.283,
+            "r_avg": -0.283
+          }
+        },
+        "by_session": {
+          "LONDON_SESSION": {
+            "n": 1,
+            "wins": 0,
+            "losses": 1,
+            "net": -69.2,
+            "r_total": -0.283,
+            "r_avg": -0.283
+          }
+        },
+        "by_reason": {
+          "claude_close": {
+            "n": 1,
+            "wins": 0,
+            "losses": 1,
+            "net": -69.2,
+            "r_total": -0.283,
+            "r_avg": -0.283
+          }
+        }
       },
       "mech": {
         "n": 0,
@@ -64,12 +109,12 @@
         "by_reason": {}
       },
       "signals": {
-        "rows": 4,
-        "buy_sell": 0,
-        "gated": 0,
-        "opened": 0
+        "rows": 8,
+        "buy_sell": 2,
+        "gated": 2,
+        "opened": 1
       },
-      "whatif_open": 0,
+      "whatif_open": 2,
       "entry_calibration": {
         "0.5-0.6": {
           "n": 0,
@@ -91,28 +136,36 @@
       "exit_calibration": {},
       "ops": {
         "entry": {
-          "calls": 1,
+          "calls": 2,
           "failed": 0,
-          "latency_p50_ms": 23853.0,
-          "latency_p95_ms": 23853.0,
-          "cost_usd": 0.093,
+          "latency_p50_ms": 24747.5,
+          "latency_p95_ms": 25552.5,
+          "cost_usd": 0.1913,
           "by_utc_day": {
             "2026-11-12": {
-              "calls": 1,
-              "cost_usd": 0.093,
-              "input_tokens": 11699,
-              "output_tokens": 2312,
-              "thinking_tokens": 1169
+              "calls": 2,
+              "cost_usd": 0.1913,
+              "input_tokens": 23335,
+              "output_tokens": 4898,
+              "thinking_tokens": 2606
             }
           }
         },
         "exit": {
-          "calls": 0,
+          "calls": 3,
           "failed": 0,
-          "latency_p50_ms": null,
-          "latency_p95_ms": null,
-          "cost_usd": 0,
-          "by_utc_day": {}
+          "latency_p50_ms": 1612.0,
+          "latency_p95_ms": 1744.3,
+          "cost_usd": 0.0011,
+          "by_utc_day": {
+            "2026-11-12": {
+              "calls": 3,
+              "cost_usd": 0.0012,
+              "input_tokens": 9999,
+              "output_tokens": 243,
+              "thinking_tokens": 0
+            }
+          }
         }
       }
     },
@@ -178,7 +231,7 @@
         "by_reason": {}
       },
       "signals": {
-        "rows": 4,
+        "rows": 8,
         "buy_sell": 0,
         "gated": 0,
         "opened": 0
@@ -205,17 +258,17 @@
       "exit_calibration": {},
       "ops": {
         "entry": {
-          "calls": 1,
+          "calls": 2,
           "failed": 0,
-          "latency_p50_ms": 9179.0,
-          "latency_p95_ms": 9179.0,
-          "cost_usd": 0.0348,
+          "latency_p50_ms": 8597.0,
+          "latency_p95_ms": 9120.8,
+          "cost_usd": 0.0688,
           "by_utc_day": {
             "2026-11-12": {
-              "calls": 1,
-              "cost_usd": 0.0348,
-              "input_tokens": 11699,
-              "output_tokens": 1140,
+              "calls": 2,
+              "cost_usd": 0.0688,
+              "input_tokens": 23335,
+              "output_tokens": 2216,
               "thinking_tokens": 0
             }
           }

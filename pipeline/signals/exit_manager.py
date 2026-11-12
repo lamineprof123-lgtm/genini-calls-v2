@@ -694,7 +694,8 @@ class ExitManager:
         if st is not None and tok and st.get("reset_token") != tok:
             # Lucid account reset: position ids restart at 1, so the books start fresh too (old state archived).
             day = datetime.now(UTC).astimezone(ZoneInfo(cfg["general"]["session_tz"])).strftime("%Y-%m-%d")
-            _atomic_write(self.state_dir / f"exit_books_pre_{tok}.json", st)
+            arch = (self.cfg.get("lucid") or {}).get("exit_books_archive") or "exit_books_pre_{token}.json"
+            _atomic_write(self.state_dir / arch.format(day=day, token=tok), st)
             log.info("exit books: reset for Lucid reset_token %s (archived)", tok)
             st = None
         self.books = Books(cfg, st)

@@ -245,9 +245,10 @@ enabled = true
 plan = "LucidPro 100K (DLL on)"
 # One-shot reset: when this token differs from the one stored in state/lucid/account.json, the sim archives the
 # state (account_pre_reset_<day>.json), starts a fresh account and logs a "reset" event. Logs are kept.
-reset_token = "2026-11-11-gemini-only"
-reset_reason = "gemini-only: no SL/TP"
-reset_archive = "account_pre_reset3_{day}.json"
+reset_token = "2026-11-12-exit-prompt-v2"
+reset_reason = "reset4: exit-prompt-v2 (closed-bar invalidation, wall harvest, giveback ratchet)"
+reset_archive = "account_pre_reset4_{day}.json"
+exit_books_archive = "exit_books_pre_reset4_{day}.json"
 # USER RULE (2026-11-11): "take the entry signal and the exit signal". exit_mode = "gemini": Gemini's entry opens,
 # the exit manager's Gemini CLOSE (book gemini_exit_book, checks every [exit_manager].check_seconds) closes.
 # No server target, no 2-bar time cut, no VWAP/EMA50 cross exits, no $381 NET-target floor (there is no target).

@@ -1,98 +1,38 @@
 {
-  "updated_at": "2026-11-12T01:24:21.040836+00:00",
+  "updated_at": "2026-11-12T01:26:22.341128+00:00",
   "paper_only": true,
   "plan": "LucidPro 100K (DLL on)",
   "exit_mode": "gemini_only",
   "card": "SL: none \u00b7 TP: none \u00b7 exit: Gemini",
-  "breaches": [
-    {
-      "t": "2026-11-11T20:49:00+00:00",
-      "day": "2026-11-11",
-      "kind": "DLL",
-      "level": 98200.0,
-      "equity": 98002.13,
-      "note": "log-only (gemini_only): no block, no forced close"
-    },
-    {
-      "t": "2026-11-11T21:56:00+00:00",
-      "day": "2026-11-11",
-      "kind": "MLL",
-      "level": 97000.0,
-      "equity": 96987.1,
-      "note": "log-only (gemini_only): no block, no forced close"
-    },
-    {
-      "t": "2026-11-11T23:00:00+00:00",
-      "day": "2026-11-12",
-      "kind": "DLL",
-      "level": 95839.6,
-      "equity": 95327.2,
-      "note": "log-only (gemini_only): no block, no forced close"
-    },
-    {
-      "t": "2026-11-11T23:00:00+00:00",
-      "day": "2026-11-12",
-      "kind": "MLL",
-      "level": 97000.0,
-      "equity": 95327.2,
-      "note": "log-only (gemini_only): no block, no forced close"
-    }
-  ],
+  "breaches": [],
   "breach_note": "DLL / MLL / 3.5% breaker are log-only (no block, no forced close)",
   "sizing_rule": "full-size futures only (NQ, GC, 6E, 6B), 1-40 contracts sized as if risk were 0.8 ATR at $1500 (notional reference only); no stop, no target, exit = Gemini CLOSE only",
   "reset": {
-    "at": "2026-11-11T19:08:31.906022+00:00",
-    "reason": "gemini-only: no SL/TP",
-    "token": "2026-11-11-gemini-only"
+    "at": "2026-11-12T01:26:22.307439+00:00",
+    "reason": "reset4: exit-prompt-v2 (closed-bar invalidation, wall harvest, giveback ratchet)",
+    "token": "2026-11-12-exit-prompt-v2"
   },
   "account": {
     "no": 1,
     "phase": "eval",
     "start_balance": 100000.0,
-    "balance": 98382.7,
-    "equity": 98382.7,
-    "realized_pnl_since_reset": -1617.3,
+    "balance": 100000.0,
+    "equity": 100000.0,
+    "realized_pnl_since_reset": 0.0,
     "open_pnl": 0.0,
     "commission_on_open": 0.0,
-    "trades_since_reset": 2,
-    "wins": 1,
-    "losses": 1,
+    "trades_since_reset": 0,
+    "wins": 0,
+    "losses": 0,
     "mll_floor": 97000.0,
-    "mll_room": 1382.7,
+    "mll_room": 3000.0,
     "dll": 1800.0,
-    "day_realized": 736.2,
+    "day_realized": 0.0,
     "day_locked": null,
-    "to_target": 7617.3
+    "to_target": 6000.0
   },
   "open_positions": [],
   "pending": 0,
-  "recent_trades": [
-    {
-      "t_exit": "2026-11-11T23:22:00+00:00",
-      "symbol": "XAUUSD",
-      "contract": "GC",
-      "qty": 3,
-      "side": "SHORT",
-      "entry_time": "2026-11-11T19:09:00+00:00",
-      "entry": 3985.2,
-      "exit": 3982.7,
-      "reason": "gemini_close",
-      "net": 736.2,
-      "balance_after": 98382.7
-    },
-    {
-      "t_exit": "2026-11-11T20:55:00+00:00",
-      "symbol": "US100",
-      "contract": "NQ",
-      "qty": 1,
-      "side": "LONG",
-      "entry_time": "2026-11-11T19:33:00+00:00",
-      "entry": 28461.75,
-      "exit": 28344.25,
-      "reason": "gemini_close",
-      "net": -2353.5,
-      "balance_after": 97639.6
-    }
-  ],
-  "last_processed": "2026-11-12T01:24:00+00:00"
+  "recent_trades": [],
+  "last_processed": "2026-11-12T01:26:00+00:00"
 }

@@ -1,13 +1,13 @@
 {
   "version": 1,
-  "created_at": "2026-11-11T19:08:31.906022+00:00",
-  "last_processed": "2026-11-12T01:24:00+00:00",
+  "created_at": "2026-11-12T01:26:22.307439+00:00",
+  "last_processed": "2026-11-12T01:26:00+00:00",
   "account": {
     "no": 1,
     "phase": "eval",
-    "started_at": "2026-11-11T19:08:31.906022+00:00",
+    "started_at": "2026-11-12T01:26:22.307439+00:00",
     "start_balance": 100000.0,
-    "balance": 98382.7,
+    "balance": 100000.0,
     "highest_close": 100000.0,
     "mll_floor": 97000.0,
     "mll_locked": false,
@@ -17,31 +17,28 @@
     "cycle_start_balance": 100000.0,
     "cycle_day_pnl": {},
     "payouts": [],
-    "trading_days": 1,
-    "realized_pnl": -1617.3,
-    "trades": 2
+    "trading_days": 0,
+    "realized_pnl": 0.0,
+    "trades": 0
   },
   "positions": [],
   "pending": [],
-  "next_pos_id": 3,
+  "next_pos_id": 1,
   "day": {
     "id": "2026-11-12",
-    "start_balance": 97639.6,
-    "realized": 736.2,
+    "start_balance": 100000.0,
+    "realized": 0.0,
     "locked": null,
     "eod_done": null,
     "traded": false
   },
-  "last_price": {
-    "XAUUSD": 3984.541,
-    "US100": 28365.831
-  },
+  "last_price": {},
   "history": [],
   "ledger": {
     "fees_total": 190.4,
     "fees": [
       {
-        "t": "2026-11-11T19:08:31.906022+00:00",
+        "t": "2026-11-12T01:26:22.307439+00:00",
         "kind": "eval",
         "amount": 190.4,
         "note": "first LucidPro 100K evaluation"
@@ -56,95 +53,17 @@
     "payouts_gross": 0.0,
     "payouts_received": 0.0,
     "payout_count": 0,
-    "trades": 2,
-    "wins": 1,
-    "losses": 1,
-    "gross_win": 736.2,
-    "gross_loss": -2353.5,
-    "commissions": 17.3,
-    "net_trade_pnl": -1617.3,
-    "skipped_signals": 38,
-    "accepted_signals": 3
+    "trades": 0,
+    "wins": 0,
+    "losses": 0,
+    "gross_win": 0.0,
+    "gross_loss": 0.0,
+    "commissions": 0.0,
+    "net_trade_pnl": 0.0,
+    "skipped_signals": 0,
+    "accepted_signals": 0
   },
-  "reset_token": "2026-11-11-gemini-only",
-  "reset_at": "2026-11-11T19:08:31.906022+00:00",
-  "reset_reason": "gemini-only: no SL/TP",
-  "book_feed": [
-    {
-      "id": 1,
-      "symbol": "XAUUSD",
-      "contract": "GC",
-      "qty": 3,
-      "side": -1,
-      "entry": 3985.2,
-      "stop": null,
-      "target": null,
-      "entry_time": "2026-11-11T19:09:00+00:00",
-      "risk_usd": null,
-      "atr": 6.065,
-      "candle": {
-        "high": 3990.24,
-        "low": 3986.49
-      },
-      "gemini_run_at_utc": "2026-11-11T19:08:20.007724+00:00",
-      "gemini_confidence": 0.85
-    },
-    {
-      "id": 2,
-      "symbol": "US100",
-      "contract": "NQ",
-      "qty": 1,
-      "side": 1,
-      "entry": 28461.75,
-      "stop": null,
-      "target": null,
-      "entry_time": "2026-11-11T19:33:00+00:00",
-      "risk_usd": null,
-      "atr": 60.356,
-      "candle": {
-        "high": 28482.79,
-        "low": 28431.53
-      },
-      "gemini_run_at_utc": "2026-11-11T19:32:20.006181+00:00",
-      "gemini_confidence": 0.82
-    }
-  ],
-  "breaches": [
-    {
-      "t": "2026-11-11T20:49:00+00:00",
-      "day": "2026-11-11",
-      "kind": "DLL",
-      "level": 98200.0,
-      "equity": 98002.13,
-      "note": "log-only (gemini_only): no block, no forced close"
-    },
-    {
-      "t": "2026-11-11T21:56:00+00:00",
-      "day": "2026-11-11",
-      "kind": "MLL",
-      "level": 97000.0,
-      "equity": 96987.1,
-      "note": "log-only (gemini_only): no block, no forced close"
-    },
-    {
-      "t": "2026-11-11T23:00:00+00:00",
-      "day": "2026-11-12",
-      "kind": "DLL",
-      "level": 95839.6,
-      "equity": 95327.2,
-      "note": "log-only (gemini_only): no block, no forced close"
-    },
-    {
-      "t": "2026-11-11T23:00:00+00:00",
-      "day": "2026-11-12",
-      "kind": "MLL",
-      "level": 97000.0,
-      "equity": 95327.2,
-      "note": "log-only (gemini_only): no block, no forced close"
-    }
-  ],
-  "close_done": [
-    2,
-    1
-  ]
+  "reset_token": "2026-11-12-exit-prompt-v2",
+  "reset_at": "2026-11-12T01:26:22.307439+00:00",
+  "reset_reason": "reset4: exit-prompt-v2 (closed-bar invalidation, wall harvest, giveback ratchet)"
 }

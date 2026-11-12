@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-12T13:18:34.585511+00:00",
+  "updated_at": "2026-11-12T13:20:42.763233+00:00",
   "paper_only": true,
   "key_present": true,
   "status": "running",
@@ -23,43 +23,40 @@
       "exit_model": "claude-haiku-5-5",
       "account": {
         "start_balance": 100000.0,
-        "balance": 99930.8,
-        "equity": 99537.8,
-        "realized_pnl": -69.2,
-        "open_pnl": -393.0,
-        "trades": 1,
+        "balance": 99376.2,
+        "equity": 99376.2,
+        "realized_pnl": -623.8,
+        "open_pnl": 0.0,
+        "trades": 2,
         "wins": 0,
-        "losses": 1,
-        "r_total": -0.283,
-        "r_per_trade": -0.283,
+        "losses": 2,
+        "r_total": -1.301,
+        "r_per_trade": -0.65,
         "mll_floor": 97000.0,
-        "mll_room": 2537.8,
-        "day_realized": -69.2,
+        "mll_room": 2376.2,
+        "day_realized": -623.8,
         "day_flattened": false,
         "blown": null
       },
-      "open_positions": [
+      "open_positions": [],
+      "recent_trades": [
         {
+          "t_exit": "2026-11-12T13:18:00+00:00",
+          "entry_time": "2026-11-12T13:17:14.327002+00:00",
           "symbol": "XAUUSD",
           "contract": "GC",
           "qty": 1,
           "side": "SHORT",
-          "entry_time": "2026-11-12T13:17:14.327002+00:00",
           "entry": 3925.6,
-          "stop": 3931.0,
-          "floor": null,
-          "floor_label": null,
-          "last": 3929.53,
-          "unrealized": -393.0,
-          "risk_usd": 544.6,
-          "phase": "A",
+          "exit": 3931.1,
+          "reason": "hard_stop",
+          "net": -554.6,
+          "R": -1.018,
+          "hold_seconds": 45,
           "setup_type": "trend",
           "score": 7,
-          "server_only": false,
-          "target": 3904.0
-        }
-      ],
-      "recent_trades": [
+          "held": "45s"
+        },
         {
           "t_exit": "2026-11-12T12:31:50.459431+00:00",
           "entry_time": "2026-11-12T12:31:05.734048+00:00",
@@ -80,33 +77,33 @@
       ],
       "books": {
         "mech": {
-          "n": 1,
+          "n": 2,
           "wins": 0,
-          "losses": 1,
-          "net": -269.2,
-          "r_total": -1.102,
-          "r_avg": -1.102
+          "losses": 2,
+          "net": -823.8,
+          "r_total": -2.12,
+          "r_avg": -1.06
         },
         "whatif": {
-          "n": 2,
+          "n": 4,
           "wins": 1,
-          "losses": 1,
-          "net": 339.48,
-          "r_total": -0.724,
-          "r_avg": -0.362
+          "losses": 3,
+          "net": -732.42,
+          "r_total": -2.816,
+          "r_avg": -0.704
         },
         "twin": {
-          "n": 2,
+          "n": 3,
           "wins": 1,
-          "losses": 1,
-          "net": -9.53,
-          "r_total": 0.236,
-          "r_avg": 0.118
+          "losses": 2,
+          "net": -999.13,
+          "r_total": -0.774,
+          "r_avg": -0.258
         },
         "whatif_gated": {
-          "n": 2,
-          "r_total": -0.724,
-          "r_avg": -0.362
+          "n": 4,
+          "r_total": -2.816,
+          "r_avg": -0.704
         }
       },
       "signals": {
@@ -133,17 +130,17 @@
           }
         },
         "exit": {
-          "calls": 5,
+          "calls": 12,
           "failed": 0,
-          "latency_p50_ms": 1759.0,
-          "latency_p95_ms": 2833.6,
-          "cost_usd": 0.0019,
+          "latency_p50_ms": 1672.5,
+          "latency_p95_ms": 2888.6,
+          "cost_usd": 0.0045,
           "by_utc_day": {
             "2026-11-12": {
-              "calls": 5,
-              "cost_usd": 0.002,
-              "input_tokens": 16635,
-              "output_tokens": 396,
+              "calls": 12,
+              "cost_usd": 0.0048,
+              "input_tokens": 39873,
+              "output_tokens": 936,
               "thinking_tokens": 0
             }
           }
@@ -236,20 +233,20 @@
       ],
       "books": {
         "mech": {
-          "n": 0,
+          "n": 1,
           "wins": 0,
-          "losses": 0,
-          "net": 0,
-          "r_total": 0,
-          "r_avg": null
+          "losses": 1,
+          "net": -344.2,
+          "r_total": -1.078,
+          "r_avg": -1.078
         },
         "whatif": {
-          "n": 0,
+          "n": 1,
           "wins": 0,
-          "losses": 0,
-          "net": 0,
-          "r_total": 0,
-          "r_avg": null
+          "losses": 1,
+          "net": -107.3,
+          "r_total": -1.062,
+          "r_avg": -1.062
         },
         "twin": {
           "n": 0,
@@ -260,9 +257,9 @@
           "r_avg": null
         },
         "whatif_gated": {
-          "n": 0,
-          "r_total": 0,
-          "r_avg": null
+          "n": 1,
+          "r_total": -1.062,
+          "r_avg": -1.062
         }
       },
       "signals": {

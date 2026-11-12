@@ -2,11 +2,11 @@
   "reset_token": "c-opus-b-v1",
   "created_at": "2026-11-12T17:19:59.566947+00:00",
   "last_call": {
-    "t": "2026-11-12T22:00:40.031455+00:00",
+    "t": "2026-11-12T22:15:40.024163+00:00",
     "ok": true,
-    "latency_ms": 15385,
-    "cost_usd": 0.100964,
-    "thinking_tokens": 270,
+    "latency_ms": 17882,
+    "cost_usd": 0.10732,
+    "thinking_tokens": 569,
     "usage": {
       "cache_creation": {
         "ephemeral_1h_input_tokens": 0,
@@ -15,10 +15,10 @@
       "cache_creation_input_tokens": 0,
       "cache_read_input_tokens": 0,
       "inference_geo": "global",
-      "input_tokens": 16566,
-      "output_tokens": 1735,
+      "input_tokens": 16565,
+      "output_tokens": 2053,
       "output_tokens_details": {
-        "thinking_tokens": 270
+        "thinking_tokens": 569
       },
       "service_tier": "standard",
       "speed": "standard"
@@ -26,14 +26,14 @@
     "error": null,
     "effort": "high",
     "prompt_version": "bracket-v1",
-    "snapshot_id": "m15-20261112214500-2d35d41d6fac",
-    "snapshot_hash": "2d35d41d6fac94c6378651346776e7372fc2f05c2a83d4eea49ef8c316dc1c50",
-    "package_id": "m15-20261112T220000-7b9beb88fe7e",
-    "package_hash": "7b9beb88fe7ee8d10e633c893c5ac44fae56afe3f19c49df8fbe786731549c70",
-    "bar_close_ts": "2026-11-12T22:00:00+00:00",
-    "snapshot_ts": "2026-11-12T22:00:23.178048+00:00",
-    "call_start": "2026-11-12T22:00:24.646145+00:00",
-    "answer_ts": "2026-11-12T22:00:40.031455+00:00",
+    "snapshot_id": "m15-20261112214500-2d71886bb4f9",
+    "snapshot_hash": "2d71886bb4f9c87d1e540787ce2ffb0737fa2ac2718878d49096870d12f3c274",
+    "package_id": "m15-20261112T221500-aec872dab595",
+    "package_hash": "aec872dab5958648ab14450e32dce969084a72bb107038cdd02dd44ef117a1a7",
+    "bar_close_ts": "2026-11-12T22:15:00+00:00",
+    "snapshot_ts": "2026-11-12T22:15:21.793020+00:00",
+    "call_start": "2026-11-12T22:15:22.142446+00:00",
+    "answer_ts": "2026-11-12T22:15:40.024163+00:00",
     "model": "claude-opus-5-5"
   },
   "last_signals": [
@@ -45,7 +45,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "session_blocks_automation true (LOW_LIQUIDITY_DEADZONE). Every level untouched on the last closed bar, so no T2/F1. Room is 0.44 ATR up and 0.46 ATR down, under the 1 ATR gate. TREND short also fails the VWAP distance gate (-7.35 ATR).",
+      "rationale": "Session LOW_LIQUIDITY_DEADZONE, so automation is blocked. No level event on the last closed bar; every level is untouched. Room up is 0.58 ATR and room down is 0.30 ATR, both under 1.0. A trend short would be chasing at 7.5 ATR from VWAP.",
       "gate_reasons": [],
       "issues": []
     },
@@ -53,11 +53,11 @@
       "symbol": "EURUSD",
       "action": "HOLD",
       "confidence": 0.0,
-      "score": 0,
+      "score": 1,
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "session_blocks_automation true (deadzone). The POC close-through is upward against the trend and the VWAP side, so T1 fails for a BUY. SELL trend: -5.0 ATR from VWAP and only 0.98 ATR of room down. Both gates fail.",
+      "rationale": "Session is a deadzone, so automation is blocked. T1 no: price is below VWAP and EMA50 for a long. No valid fade extreme. Room up is 0.10 ATR, which fails S1. RVOL 0.14 and CVD is neutral.",
       "gate_reasons": [],
       "issues": []
     },
@@ -69,7 +69,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "T1 yes: above VWAP and EMA50. T2 yes: closed_through VAH/EMA20. S1 (1.59 ATR room up), S2 (US100 awarded), S3 (cvd_slope up), S5 (h1 up), so score 6. But session_blocks_automation true (deadzone), and the live price timestamp lags at 21:15.",
+      "rationale": "T1 yes: above VWAP and EMA50. T2 yes: closed_through VAH. Supporting: S1 (1.59 ATR room), S2 (US100 awarded), S3 (cvd_slope up), S5 (h1 up); S4 no. Score 6, but the deadzone blocks automation and the live price is an hour old.",
       "gate_reasons": [],
       "issues": []
     },
@@ -81,7 +81,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "session_blocks_automation true (deadzone). The EMA20 touch is not a rejection or close-through, so T2 is absent. A SELL trend also fails the VWAP gate (-6.45 ATR). Room up is only 0.24 ATR for any long.",
+      "rationale": "Session is a deadzone, so automation is blocked. The EMA20 was only touched, with no rejection or close-through. A short would be chasing at 6.45 ATR from VWAP. Room up is 0.24 ATR. Neither TREND nor FADE must-haves are met.",
       "gate_reasons": [],
       "issues": []
     },
@@ -93,7 +93,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "session_blocks_automation true (deadzone). All levels untouched on the last closed bar, so no T2/F1. A SELL trend fails the VWAP distance gate (-4.92 ATR). Room up is only 0.72 ATR for a long.",
+      "rationale": "Session is a deadzone, so automation is blocked. No level event; every level is untouched. A short would be chasing at 5.4 ATR from VWAP. Room down is 0.80 ATR to the Session Low and room up is 0.98 ATR, both under 1.0.",
       "gate_reasons": [],
       "issues": []
     }

@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-12T15:26:32.895827+00:00",
+  "updated_at": "2026-11-12T15:28:35.777406+00:00",
   "paper_only": true,
   "key_present": true,
   "status": "running",
@@ -23,43 +23,41 @@
       "exit_model": "claude-haiku-5-5",
       "account": {
         "start_balance": 100000.0,
-        "balance": 99268.6,
-        "equity": 99538.6,
-        "realized_pnl": -731.4,
-        "open_pnl": 270.0,
-        "trades": 5,
-        "wins": 1,
+        "balance": 99449.4,
+        "equity": 99449.4,
+        "realized_pnl": -550.6,
+        "open_pnl": 0.0,
+        "trades": 6,
+        "wins": 2,
         "losses": 4,
-        "r_total": -1.82,
-        "r_per_trade": -0.364,
+        "r_total": -1.454,
+        "r_per_trade": -0.242,
         "mll_floor": 97000.0,
-        "mll_room": 2538.6,
-        "day_realized": -731.4,
+        "mll_room": 2449.4,
+        "day_realized": -550.6,
         "day_flattened": false,
         "blown": null
       },
-      "open_positions": [
+      "open_positions": [],
+      "recent_trades": [
         {
+          "t_exit": "2026-11-12T15:26:00+00:00",
+          "entry_time": "2026-11-12T15:17:16.977361+00:00",
           "symbol": "EURUSD",
           "contract": "6E",
           "qty": 4,
           "side": "SHORT",
-          "entry_time": "2026-11-12T15:17:16.977361+00:00",
           "entry": 1.10625,
-          "stop": 1.1072,
-          "floor": 1.10585,
-          "floor_label": "profit lock 50% of best",
-          "last": 1.10571,
-          "unrealized": 270.0,
-          "risk_usd": 494.2,
-          "phase": "C",
+          "exit": 1.10585,
+          "reason": "profit_lock",
+          "net": 180.8,
+          "R": 0.366,
+          "hold_seconds": 523,
           "setup_type": "trend",
           "score": 6,
-          "server_only": false,
-          "target": 1.1051
-        }
-      ],
-      "recent_trades": [
+          "exit_prompt_version": "v2-grace",
+          "held": "8m 43s"
+        },
         {
           "t_exit": "2026-11-12T15:00:09.882784+00:00",
           "entry_time": "2026-11-12T14:47:06.400113+00:00",
@@ -153,33 +151,33 @@
       ],
       "books": {
         "mech": {
-          "n": 4,
-          "wins": 1,
+          "n": 5,
+          "wins": 2,
           "losses": 3,
-          "net": -737.2,
-          "r_total": -1.879,
-          "r_avg": -0.47
+          "net": -556.4,
+          "r_total": -1.513,
+          "r_avg": -0.303
         },
         "whatif": {
-          "n": 9,
-          "wins": 3,
+          "n": 10,
+          "wins": 4,
           "losses": 6,
-          "net": -3734.47,
-          "r_total": -5.085,
-          "r_avg": -0.565
+          "net": -3689.27,
+          "r_total": -4.708,
+          "r_avg": -0.471
         },
         "twin": {
-          "n": 9,
+          "n": 10,
           "wins": 4,
-          "losses": 5,
-          "net": -1793.53,
-          "r_total": -1.34,
-          "r_avg": -0.149
+          "losses": 6,
+          "net": -1917.08,
+          "r_total": -2.371,
+          "r_avg": -0.237
         },
         "whatif_gated": {
-          "n": 9,
-          "r_total": -5.085,
-          "r_avg": -0.565
+          "n": 10,
+          "r_total": -4.708,
+          "r_avg": -0.471
         }
       },
       "signals": {
@@ -206,29 +204,29 @@
           }
         },
         "exit": {
-          "calls": 72,
+          "calls": 107,
           "failed": 0,
-          "latency_p50_ms": 1561.0,
-          "latency_p95_ms": 2639.2,
-          "cost_usd": 0.0269,
+          "latency_p50_ms": 1570.0,
+          "latency_p95_ms": 2589.8,
+          "cost_usd": 0.0398,
           "by_utc_day": {
             "2026-11-12": {
-              "calls": 72,
-              "cost_usd": 0.0288,
-              "input_tokens": 240003,
-              "output_tokens": 5778,
+              "calls": 107,
+              "cost_usd": 0.0428,
+              "input_tokens": 356248,
+              "output_tokens": 8391,
               "thinking_tokens": 0
             }
           }
         }
       },
       "since_fix": {
-        "n": 1,
-        "wins": 1,
+        "n": 2,
+        "wins": 2,
         "losses": 0,
-        "net": 130.8,
-        "r_total": 0.536,
-        "r_avg": 0.536
+        "net": 311.6,
+        "r_total": 0.902,
+        "r_avg": 0.451
       },
       "exit_prompt_version": "v2-grace",
       "last_entry_call": {

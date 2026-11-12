@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-12T15:38:35.033533+00:00",
+  "updated_at": "2026-11-12T15:40:34.938546+00:00",
   "paper_only": true,
   "plan": "LucidPro 100K (DLL on)",
   "exit_mode": "gemini_only",
@@ -10,44 +10,44 @@
       "book": "main",
       "label": "Main (stop)",
       "hard_stop_net_usd": 500.0,
-      "balance": 98270.5,
-      "equity": 98287.0,
+      "balance": 98268.75,
+      "equity": 98459.25,
       "net_pnl": -1727.2,
-      "open_pnl": 16.5,
+      "open_pnl": 190.5,
       "trades": 63,
       "wins": 29,
       "losses": 34,
       "stopped": 14,
-      "open_positions": 1
+      "open_positions": 2
     },
     {
       "book": "1-strike",
       "label": "1-strike",
       "hard_stop_net_usd": 500.0,
-      "balance": 98270.5,
-      "equity": 98463.5,
+      "balance": 98268.75,
+      "equity": 98149.35,
       "net_pnl": -1727.2,
-      "open_pnl": 193.0,
+      "open_pnl": -119.4,
       "trades": 63,
       "wins": 29,
       "losses": 34,
       "stopped": 14,
-      "open_positions": 1,
+      "open_positions": 2,
       "overlap_trades": 0
     },
     {
       "book": "nostop",
       "label": "No-stop shadow",
       "hard_stop_net_usd": null,
-      "balance": 105219.9,
-      "equity": 105405.4,
+      "balance": 105218.15,
+      "equity": 105098.75,
       "net_pnl": 5236.6,
-      "open_pnl": 185.5,
+      "open_pnl": -119.4,
       "trades": 62,
       "wins": 34,
       "losses": 28,
       "stopped": 0,
-      "open_positions": 2,
+      "open_positions": 3,
       "overlap_trades": 6
     }
   ],
@@ -80,20 +80,20 @@
     "no": 1,
     "phase": "eval",
     "start_balance": 100000.0,
-    "balance": 98270.5,
-    "equity": 98287.0,
+    "balance": 98268.75,
+    "equity": 98459.25,
     "realized_pnl_since_reset": -1727.2,
-    "open_pnl": 16.5,
-    "commission_on_open": 2.3,
+    "open_pnl": 190.5,
+    "commission_on_open": 4.05,
     "trades_since_reset": 63,
     "wins": 29,
     "losses": 34,
     "mll_floor": 97000.0,
-    "mll_room": 1287.0,
+    "mll_room": 1459.25,
     "dll": 1800.0,
     "day_realized": -1727.2,
     "day_locked": null,
-    "to_target": 7729.5
+    "to_target": 7731.25
   },
   "open_positions": [
     {
@@ -105,15 +105,31 @@
       "entry": 3864.5,
       "stop": null,
       "target": null,
-      "last": 3864.335,
-      "unrealized": 16.5,
+      "last": 3862.525,
+      "unrealized": 197.5,
       "risk_usd": null,
       "hard_stop_px": 3869.5,
       "target_usd_net": null,
       "target_source": "none (gemini_only)"
+    },
+    {
+      "symbol": "US100",
+      "contract": "NQ",
+      "qty": 1,
+      "side": "LONG",
+      "entry_time": "2026-11-12T15:39:07.667417+00:00",
+      "entry": 28221.75,
+      "stop": null,
+      "target": null,
+      "last": 28221.4,
+      "unrealized": -7.0,
+      "risk_usd": null,
+      "hard_stop_px": 28196.75,
+      "target_usd_net": null,
+      "target_source": "none (gemini_only)"
     }
   ],
-  "pending": 1,
+  "pending": 0,
   "recent_trades": [
     {
       "t_exit": "2026-11-12T15:32:00+00:00",
@@ -286,5 +302,5 @@
       "exit_prompt_version": "gemini-profit-lock-reset6"
     }
   ],
-  "last_processed": "2026-11-12T15:38:00+00:00"
+  "last_processed": "2026-11-12T15:40:00+00:00"
 }

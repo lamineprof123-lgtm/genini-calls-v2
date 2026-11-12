@@ -56,49 +56,15 @@
     52
   ],
   "last_price": {
-    "US100": 28251.75,
-    "XAUUSD": 3892.15,
-    "EURUSD": 1.10851,
+    "US100": 28221.73,
+    "XAUUSD": 3886.96,
+    "EURUSD": 1.10829,
     "GBPUSD": 1.3259
   },
   "books": {
     "1-strike": {
-      "balance": 96766.85,
+      "balance": 96223.6,
       "positions": [
-        {
-          "id": 50,
-          "symbol": "EURUSD",
-          "contract": "6E",
-          "qty": 5,
-          "side": 1,
-          "entry": 1.10925,
-          "stop": null,
-          "target": null,
-          "entry_time": "2026-11-12T14:33:13.808488+00:00",
-          "risk_usd": null,
-          "atr": 0.000714,
-          "candle": {
-            "high": 1.10985,
-            "low": 1.10915
-          },
-          "gemini_run_at_utc": "2026-11-12T14:32:20.202414+00:00",
-          "gemini_confidence": 0.65,
-          "hard_stop_px": 1.10845,
-          "hard_stop_armed_at": "2026-11-12T14:33:13.808488+00:00",
-          "fill_source": "live_quote:dukascopy:tick",
-          "book": "1-strike",
-          "strikes": 0,
-          "mfe": 0.0,
-          "mae": 0.0007800000000000029,
-          "scan_from": "2026-11-12T14:41:00+00:00",
-          "checks": 32,
-          "opened_at": "2026-11-12T14:33:13.839680+00:00",
-          "hard_stop_ok_t": "2026-11-12T14:42:27.880652+00:00",
-          "giveback_hist": [
-            0.0,
-            0.0
-          ]
-        },
         {
           "id": 52,
           "symbol": "XAUUSD",
@@ -122,14 +88,14 @@
           "fill_source": "live_quote:dukascopy:tick",
           "book": "1-strike",
           "strikes": 0,
-          "mfe": 2.544999999999618,
+          "mfe": 6.291999999999916,
           "mae": 0.41000000000030923,
-          "scan_from": "2026-11-12T14:40:00+00:00",
-          "checks": 12,
+          "scan_from": "2026-11-12T14:42:00+00:00",
+          "checks": 18,
           "opened_at": "2026-11-12T14:39:10.904393+00:00",
-          "hard_stop_ok_t": "2026-11-12T14:42:27.880652+00:00",
+          "hard_stop_ok_t": "2026-11-12T14:44:16.277857+00:00",
           "giveback_hist": [
-            48.1,
+            0.0,
             0.0
           ]
         }
@@ -137,7 +103,7 @@
       "day": {
         "id": "2026-11-12",
         "start_balance": 100000.0,
-        "realized": -3218.85,
+        "realized": -3774.1,
         "halted": null,
         "breach_logged": {
           "t": "2026-11-12T10:59:39.148958+00:00",
@@ -146,17 +112,17 @@
         }
       },
       "stats": {
-        "trades": 50,
+        "trades": 51,
         "wins": 22,
-        "losses": 28,
+        "losses": 29,
         "gross_win": 7984.15,
-        "gross_loss": -11203.0,
-        "net_pnl": -3218.85,
-        "commissions": 476.9,
-        "hold_seconds": 20091,
+        "gross_loss": -11758.25,
+        "net_pnl": -3774.1,
+        "commissions": 488.9,
+        "hold_seconds": 20682,
         "exit_reasons": {
           "gemini_close": 39,
-          "hard_stop_500": 11
+          "hard_stop_500": 12
         }
       }
     },
@@ -186,8 +152,8 @@
           "strikes": 0,
           "mfe": 0.0,
           "mae": 0.0007800000000000029,
-          "scan_from": "2026-11-12T14:41:00+00:00",
-          "checks": 32,
+          "scan_from": "2026-11-12T14:42:00+00:00",
+          "checks": 38,
           "opened_at": "2026-11-12T14:33:13.839680+00:00",
           "giveback_hist": [
             0.0,
@@ -217,12 +183,12 @@
           "strikes": 0,
           "mfe": 13.007000000001426,
           "mae": 164.6919999999991,
-          "scan_from": "2026-11-12T14:41:00+00:00",
-          "checks": 25,
+          "scan_from": "2026-11-12T14:42:00+00:00",
+          "checks": 31,
           "opened_at": "2026-11-12T14:35:16.922954+00:00",
           "giveback_hist": [
-            1270.9,
-            1076.4
+            907.2,
+            845.6
           ]
         },
         {
@@ -246,13 +212,13 @@
           "fill_source": "live_quote:dukascopy:tick",
           "book": "nostop",
           "strikes": 0,
-          "mfe": 2.544999999999618,
+          "mfe": 6.291999999999916,
           "mae": 0.41000000000030923,
-          "scan_from": "2026-11-12T14:40:00+00:00",
-          "checks": 12,
+          "scan_from": "2026-11-12T14:42:00+00:00",
+          "checks": 18,
           "opened_at": "2026-11-12T14:39:10.904393+00:00",
           "giveback_hist": [
-            48.1,
+            0.0,
             0.0
           ]
         }
@@ -346,7 +312,21 @@
     49,
     51
   ],
-  "post_exit": [],
+  "post_exit": [
+    {
+      "book": "1-strike",
+      "id": 50,
+      "symbol": "EURUSD",
+      "contract": "6E",
+      "qty": 5,
+      "side": "LONG",
+      "exit": 1.1084,
+      "t_exit": "2026-11-12T14:43:05.146455+00:00",
+      "reason": "hard_stop_500",
+      "net": -555.25,
+      "due": "2026-11-12T14:48:05.146455+00:00"
+    }
+  ],
   "retired_books": {
     "2-strike": {
       "balance": 96846.25,

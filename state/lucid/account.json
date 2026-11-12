@@ -1,7 +1,7 @@
 {
   "version": 1,
   "created_at": "2026-11-12T10:14:47.081605+00:00",
-  "last_processed": "2026-11-12T14:42:00+00:00",
+  "last_processed": "2026-11-12T14:44:00+00:00",
   "account": {
     "no": 1,
     "phase": "eval",
@@ -413,156 +413,7 @@
       "hard_stop_usd": 500.0
     }
   ],
-  "pending": [
-    {
-      "symbol": "US100",
-      "side": 1,
-      "created": "2026-11-12T14:42:35.069450+00:00",
-      "fill_after": "2026-11-12T14:43:00+00:00",
-      "reserved_risk": 0.0,
-      "planned": null,
-      "expires": "2026-11-12T14:53:00+00:00",
-      "atr": 66.944,
-      "scalp": {
-        "action": "BUY",
-        "side": 1,
-        "entry": 28277.82,
-        "stop_loss": 27947.67,
-        "take_profit": 28282.82,
-        "sdist": 330.14719999999943,
-        "tdist": 5.0,
-        "stop_source": "structure",
-        "target_source": "fixed",
-        "rr": 0.015,
-        "structure_stop": 27947.6728,
-        "atr_stop": 28224.2648,
-        "fixed_tp": 28282.82,
-        "structure_tp": null,
-        "structure_label": null,
-        "candle": {
-          "high": 27990.21,
-          "low": 27951.02
-        },
-        "levels": [
-          {
-            "price": 28030.0,
-            "label": "S/R"
-          },
-          {
-            "price": 28083.64,
-            "label": "S/R"
-          },
-          {
-            "price": 28209.17,
-            "label": "S/R"
-          },
-          {
-            "price": 27912.13,
-            "label": "Session Low"
-          },
-          {
-            "price": 27753.51,
-            "label": "Prev Low"
-          },
-          {
-            "price": 27420.02,
-            "label": "S/R"
-          }
-        ],
-        "vp": {
-          "poc": 28120.74,
-          "vah": 28194.99,
-          "val": 28081.85
-        }
-      },
-      "session": "LONDON_NY_OVERLAP",
-      "telemetry": {
-        "symbol": "US100",
-        "session": "LONDON_NY_OVERLAP",
-        "last_close": 27981.3,
-        "atr": 66.944,
-        "vwap": 28116.11,
-        "ema20": 28068.85,
-        "ema50": 28118.73,
-        "price_vs_vwap": {
-          "side": "below",
-          "dist_atr": -2.0138
-        },
-        "price_vs_ema50": {
-          "side": "below",
-          "dist_atr": -2.0529
-        },
-        "vwap_aligned_with_side": false,
-        "ema50_aligned_with_side": false,
-        "poc": 28120.74,
-        "vah": 28194.99,
-        "val": 28081.85,
-        "price_vs_value_area": "below_val",
-        "dist_to_poc_atr": -2.0829,
-        "cvd": -3.5,
-        "cvd_label": "BEARISH",
-        "cvd_slope": 1.16,
-        "cvd_agrees_with_side": false,
-        "rvol": 1.2,
-        "rvol_spike": false,
-        "rvol_bars_since_spike": 88,
-        "atr_band_z": -1.3078,
-        "atr_upper": 28202.74,
-        "atr_lower": 27934.96,
-        "nearest_sr": {
-          "above": {
-            "price": 28030.0,
-            "label": "S/R",
-            "dist_atr": 0.7275
-          },
-          "below": {
-            "price": 27912.13,
-            "label": "Session Low",
-            "dist_atr": 1.0333
-          }
-        },
-        "gemini": {
-          "action": "BUY",
-          "confidence": 0.78,
-          "confidence_band": "0.7-0.8",
-          "rationale": "1) Volume Profile: Signal bar was below VAL, but forming bar exploded to live price 28277.82, clearing POC (28120.74) and VAH (28194.99). 2) CVD: -3.50 (BEARISH) with positive slope +1.16, lagging the massive intrabar squeeze. 3) Session: LONDON_NY_OVERLAP. 4) Trend/VWAP: Live price 28277.82 cleanly reclaimed VWAP (28116.11) and EMA50 (28118.73). 5) ATR Bands: Pushing beyond +2 ATR upper band (28202.74), indicating aggressive momentum expansion. 6) Volume: Dukascopy index CFD tick volume lacks yellow spikes, but the massive 300+ point intrabar surge confirms strong demand. 7) S/R & GEX: GEX regime is POSITIVE_DAMPENING with price well above Gamma Flip (28096.48) and Put Wall #1 (28001.31), with plenty of runway toward Call Wall #1 (28431.31) and clear breakout over S/R 28209.17. High probability continuation buy.",
-          "model": "gemini-3.8-flash",
-          "model_action": "BUY"
-        },
-        "scalp": {
-          "stop_basis": "structure",
-          "target_basis": "fixed",
-          "tdist": 5.0,
-          "sdist": 330.14719999999943,
-          "structure_label": null
-        },
-        "planned": {
-          "tdist": 5.0,
-          "sdist": 330.14719999999943,
-          "qty": null,
-          "contract": null,
-          "target_usd_net": null,
-          "risk_usd": null
-        },
-        "run_at_utc": "2026-11-12T14:42:20.254849+00:00",
-        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-12/cycles/184220.json/US100.png"
-      },
-      "gemini": {
-        "action": "BUY",
-        "entry": 28277.82,
-        "stop_loss": 27947.67,
-        "take_profit": 28282.82,
-        "confidence": 0.78,
-        "rr": 0.015,
-        "shown_on_site": true,
-        "basis": "site signal",
-        "run_at_utc": "2026-11-12T14:42:20.254849+00:00",
-        "session": "LONDON_NY_OVERLAP",
-        "rationale": "1) Volume Profile: Signal bar was below VAL, but forming bar exploded to live price 28277.82, clearing POC (28120.74) and VAH (28194.99). 2) CVD: -3.50 (BEARISH) with positive slope +1.16, lagging the massive intrabar squeeze. 3) Session: LONDON_NY_OVERLAP. 4) Trend/VWAP: Live price 28277.82 cleanly reclaimed VWAP (28116.11) and EMA50 (28118.73). 5) ATR Bands: Pushing beyond +2 ATR upper band (28202.74), indicating aggressive momentum expansion. 6) Volume: Dukascopy index CFD tick volume lacks yellow spikes, but the massive 300+ point intrabar surge confirms strong demand. 7) S/R & GEX: GEX regime is POSITIVE_DAMPENING with price well above Gamma Flip (28096.48) and Put Wall #1 (28001.31), with plenty of runway toward Call Wall #1 (28431.31) and clear breakout over S/R 28209.17. High probability continuation buy.",
-        "model": "gemini-3.8-flash"
-      }
-    }
-  ],
+  "pending": [],
   "next_pos_id": 53,
   "day": {
     "id": "2026-11-12",
@@ -573,9 +424,9 @@
     "traded": true
   },
   "last_price": {
-    "US100": 28221.965,
+    "US100": 28263.69,
     "XAUUSD": 3895.328,
-    "EURUSD": 1.10856,
+    "EURUSD": 1.1085,
     "GBPUSD": 1.32618
   },
   "history": [],
@@ -605,7 +456,7 @@
     "gross_loss": -11203.0,
     "commissions": 476.9,
     "net_trade_pnl": -3218.85,
-    "skipped_signals": 9,
+    "skipped_signals": 10,
     "accepted_signals": 62
   },
   "reset_token": "2026-11-12-profit-lock",

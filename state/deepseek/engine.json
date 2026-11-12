@@ -3,33 +3,33 @@
   "created_at": "2026-11-12T16:52:53.616485+00:00",
   "spend": {
     "2026-11-12": {
-      "usd": 0.037697,
-      "calls": 15,
+      "usd": 0.040848,
+      "calls": 16,
       "failed": 0,
       "tokens": {
-        "prompt": 136158,
-        "cache_hit": 32768,
-        "cache_miss": 103390,
-        "completion": 36817,
-        "reasoning": 14436
+        "prompt": 147720,
+        "cache_hit": 34560,
+        "cache_miss": 113160,
+        "completion": 39618,
+        "reasoning": 16110
       }
     }
   },
   "last_call": {
-    "t": "2026-11-12T17:45:20.000493+00:00",
+    "t": "2026-11-12T18:00:20.006166+00:00",
     "ok": true,
-    "cost_usd": 0.00240073,
-    "spend_today_usd": 0.0377,
+    "cost_usd": 0.00315148,
+    "spend_today_usd": 0.0408,
     "band": "off_peak",
     "tokens": {
-      "prompt": 11321,
+      "prompt": 11562,
       "cache_hit": 1792,
-      "cache_miss": 9529,
-      "completion": 1610,
-      "reasoning": 455,
-      "total": 12931
+      "cache_miss": 9770,
+      "completion": 2801,
+      "reasoning": 1674,
+      "total": 14363
     },
-    "latency_s": 8.873,
+    "latency_s": 14.357,
     "error": null,
     "model": "deepseek-flash",
     "symbols": [
@@ -40,11 +40,11 @@
     ],
     "http_status": 200,
     "prompt_version": "bracket-v1",
-    "snapshot_id": "m15-20261112173000-ea5bc3900a3f",
-    "bar_close_ts": "2026-11-12T17:45:00+00:00",
-    "snapshot_ts": "2026-11-12T17:45:26.065563+00:00",
-    "call_start": "2026-11-12T17:45:26.460517+00:00",
-    "answer_ts": "2026-11-12T17:45:35.333447+00:00"
+    "snapshot_id": "m15-20261112174500-613be5ad8a9f",
+    "bar_close_ts": "2026-11-12T18:00:00+00:00",
+    "snapshot_ts": "2026-11-12T18:00:24.949427+00:00",
+    "call_start": "2026-11-12T18:00:31.273088+00:00",
+    "answer_ts": "2026-11-12T18:00:45.630747+00:00"
   },
   "last_signals": [
     {
@@ -55,7 +55,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "T1 yes a downtrend but price is 5.78 ATR below VWAP, far past any chase limit. T2 no: every labelled level, VWAP, EMA20/50 and ATR bands are untouched on the last closed bar. S1 fails too (0.74 ATR down). No fade at an extreme. HOLD."
+      "rationale": "T1 for SELL yes: below VWAP 3934.24 and EMA50 3915.74. T2 yes: closed_through Gamma Flip. But hard HOLD gates: vwap_distance_atr -5.81 (>2.0, chasing) and room_down_atr only 0.17 ATR. No fresh labelled-level event elsewhere. S4 present only"
     },
     {
       "symbol": "EURUSD",
@@ -65,7 +65,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "T1 no: price below both VWAP and EMA50 but 3.95 ATR stretched from VWAP. T2 has an ATR Lower closed_through but S1 fails badly (room_down 0.13 ATR to Session Low, room_up 0.46). Fade targets far; level accepted on trend. HOLD."
+      "rationale": "T1 for SELL yes: below VWAP 1.10791 and EMA50 1.10762. T2 no: only touches, no rejection or closed_through. Gates fail anyway: vwap_distance_atr -3.95 (>2.0 chasing) and room_down_atr 0.25 ATR. HOLD."
     },
     {
       "symbol": "XAGUSD",
@@ -75,7 +75,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "T1 no: price 4.86 ATR below VWAP, extreme stretch. T2 no level event on the last closed bar (all untouched, including Session Low 49.688). S1 insufficient (0.88 ATR down). Nothing to fade. HOLD."
+      "rationale": "Below VWAP 51.033 and EMA50 50.642, but no level event on the last closed bar (all untouched) and vwap_distance_atr -4.85 exceeds 2.0. Room up only 0.94 ATR. Nothing tradable."
     },
     {
       "symbol": "BTCUSD",
@@ -85,7 +85,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "T1 no: 3.18 ATR below VWAP, well past chase limit. T2 attempted but the EMA20 close-through is against the trade side, not a breakdown entry; S1 fails on the up side (0.80 ATR to EMA20). No extreme rejection for a fade. HOLD."
+      "rationale": "T1 for SELL yes: below VWAP 72796.87 and EMA50 72511.89. T2 arguable: pullback rejected EMA20. Gate fails: vwap_distance_atr -2.71 (>2.0 chasing). Room up only 0.31 ATR and RVOL 0.75. HOLD."
     }
   ],
   "last_bars": {

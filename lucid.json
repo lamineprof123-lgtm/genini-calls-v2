@@ -1,10 +1,19 @@
 {
-  "updated_at": "2026-11-12T10:44:50.755215+00:00",
+  "updated_at": "2026-11-12T10:46:35.713928+00:00",
   "paper_only": true,
   "plan": "LucidPro 100K (DLL on)",
   "exit_mode": "gemini_only",
   "card": "SL: none \u00b7 TP: none \u00b7 exit: Gemini",
-  "breaches": [],
+  "breaches": [
+    {
+      "t": "2026-11-12T10:44:00+00:00",
+      "day": "2026-11-12",
+      "kind": "DLL",
+      "level": 98200.0,
+      "equity": 98049.96,
+      "note": "log-only (gemini_only): no block, no forced close"
+    }
+  ],
   "breach_note": "DLL / MLL / 3.5% breaker are log-only (no block, no forced close)",
   "sizing_rule": "full-size futures only (NQ, GC, 6E, 6B), 1-6 contracts sized as if risk were 0.8 ATR at $1500 (notional reference only); no stop, no target, exit = Gemini CLOSE only",
   "reset": {
@@ -17,15 +26,15 @@
     "phase": "eval",
     "start_balance": 100000.0,
     "balance": 100200.1,
-    "equity": 98456.26,
+    "equity": 98049.96,
     "realized_pnl_since_reset": 213.0,
-    "open_pnl": -1743.84,
+    "open_pnl": -2150.14,
     "commission_on_open": 12.9,
     "trades_since_reset": 1,
     "wins": 1,
     "losses": 0,
     "mll_floor": 97000.0,
-    "mll_room": 1456.26,
+    "mll_room": 1049.96,
     "dll": 1800.0,
     "day_realized": 213.0,
     "day_locked": null,
@@ -41,8 +50,8 @@
       "entry": 28189.25,
       "stop": null,
       "target": null,
-      "last": 28175.154,
-      "unrealized": -563.84,
+      "last": 28169.109,
+      "unrealized": -805.64,
       "risk_usd": null,
       "target_usd_net": null,
       "target_source": "none (gemini_only)"
@@ -56,8 +65,8 @@
       "entry": 3945.4,
       "stop": null,
       "target": null,
-      "last": 3951.225,
-      "unrealized": -1165.0,
+      "last": 3952.335,
+      "unrealized": -1387.0,
       "risk_usd": null,
       "target_usd_net": null,
       "target_source": "none (gemini_only)"
@@ -71,8 +80,8 @@
       "entry": 1.11,
       "stop": null,
       "target": null,
-      "last": 1.10994,
-      "unrealized": -15.0,
+      "last": 1.11017,
+      "unrealized": 42.5,
       "risk_usd": null,
       "target_usd_net": null,
       "target_source": "none (gemini_only)"
@@ -96,5 +105,5 @@
       "held": "2m 00s"
     }
   ],
-  "last_processed": "2026-11-12T10:44:00+00:00"
+  "last_processed": "2026-11-12T10:46:00+00:00"
 }

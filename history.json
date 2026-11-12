@@ -1,24 +1,5 @@
 [
   {
-    "signal_at": "2026-11-12T17:26:20.203083+00:00",
-    "tz": "Asia/Dubai",
-    "model": "gemini-3.8-flash",
-    "dry_run": false,
-    "trades": [],
-    "no_trade": [
-      "XAUUSD",
-      "EURUSD",
-      "GBPUSD",
-      "BTCUSD"
-    ],
-    "in_position": [
-      "US100"
-    ],
-    "analysis_failed": false,
-    "breaker_halted": false,
-    "written_at": "2026-11-12T17:27:22.532675+00:00"
-  },
-  {
     "signal_at": "2026-11-12T17:28:27.122013+00:00",
     "tz": "Asia/Dubai",
     "model": "gemini-3.8-flash",
@@ -969,5 +950,39 @@
     "analysis_failed": false,
     "breaker_halted": false,
     "written_at": "2026-11-12T19:09:37.770660+00:00"
+  },
+  {
+    "signal_at": "2026-11-12T19:10:20.016779+00:00",
+    "tz": "Asia/Dubai",
+    "model": "gemini-3.8-flash",
+    "dry_run": false,
+    "trades": [
+      {
+        "symbol": "US100",
+        "name": "NASDAQ",
+        "action": "BUY",
+        "entry": 28345.2,
+        "stop_loss": null,
+        "take_profit": null,
+        "rr": null,
+        "confidence": 0.77,
+        "digits": 2,
+        "exit": "Gemini",
+        "card": "Hard stop \u2212$500 net \u00b7 TP: none \u00b7 exit: Gemini",
+        "session": "NEW_YORK_SESSION",
+        "cvd_label": "NEUTRAL"
+      }
+    ],
+    "no_trade": [
+      "XAUUSD",
+      "EURUSD",
+      "GBPUSD",
+      "XAGUSD",
+      "BTCUSD"
+    ],
+    "in_position": [],
+    "analysis_failed": false,
+    "breaker_halted": false,
+    "written_at": "2026-11-12T19:11:43.974871+00:00"
   }
 ]

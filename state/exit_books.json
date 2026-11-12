@@ -64,18 +64,54 @@
     60,
     61,
     62,
-    63
+    63,
+    64
   ],
   "last_price": {
     "US100": 28176.49,
-    "XAUUSD": 3855.7,
-    "EURUSD": 1.10616,
+    "XAUUSD": 3863.85,
+    "EURUSD": 1.10586,
     "GBPUSD": 1.32294
   },
   "books": {
     "1-strike": {
-      "balance": 98272.8,
-      "positions": [],
+      "balance": 98270.5,
+      "positions": [
+        {
+          "id": 64,
+          "symbol": "XAUUSD",
+          "contract": "GC",
+          "qty": 1,
+          "side": -1,
+          "entry": 3864.5,
+          "stop": null,
+          "target": null,
+          "entry_time": "2026-11-12T15:35:06.374996+00:00",
+          "risk_usd": null,
+          "atr": 12.971,
+          "candle": {
+            "high": 3862.17,
+            "low": 3852.35
+          },
+          "gemini_run_at_utc": "2026-11-12T15:34:20.013694+00:00",
+          "gemini_confidence": 0.82,
+          "hard_stop_px": 3869.5,
+          "hard_stop_armed_at": "2026-11-12T15:35:06.374996+00:00",
+          "fill_source": "live_quote:dukascopy:tick",
+          "book": "1-strike",
+          "strikes": 0,
+          "mfe": 0.0,
+          "mae": 0.0,
+          "scan_from": "2026-11-12T15:35:06.374996+00:00",
+          "checks": 5,
+          "opened_at": "2026-11-12T15:35:06.406436+00:00",
+          "hard_stop_ok_t": "2026-11-12T15:36:17.256649+00:00",
+          "giveback_hist": [
+            0.0,
+            0.0
+          ]
+        }
+      ],
       "day": {
         "id": "2026-11-12",
         "start_balance": 100000.0,
@@ -94,7 +130,7 @@
         "gross_win": 11534.45,
         "gross_loss": -13261.65,
         "net_pnl": -1727.2,
-        "commissions": 654.7,
+        "commissions": 657.0,
         "hold_seconds": 24320,
         "exit_reasons": {
           "gemini_close": 49,
@@ -103,7 +139,7 @@
       }
     },
     "nostop": {
-      "balance": 105222.2,
+      "balance": 105219.9,
       "positions": [
         {
           "id": 63,
@@ -128,9 +164,40 @@
           "strikes": 0,
           "mfe": 0.0,
           "mae": 0.0006500000000000394,
-          "scan_from": "2026-11-12T15:33:00+00:00",
-          "checks": 25,
+          "scan_from": "2026-11-12T15:35:00+00:00",
+          "checks": 31,
           "opened_at": "2026-11-12T15:27:13.622315+00:00",
+          "giveback_hist": [
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "id": 64,
+          "symbol": "XAUUSD",
+          "contract": "GC",
+          "qty": 1,
+          "side": -1,
+          "entry": 3864.5,
+          "stop": null,
+          "target": null,
+          "entry_time": "2026-11-12T15:35:06.374996+00:00",
+          "risk_usd": null,
+          "atr": 12.971,
+          "candle": {
+            "high": 3862.17,
+            "low": 3852.35
+          },
+          "gemini_run_at_utc": "2026-11-12T15:34:20.013694+00:00",
+          "gemini_confidence": 0.82,
+          "fill_source": "live_quote:dukascopy:tick",
+          "book": "nostop",
+          "strikes": 0,
+          "mfe": 0.0,
+          "mae": 0.0,
+          "scan_from": "2026-11-12T15:35:06.374996+00:00",
+          "checks": 5,
+          "opened_at": "2026-11-12T15:35:06.406436+00:00",
           "giveback_hist": [
             0.0,
             0.0
@@ -155,7 +222,7 @@
         "gross_win": 15933.75,
         "gross_loss": -10697.15,
         "net_pnl": 5236.6,
-        "commissions": 640.3,
+        "commissions": 642.6,
         "hold_seconds": 30082,
         "exit_reasons": {
           "gemini_close": 62
@@ -240,19 +307,6 @@
     63
   ],
   "post_exit": [
-    {
-      "book": "1-strike",
-      "id": 63,
-      "symbol": "EURUSD",
-      "contract": "6E",
-      "qty": 6,
-      "side": "SHORT",
-      "exit": 1.1064,
-      "t_exit": "2026-11-12T15:31:00.000000+00:00",
-      "reason": "hard_stop_500",
-      "net": -553.8,
-      "due": "2026-11-12T15:36:00+00:00"
-    },
     {
       "book": "baseline",
       "id": 63,

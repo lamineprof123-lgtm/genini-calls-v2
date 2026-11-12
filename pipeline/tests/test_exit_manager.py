@@ -10,7 +10,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from signals.config import load_config
 from signals import exit_manager as em
 from signals.exit_manager import (BOOK_1, BOOK_2, Books, ExitDecision, ExitManager, apply_strike,
-                                  build_exit_prompt, find_walls, parse_decision, position_metrics)
+                                  build_exit_prompt, find_walls, parse_decision, position_metrics,
+                                  profit_lock_flags, giveback_limit_pct, round_trip_commission,
+                                  enrich_exit_metrics)
 
 UTC = timezone.utc
 T0 = datetime(2026, 11, 11, 14, 0, tzinfo=UTC)  # Wed 09:00 New York -> in Lucid session
@@ -137,10 +139,16 @@ def test_prompt_is_m15_with_values(cfg):
     assert "Current Session: LONDON_NY_OVERLAP" in txt and "6.5 min into forming M15 bar" in txt
     assert "M1 EMA20" not in txt and "M1 candles" not in txt
     assert '"structure"' in txt and txt.index('"reason"') < txt.index('"decision"')
-    # new thresholds / structures (verbatim in the prompt, with live metrics also substituted)
-    assert "MFE {mfe_atr}" not in txt and "+0.45 M15_ATR" in txt and "within 0.12 M15_ATR" in txt
+    # profit-lock thresholds / structures (verbatim in the prompt, with live metrics also substituted)
+    assert "MFE {mfe_atr}" not in txt and "0.25 M15_ATR" in txt and "within 0.12 M15_ATR" in txt
+    assert "PROFIT LOCK" in txt and "SPEED RULE" in txt and "GIVEBACK LIMITS" in txt
+    assert "+0.03 M15_ATR" in txt and "giveback >= 50%" in txt and "giveback >= 40%" in txt
+    assert "giveback >= 30%" in txt
     assert "wall_touch_harvest" in txt and "spike_hold_wait" in txt and "session_decay" in txt
     assert "CLOSE INTO STRENGTH" in txt and "NEVER on Forming Spikes" in txt
+    assert "Round-trip commission:" in txt and "Net P&L after commission:" in txt
+    assert "Previous check giveback:" in txt
+    assert 'Do NOT use structure "healthy_pullback" when giveback is above the applicable tier limit' in txt
     # no leftover braces; gex unavailable outside coverage
     assert em._PLACEHOLDER_RE.search(txt) is None
     assert em.GEX_UNAVAILABLE in txt
@@ -356,3 +364,156 @@ def test_exit_books_reset_persists_when_flat(cfg, tmp_path):
     assert summary["books"][BOOK_1]["balance"] == 100000.0 and summary["books"][BOOK_1]["trades"] == 0
     assert summary["books"][BOOK_2]["balance"] == 100000.0 and summary["books"][BOOK_2]["trades"] == 0
     assert summary["baseline"]["trades"] == 0
+
+
+# ------------------------------------------------------------------ profit-lock inputs / rule replay
+def test_position_metrics_includes_commission_and_net():
+    # 24x 6E, 1 ATR = 0.000587 * 24 * 125000 = 1761 USD; RT commission 115.20
+    m = position_metrics(1, 1.10880, 1.10900, 0.00025, 0.000587, 24 * 125000.0, 115.20, [20.0, 32.0])
+    assert m["pnl_usd"] == 600.0
+    assert m["commission_usd"] == 115.20
+    assert m["net_pnl_usd"] == 484.80
+    assert m["commission_atr"] == round(115.20 / 1761.0, 3)
+    assert m["net_pnl_atr"] == round(484.80 / 1761.0, 3)
+    assert m["prev_giveback_pct"] == 32.0 and m["giveback_2_ago"] == 20.0
+    # giveback from peak 0.00025 vs current 0.00020 = 20%
+    assert m["giveback_pct"] == 20.0
+    assert m["giveback_change_2checks"] == 0.0  # 20 - 20 (2-ago)
+
+
+def test_round_trip_commission_from_cfg(cfg):
+    assert round_trip_commission(cfg, {"contract": "6E", "qty": 24}) == 115.20
+    assert round_trip_commission(cfg, {"contract": "GC", "qty": 2}) == 9.20
+    assert round_trip_commission(cfg, {"contract": "6E", "qty": 5, "commission_rt": 99.0}) == 99.0
+
+
+def test_exit_prompt_includes_profit_lock_inputs(cfg):
+    pos = {**feed_entry(qty=24, atr=0.000587), "mfe": 0.00025, "giveback_hist": [20.0, 32.0]}
+    ctx = {"digits": 5, "live_price": 1.11435, "live_price_ts_utc": "t", "levels": [],
+           "minutes_into_bar": 6.5, "session": "LONDON_NY_OVERLAP"}
+    # short from 1.11455 at 1.11435 is +0.00020 * 24 * 125000 = +600 gross
+    m = position_metrics(-1, pos["entry"], 1.11435, pos["mfe"], pos["atr"], 24 * 125000.0)
+    w = find_walls(ctx, -1, 1.11435, pos["entry"], pos["atr"], pos["candle"])
+    vals = em.exit_prompt_values(cfg, pos, ctx, m, w, T0 + timedelta(minutes=7))
+    assert vals["commission_usd"] == "115.20"
+    assert vals["commission_atr"] not in ("n/a", "", None)
+    assert vals["net_pnl_usd"].startswith("+") and vals["net_pnl_atr"].startswith("+")
+    assert vals["prev_giveback_pct"] == "32.0"
+    assert vals["giveback_2_ago"] == "20.0"
+    txt = em.render_exit_prompt(vals)
+    assert "Round-trip commission: 115.20 USD" in txt
+    assert "Previous check giveback: 32.0%" in txt
+    assert "Giveback 2 checks ago (~36s): 20.0%" in txt
+    assert "PROFIT LOCK" in txt and "SPEED RULE" in txt
+    leftover = em._PLACEHOLDER_RE.findall(txt)
+    assert leftover == []
+
+
+def test_first_check_prev_giveback_is_na(cfg):
+    pos = {**feed_entry(), "mfe": 0.0}
+    ctx = {"digits": 5, "live_price": 1.1140, "levels": []}
+    m = position_metrics(-1, pos["entry"], 1.1140, 0.0, pos["atr"], 625000.0)
+    w = find_walls(ctx, -1, 1.1140, pos["entry"], pos["atr"], pos["candle"])
+    vals = em.exit_prompt_values(cfg, pos, ctx, m, w, T0 + timedelta(minutes=3))
+    assert vals["prev_giveback_pct"] == "n/a"
+    assert vals["giveback_2_ago"] == "n/a"
+    assert vals["giveback_change_2checks"] == "n/a"
+    assert vals["commission_usd"] == "24.00"  # 2 * 2.40 * 5
+
+
+def test_profit_lock_flags_thresholds():
+    # below 0.25 MFE: no flags even if net is tiny or giveback is huge
+    assert profit_lock_flags(mfe_atr=0.24, net_pnl_atr=0.0, giveback_pct=80) == []
+    # profit lock at <= +0.03 net once MFE >= 0.25
+    assert "profit_lock" in profit_lock_flags(mfe_atr=0.25, net_pnl_atr=0.03, giveback_pct=0)
+    assert "profit_lock" in profit_lock_flags(mfe_atr=0.40, net_pnl_atr=0.0, giveback_pct=10)
+    assert "profit_lock" not in profit_lock_flags(mfe_atr=0.40, net_pnl_atr=0.031, giveback_pct=10)
+    # giveback tiers on peak alone
+    assert giveback_limit_pct(0.25) == 50.0 and giveback_limit_pct(0.449) == 50.0
+    assert giveback_limit_pct(0.45) == 40.0 and giveback_limit_pct(0.849) == 40.0
+    assert giveback_limit_pct(0.85) == 30.0
+    assert "giveback_limit" in profit_lock_flags(mfe_atr=0.40, net_pnl_atr=0.20, giveback_pct=50)
+    assert "giveback_limit" not in profit_lock_flags(mfe_atr=0.40, net_pnl_atr=0.20, giveback_pct=49.9)
+    assert "giveback_limit" in profit_lock_flags(mfe_atr=0.45, net_pnl_atr=0.20, giveback_pct=40)
+    assert "giveback_limit" in profit_lock_flags(mfe_atr=0.90, net_pnl_atr=0.50, giveback_pct=30)
+    # speed rule: 2-check window when both exist, else previous check
+    assert "speed_rule" in profit_lock_flags(mfe_atr=0.40, net_pnl_atr=0.20, giveback_pct=64,
+                                            prev_giveback_pct=32, giveback_2_ago=20)
+    assert "speed_rule" not in profit_lock_flags(mfe_atr=0.40, net_pnl_atr=0.20, giveback_pct=39,
+                                                prev_giveback_pct=0, giveback_2_ago=0)
+    assert "speed_rule" in profit_lock_flags(mfe_atr=0.40, net_pnl_atr=0.20, giveback_pct=50,
+                                            prev_giveback_pct=10, giveback_2_ago=None)
+
+
+def test_replay_2026_11_12_three_eurusd_gold_trades(cfg):
+    """Offline rule replay of today's three EURUSD/gold trades. Not a Gemini response."""
+    path = Path(__file__).resolve().parent / "data" / "replay_2026-11-12_profit_lock.json"
+    rows = json.loads(path.read_text())
+    report = replay_profit_lock_checks(rows, cfg)
+    # EURUSD 08:19 24x6E: first CLOSE flags at 08:23:15Z, giveback 64% (50% tier) + speed 44 pts, gross +270
+    a = report["EURUSD|2026-11-12T08:19:00+00:00"]
+    assert a["first_close"]["t_utc"].startswith("2026-11-12T08:23:15")
+    assert set(a["first_close"]["flags"]) == {"giveback_limit", "speed_rule"}
+    assert a["first_close"]["pnl_usd"] == 270.0
+    assert a["first_by_rule"]["giveback_limit"]["pnl_usd"] == 270.0
+    assert a["first_by_rule"]["speed_rule"]["pnl_usd"] == 270.0
+    assert a["first_by_rule"]["profit_lock"]["t_utc"].startswith("2026-11-12T08:23:33")
+    assert a["first_by_rule"]["profit_lock"]["pnl_usd"] == -30.0
+    # Gold 08:19 2xGC runner: 30% giveback first hits at the same 08:30:45Z check Gemini closed (+1446)
+    b = report["XAUUSD|2026-11-12T08:19:00+00:00"]
+    assert b["first_close"]["t_utc"].startswith("2026-11-12T08:30:45")
+    assert b["first_close"]["flags"] == ["giveback_limit"]
+    assert b["first_close"]["pnl_usd"] == 1446.0
+    assert "profit_lock" not in b["first_by_rule"]
+    assert "speed_rule" not in b["first_by_rule"]
+    # EURUSD 09:03 24x6E: 0.45-tier 40% giveback first at 09:09:59Z, gross +390
+    c = report["EURUSD|2026-11-12T09:03:00+00:00"]
+    assert c["first_close"]["t_utc"].startswith("2026-11-12T09:09:59")
+    assert c["first_close"]["flags"] == ["giveback_limit"]
+    assert c["first_close"]["pnl_usd"] == 390.0
+    assert c["first_by_rule"]["profit_lock"]["t_utc"].startswith("2026-11-12T09:10:53")
+    assert c["first_by_rule"]["profit_lock"]["pnl_usd"] == 30.0
+
+
+def replay_profit_lock_checks(rows: list[dict], cfg: dict) -> dict:
+    """Walk logged exit checks in time order and flag where the new rules would have said CLOSE."""
+    from collections import defaultdict
+    groups = defaultdict(list)
+    for r in rows:
+        groups[(r["symbol"], r["entry_time"])].append(r)
+    out = {}
+    for key, evs in groups.items():
+        evs = sorted(evs, key=lambda x: x["t_utc"])
+        hist = []
+        first_close = None
+        first_by_rule = {}
+        checks = []
+        pos = {"contract": evs[0]["contract"], "qty": evs[0]["qty"], "atr": evs[0].get("atr"),
+               "symbol": evs[0]["symbol"]}
+        for r in evs:
+            m = {"pnl_usd": r.get("pnl_usd"), "pnl_atr": r.get("pnl_atr"),
+                 "mfe_atr": r.get("mfe_atr"), "giveback_pct": r.get("giveback_pct")}
+            pos["giveback_hist"] = list(hist)
+            enrich_exit_metrics(m, cfg, pos)
+            flags = profit_lock_flags(mfe_atr=m.get("mfe_atr"), net_pnl_atr=m.get("net_pnl_atr"),
+                                      giveback_pct=m.get("giveback_pct"),
+                                      prev_giveback_pct=m.get("prev_giveback_pct"),
+                                      giveback_2_ago=m.get("giveback_2_ago"))
+            snap = {"t_utc": r["t_utc"], "flags": flags, "pnl_usd": r.get("pnl_usd"),
+                    "net_pnl_usd": m.get("net_pnl_usd"), "net_pnl_atr": m.get("net_pnl_atr"),
+                    "mfe_atr": r.get("mfe_atr"), "giveback_pct": r.get("giveback_pct"),
+                    "prev_giveback_pct": m.get("prev_giveback_pct"),
+                    "giveback_2_ago": m.get("giveback_2_ago"),
+                    "gemini_decision": r.get("decision"), "gemini_structure": r.get("structure")}
+            checks.append(snap)
+            if flags:
+                if first_close is None:
+                    first_close = snap
+                for f in flags:
+                    first_by_rule.setdefault(f, snap)
+            if r.get("giveback_pct") is not None:
+                hist.append(float(r["giveback_pct"]))
+                hist = hist[-2:]
+        out[f"{key[0]}|{key[1]}"] = {"first_close": first_close, "first_by_rule": first_by_rule,
+                                      "checks": checks, "n": len(checks)}
+    return out

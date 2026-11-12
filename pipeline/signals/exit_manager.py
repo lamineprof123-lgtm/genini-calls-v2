@@ -47,7 +47,9 @@ STRUCTURES = ("expanding", "healthy_pullback", "wall_touch_harvest", "giveback_l
 # Prompt placeholders that must always render to a non-empty value (never literal braces).
 PROMPT_KEYS = (
     "symbol", "side", "entry", "price", "minutes_into_bar", "pnl_atr", "pnl_usd", "mfe_atr",
-    "giveback_pct", "minutes", "session", "next_wall_label", "next_wall_price", "dist_to_wall_atr",
+    "giveback_pct", "commission_usd", "commission_atr", "net_pnl_usd", "net_pnl_atr",
+    "prev_giveback_pct", "giveback_2_ago", "giveback_change_2checks",
+    "minutes", "session", "next_wall_label", "next_wall_price", "dist_to_wall_atr",
     "invalid_level_label", "invalid_level_price", "vwap", "ema20", "ema50",
     "last_o", "last_h", "last_l", "last_c", "rvol_last", "form_o", "form_h", "form_l",
     "poc", "vah", "val", "cvd_label", "cvd_slope", "gex_summary",
@@ -93,18 +95,110 @@ def _side_word(side: int) -> str:
 
 
 def position_metrics(side: int, entry: float, price: float, mfe_pts: float, atr: float,
-                     usd_per_point: float) -> dict:
+                     usd_per_point: float, commission_rt: float = 0.0,
+                     giveback_hist: list | None = None) -> dict:
     """Open P&L / MFE / giveback. mfe_pts = best favourable excursion in price points seen so far (>= 0).
-    giveback_pct = share of the peak open profit handed back (0 when there was never any profit)."""
+    giveback_pct = share of the peak open profit handed back (0 when there was never any profit).
+    Net P&L is gross minus full round-trip commission. giveback_hist is prior checks' giveback_pct
+    (oldest first, last two kept by the caller) so the speed rule can see the ~36s change."""
     pnl_pts = side * (price - entry)
     mfe = max(float(mfe_pts or 0.0), pnl_pts, 0.0)
     give = (mfe - pnl_pts) / mfe * 100.0 if mfe > 0 else 0.0
     a = float(atr) if atr and atr > 0 else float("nan")
+    unit = (a * float(usd_per_point)) if a == a else None
+    pnl_usd = round(pnl_pts * usd_per_point, 2)
+    comm = round(float(commission_rt or 0.0), 2)
+    net_usd = round(pnl_usd - comm, 2)
+    hist = [float(x) for x in (giveback_hist or []) if x is not None]
+    prev = hist[-1] if len(hist) >= 1 else None
+    ago2 = hist[-2] if len(hist) >= 2 else None
+    gb = round(max(0.0, give), 1)
+    baseline = ago2 if ago2 is not None else prev
+    change = round(gb - baseline, 1) if baseline is not None else None
     return {"pnl_pts": pnl_pts, "mfe_pts": mfe,
             "pnl_atr": round(pnl_pts / a, 3) if a == a else None,
             "mfe_atr": round(mfe / a, 3) if a == a else None,
-            "giveback_pct": round(max(0.0, give), 1),
-            "pnl_usd": round(pnl_pts * usd_per_point, 2)}
+            "giveback_pct": gb,
+            "pnl_usd": pnl_usd,
+            "commission_usd": comm,
+            "commission_atr": round(comm / unit, 3) if unit else None,
+            "net_pnl_usd": net_usd,
+            "net_pnl_atr": round(net_usd / unit, 3) if unit else None,
+            "prev_giveback_pct": prev,
+            "giveback_2_ago": ago2,
+            "giveback_change_2checks": change}
+
+
+def round_trip_commission(cfg: dict, pos: dict) -> float:
+    """Full entry+exit commission in USD for this contract/qty (or pos['commission_rt'] if set)."""
+    if pos.get("commission_rt") is not None:
+        return round(float(pos["commission_rt"]), 2)
+    c = ((cfg.get("lucid") or {}).get("contracts") or {}).get(pos.get("contract") or "")
+    if not c:
+        return 0.0
+    return round(2 * float(c.get("commission") or 0) * int(pos.get("qty") or 0), 2)
+
+
+def usd_per_point_of(cfg: dict, pos: dict) -> float | None:
+    c = ((cfg.get("lucid") or {}).get("contracts") or {}).get(pos.get("contract") or "")
+    if not c:
+        return None
+    return float(c["point_value"]) * int(pos.get("qty") or 0)
+
+
+def giveback_limit_pct(mfe_atr: float | None) -> float | None:
+    """Giveback CLOSE threshold from peak MFE alone. None if MFE has not reached 0.25 ATR."""
+    if mfe_atr is None or float(mfe_atr) < 0.25:
+        return None
+    if float(mfe_atr) < 0.45:
+        return 50.0
+    if float(mfe_atr) < 0.85:
+        return 40.0
+    return 30.0
+
+
+def profit_lock_flags(*, mfe_atr, net_pnl_atr, giveback_pct,
+                      prev_giveback_pct=None, giveback_2_ago=None) -> list[str]:
+    """Deterministic offline CLOSE flags for profit-lock / giveback / speed rules.
+
+    This is a rule replay helper only — it does not close live trades (Gemini still decides).
+    """
+    flags: list[str] = []
+    if mfe_atr is None or float(mfe_atr) < 0.25:
+        return flags
+    if net_pnl_atr is not None and float(net_pnl_atr) <= 0.03 + 1e-12:
+        flags.append("profit_lock")
+    lim = giveback_limit_pct(mfe_atr)
+    if lim is not None and giveback_pct is not None and float(giveback_pct) >= lim - 1e-12:
+        flags.append("giveback_limit")
+    baseline = giveback_2_ago if giveback_2_ago is not None else prev_giveback_pct
+    if (baseline is not None and giveback_pct is not None
+            and (float(giveback_pct) - float(baseline)) >= 40.0 - 1e-12):
+        flags.append("speed_rule")
+    return flags
+
+
+def enrich_exit_metrics(m: dict, cfg: dict, pos: dict) -> dict:
+    """Fill commission / net P&L / previous-giveback on an existing metrics dict (mutates m)."""
+    comm = round_trip_commission(cfg, pos)
+    upp = usd_per_point_of(cfg, pos)
+    a = float(pos.get("atr") or 0)
+    unit = (a * upp) if (a > 0 and upp) else None
+    if unit is None and m.get("pnl_atr") not in (None, 0) and m.get("pnl_usd") not in (None, 0):
+        unit = m["pnl_usd"] / m["pnl_atr"]
+    m["commission_usd"] = comm
+    m["commission_atr"] = round(comm / unit, 3) if unit else None
+    net_usd = round(float(m.get("pnl_usd") or 0.0) - comm, 2)
+    m["net_pnl_usd"] = net_usd
+    m["net_pnl_atr"] = round(net_usd / unit, 3) if unit else None
+    hist = [float(x) for x in (pos.get("giveback_hist") or []) if x is not None]
+    m["prev_giveback_pct"] = hist[-1] if len(hist) >= 1 else None
+    m["giveback_2_ago"] = hist[-2] if len(hist) >= 2 else None
+    baseline = m["giveback_2_ago"] if m["giveback_2_ago"] is not None else m["prev_giveback_pct"]
+    gb = m.get("giveback_pct")
+    m["giveback_change_2checks"] = (round(gb - baseline, 1)
+                                    if baseline is not None and gb is not None else None)
+    return m
 
 
 PIN_WALLS = ("Call Wall #1", "Put Wall #1")
@@ -222,6 +316,7 @@ def exit_prompt_values(cfg: dict, pos: dict, ctx: dict, m: dict, walls: dict, no
     sc = ctx.get("signal_candle") or {}
     minutes = (now - datetime.fromisoformat(pos["entry_time"])).total_seconds() / 60.0
     mib = ctx.get("minutes_into_bar")
+    enrich_exit_metrics(m, cfg, pos)
     vals = {
         "symbol": _filled(pos.get("symbol")),
         "side": _side_word(pos["side"]),
@@ -232,6 +327,16 @@ def exit_prompt_values(cfg: dict, pos: dict, ctx: dict, m: dict, walls: dict, no
         "pnl_usd": f"{m['pnl_usd']:+,.2f}" if m.get("pnl_usd") is not None else "n/a",
         "mfe_atr": f"{m['mfe_atr']:.2f}" if m.get("mfe_atr") is not None else "n/a",
         "giveback_pct": f"{m['giveback_pct']:.0f}" if m.get("giveback_pct") is not None else "n/a",
+        "commission_usd": f"{m['commission_usd']:,.2f}" if m.get("commission_usd") is not None else "n/a",
+        "commission_atr": f"{m['commission_atr']:.3f}" if m.get("commission_atr") is not None else "n/a",
+        "net_pnl_usd": f"{m['net_pnl_usd']:+,.2f}" if m.get("net_pnl_usd") is not None else "n/a",
+        "net_pnl_atr": f"{m['net_pnl_atr']:+.3f}" if m.get("net_pnl_atr") is not None else "n/a",
+        "prev_giveback_pct": (f"{m['prev_giveback_pct']:.1f}"
+                              if m.get("prev_giveback_pct") is not None else "n/a"),
+        "giveback_2_ago": (f"{m['giveback_2_ago']:.1f}"
+                           if m.get("giveback_2_ago") is not None else "n/a"),
+        "giveback_change_2checks": (f"{m['giveback_change_2checks']:+.1f}"
+                                    if m.get("giveback_change_2checks") is not None else "n/a"),
         "minutes": f"{minutes:.1f}",
         "session": _filled(ctx.get("session")),
         "next_wall_label": _filled(walls.get("next_wall_label")),
@@ -969,10 +1074,13 @@ class ExitManager:
         # 3. Gemini decision (one call, shared by every book still holding this position)
         p0 = next(iter(held.values()))
         m = position_metrics(p0["side"], p0["entry"], price, p0.get("mfe", 0.0), p0.get("atr"),
-                             self.books.usd_per_point(p0))
+                             self.books.usd_per_point(p0),
+                             round_trip_commission(self.cfg, p0), p0.get("giveback_hist"))
         walls = find_walls(ctx, p0["side"], price, p0["entry"], p0.get("atr") or 0, p0.get("candle"))
         sc = ctx.get("signal_candle") or {}
-        rec.update({k: m[k] for k in ("pnl_atr", "pnl_usd", "mfe_atr", "giveback_pct")},
+        rec.update({k: m[k] for k in ("pnl_atr", "pnl_usd", "mfe_atr", "giveback_pct",
+                                      "commission_usd", "commission_atr", "net_pnl_usd", "net_pnl_atr",
+                                      "prev_giveback_pct", "giveback_2_ago", "giveback_change_2checks")},
                    pnl_pts=round(m["pnl_pts"], 8), walls=walls,
                    cvd_label=ctx.get("cvd_label"), cvd_slope=ctx.get("cvd_slope"), session=ctx.get("session"),
                    vwap=ctx.get("vwap"), ema20=ctx.get("ema20_baseline"), ema50=ctx.get("ema50"),
@@ -1005,6 +1113,10 @@ class ExitManager:
         # 4. apply to each book
         for name, p in held.items():
             p["checks"] = p.get("checks", 0) + 1
+            if m.get("giveback_pct") is not None:
+                hist = list(p.get("giveback_hist") or [])
+                hist.append(float(m["giveback_pct"]))
+                p["giveback_hist"] = hist[-2:]
             st = apply_strike(name, int(p.get("strikes", 0)), decision, m["mfe_atr"], float(self.e["runner_mfe_atr"]))
             p["strikes"] = st["strikes_after"]
             out = {"action": "hold", **{k: st[k] for k in ("strikes_before", "strikes_after", "rule")}}

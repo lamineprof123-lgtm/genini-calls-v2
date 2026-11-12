@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-12T17:27:11.613581+00:00",
+  "updated_at": "2026-11-12T17:29:59.650388+00:00",
   "paper_only": true,
   "model": "gemini-4-carbon",
   "entry_thinking": "high",
@@ -8,6 +8,7 @@
     "XAUUSD",
     "EURUSD",
     "US100",
+    "XAGUSD",
     "BTCUSD"
   ],
   "entry_window_utc": [
@@ -434,11 +435,11 @@
         "mfe_atr": 1.0
       }
     ],
-    "note": "BTCUSD is scored site-only/what-if (1 BTC unit, both exit styles); CB-BRACKET and CB-RUNNER never open it (no Lucid contract)."
+    "note": "BTCUSD trades on the Other-venue $100k CFD book (~$900 / 1 ATR); also scored 1-unit what-if; CB-BRACKET and CB-RUNNER never open it (no Lucid contract)."
   },
   "gemini_exit_calls_enabled": false,
   "uniform_1atr_exits": true,
   "exit_mode": "uniform-1atr-v1",
   "exit_calls_note": "All books: 1 ATR / 1 ATR bracket, no model exits",
-  "rules": "gemini-4-carbon entries (thinking high, live entry prompt unchanged) on XAUUSD / EURUSD / US100 / BTCUSD at every M15 close +20 s in 08:00-20:30 UTC + triggered one-symbol checks; BTCUSD is site-only/what-if (1 BTC unit, both exit styles) \u2014 books never open it. conf >= 0.75; chase <= 0.5 ATR. Size floor($900 / 1 ATR risk), caps NQ 1 / GC 1 / 6E 4, skip if 1 contract > $1,200, 6 aggregate, one per symbol; re-entry after the next M15 close (after a loss 30 min, no same-side re-entry this session); day P&L <= -$1,500 flattens; trailing guard $300; flat 21:45 UTC. Spend cap $15 soft / $19 hard per Dubai day. CB-BRACKET unchanged (1 ATR / 1 ATR / 90 min). CB-RUNNER keeps mechanical stop/lock/trail / 2.5 ATR target / 150-min cap; Carbon exit-model checks are paused."
+  "rules": "gemini-4-carbon entries (thinking high, live entry prompt unchanged) on XAUUSD / EURUSD / US100 / BTCUSD at every M15 close +20 s in 08:00-20:30 UTC + triggered one-symbol checks; BTCUSD is Other-venue (not a Lucid contract) \u2014 CB Lucid books never open it. conf >= 0.75; chase <= 0.5 ATR. Size floor($900 / 1 ATR risk), caps NQ 1 / GC 1 / 6E 4, skip if 1 contract > $1,200, 6 aggregate, one per symbol; re-entry after the next M15 close (after a loss 30 min, no same-side re-entry this session); day P&L <= -$1,500 flattens; trailing guard $300; flat 21:45 UTC. Spend cap $15 soft / $19 hard per Dubai day. CB-BRACKET unchanged (1 ATR / 1 ATR / 90 min). CB-RUNNER keeps mechanical stop/lock/trail / 2.5 ATR target / 150-min cap; Carbon exit-model checks are paused."
 }

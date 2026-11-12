@@ -1,9 +1,174 @@
 {
-  "updated_at": "2026-11-12T17:27:14.530916+00:00",
+  "updated_at": "2026-11-12T17:29:10.195792+00:00",
   "exit_mode": "uniform-1atr-v1",
   "paper_only": true,
-  "pending": 10449,
-  "n_scored": 0,
-  "models": {},
+  "pending": 2121,
+  "n_scored": 4687,
+  "models": {
+    "gemini-3.6-flash": {
+      "n": 474,
+      "label": "gemini-3.6-flash",
+      "win_pct": 0.675,
+      "avg_R": 0.218,
+      "twin_avg_R": -0.091,
+      "edge_R": 0.309,
+      "by_band": {
+        "0.55-0.75": {
+          "n": 42,
+          "win_pct": 0.571,
+          "avg_R": -0.032,
+          "twin_avg_R": -0.405,
+          "edge_R": 0.374
+        },
+        "0.75-0.90": {
+          "n": 431,
+          "win_pct": 0.684,
+          "avg_R": 0.24,
+          "twin_avg_R": -0.063,
+          "edge_R": 0.303
+        },
+        "0.90-1.00": {
+          "n": 1,
+          "win_pct": 1.0,
+          "avg_R": 0.816,
+          "twin_avg_R": 0.816,
+          "edge_R": 0.0
+        }
+      },
+      "excursions": {
+        "2h": {
+          "avg_mfe_atr": 2.071,
+          "avg_mae_atr": 1.008,
+          "n": 474
+        },
+        "3h": {
+          "avg_mfe_atr": 2.646,
+          "avg_mae_atr": 1.273,
+          "n": 474
+        },
+        "4h": {
+          "avg_mfe_atr": 3.424,
+          "avg_mae_atr": 1.522,
+          "n": 474
+        }
+      }
+    },
+    "gemini-3.8-flash": {
+      "n": 77,
+      "label": "gemini-3.8-flash",
+      "win_pct": 0.494,
+      "avg_R": -0.072,
+      "twin_avg_R": -0.202,
+      "edge_R": 0.13,
+      "by_band": {
+        "0.75-0.90": {
+          "n": 38,
+          "win_pct": 0.474,
+          "avg_R": -0.099,
+          "twin_avg_R": -0.41,
+          "edge_R": 0.312
+        },
+        "0.55-0.75": {
+          "n": 39,
+          "win_pct": 0.513,
+          "avg_R": -0.046,
+          "twin_avg_R": 0.002,
+          "edge_R": -0.048
+        }
+      },
+      "excursions": {
+        "2h": {
+          "avg_mfe_atr": 3.746,
+          "avg_mae_atr": 1.497,
+          "n": 77
+        },
+        "3h": {
+          "avg_mfe_atr": 5.707,
+          "avg_mae_atr": 1.888,
+          "n": 77
+        },
+        "4h": {
+          "avg_mfe_atr": 6.83,
+          "avg_mae_atr": 2.242,
+          "n": 77
+        }
+      }
+    },
+    "claude-opus-5-5": {
+      "n": 5,
+      "label": "claude-opus-5-5",
+      "win_pct": 0.2,
+      "avg_R": -0.648,
+      "twin_avg_R": 0.524,
+      "edge_R": -1.172,
+      "by_band": {
+        "<0.55": {
+          "n": 3,
+          "win_pct": 0.333,
+          "avg_R": -0.386,
+          "twin_avg_R": 0.278,
+          "edge_R": -0.664
+        },
+        "0.55-0.75": {
+          "n": 2,
+          "win_pct": 0.0,
+          "avg_R": -1.042,
+          "twin_avg_R": 0.893,
+          "edge_R": -1.935
+        }
+      },
+      "excursions": {
+        "2h": {
+          "avg_mfe_atr": 4.162,
+          "avg_mae_atr": 2.736,
+          "n": 5
+        },
+        "3h": {
+          "avg_mfe_atr": 6.129,
+          "avg_mae_atr": 3.513,
+          "n": 5
+        },
+        "4h": {
+          "avg_mfe_atr": 6.183,
+          "avg_mae_atr": 3.588,
+          "n": 5
+        }
+      }
+    },
+    "claude-sonnet-5-5": {
+      "n": 1,
+      "label": "claude-sonnet-5-5",
+      "win_pct": 0.0,
+      "avg_R": -1.071,
+      "twin_avg_R": 0.81,
+      "edge_R": -1.881,
+      "by_band": {
+        "0.55-0.75": {
+          "n": 1,
+          "win_pct": 0.0,
+          "avg_R": -1.071,
+          "twin_avg_R": 0.81,
+          "edge_R": -1.881
+        }
+      },
+      "excursions": {
+        "2h": {
+          "avg_mfe_atr": 2.922,
+          "avg_mae_atr": 3.156,
+          "n": 1
+        },
+        "3h": {
+          "avg_mfe_atr": 3.906,
+          "avg_mae_atr": 3.156,
+          "n": 1
+        },
+        "4h": {
+          "avg_mfe_atr": 3.906,
+          "avg_mae_atr": 3.156,
+          "n": 1
+        }
+      }
+    }
+  },
   "note": "Every BUY/SELL (any confidence, traded or not) vs the uniform 1 ATR / 1 ATR / 90-min bracket, plus a seeded coin-flip twin and M1 MFE/MAE over 2h/3h/4h. HOLDs scored as long+short counterfactuals. Append-only logs/<day>/signal_scores.jsonl."
 }

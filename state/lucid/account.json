@@ -1,13 +1,13 @@
 {
   "version": 1,
   "created_at": "2026-11-12T09:00:41.662867+00:00",
-  "last_processed": "2026-11-12T09:14:00+00:00",
+  "last_processed": "2026-11-12T09:16:00+00:00",
   "account": {
     "no": 1,
     "phase": "eval",
     "started_at": "2026-11-12T09:00:41.662867+00:00",
     "start_balance": 100000.0,
-    "balance": 100053.2,
+    "balance": 99395.6,
     "highest_close": 100000.0,
     "mll_floor": 97000.0,
     "mll_locked": false,
@@ -18,196 +18,23 @@
     "cycle_day_pnl": {},
     "payouts": [],
     "trading_days": 0,
-    "realized_pnl": 110.8,
-    "trades": 1
+    "realized_pnl": -604.4,
+    "trades": 2
   },
-  "positions": [
-    {
-      "id": 2,
-      "symbol": "EURUSD",
-      "contract": "6E",
-      "qty": 24,
-      "side": 1,
-      "entry": 1.1093,
-      "stop": null,
-      "notional_risk_usd": 1500.0,
-      "target": null,
-      "entry_time": "2026-11-12T09:03:00+00:00",
-      "exit_mode": "gemini_only",
-      "risk_usd": null,
-      "target_usd": null,
-      "target_source": "none (gemini_only)",
-      "sizing": "gemini_only: notional 0.8 ATR = 0.0005 x 125000/pt = $62 per 6E; 24 6E ~ $1,500 notional <= $1500 (reference only; NO stop, NO target, exit = Gemini CLOSE)",
-      "target_usd_gross": null,
-      "commission_rt": 115.2,
-      "atr": 0.000577,
-      "gemini": {
-        "action": "BUY",
-        "entry": 1.10929,
-        "stop_loss": 1.10887,
-        "take_profit": 1.10989,
-        "confidence": 0.74,
-        "rr": 1.429,
-        "shown_on_site": true,
-        "basis": "site signal",
-        "run_at_utc": "2026-11-12T09:02:20.010977+00:00",
-        "session": "LONDON_SESSION",
-        "rationale": "Confluence checklist: 1) VP Context: Price is breaking out above VAH (1.10923) and holding well above POC (1.10757). 2) CVD: CVD is +2823.61 (NEUTRAL) with positive slope (+989.83), displaying rising buyer participation. 3) Session: LONDON_SESSION active. 4) Trend: Cleanly above VWAP (1.10838) and EMA50 (1.10871), indicating short-term structural reversal higher. 5) ATR: Pressing against the upper ATR band (1.10947). 6) RVOL: 1.176 without a fresh yellow RVOL spike, but steady buying prints. 7) S/R: Approaching Session High (1.10988); upside room remains to target that liquidity pocket. GEX is null. Valid bullish breakout continuation.",
-        "model": "gemini-3.8-flash"
-      },
-      "scalp": {
-        "action": "BUY",
-        "side": 1,
-        "entry": 1.10923,
-        "stop_loss": 1.10887,
-        "take_profit": 1.10983,
-        "sdist": 0.00035885000000002165,
-        "tdist": 0.0005999999999999339,
-        "stop_source": "structure",
-        "target_source": "structure:Session High",
-        "rr": 1.672,
-        "structure_stop": 1.10887115,
-        "atr_stop": 1.1087684,
-        "fixed_tp": 1.11048,
-        "structure_tp": 1.1098299999999999,
-        "structure_label": "Session High",
-        "candle": {
-          "high": 1.10935,
-          "low": 1.1089
-        },
-        "levels": [
-          {
-            "price": 1.10988,
-            "label": "Session High"
-          },
-          {
-            "price": 1.11456,
-            "label": "S/R"
-          },
-          {
-            "price": 1.11492,
-            "label": "24h High"
-          },
-          {
-            "price": 1.10824,
-            "label": "Prev Low"
-          },
-          {
-            "price": 1.10662,
-            "label": "Session Low"
-          }
-        ],
-        "vp": {
-          "poc": 1.10757,
-          "vah": 1.10923,
-          "val": 1.10701
-        },
-        "target_scalp": 1.10986,
-        "lucid_plan": {
-          "contract": "6E",
-          "qty": 11,
-          "tdist": 0.0006,
-          "target_usd": 772.2,
-          "risk_usd": 618.75,
-          "target_source": "structure:Session High",
-          "sizing": "structure:Session High target 0.0006 reaches $772 net with 11 6E (risk $619)"
-        }
-      },
-      "telemetry": {
-        "symbol": "EURUSD",
-        "session": "LONDON_SESSION",
-        "last_close": 1.10927,
-        "atr": 0.000577,
-        "vwap": 1.10838,
-        "ema20": 1.10831,
-        "ema50": 1.10871,
-        "price_vs_vwap": {
-          "side": "above",
-          "dist_atr": 1.5425
-        },
-        "price_vs_ema50": {
-          "side": "above",
-          "dist_atr": 0.9705
-        },
-        "vwap_aligned_with_side": true,
-        "ema50_aligned_with_side": true,
-        "poc": 1.10757,
-        "vah": 1.10923,
-        "val": 1.10701,
-        "price_vs_value_area": "above_vah",
-        "dist_to_poc_atr": 2.9463,
-        "cvd": 2823.61,
-        "cvd_label": "NEUTRAL",
-        "cvd_slope": 989.83,
-        "cvd_agrees_with_side": true,
-        "rvol": 1.176,
-        "rvol_spike": false,
-        "rvol_bars_since_spike": 25,
-        "atr_band_z": 1.6638,
-        "atr_upper": 1.10947,
-        "atr_lower": 1.10716,
-        "nearest_sr": {
-          "above": {
-            "price": 1.10988,
-            "label": "Session High",
-            "dist_atr": 1.0572
-          },
-          "below": {
-            "price": 1.10824,
-            "label": "Prev Low",
-            "dist_atr": 1.7851
-          }
-        },
-        "gemini": {
-          "action": "BUY",
-          "confidence": 0.74,
-          "confidence_band": "0.7-0.8",
-          "rationale": "Confluence checklist: 1) VP Context: Price is breaking out above VAH (1.10923) and holding well above POC (1.10757). 2) CVD: CVD is +2823.61 (NEUTRAL) with positive slope (+989.83), displaying rising buyer participation. 3) Session: LONDON_SESSION active. 4) Trend: Cleanly above VWAP (1.10838) and EMA50 (1.10871), indicating short-term structural reversal higher. 5) ATR: Pressing against the upper ATR band (1.10947). 6) RVOL: 1.176 without a fresh yellow RVOL spike, but steady buying prints. 7) S/R: Approaching Session High (1.10988); upside room remains to target that liquidity pocket. GEX is null. Valid bullish breakout continuation.",
-          "model": "gemini-3.8-flash",
-          "model_action": "BUY"
-        },
-        "scalp": {
-          "stop_basis": "structure",
-          "target_basis": "structure:Session High",
-          "tdist": null,
-          "sdist": null,
-          "structure_label": "Session High",
-          "target_source": "none (gemini_only)"
-        },
-        "planned": {
-          "tdist": null,
-          "sdist": null,
-          "qty": 24,
-          "contract": "6E",
-          "target_usd_net": null,
-          "risk_usd": null,
-          "target_source": "none (gemini_only)",
-          "sizing": "gemini_only: notional 0.8 ATR = 0.0005 x 125000/pt = $62 per 6E; 24 6E ~ $1,500 notional <= $1500 (reference only; NO stop, NO target, exit = Gemini CLOSE)"
-        },
-        "run_at_utc": "2026-11-12T09:02:20.010977+00:00",
-        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-12/cycles/130220.json/EURUSD.png"
-      },
-      "mfe": 0.000260000000000149,
-      "mae": 0.00017999999999984695,
-      "mfe_min": 0.0,
-      "time_cut_deadline": null,
-      "time_cut_candles": 0,
-      "time_cut_rule": "none: exit = Gemini CLOSE only (1-strike); no stop, no target, no max hold, no 16:45 flat; DLL/MLL/breaker log-only"
-    }
-  ],
+  "positions": [],
   "pending": [],
   "next_pos_id": 3,
   "day": {
     "id": "2026-11-12",
     "start_balance": 100000.0,
-    "realized": 110.8,
+    "realized": -604.4,
     "locked": null,
     "eod_done": null,
     "traded": true
   },
   "last_price": {
     "XAUUSD": 3929.74,
-    "EURUSD": 1.10919
+    "EURUSD": 1.10917
   },
   "history": [],
   "ledger": {
@@ -229,13 +56,13 @@
     "payouts_gross": 0.0,
     "payouts_received": 0.0,
     "payout_count": 0,
-    "trades": 1,
+    "trades": 2,
     "wins": 1,
-    "losses": 0,
+    "losses": 1,
     "gross_win": 110.8,
-    "gross_loss": 0.0,
-    "commissions": 66.8,
-    "net_trade_pnl": 110.8,
+    "gross_loss": -715.2,
+    "commissions": 124.4,
+    "net_trade_pnl": -604.4,
     "skipped_signals": 0,
     "accepted_signals": 2
   },
@@ -283,6 +110,7 @@
     }
   ],
   "close_done": [
-    1
+    1,
+    2
   ]
 }

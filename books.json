@@ -1,29 +1,34 @@
 {
-  "updated_at_utc": "2026-11-12T10:58:20.271278+00:00",
+  "updated_at_utc": "2026-11-12T11:00:26.112863+00:00",
   "paper_only": true,
   "note": "GEMINI ONLY: same Lucid entries; books A (1-strike) / B (2-strike) exit on Gemini CLOSE only - no stop, no target, no max hold, no 16:45 flat; 3.5% breaker log-only. BASELINE = the main Lucid account (exit_mode=gemini_only: gemini = follows the 1-strike book's CLOSE) on the same entry ids.",
   "check_seconds": 18,
   "books": {
     "1-strike": {
-      "balance": 100203.0,
-      "net_pnl": 215.9,
-      "trades": 2,
+      "balance": 98119.5,
+      "net_pnl": -1871.1,
+      "trades": 3,
       "wins": 2,
-      "losses": 0,
-      "win_rate": 1.0,
+      "losses": 1,
+      "win_rate": 0.667,
       "avg_win": 107.95,
-      "avg_loss": null,
-      "commissions": 29.5,
-      "avg_hold_min": 4.4,
+      "avg_loss": -2087.0,
+      "commissions": 33.0,
+      "avg_hold_min": 16.0,
       "exit_reasons": {
-        "gemini_close": 2
+        "gemini_close": 3
       },
-      "open_positions": 3,
+      "open_positions": 2,
       "day": {
         "id": "2026-11-12",
         "start_balance": 100000.0,
-        "realized": 215.9,
-        "halted": null
+        "realized": -1871.1,
+        "halted": null,
+        "breach_logged": {
+          "t": "2026-11-12T10:59:39.148958+00:00",
+          "equity": 96494.2,
+          "note": "3.5% breaker breached (log-only)"
+        }
       }
     },
     "2-strike": {
@@ -45,7 +50,12 @@
         "id": "2026-11-12",
         "start_balance": 100000.0,
         "realized": 275.9,
-        "halted": null
+        "halted": null,
+        "breach_logged": {
+          "t": "2026-11-12T10:59:57.160769+00:00",
+          "equity": 96463.7,
+          "note": "3.5% breaker breached (log-only)"
+        }
       }
     }
   },

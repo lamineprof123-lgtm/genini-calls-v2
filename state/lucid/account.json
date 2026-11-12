@@ -1,13 +1,13 @@
 {
   "version": 1,
   "created_at": "2026-11-12T10:14:47.081605+00:00",
-  "last_processed": "2026-11-12T13:50:00+00:00",
+  "last_processed": "2026-11-12T13:52:00+00:00",
   "account": {
     "no": 1,
     "phase": "eval",
     "started_at": "2026-11-12T10:14:47.081605+00:00",
     "start_balance": 100000.0,
-    "balance": 96859.9,
+    "balance": 96850.3,
     "highest_close": 100000.0,
     "mll_floor": 97000.0,
     "mll_locked": false,
@@ -193,7 +193,7 @@
         "run_at_utc": "2026-11-12T13:46:20.010662+00:00",
         "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-12/cycles/174620.json/XAUUSD.png"
       },
-      "mfe": 1.8609999999998763,
+      "mfe": 3.5299999999997453,
       "mae": 1.930000000000291,
       "mfe_min": 0.0,
       "time_cut_deadline": null,
@@ -382,7 +382,7 @@
         "run_at_utc": "2026-11-12T13:48:20.346261+00:00",
         "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-12/cycles/174820.json/US100.png"
       },
-      "mfe": 0.0,
+      "mfe": 84.07900000000154,
       "mae": 0.0,
       "mfe_min": 0.0,
       "time_cut_deadline": null,
@@ -391,39 +391,75 @@
       "hard_stop_px": 28074.0,
       "hard_stop_armed_at": "2026-11-12T13:49:09.109910+00:00",
       "hard_stop_usd": 500.0
-    }
-  ],
-  "pending": [
+    },
     {
+      "id": 38,
       "symbol": "GBPUSD",
+      "contract": "6B",
+      "qty": 4,
       "side": -1,
-      "created": "2026-11-12T13:50:40.243776+00:00",
-      "fill_after": "2026-11-12T13:51:00+00:00",
-      "reserved_risk": 0.0,
-      "planned": {
-        "contract": "6B",
-        "qty": 4,
-        "risk_usd": null,
-        "tdist": null,
-        "target_source": "none (gemini_only)"
+      "entry": 1.3258,
+      "stop": null,
+      "notional_risk_usd": 150.0,
+      "target": null,
+      "entry_time": "2026-11-12T13:51:14.880270+00:00",
+      "exit_mode": "gemini_only",
+      "fill_source": "live_quote:dukascopy:tick",
+      "fill_check": {
+        "fill_minute": "2026-11-12T13:51:00+00:00",
+        "fill_t": "2026-11-12T13:51:14.880270+00:00",
+        "ref_price": 1.32592,
+        "booked": 1.3258,
+        "slippage_ticks": 1,
+        "tick": 0.0001,
+        "signal_entry": 1.32584,
+        "adverse_ticks_vs_quote": 1.2,
+        "m1_bar_open": 1.32592,
+        "quote_price": 1.32592,
+        "quote_ts": "2026-11-12T13:51:12.830000+00:00",
+        "quote_source": "dukascopy:tick",
+        "quote_age_s": 2.05,
+        "quote_fetched_at": "2026-11-12T13:51:14.880270+00:00",
+        "bar_open_minus_quote": 0.0,
+        "tolerance_ticks": 1.5,
+        "within_slippage": true
       },
-      "expires": "2026-11-12T14:01:00+00:00",
+      "risk_usd": null,
+      "target_usd": null,
+      "target_source": "none (gemini_only)",
+      "sizing": "gemini_only: notional 0.8 ATR = 0.0006 x 62500/pt = $38 per 6B; 4 6B ~ $150 notional <= $1500 (reference only; NO stop, NO target, exit = Gemini CLOSE)",
+      "target_usd_gross": null,
+      "commission_rt": 19.2,
       "atr": 0.000749,
-      "scalp": {
+      "gemini": {
         "action": "SELL",
-        "side": -1,
         "entry": 1.32584,
         "stop_loss": 1.32655,
         "take_profit": 1.32502,
-        "sdist": 0.0007074500000001649,
-        "tdist": 0.0008150000000000102,
+        "confidence": 0.72,
+        "rr": 1.155,
+        "shown_on_site": true,
+        "basis": "site signal",
+        "run_at_utc": "2026-11-12T13:50:20.468516+00:00",
+        "session": "LONDON_NY_OVERLAP",
+        "rationale": "1) VP: Price is inside Value Area (VAL 1.32593, VAH 1.32784) but pressing directly at VAL, below POC 1.32738. 2) CVD: -7,351 (BEARISH) with steep negative slope (-3,125.89), demonstrating persistent aggressive selling pressure. 3) Session: LONDON_NY_OVERLAP. 4) Trend: Below VWAP (1.32657) and downward sloping EMA50 (1.32678). 5) ATR: Testing lower ATR envelope (1.32501). 6) RVOL: Elevated at 1.69 with recent yellow RVOL breakout bar confirmation. 7) S/R: Breakdown below Prev Low (1.32618) targeting Session Low (1.32500). Heavy CVD and sustained structural weakness favor downside continuation.",
+        "model": "gemini-3.8-flash"
+      },
+      "scalp": {
+        "action": "SELL",
+        "side": -1,
+        "entry": 1.32592,
+        "stop_loss": 1.32655,
+        "take_profit": 1.3251,
+        "sdist": 0.0006274500000000849,
+        "tdist": 0.0008200000000000429,
         "stop_source": "structure",
         "target_source": "structure:Session Low",
-        "rr": 1.152,
+        "rr": 1.307,
         "structure_stop": 1.32654745,
-        "atr_stop": 1.3264391999999998,
-        "fixed_tp": 1.32459,
-        "structure_tp": 1.325025,
+        "atr_stop": 1.3265192,
+        "fixed_tp": 1.32467,
+        "structure_tp": 1.3251,
         "structure_label": "Session Low",
         "candle": {
           "high": 1.32651,
@@ -457,7 +493,6 @@
           "val": 1.32593
         }
       },
-      "session": "LONDON_NY_OVERLAP",
       "telemetry": {
         "symbol": "GBPUSD",
         "session": "LONDON_NY_OVERLAP",
@@ -514,38 +549,37 @@
         "scalp": {
           "stop_basis": "structure",
           "target_basis": "structure:Session Low",
-          "tdist": 0.0008150000000000102,
-          "sdist": 0.0007074500000001649,
-          "structure_label": "Session Low"
+          "tdist": null,
+          "sdist": null,
+          "structure_label": "Session Low",
+          "target_source": "none (gemini_only)"
         },
         "planned": {
-          "tdist": 0.0008150000000000102,
-          "sdist": 0.0007074500000001649,
-          "qty": null,
-          "contract": null,
+          "tdist": null,
+          "sdist": null,
+          "qty": 4,
+          "contract": "6B",
           "target_usd_net": null,
-          "risk_usd": null
+          "risk_usd": null,
+          "target_source": "none (gemini_only)",
+          "sizing": "gemini_only: notional 0.8 ATR = 0.0006 x 62500/pt = $38 per 6B; 4 6B ~ $150 notional <= $1500 (reference only; NO stop, NO target, exit = Gemini CLOSE)"
         },
         "run_at_utc": "2026-11-12T13:50:20.468516+00:00",
         "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-12/cycles/175020.json/GBPUSD.png"
       },
-      "gemini": {
-        "action": "SELL",
-        "entry": 1.32584,
-        "stop_loss": 1.32655,
-        "take_profit": 1.32502,
-        "confidence": 0.72,
-        "rr": 1.155,
-        "shown_on_site": true,
-        "basis": "site signal",
-        "run_at_utc": "2026-11-12T13:50:20.468516+00:00",
-        "session": "LONDON_NY_OVERLAP",
-        "rationale": "1) VP: Price is inside Value Area (VAL 1.32593, VAH 1.32784) but pressing directly at VAL, below POC 1.32738. 2) CVD: -7,351 (BEARISH) with steep negative slope (-3,125.89), demonstrating persistent aggressive selling pressure. 3) Session: LONDON_NY_OVERLAP. 4) Trend: Below VWAP (1.32657) and downward sloping EMA50 (1.32678). 5) ATR: Testing lower ATR envelope (1.32501). 6) RVOL: Elevated at 1.69 with recent yellow RVOL breakout bar confirmation. 7) S/R: Breakdown below Prev Low (1.32618) targeting Session Low (1.32500). Heavy CVD and sustained structural weakness favor downside continuation.",
-        "model": "gemini-3.8-flash"
-      }
+      "mfe": 0.0,
+      "mae": 0.0,
+      "mfe_min": 0.0,
+      "time_cut_deadline": null,
+      "time_cut_candles": 0,
+      "time_cut_rule": "none: exit = Gemini CLOSE (1-strike) or hard stop -$500 NET; no target, no max hold, no 16:45 flat; DLL/MLL/breaker log-only",
+      "hard_stop_px": 1.3278,
+      "hard_stop_armed_at": "2026-11-12T13:51:14.880270+00:00",
+      "hard_stop_usd": 500.0
     }
   ],
-  "next_pos_id": 38,
+  "pending": [],
+  "next_pos_id": 39,
   "day": {
     "id": "2026-11-12",
     "start_balance": 100000.0,
@@ -555,10 +589,10 @@
     "traded": true
   },
   "last_price": {
-    "US100": 28049.21,
-    "XAUUSD": 3897.165,
+    "US100": 27982.176,
+    "XAUUSD": 3893.361,
     "EURUSD": 1.10852,
-    "GBPUSD": 1.32588
+    "GBPUSD": 1.32592
   },
   "history": [],
   "ledger": {
@@ -585,7 +619,7 @@
     "losses": 19,
     "gross_win": 5668.45,
     "gross_loss": -8804.5,
-    "commissions": 371.35,
+    "commissions": 380.95,
     "net_trade_pnl": -3136.05,
     "skipped_signals": 7,
     "accepted_signals": 45
@@ -1361,6 +1395,28 @@
       "gemini_confidence": 0.72,
       "hard_stop_px": 28074.0,
       "hard_stop_armed_at": "2026-11-12T13:49:09.109910+00:00",
+      "fill_source": "live_quote:dukascopy:tick"
+    },
+    {
+      "id": 38,
+      "symbol": "GBPUSD",
+      "contract": "6B",
+      "qty": 4,
+      "side": -1,
+      "entry": 1.3258,
+      "stop": null,
+      "target": null,
+      "entry_time": "2026-11-12T13:51:14.880270+00:00",
+      "risk_usd": null,
+      "atr": 0.000749,
+      "candle": {
+        "high": 1.32651,
+        "low": 1.32557
+      },
+      "gemini_run_at_utc": "2026-11-12T13:50:20.468516+00:00",
+      "gemini_confidence": 0.72,
+      "hard_stop_px": 1.3278,
+      "hard_stop_armed_at": "2026-11-12T13:51:14.880270+00:00",
       "fill_source": "live_quote:dukascopy:tick"
     }
   ],

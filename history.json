@@ -1,52 +1,5 @@
 [
   {
-    "signal_at": "2026-11-12T13:10:20.014878+00:00",
-    "tz": "Asia/Dubai",
-    "model": "gemini-3.8-flash",
-    "dry_run": false,
-    "trades": [
-      {
-        "symbol": "XAUUSD",
-        "name": "GOLD",
-        "action": "SELL",
-        "entry": 3931.33,
-        "stop_loss": null,
-        "take_profit": null,
-        "rr": null,
-        "confidence": 0.65,
-        "digits": 2,
-        "exit": "Gemini",
-        "card": "Hard stop \u2212$500 net \u00b7 TP: none \u00b7 exit: Gemini",
-        "session": "LONDON_SESSION",
-        "cvd_label": "BEARISH"
-      },
-      {
-        "symbol": "GBPUSD",
-        "name": "POUND",
-        "action": "SELL",
-        "entry": 1.3258,
-        "stop_loss": null,
-        "take_profit": null,
-        "rr": null,
-        "confidence": 0.68,
-        "digits": 5,
-        "exit": "Gemini",
-        "card": "Hard stop \u2212$500 net \u00b7 TP: none \u00b7 exit: Gemini",
-        "session": "LONDON_SESSION",
-        "cvd_label": "BEARISH"
-      }
-    ],
-    "no_trade": [
-      "EURUSD",
-      "US100",
-      "BTCUSD"
-    ],
-    "in_position": [],
-    "analysis_failed": false,
-    "breaker_halted": false,
-    "written_at": "2026-11-12T13:10:38.281005+00:00"
-  },
-  {
     "signal_at": "2026-11-12T13:12:20.277760+00:00",
     "tz": "Asia/Dubai",
     "model": "gemini-3.8-flash",
@@ -1790,5 +1743,39 @@
     "analysis_failed": false,
     "breaker_halted": false,
     "written_at": "2026-11-12T14:48:38.330411+00:00"
+  },
+  {
+    "signal_at": "2026-11-12T14:50:20.207445+00:00",
+    "tz": "Asia/Dubai",
+    "model": "gemini-3.8-flash",
+    "dry_run": false,
+    "trades": [
+      {
+        "symbol": "US100",
+        "name": "NASDAQ",
+        "action": "BUY",
+        "entry": 28172.48,
+        "stop_loss": null,
+        "take_profit": null,
+        "rr": null,
+        "confidence": 0.72,
+        "digits": 2,
+        "exit": "Gemini",
+        "card": "Hard stop \u2212$500 net \u00b7 TP: none \u00b7 exit: Gemini",
+        "session": "LONDON_NY_OVERLAP",
+        "cvd_label": "NEUTRAL"
+      }
+    ],
+    "no_trade": [
+      "XAUUSD",
+      "EURUSD",
+      "BTCUSD"
+    ],
+    "in_position": [
+      "GBPUSD"
+    ],
+    "analysis_failed": false,
+    "breaker_halted": false,
+    "written_at": "2026-11-12T14:50:35.503473+00:00"
   }
 ]

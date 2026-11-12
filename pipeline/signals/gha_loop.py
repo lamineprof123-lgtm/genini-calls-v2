@@ -16,7 +16,7 @@ from pathlib import Path
 from . import gha_lock as L
 from .config import ROOT
 from .exit_manager import ExitManager, em_cfg, run_exit_loop
-from .lucid import lucid_step
+from .lucid import lucid_replay, lucid_step
 from .pipeline import next_boundary, run_once
 from .site import write_status
 
@@ -200,6 +200,15 @@ class GhaLoop:
             t0 = time.monotonic()
             res = {}
             try:
+                # Fill already-queued pendings / apply CLOSE requests BEFORE the entry scan so a
+                # 10–16s Gemini call cannot delay the first exit check on a new position.
+                if not self.dry_run:
+                    try:
+                        rpl = await lucid_replay(self.cfg)
+                        if (rpl or {}).get("filled"):
+                            log.info("lucid pre-scan fill: %s", rpl)
+                    except Exception:
+                        log.exception("lucid replay before entry scan failed")
                 res = await run_once(self.cfg, dry_run=self.dry_run, force=True, model=self.model)
             except Exception:
                 log.exception("cycle failed")
@@ -264,14 +273,26 @@ class GhaLoop:
         except Exception:
             log.exception("model_verify.json write failed")
 
+    async def _lucid_before_exit_tick(self) -> None:
+        """Fill due pendings / apply CLOSE requests, then the exit tick can watch a just-opened position."""
+        try:
+            rpl = await lucid_replay(self.cfg, only_if_needed=True)
+            if (rpl or {}).get("filled"):
+                log.info("lucid pre-tick fill: %s", rpl)
+        except Exception:
+            log.exception("lucid replay before exit tick failed")
+
     def start_exit_manager(self) -> None:
         """Gemini exit checks every [exit_manager].check_seconds (18 s) while a book position is open.
-        Separate asyncio task: never blocks the clock-aligned 2-min entry cycle; idle ticks are a file read."""
+        Separate asyncio task: never blocks the clock-aligned 2-min entry cycle; idle ticks are a file read.
+        Each tick first runs a cheap Lucid replay when a pending fill or CLOSE request is waiting, so
+        checks start within one period of the fill instead of after the next entry scan."""
         if not em_cfg(self.cfg).get("enabled") or not (self.cfg.get("lucid") or {}).get("enabled"):
             return
         mgr = ExitManager(self.cfg, dry_run=self.dry_run, model=None, io_lock=self.io_lock)
-        self.exit_task = asyncio.create_task(run_exit_loop(mgr), name="exit-manager")
-        log.info("exit manager on: check every %ss while a book position is open", mgr.period)
+        pre = None if self.dry_run else self._lucid_before_exit_tick
+        self.exit_task = asyncio.create_task(run_exit_loop(mgr, pre_tick=pre), name="exit-manager")
+        log.info("exit manager on: check every %ss while a book position is open (lucid replay first)", mgr.period)
 
     async def stop_exit_manager(self) -> None:
         t, self.exit_task = self.exit_task, None

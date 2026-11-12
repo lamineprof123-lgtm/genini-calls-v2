@@ -1122,8 +1122,9 @@ def build_m15_indicators(df_m1: pd.DataFrame, anchor: str = "utc_day") -> pd.Dat
     return ohlc
 
 
-async def fetch_m1(ticker: str, since: datetime, now: datetime, timeout: float = 60) -> pd.DataFrame:
-    """Dukascopy 1-minute bid bars (closed only) from `since` to now."""
+async def fetch_m1(ticker: str, since: datetime, now: datetime, timeout: float = 60,
+                   include_forming: bool = False) -> pd.DataFrame:
+    """Dukascopy 1-minute bid bars from `since` to now. Closed bars only unless include_forming."""
     from .data_providers import DukascopyProvider, closed_only
     dp = DukascopyProvider()
     out = tempfile.mkdtemp(prefix="duka_m1_")
@@ -1144,7 +1145,11 @@ async def fetch_m1(ticker: str, since: datetime, now: datetime, timeout: float =
         return pd.DataFrame(columns=["open", "high", "low", "close", "volume"])
     df = pd.DataFrame(rows)
     df.index = pd.to_datetime(df.pop("timestamp"), unit="ms", utc=True)
-    df = closed_only(df[["open", "high", "low", "close", "volume"]].astype(float), 1, now)
+    df = df[["open", "high", "low", "close", "volume"]].astype(float)
+    if include_forming:
+        df = df[df.index <= pd.Timestamp(now)]
+    else:
+        df = closed_only(df, 1, now)
     return df[df.index >= pd.Timestamp(since)]
 
 
@@ -1173,55 +1178,219 @@ def time_cut_rule(sc: dict, atr: float, tdist: float, target_source: str | None)
                            f"{frac:.4g}xtarget {tdist:g}={by_tgt:.5g})={mfe_min:.5g}")
 
 
-async def lucid_step(cfg: dict, record: dict | None = None, now: datetime | None = None) -> dict:
-    """One sim step: replay M1 bars since last_processed, then queue this cycle's signals. Never raises."""
+def due_pendings(sim: LucidSim, now: datetime) -> list[dict]:
+    """Pendings whose fill_after has been reached (they can fill as soon as a bar exists)."""
+    out = []
+    for pe in sim.s.get("pending") or []:
+        t = _dt(pe.get("fill_after"))
+        if t is not None and t <= now:
+            out.append(pe)
+    return out
+
+
+def due_fill_until(sim: LucidSim, now: datetime) -> datetime:
+    """When a pending is due, process the current minute (until = next minute, exclusive)
+    so the fill does not wait for that M1 bar to close."""
+    until = floor_min(now)
+    if due_pendings(sim, now):
+        until = max(until, floor_min(now) + timedelta(minutes=1))
+    return until
+
+
+def _bar_index_utc(df: pd.DataFrame) -> pd.DatetimeIndex:
+    if df is None or not len(df):
+        return pd.DatetimeIndex([], tz="UTC")
+    idx = df.index
+    if idx.tz is None:
+        idx = idx.tz_localize("UTC")
+    return idx.tz_convert("UTC")
+
+
+def inject_live_bars(bars: dict[str, pd.DataFrame], sim: LucidSim, now: datetime,
+                     live_prices: dict[str, float] | None) -> dict[str, pd.DataFrame]:
+    """Fill missing minutes up to now with a synthetic OHLC bar from a live price, so a due
+    pending can fill when the closed M1 feed is still one minute behind."""
+    if not live_prices:
+        return bars
+    out = dict(bars)
+    end = floor_min(now)
+    for pe in due_pendings(sim, now):
+        sym, px = pe["symbol"], live_prices.get(pe["symbol"])
+        if px is None:
+            continue
+        t = floor_min(_dt(pe["fill_after"]))
+        missing = []
+        while t <= end:
+            df = out.get(sym)
+            have = _bar_index_utc(df) if df is not None else pd.DatetimeIndex([], tz="UTC")
+            ts = pd.Timestamp(t)
+            if ts.tzinfo is None:
+                ts = ts.tz_localize("UTC")
+            else:
+                ts = ts.tz_convert("UTC")
+            if ts not in have:
+                missing.append(ts)
+            t += timedelta(minutes=1)
+        if not missing:
+            continue
+        add = pd.DataFrame({"open": px, "high": px, "low": px, "close": px},
+                           index=pd.DatetimeIndex(missing, tz="UTC"))
+        df = out.get(sym)
+        out[sym] = pd.concat([df, add]).sort_index() if df is not None and len(df) else add
+    return out
+
+
+def lucid_needs_replay(sim: LucidSim) -> bool:
+    """True when a short replay should run between 2-min entry cycles: due/queued fills or unapplied CLOSEs."""
+    if sim.s.get("pending"):
+        return True
+    f = Path(sim.state_dir) / "close_requests.json"
+    if not f.exists():
+        return False
+    try:
+        rows = json.loads(f.read_text())
+    except Exception:
+        return False
+    done = set(sim.s.get("close_done") or [])
+    open_ids = {p["id"] for p in sim.s.get("positions") or []}
+    return any(r.get("id") in open_ids and r.get("id") not in done for r in (rows or []))
+
+
+def apply_due_fills(sim: LucidSim, bars: dict[str, pd.DataFrame], now: datetime,
+                    live_prices: dict[str, float] | None = None,
+                    m15: dict[str, pd.DataFrame] | None = None) -> list[int]:
+    """Process far enough to fill any pending whose fill_after has passed. Returns new position ids."""
+    before = {p["id"] for p in sim.s.get("positions") or []}
+    until = due_fill_until(sim, now)
+    if until <= floor_min(_dt(sim.s["last_processed"])):
+        return []
+    bars = inject_live_bars(bars, sim, now, live_prices)
+    sim.process(bars, until, m15=m15)
+    return [p["id"] for p in sim.s.get("positions") or [] if p["id"] not in before]
+
+
+async def _default_live_prices(cfg: dict, symbols: set[str], now: datetime) -> dict[str, float]:
+    if not symbols:
+        return {}
+    try:
+        from .live_price import fetch_symbol_m1
+    except Exception:
+        return {}
+    res = await asyncio.gather(*[fetch_symbol_m1(s, cfg, now) for s in symbols], return_exceptions=True)
+    out: dict[str, float] = {}
+    for s, r in zip(symbols, res):
+        if isinstance(r, Exception) or not r or r[0] is None or not len(r[0]):
+            continue
+        try:
+            out[s] = float(r[0]["close"].iloc[-1])
+        except Exception:
+            continue
+    return out
+
+
+async def _fetch_and_replay(sim: LucidSim, cfg: dict, now: datetime,
+                            live_prices: dict[str, float] | None = None) -> tuple[dict, datetime, list[int]]:
+    """Fetch M1 (forming bars included when a fill is due) and process. Returns (bars, until, new_ids)."""
+    since = _dt(sim.s["last_processed"])
+    need = {p["symbol"] for p in sim.s["positions"]} | {p["symbol"] for p in sim.s["pending"]}
+    due = due_pendings(sim, now)
+    bars, m15, until = {}, {}, floor_min(now)
+    before = {p["id"] for p in sim.s.get("positions") or []}
+    if need:
+        lookback = since - timedelta(hours=36)
+        include_forming = bool(due)
+        res = await asyncio.gather(
+            *[fetch_m1(cfg["lucid"]["symbols"][s]["m1"], lookback, now, include_forming=include_forming)
+              for s in need],
+            return_exceptions=True)
+        lasts = []
+        for s, r in zip(need, res):
+            if isinstance(r, Exception):
+                log.warning("lucid m1 %s failed: %s", s, r); continue
+            bars[s] = r[r.index >= pd.Timestamp(since)] if len(r) else r
+            anchor = cfg.get("symbols", {}).get(s, {}).get(
+                "vwap_anchor", cfg.get("chart", {}).get("vwap", {}).get("default_anchor", "utc_day"))
+            try:
+                m15[s] = build_m15_indicators(r, anchor)
+            except Exception:
+                log.exception("lucid m15 indicators %s failed", s)
+            if len(r):
+                lasts.append(r.index[-1].to_pydatetime() + timedelta(minutes=1))
+        fresh = [x for x in lasts if now - x <= timedelta(minutes=20)]
+        if fresh:
+            until = min(until, min(fresh))
+        elif sim.in_session(now):
+            until = min(until, max(lasts)) if lasts else since
+        until = max(until, since)
+    # A lagging closed-bar feed used to cap `until` before the fill minute, so the pending
+    # sat until the next 2-min cycle. Extend to the current minute and inject live prices.
+    if due:
+        until = max(until, due_fill_until(sim, now))
+        missing = {pe["symbol"] for pe in due}
+        if live_prices is None:
+            live_prices = await _default_live_prices(cfg, missing, now)
+        bars = inject_live_bars(bars, sim, now, live_prices)
+    sim.process(bars, until, m15=m15)
+    new_ids = [p["id"] for p in sim.s.get("positions") or [] if p["id"] not in before]
+    return bars, until, new_ids
+
+
+async def _persist_sim(sim: LucidSim, cfg: dict, write_report: bool = True) -> None:
+    sim.save()
+    if write_report:
+        from .lucid_report import write_report as _wr
+        try:
+            await asyncio.to_thread(_wr, sim.logs_dir)
+        except Exception:
+            log.exception("lucid report refresh failed (sim state already saved)")
+    try:
+        await asyncio.to_thread(sim.write_site, cfg["site"]["dir"])
+    except Exception:
+        log.exception("lucid site json failed (sim state already saved)")
+
+
+async def lucid_replay(cfg: dict, now: datetime | None = None, *, only_if_needed: bool = False,
+                       live_prices: dict[str, float] | None = None) -> dict:
+    """Replay pending fills and Gemini CLOSE requests without waiting for the 2-min entry cycle.
+
+    When only_if_needed is set, this is a no-op (no feed fetch) unless there is a queued
+    pending or an unapplied close request, so the 18-second exit loop can call it cheaply."""
     if not cfg.get("lucid", {}).get("enabled"):
         return {}
     async with _LOCK:
         try:
             now = now or datetime.now(UTC)
             sim = await asyncio.to_thread(LucidSim, cfg)
-            since = _dt(sim.s["last_processed"])
-            need = {p["symbol"] for p in sim.s["positions"]} | {p["symbol"] for p in sim.s["pending"]}
-            bars, m15, until = {}, {}, floor_min(now)
-            if need:
-                # Extra lookback so EMA50 / session VWAP on M15 are warm for cross-exit checks
-                lookback = since - timedelta(hours=36)
-                res = await asyncio.gather(*[fetch_m1(cfg["lucid"]["symbols"][s]["m1"], lookback, now) for s in need],
-                                           return_exceptions=True)
-                lasts = []
-                for s, r in zip(need, res):
-                    if isinstance(r, Exception):
-                        log.warning("lucid m1 %s failed: %s", s, r); continue
-                    bars[s] = r[r.index >= pd.Timestamp(since)] if len(r) else r
-                    anchor = cfg.get("symbols", {}).get(s, {}).get(
-                        "vwap_anchor", cfg.get("chart", {}).get("vwap", {}).get("default_anchor", "utc_day"))
-                    try:
-                        m15[s] = build_m15_indicators(r, anchor)
-                    except Exception:
-                        log.exception("lucid m15 indicators %s failed", s)
-                    if len(r):
-                        lasts.append(r.index[-1].to_pydatetime() + timedelta(minutes=1))
-                # wait for the slowest fresh feed; a feed silent > 20 min (closed / gap) is not waited for
-                fresh = [x for x in lasts if now - x <= timedelta(minutes=20)]
-                if fresh:
-                    until = min(until, min(fresh))
-                elif sim.in_session(now):
-                    until = min(until, max(lasts)) if lasts else since
-                until = max(until, since)
-            sim.process(bars, until, m15=m15)
+            if only_if_needed and not lucid_needs_replay(sim):
+                return {"skipped": "not_needed", "processed_until": sim.s["last_processed"]}
+            _, until, new_ids = await _fetch_and_replay(sim, cfg, now, live_prices)
+            await _persist_sim(sim, cfg, write_report=bool(new_ids))
+            if new_ids:
+                log.info("lucid replay filled ids %s (processed until %s)", new_ids, sim.s["last_processed"])
+            return {"processed_until": sim.s["last_processed"], "until": _iso(until), "filled": new_ids}
+        except Exception:
+            log.exception("lucid replay failed (paper sim only; signals unaffected)")
+            return {}
+
+
+async def lucid_step(cfg: dict, record: dict | None = None, now: datetime | None = None,
+                     live_prices: dict[str, float] | None = None) -> dict:
+    """Replay M1, queue this cycle's signals, then replay again so a due pending can fill
+    in the same step (does not wait for the next 2-min cycle). Never raises."""
+    if not cfg.get("lucid", {}).get("enabled"):
+        return {}
+    async with _LOCK:
+        try:
+            now = now or datetime.now(UTC)
+            sim = await asyncio.to_thread(LucidSim, cfg)
+            bars, _, new_ids = await _fetch_and_replay(sim, cfg, now, live_prices)
             dec = sim.on_record(record, now) if record else []
-            sim.save()
-            from .lucid_report import write_report
-            try:
-                await asyncio.to_thread(write_report, sim.logs_dir)
-            except Exception:
-                log.exception("lucid report refresh failed (sim state already saved)")
-            try:
-                await asyncio.to_thread(sim.write_site, cfg["site"]["dir"])
-            except Exception:
-                log.exception("lucid site json failed (sim state already saved)")
-            return {"decisions": dec, "processed_until": sim.s["last_processed"]}
+            # Same-step fill: on_record queues with fill_after = next minute; if that
+            # minute is already due (or live prices cover it), fill before we return.
+            more = apply_due_fills(sim, bars, now, live_prices)
+            new_ids = new_ids + more
+            await _persist_sim(sim, cfg)
+            return {"decisions": dec, "processed_until": sim.s["last_processed"], "filled": new_ids}
         except Exception:
             log.exception("lucid step failed (paper sim only; signals unaffected)")
             return {}

@@ -1026,12 +1026,17 @@ class ExitManager:
         return rec
 
 
-async def run_exit_loop(mgr: ExitManager, stop: asyncio.Event | None = None) -> None:
+async def run_exit_loop(mgr: ExitManager, stop: asyncio.Event | None = None,
+                        pre_tick=None) -> None:
     """Fixed-cadence exit checks (default 18 s). A slow tick never stacks: missed slots are skipped.
-    Runs as its own asyncio task, so it never delays the 2-minute entry cycle."""
+    Runs as its own asyncio task, so it never delays the 2-minute entry cycle.
+    Optional pre_tick (e.g. Lucid pending fill / CLOSE replay) runs immediately before each tick
+    so a just-filled position is picked up in the same 18-second slot."""
     nxt = time.monotonic()
     while not (stop and stop.is_set()):
         try:
+            if pre_tick is not None:
+                await pre_tick()
             await mgr.tick()
         except asyncio.CancelledError:
             raise

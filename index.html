@@ -630,6 +630,12 @@
         cell('Open P&amp;L', usd(a.open_pnl, true), cls(a.open_pnl)),
         cell('Trades', `${a.trades || 0}${a.trades ? ` <small>(${a.wins}W/${a.losses}L)</small>` : ''}`),
         cell('R total', rr(a.r_total), cls(a.r_total)),
+        (() => {
+          const sf = S.since_fix || {};
+          const n = sf.n || 0;
+          if (!n) return cell('Since fix', 'no post-fix trades yet');
+          return cell('Since fix', `${usd(sf.net, true)} <small>(${n} · ${sf.wins || 0}W/${sf.losses || 0}L · ${rr(sf.r_total)})</small>`, cls(sf.net));
+        })(),
         cell('MLL floor', usd(a.mll_floor)), cell('Room to MLL', usd(a.mll_room), a.mll_room < 1000 ? 'neg' : ''),
       ].join('');
       const pos = P.length ? `<table class="lu-t"><tr><th>Symbol</th><th>Size</th><th>Side</th><th>Opened</th><th>Held</th><th>Entry</th>
@@ -643,7 +649,7 @@
       const trs = T.length ? `<table class="lu-t"><tr><th>Closed</th><th>Opened</th><th>Symbol</th><th>Size</th><th>Side</th>
         <th>Held</th><th>Exit</th><th>R</th><th>Net</th></tr>${T.map(t => `<tr><td>${dayhm(t.t_exit)}</td><td>${dayhm(t.entry_time)}</td>
         <td>${esc(t.symbol)}</td><td>${t.qty} ${esc(t.contract)}</td><td>${esc(t.side)}</td><td>${esc(t.held || heldOf(t))}</td>
-        <td>${esc(t.reason)}</td><td class="${cls(t.R)}">${rr(t.R)}</td><td class="${cls(t.net)}">${usd(t.net, true)}</td></tr>`).join('')}</table>`
+        <td>${esc(t.reason)}${t.exit_prompt_version === 'v2-pre-grace' ? ' <small>pre-fix</small>' : ''}</td><td class="${cls(t.R)}">${rr(t.R)}</td><td class="${cls(t.net)}">${usd(t.net, true)}</td></tr>`).join('')}</table>`
         : '<div class="lu-note">No closed trades yet.</div>';
       const sigs = (le.signals || []).map(g => `${esc(g.symbol)} ${esc(g.action)}${g.action !== 'HOLD' ? ` ${esc(g.setup_type)} s${g.score}` : ''}` +
         (g.decision && g.decision !== 'HOLD' && g.decision !== g.action ? ` (${esc(g.decision)})` : '')).join(' · ');

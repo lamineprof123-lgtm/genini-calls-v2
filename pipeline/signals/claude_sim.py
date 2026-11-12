@@ -14,7 +14,7 @@ State: state/claude/{engine.json, sims/<SIM>.json, report.json}. Logs: logs/<day
 trades,exit_checks,calibration,events}.jsonl. Site: claude.json at the data root (deployed with the panel).
 """
 from __future__ import annotations
-import asyncio, copy, glob, json, logging, math, os, random, time
+import asyncio, copy, glob, json, logging, math, os, random, tempfile, time
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from zoneinfo import ZoneInfo
@@ -25,6 +25,7 @@ from .risk import _atomic_write
 from . import claude_client as CC
 from .claude_rules import (rules_cfg, clamp_stop, size_for, risk_per_contract, advance, trade_result, floor_for,
                            effective_stop, phase_of, m5_summary, h1_context, lucid_day, in_session, round_tick, pctl)
+from .exit_versions import CLAUDE_EXIT_PROMPT_VERSION, CLAUDE_EXIT_PROMPT_VERSION_PRE
 
 log = logging.getLogger("signals.claude")
 UTC = timezone.utc
@@ -77,6 +78,16 @@ def next_m15_close(t: datetime) -> datetime:
     step = 900
     ts = int(t.timestamp())
     return datetime.fromtimestamp((ts // step + 1) * step, UTC)
+
+
+def in_exit_grace(entry_time, now: datetime) -> bool:
+    """True from entry until (not including) the first M15 bar close after entry.
+
+    During this window the server ignores a Haiku CLOSE; only the hard stop and
+    account risk limits can end the trade.
+    """
+    t0 = _dt(entry_time) if isinstance(entry_time, str) else entry_time
+    return now < next_m15_close(t0)
 
 
 def _side_word(side: int) -> str:
@@ -164,6 +175,7 @@ class ClaudeEngine:
             self.sims[sid] = self._load_sim(sid, label, m)
         self.entry_task: asyncio.Task | None = None
         self.last_entry: dict = self.eng.get("last_entry") or {}
+        self._backfill_exit_prompt_versions()
 
     # ---------------- state
     def _load_engine(self) -> dict:
@@ -216,6 +228,41 @@ class ClaudeEngine:
         d.mkdir(parents=True, exist_ok=True)
         with open(d / name, "a") as f:
             f.write(json.dumps(obj, default=str, separators=(",", ":")) + "\n")
+
+    def _backfill_exit_prompt_versions(self) -> int:
+        """Stamp pre-grace on already-closed Claude trades that have no version tag."""
+        n = 0
+        for sid, sim in self.sims.items():
+            for row in sim.get("recent") or []:
+                if not row.get("exit_prompt_version"):
+                    row["exit_prompt_version"] = CLAUDE_EXIT_PROMPT_VERSION_PRE
+                    n += 1
+        for f in sorted(glob.glob(str(self.logs_dir / "*" / "claude_trades.jsonl"))):
+            try:
+                raw = Path(f).read_text()
+            except Exception:
+                continue
+            lines, out, changed = raw.splitlines(), [], False
+            for line in lines:
+                if not line.strip():
+                    continue
+                try:
+                    row = json.loads(line)
+                except Exception:
+                    out.append(line)
+                    continue
+                if not row.get("exit_prompt_version"):
+                    row["exit_prompt_version"] = CLAUDE_EXIT_PROMPT_VERSION_PRE
+                    changed = True
+                    n += 1
+                out.append(json.dumps(row, default=str, separators=(",", ":")))
+            if changed:
+                path = Path(f)
+                fd, tmp = tempfile.mkstemp(dir=path.parent, prefix=".tmp_")
+                with os.fdopen(fd, "w") as fh:
+                    fh.write("\n".join(out) + "\n")
+                os.replace(tmp, path)
+        return n
 
     # ---------------- helpers
     def spec(self, contract: str) -> dict:
@@ -609,7 +656,7 @@ class ClaudeEngine:
         self._jsonl("claude_trades.jsonl", row, t)
         sim["recent"] = ([{k: row.get(k) for k in ("t_exit", "entry_time", "symbol", "contract", "qty", "side",
                                                     "entry", "exit", "reason", "net", "R", "hold_seconds",
-                                                    "setup_type", "score")}] + (sim.get("recent") or []))[:50]
+                                                    "setup_type", "score", "exit_prompt_version")}] + (sim.get("recent") or []))[:50]
         log.info("claude %s CLOSE #%s %s %s @ %s net %+.2f (%.2fR) held %s", sim["sim"], pos["id"],
                  pos["symbol"], reason, price, res["net"], res["R"] or 0, held_str(hold))
         return res
@@ -625,7 +672,8 @@ class ClaudeEngine:
                 "reach_05_before_stop": t.get("reach_05"), "setup_type": t.get("setup_type"), "score": t.get("score"),
                 "confidence": t.get("confidence"), "session": t.get("session"), "gated": t.get("gated"),
                 "model": t.get("model"), "bar": t.get("bar"), "hold_seconds": int(hold),
-                "fill_source": t.get("fill_source"), "fill_check": t.get("fill_check"), **(extra or {})}
+                "fill_source": t.get("fill_source"), "fill_check": t.get("fill_check"),
+                "exit_prompt_version": CLAUDE_EXIT_PROMPT_VERSION, **(extra or {})}
 
     # ---------------- exit tick (18 s)
     def has_work(self) -> bool:
@@ -819,12 +867,22 @@ class ClaudeEngine:
                                    "price": price, "atr": p["atr"], "t": _iso(now), "confidence": conf,
                                    "decision": dec["decision"], "phase": rec["phase"]})
         if dec["decision"] == "CLOSE":
-            sp = self.spec(p["contract"])
-            px = round_tick(price - p["side"] * int(self.r["slippage_ticks"]) * float(sp["tick"]), float(sp["tick"]))
-            self._close_real(sim, p, px, now, "claude_close",
-                             extra={"exit_reason_text": dec.get("reason"), "exit_structure": dec.get("structure"),
-                                    "exit_confidence": conf, "exit_phase": rec["phase"]})
-            rec["closed"] = True
+            if in_exit_grace(p["entry_time"], now):
+                rec["ignored"] = "close_ignored_grace"
+                rec["grace_until"] = _iso(next_m15_close(_dt(p["entry_time"])))
+                self._jsonl("claude_events.jsonl", {"t": _iso(now), "sim": sim["sim"], "event": "close_ignored_grace",
+                                                    "id": p["id"], "symbol": p["symbol"],
+                                                    "entry_time": p["entry_time"], "grace_until": rec["grace_until"],
+                                                    "exit_reason_text": dec.get("reason"),
+                                                    "exit_structure": dec.get("structure"),
+                                                    "exit_confidence": conf, "exit_phase": rec["phase"]}, now)
+            else:
+                sp = self.spec(p["contract"])
+                px = round_tick(price - p["side"] * int(self.r["slippage_ticks"]) * float(sp["tick"]), float(sp["tick"]))
+                self._close_real(sim, p, px, now, "claude_close",
+                                 extra={"exit_reason_text": dec.get("reason"), "exit_structure": dec.get("structure"),
+                                        "exit_confidence": conf, "exit_phase": rec["phase"]})
+                rec["closed"] = True
         self._jsonl("claude_exit_checks.jsonl", rec, now)
         return rec
 
@@ -876,7 +934,11 @@ class ClaudeEngine:
             except Exception:
                 pass
         key = "t_exit" if name == "claude_trades.jsonl" else "t"
-        return [r for r in rows if not since or (r.get(key) or "") >= since]
+        out = [r for r in rows if not since or (r.get(key) or "") >= since]
+        if name == "claude_trades.jsonl":
+            for r in out:
+                r.setdefault("exit_prompt_version", CLAUDE_EXIT_PROMPT_VERSION_PRE)
+        return out
 
     @staticmethod
     def _agg(rows: list[dict]) -> dict:
@@ -906,6 +968,8 @@ class ClaudeEngine:
                 if book == "whatif":
                     gated = [r for r in rows if r.get("gated")]
                     b["gated_only"] = self._agg(gated)
+                post = [r for r in rows if r.get("exit_prompt_version") == CLAUDE_EXIT_PROMPT_VERSION]
+                b["since_fix"] = self._agg(post)
                 st[book] = b
             sg = [s for s in signals if s.get("sim") == sid]
             st["signals"] = {"rows": len(sg), "buy_sell": sum(1 for s in sg if s.get("action") in ("BUY", "SELL")),
@@ -990,6 +1054,9 @@ class ClaudeEngine:
                             "blown": s.get("blown")},
                 "open_positions": pos, "recent_trades": recent, "books": books,
                 "signals": (rs.get("signals") or {}), "ops": rs.get("ops"),
+                "since_fix": (rs.get("real") or {}).get("since_fix") or {"n": 0, "wins": 0, "losses": 0,
+                                                                         "net": 0.0, "r_total": 0.0, "r_avg": None},
+                "exit_prompt_version": CLAUDE_EXIT_PROMPT_VERSION,
                 "last_entry_call": {"bar": self.last_entry.get("bar"), "t": self.last_entry.get("t"), **le}})
         return {"updated_at": _iso(now), "paper_only": True, "key_present": key,
                 "status": "running" if key else "waiting for key",
@@ -999,7 +1066,9 @@ class ClaudeEngine:
                 "rules": ("Binding server rules: hard stop = model stop clamped 0.6-1.5 ATR; $900 risk sizing "
                           "(NQ 1, GC 1, 6E/6B up to 4, 6 max); break-even at +0.5 ATR; profit lock 50% of best at "
                           "+1.0 ATR, 60% at +1.5 ATR; 45-min time stop; daily -$1,500; trailing $300 buffer; "
-                          "re-entry lock; one entry per M15 close (score >= 5). Exit model every 18 s."),
+                          "re-entry lock; one entry per M15 close (score >= 5). Until the first M15 bar close "
+                          "after entry, a Haiku CLOSE is ignored (hard stop and account limits still apply). "
+                          "Exit model every 18 s."),
                 "reset": {"at": self.eng.get("created_at"), "token": self.cc["reset_token"]},
                 "sims": sims}
 

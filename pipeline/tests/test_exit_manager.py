@@ -190,6 +190,8 @@ def test_books_copy_entries_and_net_after_commission(cfg):
     rec = b.close(BOOK_1, p, 1.11355, T0 + timedelta(minutes=20), "gemini_close")
     # 10 pips x 5 x 125000 = 625; RT commission 2 x 2.40 x 5 = 24
     assert rec["gross"] == pytest.approx(625.0) and rec["net"] == pytest.approx(601.0)
+    from signals.exit_versions import GEMINI_EXIT_PROMPT_VERSION
+    assert rec["exit_prompt_version"] == GEMINI_EXIT_PROMPT_VERSION
     s = b.summary()
     assert s[BOOK_1]["trades"] == 1 and s[BOOK_1]["win_rate"] == 1.0 and s[BOOK_1]["net_pnl"] == 601.0
     assert s[BOOK_1]["balance"] == pytest.approx(100000 + 601.0)

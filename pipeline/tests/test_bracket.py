@@ -257,3 +257,15 @@ def test_slip_rounding_is_adverse(cfg):
     assert round_adverse(27937.97 + 0.25, 0.25, -1, False) == 27938.25    # short exit (buy) rounds up
     assert round_adverse(27937.97 - 0.25, 0.25, 1, False) == 27937.5      # long exit (sell) rounds down
     assert round_adverse(3944.9, 0.1, -1, True) == pytest.approx(3944.9)  # on-tick prices unchanged
+
+def test_close_tags_exit_prompt_version(cfg):
+    from signals.exit_versions import GEMINI_EXIT_PROMPT_VERSION
+    bk = book(cfg)
+    p = {"id": 1, "symbol": "XAUUSD", "contract": "GC", "qty": 1, "side": -1,
+         "entry": 3944.9, "stop": 3949.9, "target": 3939.9, "entry_time": T0.isoformat(),
+         "risk_usd": 500.0, "atr": 5.0, "mfe": 0, "mae": 0, "checks": 0}
+    bk.s["positions"] = [p]
+    rec = bk.close(p, 3950.0, T0 + timedelta(minutes=3), "stop_1atr")
+    assert rec["exit_prompt_version"] == GEMINI_EXIT_PROMPT_VERSION
+    assert rec["reason"] == "stop_1atr" and rec["event"] == "close"
+

@@ -1,5 +1,5 @@
 """Synthetic-price replay checks for the Lucid 100K paper sim: pass, payout, MLL blow, DLL stop, 16:45 flat."""
-import copy, sys
+import copy, json, sys
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
@@ -250,6 +250,8 @@ def test_force_flat_at_1645_et(sim):
     logs = list(Path(sim.logs_dir).rglob("lucid_trades.jsonl"))
     last = logs[0].read_text().strip().splitlines()[-1]
     assert "flat_by_16:45_ET" in last and '"2026-11-10T21:45:00+00:00"' in last
+    from signals.exit_versions import GEMINI_EXIT_PROMPT_VERSION
+    assert json.loads(last)["exit_prompt_version"] == GEMINI_EXIT_PROMPT_VERSION
     # no entries inside the last 15 minutes, the 16:45-18:00 ET break, OR Asian reopen
     for m in (60, 75, 90):  # 16:30 / 16:45 / 17:00 ET relative to 15:30
         tt = t + timedelta(minutes=m)

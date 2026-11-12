@@ -21,6 +21,7 @@ from .scalp_levels import (compute_scalp_levels, size_for_target, fixed_target_d
 from .indicators import market_session, session_blocks_automation
 from .telemetry import build_entry_snapshot, enrich_close_metrics
 from .hard_stop import hard_stop_level, hard_stop_reason, hard_stop_usd
+from .exit_versions import GEMINI_EXIT_PROMPT_VERSION
 
 log = logging.getLogger("signals.lucid")
 ET = ZoneInfo("America/New_York")
@@ -528,7 +529,8 @@ class LucidSim:
                "mfe_usd": telem.get("mfe_usd"), "mae_usd": telem.get("mae_usd"),
                "mfe_atr": telem.get("mfe_atr"), "mae_atr": telem.get("mae_atr"),
                "bars_to_exit_m1": telem.get("bars_to_exit_m1"),
-               "price_source": "proxy spot/CFD M1 (not CME futures)"}
+               "price_source": "proxy spot/CFD M1 (not CME futures)",
+               "exit_prompt_version": GEMINI_EXIT_PROMPT_VERSION}
         self._jsonl("lucid_trades.jsonl", t, rec)
         log.info("lucid close %s %s x%d %s @%s net=%.2f bal=%.2f", p["symbol"], p["contract"], p["qty"],
                  reason, price, net, a["balance"])
@@ -1217,7 +1219,7 @@ class LucidSim:
                         "hard_stop_px": p.get("hard_stop_px"),
                         "target_usd_net": p.get("target_usd"), "target_source": p.get("target_source")})
         keep = ("t_exit", "symbol", "contract", "qty", "side", "entry_time", "entry", "exit", "reason", "net",
-                "balance_after", "hold_seconds", "held", "stopped")
+                "balance_after", "hold_seconds", "held", "stopped", "exit_prompt_version")
         recent_rows = []
         for trow in trades[-recent:][::-1]:
             row = {k: trow.get(k) for k in keep}

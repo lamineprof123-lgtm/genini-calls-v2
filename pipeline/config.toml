@@ -412,7 +412,10 @@ chart_margin_pct = 15           # draw GEX lines only within the visible candle 
 #   C-OPUS entries claude-opus-5-5, C-SONNET entries claude-sonnet-5-5; both exit with claude-haiku-5-5.
 # Same charts + numbers as Gemini; one batched entry call per model per M15 close; exit call every 18 s per open
 # position per sim. Server rules are BINDING here (hard stop, $900 sizing, BE / profit-lock floors, 45-min time stop,
-# daily -$1,500, trailing $300 buffer, re-entry lock, one entry per cycle). The Gemini sim is unchanged (control).
+# daily -$1,500, trailing $300 buffer, re-entry lock, one entry per cycle). Until the first M15 bar close after
+# entry, a Haiku CLOSE is ignored (event close_ignored_grace); hard stop and account limits still apply.
+# Closed trades are tagged exit_prompt_version=v2-grace (pre-fix closes backfilled as v2-pre-grace).
+# The Gemini sim is unchanged (control); Gemini closes are tagged gemini-profit-lock-reset6 only.
 # Key: env ANTHROPIC_API_KEY only (repo secret). Missing key -> sims idle, panel shows "waiting for key".
 # Env overrides: CLAUDE_ENTRY_MODELS (comma list), CLAUDE_EXIT_MODEL.
 [claude]

@@ -34,6 +34,7 @@ from zoneinfo import ZoneInfo
 import pandas as pd
 
 from .risk import _atomic_write
+from .exit_versions import GEMINI_EXIT_PROMPT_VERSION
 
 log = logging.getLogger("signals.bracket")
 UTC = timezone.utc
@@ -420,7 +421,7 @@ class BracketBook:
                "R": round(net / p["risk_usd"], 3) if p.get("risk_usd") else None,
                "mfe_atr": round(p.get("mfe", 0) / atr, 3) if atr else None,
                "mae_atr": round(p.get("mae", 0) / atr, 3) if atr else None,
-               "checks": p.get("checks", 0), **(extra or {})}
+               "checks": p.get("checks", 0), "exit_prompt_version": GEMINI_EXIT_PROMPT_VERSION, **(extra or {})}
         self._jsonl("bracket_trades.jsonl", t, rec)
         return rec
 

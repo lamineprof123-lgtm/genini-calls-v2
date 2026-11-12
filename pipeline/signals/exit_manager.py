@@ -33,6 +33,7 @@ from pydantic import BaseModel, Field
 
 from .config import ROOT
 from .risk import _atomic_write
+from .exit_versions import GEMINI_EXIT_PROMPT_VERSION
 from .hard_stop import (book_has_stop, beyond as stop_beyond, hard_stop_level, hard_stop_reason, hard_stop_usd,
                         shadow_books)
 
@@ -677,7 +678,8 @@ class Books:
                "mae_atr": round(p.get("mae", 0) / atr, 3) if atr else None,
                "mfe_usd": round(p.get("mfe", 0) * self.usd_per_point(p), 2),
                "checks": p.get("checks", 0), "strikes_at_exit": p.get("strikes", 0),
-               "hard_stop_px": p.get("hard_stop_px"), "overlap": bool(p.get("overlap")), **(extra or {})}
+               "hard_stop_px": p.get("hard_stop_px"), "overlap": bool(p.get("overlap")),
+               "exit_prompt_version": GEMINI_EXIT_PROMPT_VERSION, **(extra or {})}
         rec["event"] = "close"
         self.closed.append(rec)
         self.queue_post_exit(rec)

@@ -9,7 +9,7 @@ import pytest
 from signals import claude_client as CC
 from signals.claude_rules import (rules_cfg, clamp_stop, size_for, advance, trade_result, floor_for, m5_summary,
                                   h1_context, phase_of, risk_per_contract)
-from signals.claude_sim import ClaudeEngine, claude_cfg, next_m15_close
+from signals.claude_sim import ClaudeEngine, claude_cfg, next_m15_close, in_exit_grace
 from signals.config import load_config, ROOT
 
 UTC = timezone.utc
@@ -233,6 +233,19 @@ def _engine(tmp, answers, exit_answer=None, key=True, now=None):
     return eng, calls
 
 
+def _stamp_entry(eng, t=T0):
+    """Fill path stamps entry_time to wall-clock now; pin it to the simulated clock so grace/hard-stop tests work."""
+    iso = t.isoformat()
+    for sim in eng.sims.values():
+        for pos in sim["positions"]:
+            pos["entry_time"] = iso
+            pos["scan_from"] = iso
+    for pos in eng.eng.get("shadow") or []:
+        pos["entry_time"] = iso
+        pos["scan_from"] = iso
+
+
+
 OPUS, SON = "claude-opus-5-5", "claude-sonnet-5-5"
 
 
@@ -318,6 +331,7 @@ def test_exit_tick_close_and_failure_fallback(tmp_path):
                   _sig("US100")], SON: [_sig("XAUUSD"), _sig("EURUSD"), _sig("GBPUSD"), _sig("US100")]}
     eng, calls = _engine(tmp_path, ans, exit_answer={"ok": False, "error": "timeout"}, now=now)
     asyncio.run(eng.on_cycle(PAYLOADS, now=T0))
+    _stamp_entry(eng, T0)
     p = eng.sims["C-OPUS"]["positions"][0]
     for i in range(3):
         asyncio.run(eng.exit_tick(now + timedelta(seconds=18 * i)))
@@ -327,12 +341,15 @@ def test_exit_tick_close_and_failure_fallback(tmp_path):
     eng._exit_api = lambda *a: _ret({"ok": True, "parsed": {"structure": "momentum_stall", "reason": "stall",
                                                             "decision": "CLOSE", "confidence": 0.3},
                                      "latency_ms": 900, "cost_usd": 0.0002, "thinking_tokens": 0})
-    asyncio.run(eng.exit_tick(now + timedelta(minutes=2)))
+    # after the first M15 close (15:15); a CLOSE at now+2m (15:07) would now be ignored by the grace rule
+    asyncio.run(eng.exit_tick(T0 + timedelta(minutes=16)))
     s = eng.sims["C-OPUS"]
     assert s["positions"] == [] and s["trades"] == 1 and s["recent"][0]["reason"] == "claude_close"
+    assert s["recent"][0]["exit_prompt_version"] == "v2-grace"
     assert eng.eng["probes"] and any(t["book"] == "mech" for t in eng.eng["shadow"])
     rep = eng.build_report()
     assert rep["sims"]["C-OPUS"]["real"]["n"] == 1 and rep["sims"]["C-OPUS"]["ops"]["exit"]["failed"] == 3
+    assert rep["sims"]["C-OPUS"]["real"]["since_fix"]["n"] == 1
 
 
 async def _ret(x):
@@ -364,6 +381,124 @@ def test_gha_loop_claude_isolated(tmp_path):
     assert g.claude is None
     g.schedule_claude({"payloads": PAYLOADS})      # no engine -> no-op, no error
 
+
+
+def test_in_exit_grace_until_first_m15_close():
+    assert in_exit_grace(T0, T0) is True
+    assert in_exit_grace(T0, T0 + timedelta(minutes=14, seconds=59)) is True
+    assert in_exit_grace(T0, T0 + timedelta(minutes=15)) is False
+    mid = datetime(2026, 11, 11, 15, 1, tzinfo=UTC)
+    assert in_exit_grace(mid, datetime(2026, 11, 11, 15, 14, 59, tzinfo=UTC)) is True
+    assert in_exit_grace(mid, datetime(2026, 11, 11, 15, 15, tzinfo=UTC)) is False
+    assert in_exit_grace(T0.isoformat(), T0 + timedelta(minutes=1)) is True
+
+
+def _close_ans():
+    return {"ok": True, "parsed": {"structure": "momentum_stall", "reason": "stall",
+                                   "decision": "CLOSE", "confidence": 0.3},
+            "latency_ms": 900, "cost_usd": 0.0002, "thinking_tokens": 0}
+
+
+def _xau_buy():
+    return {OPUS: [_sig("XAUUSD", "BUY", 6, "trend", 0.6, stop=1996.0), _sig("EURUSD"), _sig("GBPUSD"),
+                   _sig("US100")], SON: [_sig(s) for s in ("XAUUSD", "EURUSD", "GBPUSD", "US100")]}
+
+
+def test_claude_close_ignored_during_grace(tmp_path):
+    now = T0 + timedelta(minutes=5)   # 15:05; first M15 close after 15:00 entry is 15:15
+    eng, _ = _engine(tmp_path, _xau_buy(), exit_answer=_close_ans(), now=now)
+    asyncio.run(eng.on_cycle(PAYLOADS, now=T0))
+    _stamp_entry(eng, T0)
+    assert eng.sims["C-OPUS"]["positions"]
+    out = asyncio.run(eng.exit_tick(now))
+    assert out.get("real_closed", 0) == 0
+    assert eng.sims["C-OPUS"]["positions"] and eng.sims["C-OPUS"]["trades"] == 0
+    evs = [json.loads(l) for f in (tmp_path / "logs").glob("*/claude_events.jsonl") for l in open(f)]
+    ign = [e for e in evs if e.get("event") == "close_ignored_grace"]
+    assert ign and ign[0]["symbol"] == "XAUUSD"
+    assert "2026-11-11T15:15:00" in ign[0]["grace_until"]
+    checks = [json.loads(l) for f in (tmp_path / "logs").glob("*/claude_exit_checks.jsonl") for l in open(f)]
+    assert checks[-1]["ignored"] == "close_ignored_grace" and "closed" not in checks[-1]
+
+
+def test_claude_close_honored_after_first_m15_close(tmp_path):
+    now = T0 + timedelta(minutes=16)
+    eng, _ = _engine(tmp_path, _xau_buy(), exit_answer=_close_ans(), now=now)
+    asyncio.run(eng.on_cycle(PAYLOADS, now=T0))
+    _stamp_entry(eng, T0)
+    asyncio.run(eng.exit_tick(now))
+    s = eng.sims["C-OPUS"]
+    assert s["positions"] == [] and s["trades"] == 1 and s["recent"][0]["reason"] == "claude_close"
+    assert s["recent"][0]["exit_prompt_version"] == "v2-grace"
+    site = eng.site_payload(eng.build_report())
+    opus = next(x for x in site["sims"] if x["id"] == "C-OPUS")
+    assert opus["since_fix"]["n"] == 1 and opus["exit_prompt_version"] == "v2-grace"
+
+
+def test_hard_stop_and_daily_flatten_still_work_during_grace(tmp_path):
+    eng, _ = _engine(tmp_path, _xau_buy(), now=T0 + timedelta(minutes=3))
+    asyncio.run(eng.on_cycle(PAYLOADS, now=T0))
+    _stamp_entry(eng, T0)
+    p = eng.sims["C-OPUS"]["positions"][0]
+    stop = p["init_stop"]
+
+    async def m1_hit(sym, cfg, n):
+        if sym != "XAUUSD":
+            px = {x["symbol"]: x for x in PAYLOADS}[sym]["context"]["live_price"]
+            return _bars(T0, [[px, px, px, px]] * 3)
+        return _bars(T0, [[2000.0, 2000.1, 1999.0, 1999.5], [1999.5, 1999.6, stop - 1.0, stop - 0.5]])
+
+    async def snap(sym, cfg, n):
+        pl = json.loads(json.dumps({x["symbol"]: x for x in PAYLOADS}[sym]))
+        return pl, await m1_hit(sym, cfg, n)
+
+    eng._m1, eng._snapshot = m1_hit, snap
+    asyncio.run(eng.exit_tick(T0 + timedelta(minutes=3)))
+    assert eng.sims["C-OPUS"]["positions"] == []
+    assert eng.sims["C-OPUS"]["recent"][0]["reason"] == "hard_stop"
+
+    eng2, _ = _engine(tmp_path / "flat", _xau_buy(), now=T0 + timedelta(minutes=3))
+    asyncio.run(eng2.on_cycle(PAYLOADS, now=T0))
+    _stamp_entry(eng2, T0)
+    sim = eng2.sims["C-OPUS"]
+    assert sim["positions"]
+    sim["day"]["realized"] = -1500.0
+    sim["last_price"] = {sim["positions"][0]["symbol"]: sim["positions"][0]["entry"]}
+    eng2._account_limits(sim, T0 + timedelta(minutes=3))
+    assert sim["positions"] == [] and sim["recent"][0]["reason"] == "daily_flatten_-1500"
+    assert sim["recent"][0]["exit_prompt_version"] == "v2-grace"
+
+
+def test_backfill_tags_pre_grace_and_since_fix_excludes_them(tmp_path):
+    from signals.exit_versions import CLAUDE_EXIT_PROMPT_VERSION, CLAUDE_EXIT_PROMPT_VERSION_PRE
+    eng, _ = _engine(tmp_path, {OPUS: [_sig(s) for s in ("XAUUSD", "EURUSD", "GBPUSD", "US100")],
+                                SON: [_sig(s) for s in ("XAUUSD", "EURUSD", "GBPUSD", "US100")]})
+    day = tmp_path / "logs" / "2026-11-12"
+    day.mkdir(parents=True)
+    rows = [
+        {"t_exit": "2026-11-12T13:30:03+00:00", "book": "real", "sim": "C-OPUS", "symbol": "EURUSD",
+         "net": -69.20, "R": -0.08, "reason": "claude_close"},
+        {"t_exit": "2026-11-12T13:35:00+00:00", "book": "real", "sim": "C-OPUS", "symbol": "GBPUSD",
+         "net": -80.0, "R": -0.1, "reason": "claude_close"},
+        {"t_exit": "2026-11-12T14:00:00+00:00", "book": "real", "sim": "C-OPUS", "symbol": "XAUUSD",
+         "net": 100.0, "R": 0.2, "reason": "claude_close", "exit_prompt_version": CLAUDE_EXIT_PROMPT_VERSION},
+    ]
+    (day / "claude_trades.jsonl").write_text("".join(json.dumps(r) + "\n" for r in rows))
+    eng.sims["C-OPUS"]["recent"] = [{"symbol": "EURUSD", "net": -69.20, "reason": "claude_close"}]
+    n = eng._backfill_exit_prompt_versions()
+    assert n >= 2
+    tagged = [json.loads(l) for l in (day / "claude_trades.jsonl").read_text().splitlines()]
+    assert tagged[0]["exit_prompt_version"] == CLAUDE_EXIT_PROMPT_VERSION_PRE
+    assert tagged[1]["exit_prompt_version"] == CLAUDE_EXIT_PROMPT_VERSION_PRE
+    assert tagged[2]["exit_prompt_version"] == CLAUDE_EXIT_PROMPT_VERSION
+    assert eng.sims["C-OPUS"]["recent"][0]["exit_prompt_version"] == CLAUDE_EXIT_PROMPT_VERSION_PRE
+    rep = eng.build_report()
+    real = rep["sims"]["C-OPUS"]["real"]
+    assert real["n"] == 3
+    assert real["since_fix"]["n"] == 1 and real["since_fix"]["net"] == 100.0
+    site = eng.site_payload(rep)
+    sf = next(x for x in site["sims"] if x["id"] == "C-OPUS")["since_fix"]
+    assert sf["n"] == 1 and sf["net"] == 100.0
 
 # ------------------------------------------------------------------ fills at the live quote (12 Nov fix)
 def _eur_sell_answers():

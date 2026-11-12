@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-12T13:34:41.015492+00:00",
+  "updated_at": "2026-11-12T13:36:44.093476+00:00",
   "paper_only": true,
   "key_present": true,
   "status": "running",
@@ -23,43 +23,40 @@
       "exit_model": "claude-haiku-5-5",
       "account": {
         "start_balance": 100000.0,
-        "balance": 99376.2,
-        "equity": 99301.2,
-        "realized_pnl": -623.8,
-        "open_pnl": -75.0,
-        "trades": 2,
+        "balance": 99207.0,
+        "equity": 99207.0,
+        "realized_pnl": -793.0,
+        "open_pnl": 0.0,
+        "trades": 3,
         "wins": 0,
-        "losses": 2,
-        "r_total": -1.301,
-        "r_per_trade": -0.65,
+        "losses": 3,
+        "r_total": -2.073,
+        "r_per_trade": -0.691,
         "mll_floor": 97000.0,
-        "mll_room": 2301.2,
-        "day_realized": -623.8,
+        "mll_room": 2207.0,
+        "day_realized": -793.0,
         "day_flattened": false,
         "blown": null
       },
-      "open_positions": [
+      "open_positions": [],
+      "recent_trades": [
         {
+          "t_exit": "2026-11-12T13:35:38.434922+00:00",
+          "entry_time": "2026-11-12T13:31:10.302317+00:00",
           "symbol": "GBPUSD",
           "contract": "6B",
           "qty": 4,
           "side": "SHORT",
-          "entry_time": "2026-11-12T13:31:10.302317+00:00",
           "entry": 1.3257,
-          "stop": 1.3265,
-          "floor": null,
-          "floor_label": null,
-          "last": 1.326,
-          "unrealized": -75.0,
-          "risk_usd": 219.2,
-          "phase": "A",
+          "exit": 1.3263,
+          "reason": "claude_close",
+          "net": -169.2,
+          "R": -0.772,
+          "hold_seconds": 268,
           "setup_type": "trend",
           "score": 6,
-          "server_only": false,
-          "target": 1.32505
-        }
-      ],
-      "recent_trades": [
+          "held": "4m 28s"
+        },
         {
           "t_exit": "2026-11-12T13:18:00+00:00",
           "entry_time": "2026-11-12T13:17:14.327002+00:00",
@@ -150,17 +147,17 @@
           }
         },
         "exit": {
-          "calls": 12,
+          "calls": 27,
           "failed": 0,
-          "latency_p50_ms": 1672.5,
-          "latency_p95_ms": 2888.6,
-          "cost_usd": 0.0045,
+          "latency_p50_ms": 1645.0,
+          "latency_p95_ms": 2810.4,
+          "cost_usd": 0.0101,
           "by_utc_day": {
             "2026-11-12": {
-              "calls": 12,
-              "cost_usd": 0.0048,
-              "input_tokens": 39873,
-              "output_tokens": 936,
+              "calls": 27,
+              "cost_usd": 0.0108,
+              "input_tokens": 89893,
+              "output_tokens": 2137,
               "thinking_tokens": 0
             }
           }

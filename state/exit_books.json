@@ -51,17 +51,18 @@
     47,
     48,
     49,
-    50
+    50,
+    51
   ],
   "last_price": {
-    "US100": 27966.64,
+    "US100": 28185.34,
     "XAUUSD": 3902.59,
-    "EURUSD": 1.10899,
+    "EURUSD": 1.10878,
     "GBPUSD": 1.3259
   },
   "books": {
     "1-strike": {
-      "balance": 97277.65,
+      "balance": 96769.15,
       "positions": [
         {
           "id": 50,
@@ -87,11 +88,11 @@
           "book": "1-strike",
           "strikes": 0,
           "mfe": 0.0,
-          "mae": 0.0,
-          "scan_from": "2026-11-12T14:33:00+00:00",
-          "checks": 5,
+          "mae": 0.000500000000000167,
+          "scan_from": "2026-11-12T14:35:00+00:00",
+          "checks": 12,
           "opened_at": "2026-11-12T14:33:13.839680+00:00",
-          "hard_stop_ok_t": "2026-11-12T14:34:22.194679+00:00",
+          "hard_stop_ok_t": "2026-11-12T14:36:27.884806+00:00",
           "giveback_hist": [
             0.0,
             0.0
@@ -101,7 +102,7 @@
       "day": {
         "id": "2026-11-12",
         "start_balance": 100000.0,
-        "realized": -2710.35,
+        "realized": -3218.85,
         "halted": null,
         "breach_logged": {
           "t": "2026-11-12T10:59:39.148958+00:00",
@@ -110,22 +111,22 @@
         }
       },
       "stats": {
-        "trades": 49,
+        "trades": 50,
         "wins": 22,
-        "losses": 27,
+        "losses": 28,
         "gross_win": 7984.15,
-        "gross_loss": -10694.5,
-        "net_pnl": -2710.35,
-        "commissions": 471.1,
-        "hold_seconds": 20021,
+        "gross_loss": -11203.0,
+        "net_pnl": -3218.85,
+        "commissions": 474.6,
+        "hold_seconds": 20091,
         "exit_reasons": {
           "gemini_close": 39,
-          "hard_stop_500": 10
+          "hard_stop_500": 11
         }
       }
     },
     "nostop": {
-      "balance": 105248.9,
+      "balance": 105247.15,
       "positions": [
         {
           "id": 50,
@@ -149,10 +150,41 @@
           "book": "nostop",
           "strikes": 0,
           "mfe": 0.0,
-          "mae": 0.0,
-          "scan_from": "2026-11-12T14:33:00+00:00",
-          "checks": 5,
+          "mae": 0.000500000000000167,
+          "scan_from": "2026-11-12T14:35:00+00:00",
+          "checks": 12,
           "opened_at": "2026-11-12T14:33:13.839680+00:00",
+          "giveback_hist": [
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "id": 51,
+          "symbol": "US100",
+          "contract": "NQ",
+          "qty": 1,
+          "side": -1,
+          "entry": 28124.75,
+          "stop": null,
+          "target": null,
+          "entry_time": "2026-11-12T14:35:16.894980+00:00",
+          "risk_usd": null,
+          "atr": 66.944,
+          "candle": {
+            "high": 27990.21,
+            "low": 27951.02
+          },
+          "gemini_run_at_utc": "2026-11-12T14:34:20.327247+00:00",
+          "gemini_confidence": 0.76,
+          "fill_source": "live_quote:dukascopy:tick",
+          "book": "nostop",
+          "strikes": 0,
+          "mfe": 0.0,
+          "mae": 0.0,
+          "scan_from": "2026-11-12T14:35:00+00:00",
+          "checks": 5,
+          "opened_at": "2026-11-12T14:35:16.922954+00:00",
           "giveback_hist": [
             0.0,
             0.0
@@ -177,7 +209,7 @@
         "gross_win": 12383.45,
         "gross_loss": -7122.55,
         "net_pnl": 5260.9,
-        "commissions": 471.1,
+        "commissions": 472.85,
         "hold_seconds": 24568,
         "exit_reasons": {
           "gemini_close": 49
@@ -244,22 +276,10 @@
     45,
     46,
     47,
-    48
+    48,
+    49
   ],
   "post_exit": [
-    {
-      "book": "1-strike",
-      "id": 48,
-      "symbol": "US100",
-      "contract": "NQ",
-      "qty": 1,
-      "side": "SHORT",
-      "exit": 27993.0,
-      "t_exit": "2026-11-12T14:30:45.882373+00:00",
-      "reason": "hard_stop_500",
-      "net": -508.5,
-      "due": "2026-11-12T14:35:45.882373+00:00"
-    },
     {
       "book": "nostop",
       "id": 48,
@@ -274,19 +294,6 @@
       "due": "2026-11-12T14:36:05.062777+00:00"
     },
     {
-      "book": "baseline",
-      "id": 48,
-      "symbol": "US100",
-      "contract": "NQ",
-      "qty": 1,
-      "side": "SHORT",
-      "exit": 27993.0,
-      "t_exit": "2026-11-12T14:30:00+00:00",
-      "reason": "hard_stop_500",
-      "net": -508.5,
-      "due": "2026-11-12T14:35:00+00:00"
-    },
-    {
       "book": "1-strike",
       "id": 49,
       "symbol": "XAUUSD",
@@ -311,6 +318,32 @@
       "reason": "gemini_close",
       "net": 275.4,
       "due": "2026-11-12T14:38:13.839680+00:00"
+    },
+    {
+      "book": "baseline",
+      "id": 49,
+      "symbol": "XAUUSD",
+      "contract": "GC",
+      "qty": 1,
+      "side": "SHORT",
+      "exit": 3902.7,
+      "t_exit": "2026-11-12T14:34:00+00:00",
+      "reason": "gemini_close",
+      "net": 275.4,
+      "due": "2026-11-12T14:39:00+00:00"
+    },
+    {
+      "book": "1-strike",
+      "id": 51,
+      "symbol": "US100",
+      "contract": "NQ",
+      "qty": 1,
+      "side": "SHORT",
+      "exit": 28150.0,
+      "t_exit": "2026-11-12T14:36:27.884806+00:00",
+      "reason": "hard_stop_500",
+      "net": -508.5,
+      "due": "2026-11-12T14:41:27.884806+00:00"
     }
   ],
   "retired_books": {

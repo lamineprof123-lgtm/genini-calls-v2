@@ -1,13 +1,13 @@
 {
   "version": 1,
-  "created_at": "2026-11-12T17:19:59.566535+00:00",
-  "last_processed": "2026-11-12T18:10:00+00:00",
+  "created_at": "2026-11-12T18:11:32.213024+00:00",
+  "last_processed": "2026-11-12T18:11:00+00:00",
   "account": {
     "no": 1,
     "phase": "eval",
-    "started_at": "2026-11-12T17:19:59.566535+00:00",
+    "started_at": "2026-11-12T18:11:32.213024+00:00",
     "start_balance": 100000.0,
-    "balance": 99998.25,
+    "balance": 100000.0,
     "highest_close": 100000.0,
     "mll_floor": 97000.0,
     "mll_locked": false,
@@ -21,216 +21,24 @@
     "realized_pnl": 0.0,
     "trades": 0
   },
-  "positions": [
-    {
-      "id": 1,
-      "symbol": "US100",
-      "contract": "NQ",
-      "qty": 1,
-      "side": -1,
-      "entry": 28400.25,
-      "stop": 28503.5,
-      "notional_risk_usd": 1650.0,
-      "target": 28297.0,
-      "entry_time": "2026-11-12T18:01:09.363225+00:00",
-      "exit_mode": "uniform-1atr-v1",
-      "fill_source": "live_quote:firmtape:NQ",
-      "fill_check": {
-        "fill_minute": "2026-11-12T18:01:00+00:00",
-        "fill_t": "2026-11-12T18:01:09.363225+00:00",
-        "ref_price": 28400.52,
-        "booked": 28400.25,
-        "slippage_ticks": 1,
-        "tick": 0.25,
-        "signal_entry": 28406.93,
-        "adverse_ticks_vs_quote": 1.08,
-        "m1_bar_open": 28400.52,
-        "quote_price": 28400.52,
-        "quote_ts": "2026-11-12T18:01:07+00:00",
-        "quote_source": "firmtape:NQ",
-        "quote_age_s": 2.36,
-        "quote_fetched_at": "2026-11-12T18:01:09.363225+00:00",
-        "bar_open_minus_quote": 0.0,
-        "tolerance_ticks": 1.5,
-        "within_slippage": true
-      },
-      "risk_usd": null,
-      "target_usd": null,
-      "target_source": "none (gemini_only)",
-      "sizing": "gemini_only: notional 0.8 ATR = 82.5 x 20/pt = $1,650 per NQ; 1 NQ ~ $1,650 notional <= $1500 (reference only; NO stop, NO target, exit = Gemini CLOSE)",
-      "target_usd_gross": null,
-      "commission_rt": 3.5,
-      "atr": 103.074,
-      "gemini": {
-        "action": "SELL",
-        "entry": 28406.93,
-        "stop_loss": 28510.0,
-        "take_profit": 28303.86,
-        "confidence": 0.52,
-        "rr": null,
-        "shown_on_site": true,
-        "basis": "site signal",
-        "run_at_utc": "2026-11-12T18:00:20.006166+00:00",
-        "session": "NEW_YORK_SESSION",
-        "rationale": "Fade sell. F1 yes: Call Wall #2 rejected, close back below. F2 yes: VWAP magnet 2.26 ATR away, wall not accepted, GEX POSITIVE_DAMPENING. S1 yes: 1.009 ATR room to EMA20. S2 (US100 awarded). S4 yes: NY session. S3 no: CVD neutral. S5 no: h1 up. Score 5.",
-        "model": "claude-opus-5-5"
-      },
-      "scalp": {
-        "action": "SELL",
-        "side": -1,
-        "entry": 28400.52,
-        "stop_loss": 28478.9,
-        "take_profit": 28395.52,
-        "sdist": 78.3836999999985,
-        "tdist": 5.0,
-        "stop_source": "structure",
-        "target_source": "fixed",
-        "rr": 0.064,
-        "structure_stop": 28478.9037,
-        "atr_stop": 28482.9792,
-        "fixed_tp": 28395.52,
-        "structure_tp": 28265.96,
-        "structure_label": "S/R",
-        "candle": {
-          "high": 28473.75,
-          "low": 28402.31
-        },
-        "levels": [
-          {
-            "price": 28550.97,
-            "label": "Session High"
-          },
-          {
-            "price": 28596.5,
-            "label": "Prev High"
-          },
-          {
-            "price": 28265.71,
-            "label": "S/R"
-          },
-          {
-            "price": 28209.17,
-            "label": "S/R"
-          },
-          {
-            "price": 28083.64,
-            "label": "S/R"
-          }
-        ],
-        "vp": {
-          "poc": 28122.95,
-          "vah": 28231.55,
-          "val": 28039.9
-        }
-      },
-      "telemetry": {
-        "symbol": "US100",
-        "session": "NEW_YORK_SESSION",
-        "last_close": 28404.87,
-        "atr": 103.074,
-        "vwap": 28174.34,
-        "ema20": 28302.91,
-        "ema50": 28224.18,
-        "price_vs_vwap": {
-          "side": "above",
-          "dist_atr": 2.2365
-        },
-        "price_vs_ema50": {
-          "side": "above",
-          "dist_atr": 1.753
-        },
-        "vwap_aligned_with_side": false,
-        "ema50_aligned_with_side": false,
-        "poc": 28122.95,
-        "vah": 28231.55,
-        "val": 28039.9,
-        "price_vs_value_area": "above_vah",
-        "dist_to_poc_atr": 2.7351,
-        "cvd": 1.86,
-        "cvd_label": "NEUTRAL",
-        "cvd_slope": 0.21,
-        "cvd_agrees_with_side": false,
-        "rvol": 0.749,
-        "rvol_spike": false,
-        "rvol_bars_since_spike": 11,
-        "atr_band_z": 0.9892,
-        "atr_upper": 28509.06,
-        "atr_lower": 28096.77,
-        "nearest_sr": {
-          "above": {
-            "price": 28550.97,
-            "label": "Session High",
-            "dist_atr": 1.4174
-          },
-          "below": {
-            "price": 28265.71,
-            "label": "S/R",
-            "dist_atr": 1.3501
-          }
-        },
-        "gemini": {
-          "action": "SELL",
-          "confidence": 0.52,
-          "confidence_band": "<0.6",
-          "rationale": "Fade sell. F1 yes: Call Wall #2 rejected, close back below. F2 yes: VWAP magnet 2.26 ATR away, wall not accepted, GEX POSITIVE_DAMPENING. S1 yes: 1.009 ATR room to EMA20. S2 (US100 awarded). S4 yes: NY session. S3 no: CVD neutral. S5 no: h1 up. Score 5.",
-          "model": "claude-opus-5-5",
-          "model_action": "SELL"
-        },
-        "scalp": {
-          "stop_basis": "structure",
-          "target_basis": "fixed",
-          "tdist": null,
-          "sdist": null,
-          "structure_label": "S/R",
-          "target_source": "none (gemini_only)"
-        },
-        "planned": {
-          "tdist": null,
-          "sdist": null,
-          "qty": 1,
-          "contract": "NQ",
-          "target_usd_net": null,
-          "risk_usd": null,
-          "target_source": "none (gemini_only)",
-          "sizing": "gemini_only: notional 0.8 ATR = 82.5 x 20/pt = $1,650 per NQ; 1 NQ ~ $1,650 notional <= $1500 (reference only; NO stop, NO target, exit = Gemini CLOSE)"
-        },
-        "run_at_utc": "2026-11-12T18:00:20.006166+00:00",
-        "chart_path": null
-      },
-      "mfe": 37.91900000000169,
-      "mae": 20.868999999998778,
-      "mfe_min": 0.0,
-      "time_cut_deadline": null,
-      "time_cut_candles": 0,
-      "time_cut_rule": "none: exit = Gemini CLOSE (1-strike) or hard stop -$500 NET; no target, no max hold, no 16:45 flat; DLL/MLL/breaker log-only",
-      "stop_note": "uniform_1atr",
-      "mech_target_atr": 1.0,
-      "uniform_exit": "uniform-1atr-v1",
-      "deadline": "2026-11-12T19:31:09.363225+00:00",
-      "model": "claude-opus-5-5",
-      "book": "C-OPUS-B",
-      "prompt_version": "bracket-v1"
-    }
-  ],
+  "positions": [],
   "pending": [],
-  "next_pos_id": 2,
+  "next_pos_id": 1,
   "day": {
-    "id": "2026-11-12",
-    "start_balance": 100000.0,
+    "id": null,
+    "start_balance": null,
     "realized": 0.0,
     "locked": null,
     "eod_done": null,
-    "traded": true
+    "traded": false
   },
-  "last_price": {
-    "US100": 28374.865
-  },
+  "last_price": {},
   "history": [],
   "ledger": {
     "fees_total": 0.0,
     "fees": [
       {
-        "t": "2026-11-12T17:19:59.566535+00:00",
+        "t": "2026-11-12T18:11:32.213024+00:00",
         "kind": "eval",
         "amount": 0.0,
         "note": "first LucidPro 100K evaluation"
@@ -250,34 +58,12 @@
     "losses": 0,
     "gross_win": 0.0,
     "gross_loss": 0.0,
-    "commissions": 1.75,
+    "commissions": 0.0,
     "net_trade_pnl": 0.0,
     "skipped_signals": 0,
-    "accepted_signals": 1
+    "accepted_signals": 0
   },
-  "reset_token": "c-opus-b-v1",
-  "book_feed": [
-    {
-      "id": 1,
-      "symbol": "US100",
-      "contract": "NQ",
-      "qty": 1,
-      "side": -1,
-      "entry": 28400.25,
-      "stop": 28503.5,
-      "target": 28297.0,
-      "entry_time": "2026-11-12T18:01:09.363225+00:00",
-      "risk_usd": null,
-      "atr": 103.074,
-      "candle": {
-        "high": 28473.75,
-        "low": 28402.31
-      },
-      "gemini_run_at_utc": "2026-11-12T18:00:20.006166+00:00",
-      "gemini_confidence": 0.52,
-      "hard_stop_px": null,
-      "hard_stop_armed_at": null,
-      "fill_source": "live_quote:firmtape:NQ"
-    }
-  ]
+  "reset_token": "2026-11-12-uniform-reset",
+  "reset_at": "2026-11-12T18:11:32.213024+00:00",
+  "reset_reason": "t255u shared reset: C-OPUS-B fresh $100k (bracket-v1, high effort)"
 }

@@ -1,0 +1,231 @@
+{
+  "reset_token": "claude-v2-1",
+  "created_at": "2026-11-12T12:14:51.993423+00:00",
+  "last_entry_bar": "2026-11-12T17:45:00+00:00",
+  "shadow": [
+    {
+      "vid": 41,
+      "book": "whatif",
+      "sim": "C-OPUS",
+      "symbol": "US100",
+      "contract": "NQ",
+      "qty": 1,
+      "side": -1,
+      "entry": 28400.36,
+      "stop": 28509.0,
+      "init_stop": 28470.0,
+      "atr": 108.421,
+      "entry_time": "2026-11-12T17:15:47.372188+00:00",
+      "scan_from": "2026-11-12T18:09:00+00:00",
+      "tick": 0.25,
+      "comm_pts": 0.175,
+      "mfe_pts": 67.28499999999985,
+      "mae_pts": 73.39400000000023,
+      "floor": null,
+      "floor_label": null,
+      "reach_05": true,
+      "setup_type": "fade",
+      "score": 6,
+      "confidence": 0.55,
+      "session": "NEW_YORK_SESSION",
+      "gated": true,
+      "model": "claude-opus-5-5",
+      "bar": "2026-11-12T17:00:00+00:00",
+      "stop_note": "uniform_1atr",
+      "target": 28291.75,
+      "mech_target_atr": 1.0,
+      "uniform_exit": "uniform-1atr-v1",
+      "mech_armed_at": "2026-11-12T17:16:55.949248+00:00",
+      "mech_stop_armed_at": "2026-11-12T17:16:55.949248+00:00",
+      "deadline": "2026-11-12T18:46:55.949248+00:00"
+    },
+    {
+      "vid": 42,
+      "book": "twin",
+      "sim": "C-OPUS",
+      "symbol": "US100",
+      "contract": "NQ",
+      "qty": 1,
+      "side": 1,
+      "entry": 28400.36,
+      "stop": 28291.75,
+      "init_stop": 28330.72,
+      "atr": 108.421,
+      "entry_time": "2026-11-12T17:15:47.372188+00:00",
+      "scan_from": "2026-11-12T18:09:00+00:00",
+      "tick": 0.25,
+      "comm_pts": 0.175,
+      "mfe_pts": 73.39400000000023,
+      "mae_pts": 67.28499999999985,
+      "floor": null,
+      "floor_label": null,
+      "reach_05": true,
+      "setup_type": "fade",
+      "score": 6,
+      "confidence": 0.55,
+      "session": "NEW_YORK_SESSION",
+      "gated": true,
+      "model": "claude-opus-5-5",
+      "bar": "2026-11-12T17:00:00+00:00",
+      "stop_note": "uniform_1atr",
+      "target": 28509.0,
+      "mech_target_atr": 1.0,
+      "uniform_exit": "uniform-1atr-v1",
+      "mech_armed_at": "2026-11-12T17:16:55.949248+00:00",
+      "mech_stop_armed_at": "2026-11-12T17:16:55.949248+00:00",
+      "deadline": "2026-11-12T18:46:55.949248+00:00"
+    }
+  ],
+  "probes": [],
+  "next_vid": 43,
+  "last_entry": {
+    "bar": "2026-11-12T17:45:00+00:00",
+    "t": "2026-11-12T18:00:20.006166+00:00",
+    "render_ms": 0,
+    "sims": {
+      "C-OPUS": {
+        "ok": true,
+        "latency_ms": 23858,
+        "cost_usd": 0.117444,
+        "error": null,
+        "model": "claude-opus-5-5",
+        "answer_ts": "2026-11-12T18:00:55.151565+00:00",
+        "thinking_tokens": 1018,
+        "stop_reason": "end_turn",
+        "signals": [
+          {
+            "symbol": "XAUUSD",
+            "action": "HOLD",
+            "setup_type": "none",
+            "score": 0,
+            "confidence": 0.0,
+            "decision": "HOLD"
+          },
+          {
+            "symbol": "EURUSD",
+            "action": "HOLD",
+            "setup_type": "none",
+            "score": 0,
+            "confidence": 0.0,
+            "decision": "HOLD"
+          },
+          {
+            "symbol": "GBPUSD",
+            "action": "HOLD",
+            "setup_type": "none",
+            "score": 4,
+            "confidence": 0.0,
+            "decision": "HOLD"
+          },
+          {
+            "symbol": "US100",
+            "action": "HOLD",
+            "setup_type": "none",
+            "score": 4,
+            "confidence": 0.0,
+            "decision": "HOLD"
+          },
+          {
+            "symbol": "XAGUSD",
+            "action": "HOLD",
+            "setup_type": "none",
+            "score": 0,
+            "confidence": 0.0,
+            "decision": "HOLD"
+          },
+          {
+            "symbol": "BTCUSD",
+            "action": "HOLD",
+            "setup_type": "none",
+            "score": 0,
+            "confidence": 0.0,
+            "decision": "HOLD"
+          }
+        ]
+      },
+      "C-SONNET": {
+        "ok": true,
+        "latency_ms": 11659,
+        "cost_usd": 0.047912,
+        "error": null,
+        "model": "claude-sonnet-5-5",
+        "answer_ts": "2026-11-12T18:00:55.151565+00:00",
+        "thinking_tokens": 0,
+        "stop_reason": "end_turn",
+        "signals": [
+          {
+            "symbol": "XAUUSD",
+            "action": "HOLD",
+            "setup_type": "none",
+            "score": 0,
+            "confidence": 0.0,
+            "decision": "HOLD"
+          },
+          {
+            "symbol": "EURUSD",
+            "action": "HOLD",
+            "setup_type": "none",
+            "score": 0,
+            "confidence": 0.0,
+            "decision": "HOLD"
+          },
+          {
+            "symbol": "GBPUSD",
+            "action": "HOLD",
+            "setup_type": "none",
+            "score": 0,
+            "confidence": 0.0,
+            "decision": "HOLD"
+          },
+          {
+            "symbol": "US100",
+            "action": "HOLD",
+            "setup_type": "none",
+            "score": 0,
+            "confidence": 0.0,
+            "decision": "HOLD"
+          },
+          {
+            "symbol": "XAGUSD",
+            "action": "HOLD",
+            "setup_type": "none",
+            "score": 0,
+            "confidence": 0.0,
+            "decision": "HOLD"
+          },
+          {
+            "symbol": "BTCUSD",
+            "action": "HOLD",
+            "setup_type": "none",
+            "score": 0,
+            "confidence": 0.0,
+            "decision": "HOLD"
+          }
+        ]
+      }
+    },
+    "snapshot_id": "m15-20261112174500-613be5ad8a9f",
+    "snapshot_hash": "613be5ad8a9f9c8b59dae1500a386438de141d7a5895777333e277003a1d0b02",
+    "bar_close_ts": "2026-11-12T18:00:00+00:00",
+    "snapshot_ts": "2026-11-12T18:00:24.949427+00:00"
+  },
+  "live": {
+    "GBPUSD": {
+      "price": 1.32345,
+      "t": "2026-11-12T15:57:05.839726+00:00"
+    },
+    "XAUUSD": {
+      "price": 3922.66,
+      "t": "2026-11-12T13:20:02.434772+00:00"
+    },
+    "EURUSD": {
+      "price": 1.10561,
+      "t": "2026-11-12T16:33:05.844639+00:00"
+    },
+    "US100": {
+      "price": 28374.865,
+      "t": "2026-11-12T18:11:01.893469+00:00"
+    }
+  },
+  "fill_quotes": {}
+}

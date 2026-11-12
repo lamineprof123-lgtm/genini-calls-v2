@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-12T19:15:39.128309+00:00",
+  "updated_at": "2026-11-12T19:30:39.580960+00:00",
   "paper_only": true,
   "plan": "LucidPro 100K (DLL on)",
   "exit_mode": "uniform-1atr-v1",
@@ -44,9 +44,9 @@
       "stop_txt": "\u2212$500 net \u00b7 1 ATR tgt \u00b7 90 min",
       "exit_rule": "\u2212$500 net \u00b7 1 ATR tgt \u00b7 90 min",
       "balance": 99998.25,
-      "equity": 99680.65,
+      "equity": 99093.25,
       "net_pnl": 0.0,
-      "open_pnl": -317.6,
+      "open_pnl": -905.0,
       "trades": 0,
       "wins": 0,
       "losses": 0,
@@ -61,9 +61,9 @@
       "stop_txt": "1 ATR stop \u00b7 1 ATR tgt \u00b7 90 min",
       "exit_rule": "1 ATR stop \u00b7 1 ATR tgt \u00b7 90 min",
       "balance": 99998.25,
-      "equity": 99680.65,
+      "equity": 99093.25,
       "net_pnl": 0.0,
-      "open_pnl": -317.6,
+      "open_pnl": -905.0,
       "trades": 0,
       "wins": 0,
       "losses": 0,
@@ -117,11 +117,11 @@
   "rules": "C-OPUS-B: claude-opus-5-5 entries, adaptive thinking, effort high, shared bracket-v1 package with DS-FLASH (same charts, facts, 3 symbols, M15 close +20s). Question: will price travel 1 ATR my way before 1 ATR against? Code-computed facts + hold gates (no trend >2 ATR from VWAP; \u22651 ATR room; US100 volume-free S2). 0.3 ATR fill check. Uniform 1 ATR / 1 ATR / 90-min exits, no model exits. Fresh $100k Lucid account.",
   "stop_txt": "1 ATR stop \u00b7 1 ATR target \u00b7 90 min",
   "last_call": {
-    "t": "2026-11-12T19:15:39.125555+00:00",
+    "t": "2026-11-12T19:30:39.578269+00:00",
     "ok": true,
-    "latency_ms": 14956,
-    "cost_usd": 0.101308,
-    "thinking_tokens": 312,
+    "latency_ms": 14220,
+    "cost_usd": 0.101768,
+    "thinking_tokens": 297,
     "usage": {
       "cache_creation": {
         "ephemeral_1h_input_tokens": 0,
@@ -130,10 +130,10 @@
       "cache_creation_input_tokens": 0,
       "cache_read_input_tokens": 0,
       "inference_geo": "global",
-      "input_tokens": 17197,
-      "output_tokens": 1626,
+      "input_tokens": 17202,
+      "output_tokens": 1648,
       "output_tokens_details": {
-        "thinking_tokens": 312
+        "thinking_tokens": 297
       },
       "service_tier": "standard",
       "speed": "standard"
@@ -141,14 +141,14 @@
     "error": null,
     "effort": "high",
     "prompt_version": "bracket-v1",
-    "snapshot_id": "m15-20261112190000-475f4d8d909d",
-    "snapshot_hash": "475f4d8d909d192657d7e34c7097dc6d047f9b360a0467d1c53efe58b6a4fe51",
-    "package_id": "m15-20261112T191500-477b178457b2",
-    "package_hash": "477b178457b24228fb2965bdb4ea6f61bde703d44ac3dd7857431f809575b2cf",
-    "bar_close_ts": "2026-11-12T19:15:00+00:00",
-    "snapshot_ts": "2026-11-12T19:15:22.505248+00:00",
-    "call_start": "2026-11-12T19:15:24.169589+00:00",
-    "answer_ts": "2026-11-12T19:15:39.125555+00:00",
+    "snapshot_id": "m15-20261112191500-9cde933d103c",
+    "snapshot_hash": "9cde933d103c9d2171390ba29fde4eb2c7c17bc168b4899587350f6286ac6d25",
+    "package_id": "m15-20261112T193000-2d9c801de236",
+    "package_hash": "2d9c801de2360efb0a329e512922dcc1cbce976124787ae30bfba77b561f2389",
+    "bar_close_ts": "2026-11-12T19:30:00+00:00",
+    "snapshot_ts": "2026-11-12T19:30:24.758773+00:00",
+    "call_start": "2026-11-12T19:30:25.358629+00:00",
+    "answer_ts": "2026-11-12T19:30:39.578269+00:00",
     "model": "claude-opus-5-5"
   },
   "last_signals": [
@@ -160,7 +160,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "No level event: every key level is untouched on the last closed bar, so T2 and F1 are missing. A SELL would also be chasing at 5.5 ATR from VWAP (above the 2.0 limit). Room up is 0.53 ATR. HOLD.",
+      "rationale": "A touch only, with no rejection or close through. A trend SELL is blocked because VWAP distance is 5.5 ATR (over 2.0). A BUY has 0.15 ATR of room up to VAL. No fade must-have at a labelled extreme. HOLD.",
       "gate_reasons": [],
       "issues": []
     },
@@ -172,7 +172,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "No level event: all levels are untouched on the last closed bar. A trend SELL fails the 2.0 ATR VWAP limit (3.6 ATR away), and room down is only 0.87 ATR to ATR Lower. No fade trigger. HOLD.",
+      "rationale": "Every level is untouched on the last closed bar, so T2 and F1 are missing. VWAP distance is 3.4 ATR, beyond the trend limit. Room up is 0.90 ATR and room down is 1.09 ATR. HOLD.",
       "gate_reasons": [],
       "issues": []
     },
@@ -180,11 +180,11 @@
       "symbol": "US100",
       "action": "HOLD",
       "confidence": 0.0,
-      "score": 2,
+      "score": 0,
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "Trend BUY: T1 yes (above VWAP and EMA50); T2 yes (pullback rejected Gamma Flip / Put Wall #1). S1 fails: only 0.77 ATR of room to Put Wall #2 28406.73, which is a hard gate. A fade lacks a magnet in the trade direction. HOLD.",
+      "rationale": "The bearish close through EMA20 and the Flip fails T1 for a SELL, since price is still above VWAP and EMA50. Room down is 0.16 ATR to Put Wall #1. A BUY has 0.08 ATR of room up. The S1 room gate fails both ways, and the NEGATIVE regime rule",
       "gate_reasons": [],
       "issues": []
     },
@@ -196,7 +196,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "No level event: every level is untouched on the last closed bar, so T2 and F1 are missing. A SELL would be chasing at 4.7 ATR from VWAP. Room up is 0.54 ATR. HOLD.",
+      "rationale": "Every level is untouched on the last closed bar, so T2 and F1 are missing. VWAP distance of 4.9 ATR blocks a trend trade. Room up is only 0.56 ATR. HOLD.",
       "gate_reasons": [],
       "issues": []
     },
@@ -208,7 +208,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "No level event: all levels are untouched on the last closed bar. A trend SELL breaches the 2.0 ATR VWAP limit (3.6 ATR away). Room up is 0.94 ATR, so no fade room either. HOLD.",
+      "rationale": "Every level is untouched on the last closed bar, so T2 and F1 are missing. VWAP distance of 3.9 ATR blocks a trend trade. Room down is 0.90 ATR to ATR Lower, below the 1.0 gate. HOLD.",
       "gate_reasons": [],
       "issues": []
     }

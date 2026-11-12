@@ -4,42 +4,11 @@
   "reset_token": "bracket-v1",
   "created_at": "2026-11-12T13:12:49.149672+00:00",
   "start_balance": 100000.0,
-  "balance": 99811.35,
+  "balance": 101104.6,
   "peak_balance": 101199.6,
   "max_drawdown": -1467.3,
   "next_id": 12,
   "positions": [
-    {
-      "symbol": "US100",
-      "side": -1,
-      "contract": "NQ",
-      "qty": 1,
-      "atr": 64.957,
-      "confidence": 0.75,
-      "signal_entry": 28022.11,
-      "signal_at": "2026-11-12T13:54:20.012204+00:00",
-      "queued_at": "2026-11-12T13:54:38.341924+00:00",
-      "level_event": "rejection below s/r 28030.00",
-      "session": "LONDON_NY_OVERLAP",
-      "rationale": "Price is accepted below VAL (28081.85) and POC (28120.74). CVD is BEARISH (-3.89) with a negative slope (-0.35), aligning with downside trend. Session is LONDON_NY_OVERLAP. Price remains firmly underneath VWAP (28123.73) and EMA50 (28134.82). The forming candle tested the lower ATR band (27965.54) b",
-      "id": 10,
-      "book": "bracket",
-      "entry": 28026.5,
-      "entry_time": "2026-11-12T13:54:41.272587+00:00",
-      "quote_price": 28026.97,
-      "quote_source": "dukascopy:tick",
-      "quote_age_s": 2.76,
-      "stop": 28091.5,
-      "target": 27961.5,
-      "deadline": "2026-11-12T15:24:41.272587+00:00",
-      "risk_usd": 1303.5,
-      "target_usd": 1296.5,
-      "mfe": 47.49199999999837,
-      "mae": 29.598000000001775,
-      "scan_from": "2026-11-12T14:11:00+00:00",
-      "checks": 60,
-      "last_check_at": "2026-11-12T14:12:31.837249+00:00"
-    },
     {
       "symbol": "XAUUSD",
       "side": -1,
@@ -66,17 +35,17 @@
       "risk_usd": 1074.6,
       "target_usd": 1065.4,
       "mfe": 5.012000000000171,
-      "mae": 0.18999999999959982,
-      "scan_from": "2026-11-12T14:11:00+00:00",
-      "checks": 13,
-      "last_check_at": "2026-11-12T14:12:31.837249+00:00"
+      "mae": 3.0,
+      "scan_from": "2026-11-12T14:12:00+00:00",
+      "checks": 20,
+      "last_check_at": "2026-11-12T14:14:37.839732+00:00"
     }
   ],
   "pending": [],
   "last_price": {
-    "US100": 27982.02,
+    "US100": 27958.17,
     "EURUSD": 1.10909,
-    "XAUUSD": 3887.95
+    "XAUUSD": 3890.8
   },
   "seen_cycles": [
     "2026-11-12T13:14:20.285273+00:00",
@@ -111,17 +80,17 @@
     "2026-11-12T14:12:20.291764+00:00"
   ],
   "stats": {
-    "trades": 9,
-    "wins": 4,
+    "trades": 10,
+    "wins": 5,
     "losses": 5,
-    "gross_win": 3882.7,
+    "gross_win": 5174.2,
     "gross_loss": -4067.3,
-    "net_pnl": -184.6,
-    "commissions": 76.15,
-    "hold_seconds": 5375,
+    "net_pnl": 1106.9,
+    "commissions": 77.9,
+    "hold_seconds": 6553,
     "exit_reasons": {
       "stop_1atr": 5,
-      "target_1atr": 4
+      "target_1atr": 5
     },
     "signals_seen": 40,
     "signals_taken": 11,

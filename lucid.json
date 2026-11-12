@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-12T09:40:34.872333+00:00",
+  "updated_at": "2026-11-12T09:42:38.459391+00:00",
   "paper_only": true,
   "plan": "LucidPro 100K (DLL on)",
   "exit_mode": "gemini_only",
@@ -25,20 +25,20 @@
     "no": 1,
     "phase": "eval",
     "start_balance": 100000.0,
-    "balance": 99389.25,
-    "equity": 98139.77,
-    "realized_pnl_since_reset": -604.4,
-    "open_pnl": -1249.48,
-    "commission_on_open": 6.35,
-    "trades_since_reset": 2,
-    "wins": 1,
+    "balance": 99467.5,
+    "equity": 97196.5,
+    "realized_pnl_since_reset": -527.9,
+    "open_pnl": -2271.0,
+    "commission_on_open": 4.6,
+    "trades_since_reset": 3,
+    "wins": 2,
     "losses": 1,
     "mll_floor": 97000.0,
-    "mll_room": 1139.77,
+    "mll_room": 196.5,
     "dll": 1800.0,
-    "day_realized": -604.4,
+    "day_realized": -527.9,
     "day_locked": null,
-    "to_target": 6610.75
+    "to_target": 6532.5
   },
   "open_positions": [
     {
@@ -50,30 +50,28 @@
       "entry": 3929.5,
       "stop": null,
       "target": null,
-      "last": 3937.155,
-      "unrealized": -1531.0,
+      "last": 3940.855,
+      "unrealized": -2271.0,
       "risk_usd": null,
       "target_usd_net": null,
       "target_source": "none (gemini_only)"
-    },
+    }
+  ],
+  "pending": 1,
+  "recent_trades": [
     {
+      "t_exit": "2026-11-12T09:40:00+00:00",
       "symbol": "US100",
       "contract": "NQ",
       "qty": 1,
       "side": "LONG",
       "entry_time": "2026-11-12T09:33:00+00:00",
       "entry": 28191.5,
-      "stop": null,
-      "target": null,
-      "last": 28205.576,
-      "unrealized": 281.52,
-      "risk_usd": null,
-      "target_usd_net": null,
-      "target_source": "none (gemini_only)"
-    }
-  ],
-  "pending": 0,
-  "recent_trades": [
+      "exit": 28195.5,
+      "reason": "gemini_close",
+      "net": 76.5,
+      "balance_after": 99467.5
+    },
     {
       "t_exit": "2026-11-12T09:15:00+00:00",
       "symbol": "EURUSD",
@@ -101,5 +99,5 @@
       "balance_after": 100053.2
     }
   ],
-  "last_processed": "2026-11-12T09:40:00+00:00"
+  "last_processed": "2026-11-12T09:42:00+00:00"
 }

@@ -79,51 +79,15 @@
     75
   ],
   "last_price": {
-    "US100": 28372.37,
-    "XAUUSD": 3867.84,
+    "US100": 28377.92,
+    "XAUUSD": 3870.07,
     "EURUSD": 1.10553,
     "GBPUSD": 1.32294
   },
   "books": {
     "1-strike": {
-      "balance": 100384.45,
+      "balance": 99872.15,
       "positions": [
-        {
-          "id": 74,
-          "symbol": "XAUUSD",
-          "contract": "GC",
-          "qty": 1,
-          "side": -1,
-          "entry": 3866.7,
-          "stop": null,
-          "target": 3854.8,
-          "entry_time": "2026-11-12T16:37:18.648695+00:00",
-          "risk_usd": null,
-          "atr": 11.936,
-          "candle": {
-            "high": 3878.45,
-            "low": 3872.0
-          },
-          "gemini_run_at_utc": "2026-11-12T16:36:20.192527+00:00",
-          "gemini_confidence": 0.78,
-          "hard_stop_px": 3871.7,
-          "hard_stop_armed_at": "2026-11-12T16:37:18.648695+00:00",
-          "fill_source": "live_quote:dukascopy:tick",
-          "book": "1-strike",
-          "strikes": 0,
-          "mfe": 1.224999999999909,
-          "mae": 1.055000000000291,
-          "scan_from": "2026-11-12T16:40:00+00:00",
-          "checks": 5,
-          "opened_at": "2026-11-12T16:37:18.678134+00:00",
-          "hard_stop_ok_t": "2026-11-12T16:42:27.285566+00:00",
-          "giveback_hist": [
-            0.0,
-            0.0
-          ],
-          "mech_target_atr": 1.0,
-          "mech_armed_at": "2026-11-12T16:38:51.288237+00:00"
-        },
         {
           "id": 75,
           "symbol": "US100",
@@ -147,18 +111,18 @@
           "fill_source": "live_quote:firmtape:NQ",
           "book": "1-strike",
           "strikes": 0,
-          "mfe": 0.0,
+          "mfe": 24.918000000001484,
           "mae": 0.0,
-          "scan_from": "2026-11-12T16:41:00+00:00",
+          "scan_from": "2026-11-12T16:42:00+00:00",
           "checks": 0,
           "opened_at": "2026-11-12T16:41:16.592178+00:00",
-          "hard_stop_ok_t": "2026-11-12T16:42:27.285566+00:00"
+          "hard_stop_ok_t": "2026-11-12T16:44:33.789749+00:00"
         }
       ],
       "day": {
         "id": "2026-11-12",
         "start_balance": 100000.0,
-        "realized": 388.5,
+        "realized": -126.1,
         "halted": null,
         "breach_logged": {
           "t": "2026-11-12T10:59:39.148958+00:00",
@@ -167,17 +131,17 @@
         }
       },
       "stats": {
-        "trades": 73,
+        "trades": 74,
         "wins": 34,
-        "losses": 39,
+        "losses": 40,
         "gross_win": 15245.95,
-        "gross_loss": -14857.45,
-        "net_pnl": 388.5,
-        "commissions": 738.05,
-        "hold_seconds": 28017,
+        "gross_loss": -15372.05,
+        "net_pnl": -126.1,
+        "commissions": 740.35,
+        "hold_seconds": 28397,
         "exit_reasons": {
           "gemini_close": 56,
-          "hard_stop_500": 17
+          "hard_stop_500": 18
         }
       }
     },
@@ -206,8 +170,8 @@
           "book": "nostop",
           "strikes": 0,
           "mfe": 1.224999999999909,
-          "mae": 1.055000000000291,
-          "scan_from": "2026-11-12T16:40:00+00:00",
+          "mae": 1.4650000000001455,
+          "scan_from": "2026-11-12T16:42:00+00:00",
           "checks": 5,
           "opened_at": "2026-11-12T16:37:18.678134+00:00",
           "giveback_hist": [
@@ -240,9 +204,9 @@
           "fill_source": "live_quote:firmtape:NQ",
           "book": "nostop",
           "strikes": 0,
-          "mfe": 0.0,
+          "mfe": 24.918000000001484,
           "mae": 0.0,
-          "scan_from": "2026-11-12T16:41:00+00:00",
+          "scan_from": "2026-11-12T16:42:00+00:00",
           "checks": 0,
           "opened_at": "2026-11-12T16:41:16.592178+00:00",
           "stop_note": "mech_1atr"
@@ -360,7 +324,21 @@
     72,
     73
   ],
-  "post_exit": [],
+  "post_exit": [
+    {
+      "book": "1-strike",
+      "id": 74,
+      "symbol": "XAUUSD",
+      "contract": "GC",
+      "qty": 1,
+      "side": "SHORT",
+      "exit": 3871.8,
+      "t_exit": "2026-11-12T16:43:39.295710+00:00",
+      "reason": "hard_stop_500",
+      "net": -514.6,
+      "due": "2026-11-12T16:48:39.295710+00:00"
+    }
+  ],
   "retired_books": {
     "2-strike": {
       "balance": 96846.25,

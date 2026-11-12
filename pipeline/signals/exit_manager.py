@@ -1154,17 +1154,34 @@ class ExitManager:
             rec["books"] = book_out
             self._stop_request(pid, sym, stop_hits, rec)
             return rec
-        # 1b. hard stop on the LIVE price (NET of RT commission <= -$N): fill at the live price - slippage
+        # 1b. hard stop on the LIVE price (NET of RT commission <= -$N). Fill model = a resting stop order: the
+        #     level + slippage when the stop was already working at the previous observation (<= gap_s ago);
+        #     the live price + slippage when it was not (armed at deploy while already beyond, or a data /
+        #     session gap), i.e. the market gapped through. The live-price fill is logged either way.
+        gap_s = float(self.e.get("hard_stop_gap_seconds", 180))
         for name, p in list(held.items()):
             lvl = p.get("hard_stop_px") if p.get("stop") is None and self.books.has_stop(name) else None
-            if lvl is not None and stop_beyond(p["side"], lvl, float(price)):
-                px = self.books.slip_exit(p, float(price))
-                c = self.books.close(name, p, px, now, hs_reason,
-                                     extra={"stop_trigger": "live_price", "live_price": price,
-                                            "hard_stop_armed_at": p.get("hard_stop_armed_at")})
-                book_out[name] = {"action": hs_reason, "exit": px, "net": c["net"], "trigger": "live_price"}
-                stop_hits.append({"book": name, "price": px, "t": now, "trigger": "live_price", "net": c["net"]})
-                held.pop(name)
+            if lvl is None:
+                continue
+            if not stop_beyond(p["side"], lvl, float(price)):
+                p["hard_stop_ok_t"] = now.isoformat()
+                continue
+            prev = p.get("hard_stop_ok_t") or (None if p.get("hard_stop_armed_late") else p.get("hard_stop_armed_at"))
+            resting = bool(prev) and (now - datetime.fromisoformat(prev)).total_seconds() <= gap_s
+            live_px = self.books.slip_exit(p, float(price))
+            px = self.books.slip_exit(p, lvl) if resting else live_px
+            trig = "live_price" if resting else "live_price_gap"
+            live_net = round(p["side"] * (live_px - p["entry"]) * self.books.usd_per_point(p)
+                             - 2 * self.books.spec(p["contract"])["commission"] * p["qty"], 2)
+            c = self.books.close(name, p, px, now, hs_reason,
+                                 extra={"stop_trigger": trig, "live_price": price,
+                                        "fill_model": "resting_stop_at_level" if resting else "live_price",
+                                        "net_if_live_fill": live_net, "last_ok_t": prev,
+                                        "hard_stop_armed_at": p.get("hard_stop_armed_at")})
+            book_out[name] = {"action": hs_reason, "exit": px, "net": c["net"], "trigger": trig,
+                              "net_if_live_fill": live_net}
+            stop_hits.append({"book": name, "price": px, "t": now, "trigger": trig, "net": c["net"]})
+            held.pop(name)
         self._stop_request(pid, sym, stop_hits, rec)
         if forced:
             for name, p in list(held.items()):

@@ -93,13 +93,14 @@ def test_live_price_stop_main_books_nostop_keeps_gemini_checks(cfg, tmp_path):
     rec = r["records"][0]
     for b in (BOOK_1, BOOK_2):
         assert rec["books"][b]["action"] == "hard_stop_500" and rec["books"][b]["trigger"] == "live_price"
-        assert rec["books"][b]["exit"] == pytest.approx(3947.8)          # live + 1 tick adverse slippage
-        assert rec["books"][b]["net"] == pytest.approx(-(2.7 * 200) - 9.2)
+        assert rec["books"][b]["exit"] == pytest.approx(3947.7)          # resting stop: level + 1 tick slippage
+        assert rec["books"][b]["net"] == pytest.approx(-(2.6 * 200) - 9.2)
+        assert rec["books"][b]["net_if_live_fill"] == pytest.approx(-(2.7 * 200) - 9.2)
     assert calls["n"] == 2 and rec["books_after_stop"] == [BOOK_NOSTOP]  # Gemini still called for the shadow
     assert rec["decision"] == "HOLD" and rec["confidence"] == 0.66 and rec["reason"] == "test"
     req = json.loads((tmp_path / "state" / "lucid" / "close_requests.json").read_text())
     assert req[-1]["id"] == 1 and req[-1]["reason"] == "hard_stop_500" and req[-1]["book"] == BOOK_1
-    assert req[-1]["price"] == pytest.approx(3947.8)
+    assert req[-1]["price"] == pytest.approx(3947.7)
     assert set(mgr.books.positions_for(1)) == {BOOK_NOSTOP}
     live["px"] = 3950.0                                                  # shadow keeps holding, -$1,000: no stop
     asyncio.run(mgr.tick(T0 + timedelta(minutes=1, seconds=36)))
@@ -154,10 +155,29 @@ def test_positions_open_at_deploy_armed_now_not_retroactive(cfg, tmp_path):
     assert set(mgr.books.positions_for(1)) == {BOOK_1, BOOK_2, BOOK_NOSTOP}   # no retroactive stop
     p1 = mgr.books.positions_for(1)[BOOK_1]
     assert p1["hard_stop_armed_at"] == later.isoformat() and p1["hard_stop_armed_late"]
-    live["px"] = 3949.0                                                   # already below -$500 -> next check
+    live["px"] = 3949.0                                                   # crosses after a check with the stop working
     r = asyncio.run(mgr.tick(later + timedelta(seconds=18)))
-    assert r["records"][0]["books"][BOOK_1]["action"] == "hard_stop_500"
+    o = r["records"][0]["books"][BOOK_1]
+    assert o["action"] == "hard_stop_500" and o["trigger"] == "live_price" and o["exit"] == pytest.approx(3947.7)
     assert set(mgr.books.positions_for(1)) == {BOOK_NOSTOP}
+
+
+def test_deploy_position_already_beyond_stop_fills_at_live(cfg, tmp_path):
+    """Open at deploy and already below -$500: no resting order existed -> closed at the first check, live fill."""
+    pos = gc_short()
+    old = Books(cfg)
+    old.s["books"].pop(BOOK_NOSTOP)
+    old.sync_feed([pos], T0)
+    for b in old.s["books"].values():
+        for p in b["positions"]:
+            p.pop("hard_stop_px", None); p.pop("hard_stop_armed_at", None)
+    old.s["reset_token"] = cfg["lucid"]["reset_token"]
+    rows = [[3949.0, 3949.5, 3948.5, 3949.0]] * 5
+    mgr, calls = _manager(cfg, tmp_path, ["HOLD"], lambda now: rows, lambda now: 3949.0, feed=[pos], books_state=old.s)
+    r = asyncio.run(mgr.tick(T0 + timedelta(minutes=5)))
+    o = r["records"][0]["books"][BOOK_1]
+    assert o["action"] == "hard_stop_500" and o["trigger"] == "live_price_gap" and o["exit"] == pytest.approx(3949.1)
+    assert r["records"][0]["books"][BOOK_NOSTOP]["action"] == "hold" and calls["n"] == 1
 
 
 def test_shadow_overlap_tagged_on_reentry(cfg):

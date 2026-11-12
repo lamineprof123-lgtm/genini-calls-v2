@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-12T11:46:31.706014+00:00",
+  "updated_at": "2026-11-12T11:48:31.787758+00:00",
   "paper_only": true,
   "plan": "LucidPro 100K (DLL on)",
   "exit_mode": "gemini_only",
@@ -33,37 +33,22 @@
     "no": 1,
     "phase": "eval",
     "start_balance": 100000.0,
-    "balance": 96255.0,
-    "equity": 96172.0,
-    "realized_pnl_since_reset": -3730.8,
-    "open_pnl": -83.0,
-    "commission_on_open": 14.2,
-    "trades_since_reset": 7,
+    "balance": 96195.4,
+    "equity": 96058.4,
+    "realized_pnl_since_reset": -3800.0,
+    "open_pnl": -137.0,
+    "commission_on_open": 4.6,
+    "trades_since_reset": 8,
     "wins": 4,
-    "losses": 3,
+    "losses": 4,
     "mll_floor": 97000.0,
-    "mll_room": -828.0,
+    "mll_room": -941.6,
     "dll": 1800.0,
-    "day_realized": -3730.8,
+    "day_realized": -3800.0,
     "day_locked": null,
-    "to_target": 9745.0
+    "to_target": 9804.6
   },
   "open_positions": [
-    {
-      "symbol": "GBPUSD",
-      "contract": "6B",
-      "qty": 4,
-      "side": "SHORT",
-      "entry_time": "2026-11-12T11:35:00+00:00",
-      "entry": 1.3265,
-      "stop": null,
-      "target": null,
-      "last": 1.32678,
-      "unrealized": -70.0,
-      "risk_usd": null,
-      "target_usd_net": null,
-      "target_source": "none (gemini_only)"
-    },
     {
       "symbol": "XAUUSD",
       "contract": "GC",
@@ -73,8 +58,8 @@
       "entry": 3945.1,
       "stop": null,
       "target": null,
-      "last": 3945.165,
-      "unrealized": -13.0,
+      "last": 3945.785,
+      "unrealized": -137.0,
       "risk_usd": null,
       "target_usd_net": null,
       "target_source": "none (gemini_only)"
@@ -82,6 +67,21 @@
   ],
   "pending": 0,
   "recent_trades": [
+    {
+      "t_exit": "2026-11-12T11:46:00+00:00",
+      "symbol": "GBPUSD",
+      "contract": "6B",
+      "qty": 4,
+      "side": "SHORT",
+      "entry_time": "2026-11-12T11:35:00+00:00",
+      "entry": 1.3265,
+      "exit": 1.3267,
+      "reason": "gemini_close",
+      "net": -69.2,
+      "balance_after": 96195.4,
+      "hold_seconds": 660,
+      "held": "11m 00s"
+    },
     {
       "t_exit": "2026-11-12T11:38:00+00:00",
       "symbol": "XAUUSD",
@@ -188,5 +188,5 @@
       "held": "2m 00s"
     }
   ],
-  "last_processed": "2026-11-12T11:46:00+00:00"
+  "last_processed": "2026-11-12T11:48:00+00:00"
 }

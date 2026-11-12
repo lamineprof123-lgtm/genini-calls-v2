@@ -241,3 +241,29 @@ def test_site_recent_trades_include_held_and_opened(cfg, tmp_path):
     assert euru["symbol"] == "EURUSD"
     assert euru["hold_seconds"] == trade_hold_seconds(euru) == 3907
     assert euru["held"] == "1h 05m" and euru["entry_time"] == t0.isoformat()
+
+
+def test_site_open_positions_include_entry_time(cfg, tmp_path):
+    """Open-position rows already carry entry_time; Held is computed live in the browser, not snapshotted."""
+    st, lg = tmp_path / "state", tmp_path / "logs"
+    cfg["lucid"]["reset_token"] = "open-held-test"
+    s = LucidSim(cfg, st, lg)
+    t0 = datetime.now(UTC) - timedelta(minutes=5)
+    s.s["positions"].append({
+        "id": 1, "symbol": "US100", "contract": "NQ", "qty": 2, "side": 1,
+        "entry": 28189.25, "stop": None, "target": None, "entry_time": t0.isoformat(),
+    })
+    s.s["last_price"]["US100"] = 28190.0
+    j = json.loads(s.write_site(tmp_path / "site").read_text())
+    assert len(j["open_positions"]) == 1
+    p = j["open_positions"][0]
+    assert p["symbol"] == "US100" and p["qty"] == 2 and p["entry_time"] == t0.isoformat()
+    assert "held" not in p and p.get("hold_seconds") is None
+
+
+def test_panel_open_positions_show_live_held():
+    html = Path(__file__).resolve().parents[2].joinpath("index.html").read_text()
+    assert html.count("<th>Opened</th>") >= 2 and html.count("<th>Held</th>") >= 2
+    assert "data-entry-time" in html and "heldSince(p.entry_time)" in html
+    assert "tickOpenHeld" in html and "setInterval(tickOpenHeld, 1000)" in html
+    assert "$('luPos')" in html

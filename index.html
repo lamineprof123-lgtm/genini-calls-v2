@@ -396,6 +396,16 @@
     if (Number.isFinite(a) && Number.isFinite(b)) return fmtHeld((b - a) / 1000);
     return '—';
   };
+  const heldSince = iso => {
+    const a = Date.parse(iso);
+    if (!Number.isFinite(a)) return '—';
+    return fmtHeld((Date.now() - a) / 1000);
+  };
+  const tickOpenHeld = () => {
+    document.querySelectorAll('#luPos [data-entry-time]').forEach(el => {
+      el.textContent = heldSince(el.getAttribute('data-entry-time'));
+    });
+  };
   const px = (v, d) => v == null ? '—' : Number(v).toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d });
 
   function schedule(now) {
@@ -519,9 +529,11 @@
       cell('MLL floor', usd(a.mll_floor)), cell('Room to MLL', usd(a.mll_room), a.mll_room < 1000 ? 'neg' : ''),
     ].join('');
     const P = L.open_positions || [];
-    $('luPos').innerHTML = P.length ? `<table class="lu-t"><tr><th>Symbol</th><th>Size</th><th>Side</th><th>Entry</th>
+    $('luPos').innerHTML = P.length ? `<table class="lu-t"><tr><th>Symbol</th><th>Size</th><th>Side</th><th>Opened</th><th>Held</th><th>Entry</th>
       <th>Stop</th><th>Exit</th><th>Open P&amp;L</th></tr>${P.map(p => `<tr><td>${esc(p.symbol)}</td>
-      <td>${p.qty} ${esc(p.contract)}</td><td>${esc(p.side)}</td><td>${px(p.entry, 2)}</td><td>${p.stop != null ? px(p.stop, 2) : 'none'}</td>
+      <td>${p.qty} ${esc(p.contract)}</td><td>${esc(p.side)}</td><td>${dayhm(p.entry_time)}</td>
+      <td data-entry-time="${esc(p.entry_time)}">${esc(heldSince(p.entry_time))}</td>
+      <td>${px(p.entry, 2)}</td><td>${p.stop != null ? px(p.stop, 2) : 'none'}</td>
       <td>${p.target != null ? px(p.target, 2) : 'Gemini'}</td><td class="${cls(p.unrealized)}">${usd(p.unrealized, true)}</td></tr>`).join('')}</table>`
       : `<div class="lu-note">None${L.pending ? ` · ${L.pending} pending entry` : ''}</div>`;
     const T = L.recent_trades || [];
@@ -545,6 +557,7 @@
   }
   pollLucid();
   setInterval(pollLucid, 15000);
+  setInterval(tickOpenHeld, 1000);
 
   poll();
   setInterval(poll, POLL_MS);

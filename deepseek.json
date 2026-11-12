@@ -1,12 +1,13 @@
 {
-  "updated_at": "2026-11-12T17:16:36.265847+00:00",
+  "updated_at": "2026-11-12T17:19:41.443563+00:00",
   "paper_only": true,
   "plan": "LucidPro 100K (DLL on)",
   "exit_mode": "mech",
   "gemini_exit_calls_enabled": false,
-  "exit_calls_note": "No DeepSeek exit calls \u2014 mechanical exits",
+  "exit_calls_note": "All books: 1 ATR / 1 ATR bracket, no model exits",
+  "uniform_1atr_exits": true,
   "exit_rules": null,
-  "card": "Hard stop \u2212$500 net \u00b7 1 ATR target \u00b7 90-min cap \u00b7 no model exits",
+  "card": "All books: 1 ATR / 1 ATR bracket, no model exits",
   "hard_stop_net_usd": 500.0,
   "comparison": null,
   "breaches": [],
@@ -22,15 +23,15 @@
     "phase": "eval",
     "start_balance": 100000.0,
     "balance": 99998.25,
-    "equity": 100770.87,
+    "equity": 101163.07,
     "realized_pnl_since_reset": 0.0,
-    "open_pnl": 772.62,
+    "open_pnl": 1164.82,
     "commission_on_open": 1.75,
     "trades_since_reset": 0,
     "wins": 0,
     "losses": 0,
     "mll_floor": 97000.0,
-    "mll_room": 3770.87,
+    "mll_room": 4163.07,
     "dll": 1800.0,
     "day_realized": 0.0,
     "day_locked": null,
@@ -48,10 +49,10 @@
       "side": "SHORT",
       "entry_time": "2026-11-12T17:05:14.999237+00:00",
       "entry": 28419.75,
-      "stop": null,
-      "target": 28308.5,
-      "last": 28381.119,
-      "unrealized": 772.62,
+      "stop": 28531.25,
+      "target": 28308.25,
+      "last": 28361.509,
+      "unrealized": 1164.82,
       "risk_usd": null,
       "hard_stop_px": 28444.75,
       "target_usd_net": null,
@@ -60,27 +61,27 @@
   ],
   "pending": 0,
   "recent_trades": [],
-  "last_processed": "2026-11-12T17:16:00+00:00",
+  "last_processed": "2026-11-12T17:19:00+00:00",
+  "stop_txt": "\u2212$500 net \u00b7 1 ATR tgt \u00b7 90 min",
   "book": "DS-FLASH",
   "label": "DS-FLASH (deepseek-flash entries, mechanical exits)",
   "model": "deepseek-flash",
   "effort": "low",
   "key_present": true,
-  "rules": "deepseek-flash entries (effort low), same 2-min cycle / charts / numbers as Gemini flash; no model exits; \u2212$500 net hard stop \u00b7 1 ATR target \u00b7 90-min cap; same fill and full-size sizing as main; spend soft-stop $5/day Dubai",
-  "stop_txt": "\u2212$500 net \u00b7 1 ATR tgt \u00b7 90 min",
+  "rules": "deepseek-flash entries (effort low), same 2-min cycle / charts / numbers as Gemini flash; no model exits; All books: 1 ATR / 1 ATR bracket, no model exits; same fill and full-size sizing as main; spend soft-stop $5/day Dubai",
   "spend": {
     "day_dubai": "2026-11-12",
-    "usd": 0.0303,
+    "usd": 0.0326,
     "soft_usd": 5.0,
     "state": "ok",
-    "calls": 12,
+    "calls": 13,
     "failed": 0,
     "tokens": {
-      "prompt": 105238,
-      "cache_hit": 28160,
-      "cache_miss": 77078,
-      "completion": 31136,
-      "reasoning": 12306
+      "prompt": 113270,
+      "cache_hit": 30976,
+      "cache_miss": 82294,
+      "completion": 33578,
+      "reasoning": 13443
     },
     "pricing": {
       "off_peak": {
@@ -102,20 +103,20 @@
     }
   },
   "last_call": {
-    "t": "2026-11-12T17:16:20.012911+00:00",
+    "t": "2026-11-12T17:18:20.018216+00:00",
     "ok": true,
-    "cost_usd": 0.00199385,
-    "spend_today_usd": 0.0303,
+    "cost_usd": 0.00225605,
+    "spend_today_usd": 0.0326,
     "band": "off_peak",
     "tokens": {
       "prompt": 8032,
       "cache_hit": 2816,
       "cache_miss": 5216,
-      "completion": 2005,
-      "reasoning": 613,
-      "total": 10037
+      "completion": 2442,
+      "reasoning": 1137,
+      "total": 10474
     },
-    "latency_s": 12.34,
+    "latency_s": 15.249,
     "error": null,
     "model": "deepseek-flash",
     "symbols": [
@@ -128,24 +129,24 @@
   "last_signals": [
     {
       "symbol": "XAUUSD",
-      "action": "HOLD",
-      "confidence": null,
-      "entry": null,
-      "rationale": ""
+      "action": "BUY",
+      "confidence": 0.5,
+      "entry": 3874.99,
+      "rationale": "Value area: price below VAL 3902.66 and below POC 3978.13 (close_vs_poc below) \u2014 a breakdown, but it came without fresh yellow RVOL on the last legs (rvol_last 0.77, 13 bars since spike), so the break is suspect and prone to mean-reversion."
     },
     {
       "symbol": "EURUSD",
       "action": "HOLD",
-      "confidence": null,
-      "entry": null,
-      "rationale": ""
+      "confidence": 0.55,
+      "entry": 1.10575,
+      "rationale": "Value area: price below VAL 1.10740 and below POC 1.10943 \u2014 breakout lower, but with no yellow RVOL on the break (rvol_last 0.663, 15 bars since spike), so the break is unconfirmed/suspect. CVD -4,328 NEUTRAL label, though cvd_slope -5,740 "
     },
     {
       "symbol": "GBPUSD",
       "action": "HOLD",
-      "confidence": null,
-      "entry": null,
-      "rationale": ""
+      "confidence": 0.55,
+      "entry": 1.32349,
+      "rationale": "Value area: price below VAL 1.32521 and below POC 1.32731 (close_vs_poc below) \u2014 a downside break, but the last push has no yellow volume (rvol_last 0.469, 15 bars since spike), making it a low-volume/suspect move. CVD -8,718 BEARISH agrees"
     }
   ]
 }

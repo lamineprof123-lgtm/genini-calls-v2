@@ -3,33 +3,33 @@
   "created_at": "2026-11-12T16:52:53.616485+00:00",
   "spend": {
     "2026-11-12": {
-      "usd": 0.030328,
-      "calls": 12,
+      "usd": 0.032584,
+      "calls": 13,
       "failed": 0,
       "tokens": {
-        "prompt": 105238,
-        "cache_hit": 28160,
-        "cache_miss": 77078,
-        "completion": 31136,
-        "reasoning": 12306
+        "prompt": 113270,
+        "cache_hit": 30976,
+        "cache_miss": 82294,
+        "completion": 33578,
+        "reasoning": 13443
       }
     }
   },
   "last_call": {
-    "t": "2026-11-12T17:16:20.012911+00:00",
+    "t": "2026-11-12T17:18:20.018216+00:00",
     "ok": true,
-    "cost_usd": 0.00199385,
-    "spend_today_usd": 0.0303,
+    "cost_usd": 0.00225605,
+    "spend_today_usd": 0.0326,
     "band": "off_peak",
     "tokens": {
       "prompt": 8032,
       "cache_hit": 2816,
       "cache_miss": 5216,
-      "completion": 2005,
-      "reasoning": 613,
-      "total": 10037
+      "completion": 2442,
+      "reasoning": 1137,
+      "total": 10474
     },
-    "latency_s": 12.34,
+    "latency_s": 15.249,
     "error": null,
     "model": "deepseek-flash",
     "symbols": [
@@ -42,24 +42,24 @@
   "last_signals": [
     {
       "symbol": "XAUUSD",
-      "action": "HOLD",
-      "confidence": null,
-      "entry": null,
-      "rationale": ""
+      "action": "BUY",
+      "confidence": 0.5,
+      "entry": 3874.99,
+      "rationale": "Value area: price below VAL 3902.66 and below POC 3978.13 (close_vs_poc below) \u2014 a breakdown, but it came without fresh yellow RVOL on the last legs (rvol_last 0.77, 13 bars since spike), so the break is suspect and prone to mean-reversion."
     },
     {
       "symbol": "EURUSD",
       "action": "HOLD",
-      "confidence": null,
-      "entry": null,
-      "rationale": ""
+      "confidence": 0.55,
+      "entry": 1.10575,
+      "rationale": "Value area: price below VAL 1.10740 and below POC 1.10943 \u2014 breakout lower, but with no yellow RVOL on the break (rvol_last 0.663, 15 bars since spike), so the break is unconfirmed/suspect. CVD -4,328 NEUTRAL label, though cvd_slope -5,740 "
     },
     {
       "symbol": "GBPUSD",
       "action": "HOLD",
-      "confidence": null,
-      "entry": null,
-      "rationale": ""
+      "confidence": 0.55,
+      "entry": 1.32349,
+      "rationale": "Value area: price below VAL 1.32521 and below POC 1.32731 (close_vs_poc below) \u2014 a downside break, but the last push has no yellow volume (rvol_last 0.469, 15 bars since spike), making it a low-volume/suspect move. CVD -8,718 BEARISH agrees"
     }
   ],
   "last_bars": {

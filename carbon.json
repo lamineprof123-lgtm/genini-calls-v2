@@ -1,13 +1,14 @@
 {
-  "updated_at": "2026-11-12T17:16:35.623853+00:00",
+  "updated_at": "2026-11-12T17:19:37.961460+00:00",
   "paper_only": true,
   "model": "gemini-4-carbon",
-  "entry_thinking": "medium",
+  "entry_thinking": "high",
   "exit_thinking": "low",
   "symbols": [
     "XAUUSD",
     "EURUSD",
-    "US100"
+    "US100",
+    "BTCUSD"
   ],
   "entry_window_utc": [
     "08:00",
@@ -204,12 +205,12 @@
       "since": "2026-11-12T15:30:53.246671+00:00",
       "rules": {
         "stop_atr": 1.0,
+        "target_atr": 1.0,
+        "max_hold_min": 90,
+        "model_exits": false,
         "lock_at_atr": 1.0,
         "lock_to_atr": 0.5,
-        "trail_atr": 0.75,
-        "target_atr": 2.5,
-        "max_hold_min": 150,
-        "model_exits": "m15_close_only_when_mfe_ge_1atr"
+        "trail_atr": 0.75
       },
       "account": {
         "start_balance": 100000.0,
@@ -267,6 +268,20 @@
         "r_total": -0.014,
         "net_1c": 776.9,
         "win_rate": 0.5
+      },
+      "site_only": {
+        "n": 0,
+        "r_avg": null,
+        "r_total": 0,
+        "net_1c": 0,
+        "win_rate": null
+      },
+      "tradeable": {
+        "n": 2,
+        "r_avg": -0.007,
+        "r_total": -0.014,
+        "net_1c": 776.9,
+        "win_rate": 0.5
       }
     },
     "CB-RUNNER": {
@@ -290,11 +305,140 @@
         "r_total": -0.611,
         "net_1c": -408.1,
         "win_rate": 0.5
+      },
+      "site_only": {
+        "n": 0,
+        "r_avg": null,
+        "r_total": 0,
+        "net_1c": 0,
+        "win_rate": null
+      },
+      "tradeable": {
+        "n": 2,
+        "r_avg": -0.305,
+        "r_total": -0.611,
+        "net_1c": -408.1,
+        "win_rate": 0.5
       }
     },
-    "open": 2
+    "open": 2,
+    "open_rows": [
+      {
+        "vid": 5,
+        "exit": "CB-BRACKET",
+        "symbol": "US100",
+        "side": "SHORT",
+        "entry": 28358.5,
+        "stop": 28471.0,
+        "target": 28246.0,
+        "confidence": 0.72,
+        "site_only": false,
+        "flag": null,
+        "unit": null,
+        "thinking_level": null
+      },
+      {
+        "vid": 6,
+        "exit": "CB-RUNNER",
+        "symbol": "US100",
+        "side": "SHORT",
+        "entry": 28358.5,
+        "stop": 28471.0,
+        "target": 28077.5,
+        "confidence": 0.72,
+        "site_only": false,
+        "flag": null,
+        "unit": null,
+        "thinking_level": null
+      }
+    ],
+    "recent": [
+      {
+        "t_exit": "2026-11-12T16:54:59.622740+00:00",
+        "vid": 4,
+        "exit_rules": "CB-RUNNER",
+        "symbol": "XAUUSD",
+        "side": "SHORT",
+        "confidence": 0.74,
+        "passes_filter": false,
+        "kind": "entry",
+        "signal_at": "2026-11-12T16:45:46.214777+00:00",
+        "entry_time": "2026-11-12T16:45:53.100091+00:00",
+        "entry": 3871.0,
+        "exit": 3882.9,
+        "reason": "stop_1atr",
+        "net_1c": -1194.6,
+        "R": -1.008,
+        "atr": 11.716,
+        "chase_atr": 0.009,
+        "mfe_atr": 0.023
+      },
+      {
+        "t_exit": "2026-11-12T16:54:59.622740+00:00",
+        "vid": 3,
+        "exit_rules": "CB-BRACKET",
+        "symbol": "XAUUSD",
+        "side": "SHORT",
+        "confidence": 0.74,
+        "passes_filter": false,
+        "kind": "entry",
+        "signal_at": "2026-11-12T16:45:46.214777+00:00",
+        "entry_time": "2026-11-12T16:45:53.100091+00:00",
+        "entry": 3871.0,
+        "exit": 3882.9,
+        "reason": "stop_1atr",
+        "net_1c": -1194.6,
+        "R": -1.008,
+        "atr": 11.716,
+        "chase_atr": 0.009,
+        "mfe_atr": 0.023
+      },
+      {
+        "t_exit": "2026-11-12T15:54:00+00:00",
+        "vid": 1,
+        "exit_rules": "CB-BRACKET",
+        "symbol": "US100",
+        "side": "LONG",
+        "confidence": 0.72,
+        "passes_filter": false,
+        "kind": "entry",
+        "signal_at": "2026-11-12T15:46:09.306718+00:00",
+        "entry_time": "2026-11-12T15:46:14.764782+00:00",
+        "entry": 28249.0,
+        "exit": 28347.75,
+        "reason": "target",
+        "net_1c": 1971.5,
+        "R": 0.994,
+        "atr": 98.8,
+        "chase_atr": 0.074,
+        "mfe_atr": 1.0
+      },
+      {
+        "t_exit": "2026-11-12T15:53:00+00:00",
+        "vid": 2,
+        "exit_rules": "CB-RUNNER",
+        "symbol": "US100",
+        "side": "LONG",
+        "confidence": 0.72,
+        "passes_filter": false,
+        "kind": "entry",
+        "signal_at": "2026-11-12T15:46:09.306718+00:00",
+        "entry_time": "2026-11-12T15:46:14.764782+00:00",
+        "entry": 28249.0,
+        "exit": 28288.5,
+        "reason": "trail_stop",
+        "net_1c": 786.5,
+        "R": 0.397,
+        "atr": 98.8,
+        "chase_atr": 0.074,
+        "mfe_atr": 1.0
+      }
+    ],
+    "note": "BTCUSD is scored site-only/what-if (1 BTC unit, both exit styles); CB-BRACKET and CB-RUNNER never open it (no Lucid contract)."
   },
   "gemini_exit_calls_enabled": false,
-  "exit_calls_note": "Gemini exit calls paused \u2014 mechanical exits",
-  "rules": "gemini-4-carbon entries (thinking medium, live entry prompt unchanged) on XAUUSD / EURUSD / US100 at every M15 close +20 s in 08:00-20:30 UTC + triggered one-symbol checks; conf >= 0.75; chase <= 0.5 ATR. Size floor($900 / 1 ATR risk), caps NQ 1 / GC 1 / 6E 4, skip if 1 contract > $1,200, 6 aggregate, one per symbol; re-entry after the next M15 close (after a loss 30 min, no same-side re-entry this session); day P&L <= -$1,500 flattens; trailing guard $300; flat 21:45 UTC. Spend cap $15 soft / $19 hard per Dubai day. CB-BRACKET unchanged (1 ATR / 1 ATR / 90 min). CB-RUNNER keeps mechanical stop/lock/trail / 2.5 ATR target / 150-min cap; Carbon exit-model checks are paused."
+  "uniform_1atr_exits": true,
+  "exit_mode": "uniform-1atr-v1",
+  "exit_calls_note": "All books: 1 ATR / 1 ATR bracket, no model exits",
+  "rules": "gemini-4-carbon entries (thinking high, live entry prompt unchanged) on XAUUSD / EURUSD / US100 / BTCUSD at every M15 close +20 s in 08:00-20:30 UTC + triggered one-symbol checks; BTCUSD is site-only/what-if (1 BTC unit, both exit styles) \u2014 books never open it. conf >= 0.75; chase <= 0.5 ATR. Size floor($900 / 1 ATR risk), caps NQ 1 / GC 1 / 6E 4, skip if 1 contract > $1,200, 6 aggregate, one per symbol; re-entry after the next M15 close (after a loss 30 min, no same-side re-entry this session); day P&L <= -$1,500 flattens; trailing guard $300; flat 21:45 UTC. Spend cap $15 soft / $19 hard per Dubai day. CB-BRACKET unchanged (1 ATR / 1 ATR / 90 min). CB-RUNNER keeps mechanical stop/lock/trail / 2.5 ATR target / 150-min cap; Carbon exit-model checks are paused."
 }

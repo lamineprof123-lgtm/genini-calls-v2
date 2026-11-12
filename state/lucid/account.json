@@ -1,7 +1,7 @@
 {
   "version": 1,
   "created_at": "2026-11-12T10:14:47.081605+00:00",
-  "last_processed": "2026-11-12T17:16:00+00:00",
+  "last_processed": "2026-11-12T17:19:00+00:00",
   "account": {
     "no": 1,
     "phase": "eval",
@@ -22,7 +22,158 @@
     "trades": 76
   },
   "positions": [],
-  "pending": [],
+  "pending": [
+    {
+      "symbol": "US100",
+      "side": -1,
+      "created": "2026-11-12T17:19:45.098960+00:00",
+      "fill_after": "2026-11-12T17:20:00+00:00",
+      "reserved_risk": 0.0,
+      "planned": {
+        "contract": "NQ",
+        "qty": 1,
+        "risk_usd": null,
+        "tdist": null,
+        "target_source": "none (gemini_only)"
+      },
+      "expires": "2026-11-12T17:30:00+00:00",
+      "atr": 108.421,
+      "scalp": {
+        "action": "SELL",
+        "side": -1,
+        "entry": 28358.74,
+        "stop_loss": 28448.8,
+        "take_profit": 28353.74,
+        "sdist": 90.06105000000025,
+        "tdist": 5.0,
+        "stop_source": "structure",
+        "target_source": "fixed",
+        "rr": 0.056,
+        "structure_stop": 28448.801050000002,
+        "atr_stop": 28445.4768,
+        "fixed_tp": 28353.74,
+        "structure_tp": 28267.87842,
+        "structure_label": "S/R",
+        "candle": {
+          "high": 28443.38,
+          "low": 28371.88
+        },
+        "levels": [
+          {
+            "price": 28550.97,
+            "label": "Session High"
+          },
+          {
+            "price": 28596.5,
+            "label": "Prev High"
+          },
+          {
+            "price": 28265.71,
+            "label": "S/R"
+          },
+          {
+            "price": 28209.17,
+            "label": "S/R"
+          },
+          {
+            "price": 28083.64,
+            "label": "S/R"
+          }
+        ],
+        "vp": {
+          "poc": 28122.95,
+          "vah": 28231.55,
+          "val": 28052.68
+        }
+      },
+      "session": "NEW_YORK_SESSION",
+      "telemetry": {
+        "symbol": "US100",
+        "session": "NEW_YORK_SESSION",
+        "last_close": 28414.05,
+        "atr": 108.421,
+        "vwap": 28163.31,
+        "ema20": 28266.92,
+        "ema50": 28201.15,
+        "price_vs_vwap": {
+          "side": "above",
+          "dist_atr": 2.3127
+        },
+        "price_vs_ema50": {
+          "side": "above",
+          "dist_atr": 1.9636
+        },
+        "vwap_aligned_with_side": false,
+        "ema50_aligned_with_side": false,
+        "poc": 28122.95,
+        "vah": 28231.55,
+        "val": 28052.68,
+        "price_vs_value_area": "above_vah",
+        "dist_to_poc_atr": 2.6849,
+        "cvd": 1.92,
+        "cvd_label": "NEUTRAL",
+        "cvd_slope": -1.08,
+        "cvd_agrees_with_side": true,
+        "rvol": 0.962,
+        "rvol_spike": false,
+        "rvol_bars_since_spike": 8,
+        "atr_band_z": 1.357,
+        "atr_upper": 28483.76,
+        "atr_lower": 28050.08,
+        "nearest_sr": {
+          "above": {
+            "price": 28550.97,
+            "label": "Session High",
+            "dist_atr": 1.2629
+          },
+          "below": {
+            "price": 28265.71,
+            "label": "S/R",
+            "dist_atr": 1.3682
+          }
+        },
+        "gemini": {
+          "action": "SELL",
+          "confidence": 0.72,
+          "confidence_band": "0.7-0.8",
+          "rationale": "Price is above VAH (28231.55) and above POC (28122.95). CVD is +1.92 (NEUTRAL) with short-term cvd_slope -1.08 indicating fading upside pressure. SESSION is NEW_YORK_SESSION. Price is above VWAP (28163.31) and EMA50 (28201.15) but severely stretched. Upper wick on signal candle rejected near the upper ATR band (28483.76). RVOL is 0.962 (US100 CFD tick volume rarely prints RVOL > 2.0; lack of yellow bars does not veto). Clean rejection off Call Wall #1 (28432.24, strength 0.85, OI-aligned) and Call Wall #2 (28442.24) below Session High (28550.97). GEX regime is POSITIVE_DAMPENING (above Gamma Flip 28268.45), where dealers hedge against moves and favor mean-reversion rejections off Call Walls toward POC/VWAP. Downside has ~90 points of room to Gamma Flip (28268.45) / EMA20 baseline (28266.92) before Put Wall #1 (28152.24).",
+          "model": "gemini-3.8-flash",
+          "model_action": "SELL"
+        },
+        "scalp": {
+          "stop_basis": "structure",
+          "target_basis": "fixed",
+          "tdist": 5.0,
+          "sdist": 90.06105000000025,
+          "structure_label": "S/R"
+        },
+        "planned": {
+          "tdist": 5.0,
+          "sdist": 90.06105000000025,
+          "qty": null,
+          "contract": null,
+          "target_usd_net": null,
+          "risk_usd": null
+        },
+        "run_at_utc": "2026-11-12T17:18:20.018216+00:00",
+        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-12/cycles/211820.json/US100.png"
+      },
+      "gemini": {
+        "action": "SELL",
+        "entry": 28358.74,
+        "stop_loss": 28448.8,
+        "take_profit": 28353.74,
+        "confidence": 0.72,
+        "rr": 0.056,
+        "shown_on_site": true,
+        "basis": "site signal",
+        "run_at_utc": "2026-11-12T17:18:20.018216+00:00",
+        "session": "NEW_YORK_SESSION",
+        "rationale": "Price is above VAH (28231.55) and above POC (28122.95). CVD is +1.92 (NEUTRAL) with short-term cvd_slope -1.08 indicating fading upside pressure. SESSION is NEW_YORK_SESSION. Price is above VWAP (28163.31) and EMA50 (28201.15) but severely stretched. Upper wick on signal candle rejected near the upper ATR band (28483.76). RVOL is 0.962 (US100 CFD tick volume rarely prints RVOL > 2.0; lack of yellow bars does not veto). Clean rejection off Call Wall #1 (28432.24, strength 0.85, OI-aligned) and Call Wall #2 (28442.24) below Session High (28550.97). GEX regime is POSITIVE_DAMPENING (above Gamma Flip 28268.45), where dealers hedge against moves and favor mean-reversion rejections off Call Walls toward POC/VWAP. Downside has ~90 points of room to Gamma Flip (28268.45) / EMA20 baseline (28266.92) before Put Wall #1 (28152.24).",
+        "model": "gemini-3.8-flash"
+      }
+    }
+  ],
   "next_pos_id": 77,
   "day": {
     "id": "2026-11-12",
@@ -66,7 +217,7 @@
     "commissions": 746.7,
     "net_trade_pnl": -1149.2,
     "skipped_signals": 27,
-    "accepted_signals": 103
+    "accepted_signals": 104
   },
   "reset_token": "2026-11-12-profit-lock",
   "reset_at": "2026-11-12T10:14:47.081605+00:00",

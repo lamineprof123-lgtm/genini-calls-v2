@@ -2,11 +2,11 @@
   "reset_token": "c-opus-b-v1",
   "created_at": "2026-11-12T17:19:59.566947+00:00",
   "last_call": {
-    "t": "2026-11-12T21:15:39.743550+00:00",
+    "t": "2026-11-12T21:30:39.680950+00:00",
     "ok": true,
-    "latency_ms": 17366,
-    "cost_usd": 0.101096,
-    "thinking_tokens": 271,
+    "latency_ms": 15494,
+    "cost_usd": 0.101216,
+    "thinking_tokens": 313,
     "usage": {
       "cache_creation": {
         "ephemeral_1h_input_tokens": 0,
@@ -16,9 +16,9 @@
       "cache_read_input_tokens": 0,
       "inference_geo": "global",
       "input_tokens": 16594,
-      "output_tokens": 1736,
+      "output_tokens": 1742,
       "output_tokens_details": {
-        "thinking_tokens": 271
+        "thinking_tokens": 313
       },
       "service_tier": "standard",
       "speed": "standard"
@@ -26,14 +26,14 @@
     "error": null,
     "effort": "high",
     "prompt_version": "bracket-v1",
-    "snapshot_id": "m15-20261112210000-5f89de5a2523",
-    "snapshot_hash": "5f89de5a25236fdb3f0e8cb9bc9fdc28abcdf362c74db4b0aaf390a81d7aa316",
-    "package_id": "m15-20261112T211500-d29d051ca2a6",
-    "package_hash": "d29d051ca2a66aa47665e208bcbb6c0b82cf7dfc7f9ee77a8f63c31a5dd660b9",
-    "bar_close_ts": "2026-11-12T21:15:00+00:00",
-    "snapshot_ts": "2026-11-12T21:15:21.918790+00:00",
-    "call_start": "2026-11-12T21:15:22.377116+00:00",
-    "answer_ts": "2026-11-12T21:15:39.743550+00:00",
+    "snapshot_id": "m15-20261112211500-07bce85088c5",
+    "snapshot_hash": "07bce85088c5d16a16af56895193b9d590db07e2715566fc8027c88bab3d935b",
+    "package_id": "m15-20261112T213000-077192710837",
+    "package_hash": "0771927108373d967c9a5a6b8b61b3425176d161b306035b94c9f8f94d3492ec",
+    "bar_close_ts": "2026-11-12T21:30:00+00:00",
+    "snapshot_ts": "2026-11-12T21:30:23.666976+00:00",
+    "call_start": "2026-11-12T21:30:24.186963+00:00",
+    "answer_ts": "2026-11-12T21:30:39.680950+00:00",
     "model": "claude-opus-5-5"
   },
   "last_signals": [
@@ -45,7 +45,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "Hard HOLD: session_blocks_automation is true in the LOW_LIQUIDITY_DEADZONE. Every level was untouched on the last closed bar, so T2 and F1 are missing. Room is under 1 ATR both ways (up 0.92 to POC, down 0.90 to ATR Lower), so the S1 gate f",
+      "rationale": "Session gate: LOW_LIQUIDITY_DEADZONE blocks automation. T2/F1 missing because every level was untouched on the last closed bar. TREND would be chasing at -7.3 ATR from VWAP. Room up only 0.83 ATR to POC. HOLD.",
       "gate_reasons": [],
       "issues": []
     },
@@ -57,7 +57,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "Hard HOLD: session_blocks_automation is true. All levels were untouched on the last closed bar, so there is no T2/F1 event. A trend sell would also fail the VWAP distance gate (-4.02 ATR, over 2.0). Room down is 1.45 ATR, room up only 0.54 ",
+      "rationale": "Session gate: LOW_LIQUIDITY_DEADZONE blocks automation. No level event on the last closed bar; all levels untouched. VWAP distance of -4.27 ATR exceeds the trend cap. Room up only 0.62 ATR to EMA20. HOLD.",
       "gate_reasons": [],
       "issues": []
     },
@@ -69,7 +69,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "Trend buy shape: T1 yes (above VWAP 28196.72 and EMA50). T2 yes (closed_through VAH and EMA20). Supporting points: S1 (1.65 ATR room up), S2 (US100 awarded), S3 (cvd_slope up), S5 (h1 up); S4 no. Score 6, but HOLD because session_blocks_aut",
+      "rationale": "T1 yes: above VWAP and EMA50. T2 yes: closed_through VAH. Supporting: S1 (1.59 ATR room up), S2 (US100 awarded), S3 (cvd_slope up), S5 (h1 up). S4 missing, so score 6. Blocked: LOW_LIQUIDITY_DEADZONE automation gate and a live price from 21",
       "gate_reasons": [],
       "issues": []
     },
@@ -81,7 +81,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "Hard HOLD: session_blocks_automation is true. No level event on the last closed bar (all untouched), so T2/F1 are missing. A trend sell would be chasing at -6.27 ATR from VWAP. Room up is only 0.86 ATR to EMA20.",
+      "rationale": "Session gate: LOW_LIQUIDITY_DEADZONE blocks automation. No level event on the last closed bar. TREND would be chasing at -6.4 ATR from VWAP. Room up only 0.70 ATR to EMA20. HOLD.",
       "gate_reasons": [],
       "issues": []
     },
@@ -93,7 +93,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "Hard HOLD: session_blocks_automation is true. Every level was untouched on the last closed bar, so there is no T2/F1. A trend sell fails the VWAP distance gate (-4.48 ATR). Room up is only 0.68 ATR to EMA20; room down is 1.14 ATR to Session",
+      "rationale": "Session gate: LOW_LIQUIDITY_DEADZONE blocks automation. No level event on the last closed bar. VWAP distance of -4.28 ATR exceeds the trend cap. Room up only 0.38 ATR to EMA20. HOLD.",
       "gate_reasons": [],
       "issues": []
     }

@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-12T14:46:39.794447+00:00",
+  "updated_at": "2026-11-12T14:48:38.722677+00:00",
   "paper_only": true,
   "plan": "LucidPro 100K (DLL on)",
   "exit_mode": "gemini_only",
@@ -10,44 +10,44 @@
       "book": "main",
       "label": "Main (stop)",
       "hard_stop_net_usd": 500.0,
-      "balance": 96911.3,
-      "equity": 96911.3,
+      "balance": 96896.9,
+      "equity": 96855.65,
       "net_pnl": -3088.7,
-      "open_pnl": 0.0,
+      "open_pnl": -41.25,
       "trades": 52,
       "wins": 23,
       "losses": 29,
       "stopped": 12,
-      "open_positions": 0
+      "open_positions": 1
     },
     {
       "book": "1-strike",
       "label": "1-strike",
       "hard_stop_net_usd": 500.0,
-      "balance": 96911.3,
-      "equity": 96911.3,
+      "balance": 96896.9,
+      "equity": 96979.4,
       "net_pnl": -3088.7,
-      "open_pnl": 0.0,
+      "open_pnl": 82.5,
       "trades": 52,
       "wins": 23,
       "losses": 29,
       "stopped": 12,
-      "open_positions": 0,
+      "open_positions": 1,
       "overlap_trades": 0
     },
     {
       "book": "nostop",
       "label": "No-stop shadow",
       "hard_stop_net_usd": null,
-      "balance": 103741.3,
-      "equity": 103741.3,
+      "balance": 103726.9,
+      "equity": 103809.4,
       "net_pnl": 3741.3,
-      "open_pnl": 0.0,
+      "open_pnl": 82.5,
       "trades": 52,
       "wins": 28,
       "losses": 24,
       "stopped": 0,
-      "open_positions": 0,
+      "open_positions": 1,
       "overlap_trades": 6
     }
   ],
@@ -80,23 +80,40 @@
     "no": 1,
     "phase": "eval",
     "start_balance": 100000.0,
-    "balance": 96911.3,
-    "equity": 96911.3,
+    "balance": 96896.9,
+    "equity": 96855.65,
     "realized_pnl_since_reset": -3088.7,
-    "open_pnl": 0.0,
-    "commission_on_open": 0.0,
+    "open_pnl": -41.25,
+    "commission_on_open": 14.4,
     "trades_since_reset": 52,
     "wins": 23,
     "losses": 29,
     "mll_floor": 97000.0,
-    "mll_room": -88.7,
+    "mll_room": -144.35,
     "dll": 1800.0,
     "day_realized": -3088.7,
     "day_locked": null,
-    "to_target": 9088.7
+    "to_target": 9103.1
   },
-  "open_positions": [],
-  "pending": 2,
+  "open_positions": [
+    {
+      "symbol": "GBPUSD",
+      "contract": "6B",
+      "qty": 6,
+      "side": "SHORT",
+      "entry_time": "2026-11-12T14:47:17.647030+00:00",
+      "entry": 1.3254,
+      "stop": null,
+      "target": null,
+      "last": 1.32551,
+      "unrealized": -41.25,
+      "risk_usd": null,
+      "hard_stop_px": 1.3267,
+      "target_usd_net": null,
+      "target_source": "none (gemini_only)"
+    }
+  ],
+  "pending": 0,
   "recent_trades": [
     {
       "t_exit": "2026-11-12T14:45:00+00:00",
@@ -269,5 +286,5 @@
       "exit_prompt_version": null
     }
   ],
-  "last_processed": "2026-11-12T14:46:00+00:00"
+  "last_processed": "2026-11-12T14:48:00+00:00"
 }

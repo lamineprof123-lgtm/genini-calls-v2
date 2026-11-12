@@ -1,13 +1,13 @@
 {
   "version": 1,
   "created_at": "2026-11-12T10:14:47.081605+00:00",
-  "last_processed": "2026-11-12T15:58:00+00:00",
+  "last_processed": "2026-11-12T16:00:00+00:00",
   "account": {
     "no": 1,
     "phase": "eval",
     "started_at": "2026-11-12T10:14:47.081605+00:00",
     "start_balance": 100000.0,
-    "balance": 98550.95,
+    "balance": 100259.2,
     "highest_close": 100000.0,
     "mll_floor": 97000.0,
     "mll_locked": false,
@@ -18,208 +18,22 @@
     "cycle_day_pnl": {},
     "payouts": [],
     "trading_days": 0,
-    "realized_pnl": -1447.3,
-    "trades": 67
+    "realized_pnl": 259.2,
+    "trades": 68
   },
-  "positions": [
-    {
-      "id": 68,
-      "symbol": "US100",
-      "contract": "NQ",
-      "qty": 1,
-      "side": 1,
-      "entry": 28348.0,
-      "stop": null,
-      "notional_risk_usd": 1585.0,
-      "target": null,
-      "entry_time": "2026-11-12T15:55:19.091823+00:00",
-      "exit_mode": "gemini_only",
-      "fill_source": "live_quote:firmtape:NQ",
-      "fill_check": {
-        "fill_minute": "2026-11-12T15:55:00+00:00",
-        "fill_t": "2026-11-12T15:55:19.091823+00:00",
-        "ref_price": 28347.8,
-        "booked": 28348.0,
-        "slippage_ticks": 1,
-        "tick": 0.25,
-        "signal_entry": 28331.96,
-        "adverse_ticks_vs_quote": 0.8,
-        "m1_bar_open": 28347.8,
-        "quote_price": 28347.8,
-        "quote_ts": "2026-11-12T15:55:16+00:00",
-        "quote_source": "firmtape:NQ",
-        "quote_age_s": 3.09,
-        "quote_fetched_at": "2026-11-12T15:55:19.091823+00:00",
-        "bar_open_minus_quote": 0.0,
-        "tolerance_ticks": 1.5,
-        "within_slippage": true
-      },
-      "risk_usd": null,
-      "target_usd": null,
-      "target_source": "none (gemini_only)",
-      "sizing": "gemini_only: notional 0.8 ATR = 79.25 x 20/pt = $1,585 per NQ; 1 NQ ~ $1,585 notional <= $1500 (reference only; NO stop, NO target, exit = Gemini CLOSE)",
-      "target_usd_gross": null,
-      "commission_rt": 3.5,
-      "atr": 98.8,
-      "gemini": {
-        "action": "BUY",
-        "entry": 28331.96,
-        "stop_loss": 28139.61,
-        "take_profit": 28336.96,
-        "confidence": 0.76,
-        "rr": 0.026,
-        "shown_on_site": true,
-        "basis": "site signal",
-        "run_at_utc": "2026-11-12T15:54:20.017725+00:00",
-        "session": "LONDON_NY_OVERLAP",
-        "rationale": "Price has broken out above VAH (28203.68) and POC (28115.45). CVD is NEUTRAL (+0.47) but with accelerating positive slope (+3.29). Session is LONDON_NY_OVERLAP. Price is cleanly holding above rising VWAP (28129.07) and EMA50 (28138.34). Price breached upper ATR band (28328.93) and cleared Session High (28295.74). Volume confirms with Dukascopy index CFD context noted. GEX is POSITIVE_DAMPENING above Gamma Flip (28178.61), with ample runway up to Call Wall #1 at 28432.02. Momentum is strong and the forming candle is pushing fresh highs with room to run into Call Wall. BUY.",
-        "model": "gemini-3.8-flash"
-      },
-      "scalp": {
-        "action": "BUY",
-        "side": 1,
-        "entry": 28347.8,
-        "stop_loss": 28139.61,
-        "take_profit": 28352.8,
-        "sdist": 208.1899999999987,
-        "tdist": 5.0,
-        "stop_source": "structure",
-        "target_source": "fixed",
-        "rr": 0.024,
-        "structure_stop": 28139.61,
-        "atr_stop": 28268.76,
-        "fixed_tp": 28352.8,
-        "structure_tp": 28596.25,
-        "structure_label": "Prev High",
-        "candle": {
-          "high": 28278.39,
-          "low": 28144.55
-        },
-        "levels": [
-          {
-            "price": 28295.74,
-            "label": "Session High"
-          },
-          {
-            "price": 28596.5,
-            "label": "Prev High"
-          },
-          {
-            "price": 28209.17,
-            "label": "S/R"
-          },
-          {
-            "price": 28083.64,
-            "label": "S/R"
-          },
-          {
-            "price": 28030.0,
-            "label": "S/R"
-          }
-        ],
-        "vp": {
-          "poc": 28115.45,
-          "vah": 28203.68,
-          "val": 28073.25
-        }
-      },
-      "telemetry": {
-        "symbol": "US100",
-        "session": "LONDON_NY_OVERLAP",
-        "last_close": 28273.4,
-        "atr": 98.8,
-        "vwap": 28129.07,
-        "ema20": 28131.33,
-        "ema50": 28138.34,
-        "price_vs_vwap": {
-          "side": "above",
-          "dist_atr": 1.4608
-        },
-        "price_vs_ema50": {
-          "side": "above",
-          "dist_atr": 1.367
-        },
-        "vwap_aligned_with_side": true,
-        "ema50_aligned_with_side": true,
-        "poc": 28115.45,
-        "vah": 28203.68,
-        "val": 28073.25,
-        "price_vs_value_area": "above_vah",
-        "dist_to_poc_atr": 1.5987,
-        "cvd": 0.47,
-        "cvd_label": "NEUTRAL",
-        "cvd_slope": 3.29,
-        "cvd_agrees_with_side": true,
-        "rvol": 1.412,
-        "rvol_spike": false,
-        "rvol_bars_since_spike": 2,
-        "atr_band_z": 1.438,
-        "atr_upper": 28328.93,
-        "atr_lower": 27933.73,
-        "nearest_sr": {
-          "above": {
-            "price": 28295.74,
-            "label": "Session High",
-            "dist_atr": 0.2261
-          },
-          "below": {
-            "price": 28209.17,
-            "label": "S/R",
-            "dist_atr": 0.6501
-          }
-        },
-        "gemini": {
-          "action": "BUY",
-          "confidence": 0.76,
-          "confidence_band": "0.7-0.8",
-          "rationale": "Price has broken out above VAH (28203.68) and POC (28115.45). CVD is NEUTRAL (+0.47) but with accelerating positive slope (+3.29). Session is LONDON_NY_OVERLAP. Price is cleanly holding above rising VWAP (28129.07) and EMA50 (28138.34). Price breached upper ATR band (28328.93) and cleared Session High (28295.74). Volume confirms with Dukascopy index CFD context noted. GEX is POSITIVE_DAMPENING above Gamma Flip (28178.61), with ample runway up to Call Wall #1 at 28432.02. Momentum is strong and the forming candle is pushing fresh highs with room to run into Call Wall. BUY.",
-          "model": "gemini-3.8-flash",
-          "model_action": "BUY"
-        },
-        "scalp": {
-          "stop_basis": "structure",
-          "target_basis": "fixed",
-          "tdist": null,
-          "sdist": null,
-          "structure_label": "Prev High",
-          "target_source": "none (gemini_only)"
-        },
-        "planned": {
-          "tdist": null,
-          "sdist": null,
-          "qty": 1,
-          "contract": "NQ",
-          "target_usd_net": null,
-          "risk_usd": null,
-          "target_source": "none (gemini_only)",
-          "sizing": "gemini_only: notional 0.8 ATR = 79.25 x 20/pt = $1,585 per NQ; 1 NQ ~ $1,585 notional <= $1500 (reference only; NO stop, NO target, exit = Gemini CLOSE)"
-        },
-        "run_at_utc": "2026-11-12T15:54:20.017725+00:00",
-        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-12/cycles/195420.json/US100.png"
-      },
-      "mfe": 13.497999999999593,
-      "mae": 12.669000000001688,
-      "mfe_min": 0.0,
-      "time_cut_deadline": null,
-      "time_cut_candles": 0,
-      "time_cut_rule": "none: exit = Gemini CLOSE (1-strike) or hard stop -$500 NET; no target, no max hold, no 16:45 flat; DLL/MLL/breaker log-only",
-      "hard_stop_px": 28323.0,
-      "hard_stop_armed_at": "2026-11-12T15:55:19.091823+00:00",
-      "hard_stop_usd": 500.0
-    }
-  ],
+  "positions": [],
   "pending": [],
   "next_pos_id": 69,
   "day": {
     "id": "2026-11-12",
     "start_balance": 100000.0,
-    "realized": -1447.3,
+    "realized": 259.2,
     "locked": null,
     "eod_done": null,
     "traded": true
   },
   "last_price": {
-    "US100": 28361.498,
+    "US100": 28433.842,
     "XAUUSD": 3871.335,
     "EURUSD": 1.10609,
     "GBPUSD": 1.32318
@@ -244,13 +58,13 @@
     "payouts_gross": 0.0,
     "payouts_received": 0.0,
     "payout_count": 0,
-    "trades": 67,
-    "wins": 31,
+    "trades": 68,
+    "wins": 32,
     "losses": 36,
-    "gross_win": 12837.45,
+    "gross_win": 14543.95,
     "gross_loss": -14284.75,
-    "commissions": 671.55,
-    "net_trade_pnl": -1447.3,
+    "commissions": 673.3,
+    "net_trade_pnl": 259.2,
     "skipped_signals": 24,
     "accepted_signals": 92
   },
@@ -1423,7 +1237,8 @@
     65,
     64,
     66,
-    67
+    67,
+    68
   ],
   "breaches": [
     {

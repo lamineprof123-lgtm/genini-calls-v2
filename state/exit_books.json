@@ -69,7 +69,7 @@
   "last_price": {
     "US100": 28176.49,
     "XAUUSD": 3855.7,
-    "EURUSD": 1.10603,
+    "EURUSD": 1.10616,
     "GBPUSD": 1.32294
   },
   "books": {
@@ -128,8 +128,8 @@
           "strikes": 0,
           "mfe": 0.0,
           "mae": 0.0006500000000000394,
-          "scan_from": "2026-11-12T15:31:00+00:00",
-          "checks": 18,
+          "scan_from": "2026-11-12T15:33:00+00:00",
+          "checks": 25,
           "opened_at": "2026-11-12T15:27:13.622315+00:00",
           "giveback_hist": [
             0.0,
@@ -236,35 +236,10 @@
     59,
     60,
     61,
-    62
+    62,
+    63
   ],
   "post_exit": [
-    {
-      "book": "1-strike",
-      "id": 62,
-      "symbol": "XAUUSD",
-      "contract": "GC",
-      "qty": 1,
-      "side": "SHORT",
-      "exit": 3855.8,
-      "t_exit": "2026-11-12T15:26:15.904220+00:00",
-      "reason": "gemini_close",
-      "net": 375.4,
-      "due": "2026-11-12T15:31:15.904220+00:00"
-    },
-    {
-      "book": "nostop",
-      "id": 62,
-      "symbol": "XAUUSD",
-      "contract": "GC",
-      "qty": 1,
-      "side": "SHORT",
-      "exit": 3855.8,
-      "t_exit": "2026-11-12T15:26:15.904220+00:00",
-      "reason": "gemini_close",
-      "net": 375.4,
-      "due": "2026-11-12T15:31:15.904220+00:00"
-    },
     {
       "book": "1-strike",
       "id": 63,
@@ -277,6 +252,19 @@
       "reason": "hard_stop_500",
       "net": -553.8,
       "due": "2026-11-12T15:36:00+00:00"
+    },
+    {
+      "book": "baseline",
+      "id": 63,
+      "symbol": "EURUSD",
+      "contract": "6E",
+      "qty": 6,
+      "side": "SHORT",
+      "exit": 1.1064,
+      "t_exit": "2026-11-12T15:32:00+00:00",
+      "reason": "hard_stop_500",
+      "net": -553.8,
+      "due": "2026-11-12T15:37:00+00:00"
     }
   ],
   "retired_books": {

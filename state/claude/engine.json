@@ -1,7 +1,7 @@
 {
   "reset_token": "claude-v2-1",
   "created_at": "2026-11-12T12:14:51.993423+00:00",
-  "last_entry_bar": "2026-11-12T15:00:00+00:00",
+  "last_entry_bar": "2026-11-12T15:15:00+00:00",
   "shadow": [
     {
       "vid": 32,
@@ -16,7 +16,7 @@
       "init_stop": 1.3263,
       "atr": 0.000858,
       "entry_time": "2026-11-12T14:47:06.400113+00:00",
-      "scan_from": "2026-11-12T15:31:00+00:00",
+      "scan_from": "2026-11-12T15:33:00+00:00",
       "tick": 0.0001,
       "comm_pts": 7.68e-05,
       "mfe_pts": 0.003129999999999855,
@@ -61,37 +61,37 @@
   "probes": [],
   "next_vid": 37,
   "last_entry": {
-    "bar": "2026-11-12T15:00:00+00:00",
-    "t": "2026-11-12T15:16:49.657150+00:00",
-    "render_ms": 389,
+    "bar": "2026-11-12T15:15:00+00:00",
+    "t": "2026-11-12T15:32:37.280549+00:00",
+    "render_ms": 834,
     "sims": {
       "C-OPUS": {
         "ok": true,
-        "latency_ms": 26430,
-        "cost_usd": 0.101916,
+        "latency_ms": 35890,
+        "cost_usd": 0.099852,
         "error": null,
         "signals": [
           {
             "symbol": "XAUUSD",
             "action": "HOLD",
             "setup_type": "none",
-            "score": 1,
+            "score": 0,
             "confidence": 0.0,
             "decision": "HOLD"
           },
           {
             "symbol": "EURUSD",
-            "action": "SELL",
-            "setup_type": "trend",
-            "score": 6,
-            "confidence": 0.52,
-            "decision": "OPENED"
+            "action": "HOLD",
+            "setup_type": "none",
+            "score": 2,
+            "confidence": 0.0,
+            "decision": "HOLD"
           },
           {
             "symbol": "GBPUSD",
             "action": "HOLD",
             "setup_type": "none",
-            "score": 1,
+            "score": 2,
             "confidence": 0.0,
             "decision": "HOLD"
           },
@@ -107,15 +107,15 @@
       },
       "C-SONNET": {
         "ok": true,
-        "latency_ms": 9271,
-        "cost_usd": 0.035978,
+        "latency_ms": 8773,
+        "cost_usd": 0.036016,
         "error": null,
         "signals": [
           {
             "symbol": "XAUUSD",
             "action": "HOLD",
             "setup_type": "none",
-            "score": 2,
+            "score": 0,
             "confidence": 0.0,
             "decision": "HOLD"
           },
@@ -123,7 +123,7 @@
             "symbol": "EURUSD",
             "action": "HOLD",
             "setup_type": "none",
-            "score": 2,
+            "score": 0,
             "confidence": 0.0,
             "decision": "HOLD"
           },
@@ -131,7 +131,7 @@
             "symbol": "GBPUSD",
             "action": "HOLD",
             "setup_type": "none",
-            "score": 2,
+            "score": 0,
             "confidence": 0.0,
             "decision": "HOLD"
           },
@@ -139,7 +139,7 @@
             "symbol": "US100",
             "action": "HOLD",
             "setup_type": "none",
-            "score": 2,
+            "score": 0,
             "confidence": 0.0,
             "decision": "HOLD"
           }
@@ -149,8 +149,8 @@
   },
   "live": {
     "GBPUSD": {
-      "price": 1.32288,
-      "t": "2026-11-12T15:32:23.248546+00:00"
+      "price": 1.32311,
+      "t": "2026-11-12T15:34:29.250073+00:00"
     },
     "XAUUSD": {
       "price": 3922.66,
@@ -165,16 +165,5 @@
       "t": "2026-11-12T14:33:09.888450+00:00"
     }
   },
-  "fill_quotes": {
-    "EURUSD": {
-      "symbol": "EURUSD",
-      "price": 1.10628,
-      "ts": "2026-11-12T15:17:16.487000+00:00",
-      "source": "dukascopy:tick",
-      "stale": false,
-      "fetched_at": "2026-11-12T15:17:16.977361+00:00",
-      "age_s": 0.49,
-      "at": "2026-11-12T15:17:16.977361+00:00"
-    }
-  }
+  "fill_quotes": {}
 }

@@ -1,12 +1,12 @@
 {
-  "updated_at": "2026-11-12T09:20:36.004872+00:00",
+  "updated_at": "2026-11-12T09:22:37.855898+00:00",
   "paper_only": true,
   "plan": "LucidPro 100K (DLL on)",
   "exit_mode": "gemini_only",
   "card": "SL: none \u00b7 TP: none \u00b7 exit: Gemini",
   "breaches": [],
   "breach_note": "DLL / MLL / 3.5% breaker are log-only (no block, no forced close)",
-  "sizing_rule": "full-size futures only (NQ, GC, 6E, 6B), 1-40 contracts sized as if risk were 0.8 ATR at $1500 (notional reference only); no stop, no target, exit = Gemini CLOSE only",
+  "sizing_rule": "full-size futures only (NQ, GC, 6E, 6B), 1-6 contracts sized as if risk were 0.8 ATR at $1500 (notional reference only); no stop, no target, exit = Gemini CLOSE only",
   "reset": {
     "at": "2026-11-12T09:00:41.662867+00:00",
     "reason": "reset5: exit-check start-delay fix",
@@ -16,23 +16,39 @@
     "no": 1,
     "phase": "eval",
     "start_balance": 100000.0,
-    "balance": 99395.6,
-    "equity": 99395.6,
+    "balance": 99391.0,
+    "equity": 99370.0,
     "realized_pnl_since_reset": -604.4,
-    "open_pnl": 0.0,
-    "commission_on_open": 0.0,
+    "open_pnl": -21.0,
+    "commission_on_open": 4.6,
     "trades_since_reset": 2,
     "wins": 1,
     "losses": 1,
     "mll_floor": 97000.0,
-    "mll_room": 2395.6,
+    "mll_room": 2370.0,
     "dll": 1800.0,
     "day_realized": -604.4,
     "day_locked": null,
-    "to_target": 6604.4
+    "to_target": 6609.0
   },
-  "open_positions": [],
-  "pending": 1,
+  "open_positions": [
+    {
+      "symbol": "XAUUSD",
+      "contract": "GC",
+      "qty": 2,
+      "side": "SHORT",
+      "entry_time": "2026-11-12T09:21:00+00:00",
+      "entry": 3929.5,
+      "stop": null,
+      "target": null,
+      "last": 3929.605,
+      "unrealized": -21.0,
+      "risk_usd": null,
+      "target_usd_net": null,
+      "target_source": "none (gemini_only)"
+    }
+  ],
+  "pending": 0,
   "recent_trades": [
     {
       "t_exit": "2026-11-12T09:15:00+00:00",
@@ -61,5 +77,5 @@
       "balance_after": 100053.2
     }
   ],
-  "last_processed": "2026-11-12T09:20:00+00:00"
+  "last_processed": "2026-11-12T09:22:00+00:00"
 }

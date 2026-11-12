@@ -1,22 +1,5 @@
 [
   {
-    "signal_at": "2026-11-11T21:06:20.010093+00:00",
-    "tz": "Asia/Dubai",
-    "model": "gemini-3.6-flash",
-    "dry_run": false,
-    "trades": [],
-    "no_trade": [
-      "XAUUSD",
-      "EURUSD",
-      "GBPUSD",
-      "US100",
-      "BTCUSD"
-    ],
-    "analysis_failed": false,
-    "breaker_halted": false,
-    "written_at": "2026-11-11T21:06:30.855721+00:00"
-  },
-  {
     "signal_at": "2026-11-11T21:08:20.006053+00:00",
     "tz": "Asia/Dubai",
     "model": "gemini-3.6-flash",
@@ -903,5 +886,52 @@
     "analysis_failed": false,
     "breaker_halted": false,
     "written_at": "2026-11-12T08:16:35.761665+00:00"
+  },
+  {
+    "signal_at": "2026-11-12T08:18:20.010895+00:00",
+    "tz": "Asia/Dubai",
+    "model": "gemini-3.8-flash",
+    "dry_run": false,
+    "trades": [
+      {
+        "symbol": "XAUUSD",
+        "name": "GOLD",
+        "action": "SELL",
+        "entry": 3956.21,
+        "stop_loss": null,
+        "take_profit": null,
+        "rr": null,
+        "confidence": 0.82,
+        "digits": 2,
+        "exit": "Gemini",
+        "card": "SL: none \u00b7 TP: none \u00b7 exit: Gemini",
+        "session": "LONDON_SESSION",
+        "cvd_label": "BEARISH"
+      },
+      {
+        "symbol": "EURUSD",
+        "name": "EURO",
+        "action": "BUY",
+        "entry": 1.10888,
+        "stop_loss": null,
+        "take_profit": null,
+        "rr": null,
+        "confidence": 0.76,
+        "digits": 5,
+        "exit": "Gemini",
+        "card": "SL: none \u00b7 TP: none \u00b7 exit: Gemini",
+        "session": "LONDON_SESSION",
+        "cvd_label": "NEUTRAL"
+      }
+    ],
+    "no_trade": [
+      "GBPUSD",
+      "US100",
+      "BTCUSD"
+    ],
+    "in_position": [],
+    "analysis_failed": false,
+    "breaker_halted": false,
+    "written_at": "2026-11-12T08:18:38.432655+00:00"
   }
 ]

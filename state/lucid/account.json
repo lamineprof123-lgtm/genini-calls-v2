@@ -1,7 +1,7 @@
 {
   "version": 1,
   "created_at": "2026-11-12T01:26:22.307439+00:00",
-  "last_processed": "2026-11-12T08:16:00+00:00",
+  "last_processed": "2026-11-12T08:18:00+00:00",
   "account": {
     "no": 1,
     "phase": "eval",
@@ -22,7 +22,324 @@
     "trades": 0
   },
   "positions": [],
-  "pending": [],
+  "pending": [
+    {
+      "symbol": "XAUUSD",
+      "side": -1,
+      "created": "2026-11-12T08:18:38.436555+00:00",
+      "fill_after": "2026-11-12T08:19:00+00:00",
+      "reserved_risk": 0.0,
+      "planned": {
+        "contract": "GC",
+        "qty": 2,
+        "risk_usd": null,
+        "tdist": null,
+        "target_source": "none (gemini_only)"
+      },
+      "expires": "2026-11-12T08:29:00+00:00",
+      "atr": 7.528,
+      "scalp": {
+        "action": "SELL",
+        "side": -1,
+        "entry": 3956.21,
+        "stop_loss": 3965.2,
+        "take_profit": 3948.71,
+        "sdist": 8.98640000000023,
+        "tdist": 7.5,
+        "stop_source": "structure",
+        "target_source": "extended:min_net",
+        "rr": 0.835,
+        "structure_stop": 3965.1964000000003,
+        "atr_stop": 3962.2324,
+        "fixed_tp": 3954.96,
+        "structure_tp": 3954.86056,
+        "structure_label": "Session Low",
+        "candle": {
+          "high": 3964.82,
+          "low": 3956.78
+        },
+        "levels": [
+          {
+            "price": 3968.55,
+            "label": "S/R"
+          },
+          {
+            "price": 3977.99,
+            "label": "Prev Low"
+          },
+          {
+            "price": 4000.33,
+            "label": "Session High"
+          },
+          {
+            "price": 3954.71,
+            "label": "Session Low"
+          }
+        ],
+        "vp": {
+          "poc": 3978.89,
+          "vah": 3988.47,
+          "val": 3970.22
+        },
+        "target_scalp": 3954.96,
+        "lucid_plan": {
+          "contract": "GC",
+          "qty": 1,
+          "tdist": 7.5,
+          "target_usd": 745.4,
+          "risk_usd": 900.0,
+          "target_source": "extended:min_net",
+          "sizing": "fixed target 1.25 cannot reach $381 net within $1500 risk; extended:min_net: 1 GC (fewest that fit) target 7.5 -> $745 net, risk $900"
+        }
+      },
+      "session": "LONDON_SESSION",
+      "telemetry": {
+        "symbol": "XAUUSD",
+        "session": "LONDON_SESSION",
+        "last_close": 3956.93,
+        "atr": 7.528,
+        "vwap": 3978.35,
+        "ema20": 3970.33,
+        "ema50": 3982.19,
+        "price_vs_vwap": {
+          "side": "below",
+          "dist_atr": -2.8454
+        },
+        "price_vs_ema50": {
+          "side": "below",
+          "dist_atr": -3.3555
+        },
+        "vwap_aligned_with_side": true,
+        "ema50_aligned_with_side": true,
+        "poc": 3978.89,
+        "vah": 3988.47,
+        "val": 3970.22,
+        "price_vs_value_area": "below_val",
+        "dist_to_poc_atr": -2.9171,
+        "cvd": -2.67,
+        "cvd_label": "BEARISH",
+        "cvd_slope": -0.87,
+        "cvd_agrees_with_side": true,
+        "rvol": 0.917,
+        "rvol_spike": false,
+        "rvol_bars_since_spike": 28,
+        "atr_band_z": -1.78,
+        "atr_upper": 3985.38,
+        "atr_lower": 3955.27,
+        "nearest_sr": {
+          "above": {
+            "price": 3968.55,
+            "label": "S/R",
+            "dist_atr": 1.5436
+          },
+          "below": {
+            "price": 3954.71,
+            "label": "Session Low",
+            "dist_atr": 0.2949
+          }
+        },
+        "gemini": {
+          "action": "SELL",
+          "confidence": 0.82,
+          "confidence_band": ">=0.8",
+          "rationale": "Confluence Checklist: 1) VP Context: Price is below_val (3970.22) and below POC (3978.89), signaling strong bearish trend expansion into low volume nodes. 2) CVD: Bearish at -2.67 with negative slope -0.87, aligning with downside pressure. 3) Session: LONDON_SESSION, active liquidity. 4) Trend: Substantially below VWAP (3978.35) and EMA50 (3982.19), both sloping steeply downwards. 5) ATR: Re-testing and piercing the lower ATR band (3955.27). 6) RVOL: Current RVOL 0.917 shows continuation of the breakdown trend without immediate climax absorption. 7) S/R: Pressing through Session Low support (3954.71) with no reversal wicks; GEX is null. Clean short continuation scalp.",
+          "model": "gemini-3.8-flash",
+          "model_action": "SELL"
+        },
+        "scalp": {
+          "stop_basis": "structure",
+          "target_basis": "extended:min_net",
+          "tdist": 7.5,
+          "sdist": 8.98640000000023,
+          "structure_label": "Session Low"
+        },
+        "planned": {
+          "tdist": 7.5,
+          "sdist": 8.98640000000023,
+          "qty": null,
+          "contract": null,
+          "target_usd_net": null,
+          "risk_usd": null
+        },
+        "run_at_utc": "2026-11-12T08:18:20.010895+00:00",
+        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-12/cycles/121820.json/XAUUSD.png"
+      },
+      "gemini": {
+        "action": "SELL",
+        "entry": 3956.21,
+        "stop_loss": 3965.2,
+        "take_profit": 3948.71,
+        "confidence": 0.82,
+        "rr": 0.834,
+        "shown_on_site": true,
+        "basis": "site signal",
+        "run_at_utc": "2026-11-12T08:18:20.010895+00:00",
+        "session": "LONDON_SESSION",
+        "rationale": "Confluence Checklist: 1) VP Context: Price is below_val (3970.22) and below POC (3978.89), signaling strong bearish trend expansion into low volume nodes. 2) CVD: Bearish at -2.67 with negative slope -0.87, aligning with downside pressure. 3) Session: LONDON_SESSION, active liquidity. 4) Trend: Substantially below VWAP (3978.35) and EMA50 (3982.19), both sloping steeply downwards. 5) ATR: Re-testing and piercing the lower ATR band (3955.27). 6) RVOL: Current RVOL 0.917 shows continuation of the breakdown trend without immediate climax absorption. 7) S/R: Pressing through Session Low support (3954.71) with no reversal wicks; GEX is null. Clean short continuation scalp.",
+        "model": "gemini-3.8-flash"
+      }
+    },
+    {
+      "symbol": "EURUSD",
+      "side": 1,
+      "created": "2026-11-12T08:18:38.436555+00:00",
+      "fill_after": "2026-11-12T08:19:00+00:00",
+      "reserved_risk": 0.0,
+      "planned": {
+        "contract": "6E",
+        "qty": 24,
+        "risk_usd": null,
+        "tdist": null,
+        "target_source": "none (gemini_only)"
+      },
+      "expires": "2026-11-12T08:29:00+00:00",
+      "atr": 0.000587,
+      "scalp": {
+        "action": "BUY",
+        "side": 1,
+        "entry": 1.10888,
+        "stop_loss": 1.10847,
+        "take_profit": 1.10928,
+        "sdist": 0.000409349999999975,
+        "tdist": 0.0004,
+        "stop_source": "structure",
+        "target_source": "structure:VAH",
+        "rr": 0.977,
+        "structure_stop": 1.1084706500000001,
+        "atr_stop": 1.1084104000000001,
+        "fixed_tp": 1.11013,
+        "structure_tp": 1.1092650000000002,
+        "structure_label": "VAH",
+        "candle": {
+          "high": 1.10918,
+          "low": 1.1085
+        },
+        "levels": [
+          {
+            "price": 1.10988,
+            "label": "Session High"
+          },
+          {
+            "price": 1.11456,
+            "label": "S/R"
+          },
+          {
+            "price": 1.11499,
+            "label": "24h High"
+          },
+          {
+            "price": 1.10824,
+            "label": "Prev Low"
+          },
+          {
+            "price": 1.10662,
+            "label": "Session Low"
+          }
+        ],
+        "vp": {
+          "poc": 1.10757,
+          "vah": 1.10929,
+          "val": 1.10701
+        },
+        "target_scalp": 1.10927,
+        "lucid_plan": {
+          "contract": "6E",
+          "qty": 17,
+          "tdist": 0.0004,
+          "target_usd": 768.4,
+          "risk_usd": 956.25,
+          "target_source": "structure:VAH",
+          "sizing": "structure:VAH target 0.0004 reaches $768 net with 17 6E (risk $956)"
+        }
+      },
+      "session": "LONDON_SESSION",
+      "telemetry": {
+        "symbol": "EURUSD",
+        "session": "LONDON_SESSION",
+        "last_close": 1.10877,
+        "atr": 0.000587,
+        "vwap": 1.10831,
+        "ema20": 1.10805,
+        "ema50": 1.10867,
+        "price_vs_vwap": {
+          "side": "above",
+          "dist_atr": 0.7836
+        },
+        "price_vs_ema50": {
+          "side": "above",
+          "dist_atr": 0.1704
+        },
+        "vwap_aligned_with_side": true,
+        "ema50_aligned_with_side": true,
+        "poc": 1.10757,
+        "vah": 1.10929,
+        "val": 1.10701,
+        "price_vs_value_area": "inside",
+        "dist_to_poc_atr": 2.0443,
+        "cvd": 1297.05,
+        "cvd_label": "NEUTRAL",
+        "cvd_slope": 2941.69,
+        "cvd_agrees_with_side": true,
+        "rvol": 1.69,
+        "rvol_spike": false,
+        "rvol_bars_since_spike": 22,
+        "atr_band_z": 1.2266,
+        "atr_upper": 1.10922,
+        "atr_lower": 1.10688,
+        "nearest_sr": {
+          "above": {
+            "price": 1.10988,
+            "label": "Session High",
+            "dist_atr": 1.891
+          },
+          "below": {
+            "price": 1.10824,
+            "label": "Prev Low",
+            "dist_atr": 0.9029
+          }
+        },
+        "gemini": {
+          "action": "BUY",
+          "confidence": 0.76,
+          "confidence_band": "0.7-0.8",
+          "rationale": "Confluence Checklist: 1) VP Context: Price is inside value area (VAL 1.10701, VAH 1.10929) and holding above POC (1.10757). 2) CVD: Neutral at +1,297 but accelerating positive slope (+2941.69), demonstrating fresh buyer aggression. 3) Session: LONDON_SESSION, clean directional flows. 4) Trend: Price reclaimed both session VWAP (1.10831) and EMA50 (1.10867). 5) ATR: Traversing upwards toward upper ATR band (1.10922). 6) RVOL: Healthy elevated volume (RVOL 1.69) supporting the push. 7) S/R: Successfully swept Prev Low (1.10824) and pushing toward Session High (1.10988); GEX is null. Favorable long momentum scalp.",
+          "model": "gemini-3.8-flash",
+          "model_action": "BUY"
+        },
+        "scalp": {
+          "stop_basis": "structure",
+          "target_basis": "structure:VAH",
+          "tdist": 0.0004,
+          "sdist": 0.000409349999999975,
+          "structure_label": "VAH"
+        },
+        "planned": {
+          "tdist": 0.0004,
+          "sdist": 0.000409349999999975,
+          "qty": null,
+          "contract": null,
+          "target_usd_net": null,
+          "risk_usd": null
+        },
+        "run_at_utc": "2026-11-12T08:18:20.010895+00:00",
+        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-12/cycles/121820.json/EURUSD.png"
+      },
+      "gemini": {
+        "action": "BUY",
+        "entry": 1.10888,
+        "stop_loss": 1.10847,
+        "take_profit": 1.10928,
+        "confidence": 0.76,
+        "rr": 0.976,
+        "shown_on_site": true,
+        "basis": "site signal",
+        "run_at_utc": "2026-11-12T08:18:20.010895+00:00",
+        "session": "LONDON_SESSION",
+        "rationale": "Confluence Checklist: 1) VP Context: Price is inside value area (VAL 1.10701, VAH 1.10929) and holding above POC (1.10757). 2) CVD: Neutral at +1,297 but accelerating positive slope (+2941.69), demonstrating fresh buyer aggression. 3) Session: LONDON_SESSION, clean directional flows. 4) Trend: Price reclaimed both session VWAP (1.10831) and EMA50 (1.10867). 5) ATR: Traversing upwards toward upper ATR band (1.10922). 6) RVOL: Healthy elevated volume (RVOL 1.69) supporting the push. 7) S/R: Successfully swept Prev Low (1.10824) and pushing toward Session High (1.10988); GEX is null. Favorable long momentum scalp.",
+        "model": "gemini-3.8-flash"
+      }
+    }
+  ],
   "next_pos_id": 1,
   "day": {
     "id": "2026-11-12",
@@ -61,7 +378,7 @@
     "commissions": 0.0,
     "net_trade_pnl": 0.0,
     "skipped_signals": 0,
-    "accepted_signals": 0
+    "accepted_signals": 2
   },
   "reset_token": "2026-11-12-exit-prompt-v2",
   "reset_at": "2026-11-12T01:26:22.307439+00:00",

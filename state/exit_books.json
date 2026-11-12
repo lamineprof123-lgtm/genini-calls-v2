@@ -11,48 +11,17 @@
   ],
   "last_price": {
     "US100": 28136.24,
-    "XAUUSD": 3947.07,
-    "EURUSD": 1.109
+    "XAUUSD": 3947.68,
+    "EURUSD": 1.10901
   },
   "books": {
     "1-strike": {
-      "balance": 96003.0,
-      "positions": [
-        {
-          "id": 6,
-          "symbol": "XAUUSD",
-          "contract": "GC",
-          "qty": 2,
-          "side": -1,
-          "entry": 3948.6,
-          "stop": null,
-          "target": null,
-          "entry_time": "2026-11-12T11:21:00+00:00",
-          "risk_usd": null,
-          "atr": 7.769,
-          "candle": {
-            "high": 3955.43,
-            "low": 3948.89
-          },
-          "gemini_run_at_utc": "2026-11-12T11:20:20.259542+00:00",
-          "gemini_confidence": 0.76,
-          "book": "1-strike",
-          "strikes": 0,
-          "mfe": 1.625,
-          "mae": 0.0,
-          "scan_from": "2026-11-12T11:24:00+00:00",
-          "checks": 18,
-          "opened_at": "2026-11-12T11:21:15.333956+00:00",
-          "giveback_hist": [
-            24.9,
-            5.8
-          ]
-        }
-      ],
+      "balance": 96158.4,
+      "positions": [],
       "day": {
         "id": "2026-11-12",
         "start_balance": 100000.0,
-        "realized": -3992.4,
+        "realized": -3841.6,
         "halted": null,
         "breach_logged": {
           "t": "2026-11-12T10:59:39.148958+00:00",
@@ -61,16 +30,16 @@
         }
       },
       "stats": {
-        "trades": 5,
-        "wins": 2,
+        "trades": 6,
+        "wins": 3,
         "losses": 3,
-        "gross_win": 215.9,
+        "gross_win": 366.7,
         "gross_loss": -4208.3,
-        "net_pnl": -3992.4,
-        "commissions": 47.0,
-        "hold_seconds": 6580,
+        "net_pnl": -3841.6,
+        "commissions": 51.6,
+        "hold_seconds": 7027,
         "exit_reasons": {
-          "gemini_close": 5
+          "gemini_close": 6
         }
       }
     },
@@ -96,15 +65,15 @@
           "gemini_run_at_utc": "2026-11-12T10:50:20.289297+00:00",
           "gemini_confidence": 0.72,
           "book": "2-strike",
-          "strikes": 0,
+          "strikes": 1,
           "mfe": 5.0000000000105516e-05,
-          "mae": 0.0011399999999999189,
-          "scan_from": "2026-11-12T11:24:00+00:00",
-          "checks": 118,
+          "mae": 0.0013199999999999878,
+          "scan_from": "2026-11-12T11:27:00+00:00",
+          "checks": 125,
           "opened_at": "2026-11-12T10:51:15.469355+00:00",
           "giveback_hist": [
-            2300.0,
-            2400.0
+            2440.0,
+            2380.0
           ]
         },
         {
@@ -126,15 +95,15 @@
           "gemini_run_at_utc": "2026-11-12T11:20:20.259542+00:00",
           "gemini_confidence": 0.76,
           "book": "2-strike",
-          "strikes": 0,
-          "mfe": 1.625,
+          "strikes": 1,
+          "mfe": 2.0349999999998545,
           "mae": 0.0,
-          "scan_from": "2026-11-12T11:24:00+00:00",
-          "checks": 18,
+          "scan_from": "2026-11-12T11:26:00+00:00",
+          "checks": 25,
           "opened_at": "2026-11-12T11:21:15.333956+00:00",
           "giveback_hist": [
-            24.9,
-            5.8
+            37.6,
+            54.8
           ]
         }
       ],
@@ -176,29 +145,16 @@
   "post_exit": [
     {
       "book": "1-strike",
-      "id": 5,
-      "symbol": "EURUSD",
-      "contract": "6E",
+      "id": 6,
+      "symbol": "XAUUSD",
+      "contract": "GC",
       "qty": 2,
-      "side": "LONG",
-      "exit": 1.1091,
-      "t_exit": "2026-11-12T11:21:51.183694+00:00",
+      "side": "SHORT",
+      "exit": 3947.8,
+      "t_exit": "2026-11-12T11:28:27.018167+00:00",
       "reason": "gemini_close",
-      "net": -272.1,
-      "due": "2026-11-12T11:26:51.183694+00:00"
-    },
-    {
-      "book": "baseline",
-      "id": 5,
-      "symbol": "EURUSD",
-      "contract": "6E",
-      "qty": 2,
-      "side": "LONG",
-      "exit": 1.1091,
-      "t_exit": "2026-11-12T11:22:00+00:00",
-      "reason": "gemini_close",
-      "net": -272.1,
-      "due": "2026-11-12T11:27:00+00:00"
+      "net": 150.8,
+      "due": "2026-11-12T11:33:27.018167+00:00"
     }
   ]
 }

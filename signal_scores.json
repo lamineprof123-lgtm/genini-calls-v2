@@ -1,9 +1,9 @@
 {
-  "updated_at": "2026-11-12T19:46:59.484992+00:00",
+  "updated_at": "2026-11-12T19:49:04.960905+00:00",
   "exit_mode": "uniform-1atr-v1",
   "paper_only": true,
-  "pending": 3477,
-  "n_scored": 5228,
+  "pending": 3455,
+  "n_scored": 5262,
   "models": {
     "gemini-3.6-flash": {
       "n": 474,
@@ -54,11 +54,11 @@
       }
     },
     "gemini-3.8-flash": {
-      "n": 151,
+      "n": 152,
       "label": "gemini-3.8-flash",
-      "win_pct": 0.497,
-      "avg_R": -0.06,
-      "twin_avg_R": -0.06,
+      "win_pct": 0.5,
+      "avg_R": -0.053,
+      "twin_avg_R": -0.053,
       "edge_R": 0.0,
       "by_band": {
         "0.75-0.90": {
@@ -69,28 +69,28 @@
           "edge_R": 0.026
         },
         "0.55-0.75": {
-          "n": 55,
-          "win_pct": 0.491,
-          "avg_R": -0.091,
-          "twin_avg_R": -0.046,
-          "edge_R": -0.045
+          "n": 56,
+          "win_pct": 0.5,
+          "avg_R": -0.071,
+          "twin_avg_R": -0.027,
+          "edge_R": -0.044
         }
       },
       "excursions": {
         "2h": {
-          "avg_mfe_atr": 3.282,
-          "avg_mae_atr": 1.759,
-          "n": 151
+          "avg_mfe_atr": 3.28,
+          "avg_mae_atr": 1.751,
+          "n": 152
         },
         "3h": {
-          "avg_mfe_atr": 4.317,
-          "avg_mae_atr": 2.149,
-          "n": 151
+          "avg_mfe_atr": 4.309,
+          "avg_mae_atr": 2.138,
+          "n": 152
         },
         "4h": {
-          "avg_mfe_atr": 4.891,
-          "avg_mae_atr": 2.345,
-          "n": 151
+          "avg_mfe_atr": 4.878,
+          "avg_mae_atr": 2.333,
+          "n": 152
         }
       }
     },
@@ -165,6 +165,40 @@
         "4h": {
           "avg_mfe_atr": 3.906,
           "avg_mae_atr": 3.156,
+          "n": 1
+        }
+      }
+    },
+    "gemini-4-carbon": {
+      "n": 1,
+      "label": "gemini-4-carbon",
+      "win_pct": 1.0,
+      "avg_R": 0.993,
+      "twin_avg_R": -1.003,
+      "edge_R": 1.996,
+      "by_band": {
+        "0.55-0.75": {
+          "n": 1,
+          "win_pct": 1.0,
+          "avg_R": 0.993,
+          "twin_avg_R": -1.003,
+          "edge_R": 1.996
+        }
+      },
+      "excursions": {
+        "2h": {
+          "avg_mfe_atr": 3.131,
+          "avg_mae_atr": 0.29,
+          "n": 1
+        },
+        "3h": {
+          "avg_mfe_atr": 3.131,
+          "avg_mae_atr": 0.29,
+          "n": 1
+        },
+        "4h": {
+          "avg_mfe_atr": 3.131,
+          "avg_mae_atr": 0.29,
           "n": 1
         }
       }

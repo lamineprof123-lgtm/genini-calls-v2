@@ -178,68 +178,7 @@
       "session": "LONDON_NY_OVERLAP"
     }
   },
-  "whatif": [
-    {
-      "vid": 1,
-      "exit": "CB-BRACKET",
-      "symbol": "US100",
-      "side": 1,
-      "contract": "NQ",
-      "atr": 98.8,
-      "confidence": 0.72,
-      "signal_entry": 28241.67,
-      "signal_at": "2026-11-12T15:46:09.306718+00:00",
-      "kind": "entry",
-      "queued_at": "2026-11-12T15:46:09.306718+00:00",
-      "entry": 28249.0,
-      "entry_time": "2026-11-12T15:46:14.764782+00:00",
-      "scan_from": "2026-11-12T15:52:00+00:00",
-      "best": 28333.89,
-      "mfe": 84.88999999999942,
-      "mae": 36.419999999998254,
-      "locked": false,
-      "checks": 0,
-      "stop": 28150.0,
-      "target": 28348.0,
-      "deadline": "2026-11-12T17:16:14.764782+00:00",
-      "init_stop": 28150.0,
-      "qty": 1,
-      "risk_usd": 1983.5,
-      "chase_atr": 0.074,
-      "risk_1c_usd": 1976.0,
-      "last_check_at": "2026-11-12T15:54:23.839339+00:00"
-    },
-    {
-      "vid": 2,
-      "exit": "CB-RUNNER",
-      "symbol": "US100",
-      "side": 1,
-      "contract": "NQ",
-      "atr": 98.8,
-      "confidence": 0.72,
-      "signal_entry": 28241.67,
-      "signal_at": "2026-11-12T15:46:09.306718+00:00",
-      "kind": "entry",
-      "queued_at": "2026-11-12T15:46:09.306718+00:00",
-      "entry": 28249.0,
-      "entry_time": "2026-11-12T15:46:14.764782+00:00",
-      "scan_from": "2026-11-12T15:52:00+00:00",
-      "best": 28333.89,
-      "mfe": 84.88999999999942,
-      "mae": 36.419999999998254,
-      "locked": false,
-      "checks": 0,
-      "stop": 28150.0,
-      "target": 28496.0,
-      "deadline": "2026-11-12T18:16:14.764782+00:00",
-      "init_stop": 28150.0,
-      "qty": 1,
-      "risk_usd": 1983.5,
-      "chase_atr": 0.074,
-      "risk_1c_usd": 1976.0,
-      "last_check_at": "2026-11-12T15:54:23.839339+00:00"
-    }
-  ],
+  "whatif": [],
   "next_vid": 3,
   "last_call": {
     "t": "2026-11-12T15:54:23.825454+00:00",
@@ -316,40 +255,37 @@
   },
   "calls_total": 2,
   "last_scan": {
-    "kind": "entry",
-    "t": "2026-11-12T15:45:20.003718+00:00",
-    "trigger": null,
+    "kind": "trigger",
+    "t": "2026-11-12T15:53:57.097454+00:00",
+    "trigger": {
+      "trigger": "level_cross",
+      "level": "Session High",
+      "level_price": 28295.74,
+      "price": 28326.02,
+      "direction": "up",
+      "symbol": "US100",
+      "bar": "2026-11-12T15:45:00+00:00",
+      "n_today": 1
+    },
     "sent": [
-      "XAUUSD",
-      "EURUSD",
       "US100"
     ],
     "blocked_session": [],
     "ok": true,
-    "latency_s": 48.497,
-    "cost_usd": 0.070626,
+    "latency_s": 26.611,
+    "cost_usd": 0.030532,
     "tokens": {
-      "input": 10203,
-      "output": 1220,
-      "thoughts": 3802,
-      "total": 15225
+      "input": 5946,
+      "output": 680,
+      "thoughts": 1184,
+      "total": 7810
     },
     "error": null,
     "signals": [
       {
-        "symbol": "XAUUSD",
-        "action": "HOLD",
-        "confidence": 0.42
-      },
-      {
-        "symbol": "EURUSD",
-        "action": "HOLD",
-        "confidence": 0.38
-      },
-      {
         "symbol": "US100",
-        "action": "BUY",
-        "confidence": 0.72
+        "action": "HOLD",
+        "confidence": 0.68
       }
     ]
   }

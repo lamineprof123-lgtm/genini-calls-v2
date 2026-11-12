@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-12T15:54:23.825454+00:00",
+  "updated_at": "2026-11-12T15:56:11.842266+00:00",
   "paper_only": true,
   "model": "gemini-4-carbon",
   "entry_thinking": "medium",
@@ -124,40 +124,37 @@
   },
   "calls_total": 2,
   "last_scan": {
-    "kind": "entry",
-    "t": "2026-11-12T15:45:20.003718+00:00",
-    "trigger": null,
+    "kind": "trigger",
+    "t": "2026-11-12T15:53:57.097454+00:00",
+    "trigger": {
+      "trigger": "level_cross",
+      "level": "Session High",
+      "level_price": 28295.74,
+      "price": 28326.02,
+      "direction": "up",
+      "symbol": "US100",
+      "bar": "2026-11-12T15:45:00+00:00",
+      "n_today": 1
+    },
     "sent": [
-      "XAUUSD",
-      "EURUSD",
       "US100"
     ],
     "blocked_session": [],
     "ok": true,
-    "latency_s": 48.497,
-    "cost_usd": 0.070626,
+    "latency_s": 26.611,
+    "cost_usd": 0.030532,
     "tokens": {
-      "input": 10203,
-      "output": 1220,
-      "thoughts": 3802,
-      "total": 15225
+      "input": 5946,
+      "output": 680,
+      "thoughts": 1184,
+      "total": 7810
     },
     "error": null,
     "signals": [
       {
-        "symbol": "XAUUSD",
-        "action": "HOLD",
-        "confidence": 0.42
-      },
-      {
-        "symbol": "EURUSD",
-        "action": "HOLD",
-        "confidence": 0.38
-      },
-      {
         "symbol": "US100",
-        "action": "BUY",
-        "confidence": 0.72
+        "action": "HOLD",
+        "confidence": 0.68
       }
     ]
   },
@@ -255,11 +252,11 @@
   "whatif": {
     "CB-BRACKET": {
       "all": {
-        "n": 0,
-        "r_avg": null,
-        "r_total": 0,
-        "net_1c": 0,
-        "win_rate": null
+        "n": 1,
+        "r_avg": 0.994,
+        "r_total": 0.994,
+        "net_1c": 1971.5,
+        "win_rate": 1.0
       },
       "conf>=min": {
         "n": 0,
@@ -269,20 +266,20 @@
         "win_rate": null
       },
       "conf<min": {
-        "n": 0,
-        "r_avg": null,
-        "r_total": 0,
-        "net_1c": 0,
-        "win_rate": null
+        "n": 1,
+        "r_avg": 0.994,
+        "r_total": 0.994,
+        "net_1c": 1971.5,
+        "win_rate": 1.0
       }
     },
     "CB-RUNNER": {
       "all": {
-        "n": 0,
-        "r_avg": null,
-        "r_total": 0,
-        "net_1c": 0,
-        "win_rate": null
+        "n": 1,
+        "r_avg": 0.397,
+        "r_total": 0.397,
+        "net_1c": 786.5,
+        "win_rate": 1.0
       },
       "conf>=min": {
         "n": 0,
@@ -292,14 +289,14 @@
         "win_rate": null
       },
       "conf<min": {
-        "n": 0,
-        "r_avg": null,
-        "r_total": 0,
-        "net_1c": 0,
-        "win_rate": null
+        "n": 1,
+        "r_avg": 0.397,
+        "r_total": 0.397,
+        "net_1c": 786.5,
+        "win_rate": 1.0
       }
     },
-    "open": 2
+    "open": 0
   },
   "rules": "gemini-4-carbon entries (thinking medium, live entry prompt unchanged) on XAUUSD / EURUSD / US100 at every M15 close +20 s in 08:00-20:30 UTC + triggered one-symbol checks; conf >= 0.75; chase <= 0.5 ATR. Size floor($900 / 1 ATR risk), caps NQ 1 / GC 1 / 6E 4, skip if 1 contract > $1,200, 6 aggregate, one per symbol; re-entry after the next M15 close (after a loss 30 min, no same-side re-entry this session); day P&L <= -$1,500 flattens; trailing guard $300; flat 21:45 UTC. Spend cap $15 soft / $19 hard per Dubai day."
 }

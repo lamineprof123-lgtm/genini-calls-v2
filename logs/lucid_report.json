@@ -1,30 +1,176 @@
 {
   "scope": "Post-reset account only (pre-reset trades listed separately); paper trades only; net P&L after round-trip commission",
   "summary": {
-    "count": 0,
+    "count": 1,
     "wins": 0,
-    "losses": 0,
+    "losses": 1,
     "breakeven": 0,
-    "win_rate": null,
-    "net_pnl": 0,
+    "win_rate": 0.0,
+    "net_pnl": -265.2,
     "avg_win": null,
-    "avg_loss": null,
-    "expectancy": null,
+    "avg_loss": -265.2,
+    "expectancy": -265.2,
     "low_confidence": true
   },
   "groups": {
-    "session": {},
-    "value_area_position": {},
-    "cvd_agrees": {},
-    "rvol_spike": {},
-    "vwap_aligned": {},
-    "ema50_aligned": {},
-    "vwap_ema50_aligned": {},
-    "confidence_band": {},
-    "symbol": {},
-    "exit_reason": {}
+    "session": {
+      "LONDON_SESSION": {
+        "count": 1,
+        "wins": 0,
+        "losses": 1,
+        "breakeven": 0,
+        "win_rate": 0.0,
+        "net_pnl": -265.2,
+        "avg_win": null,
+        "avg_loss": -265.2,
+        "expectancy": -265.2,
+        "low_confidence": true
+      }
+    },
+    "value_area_position": {
+      "inside": {
+        "count": 1,
+        "wins": 0,
+        "losses": 1,
+        "breakeven": 0,
+        "win_rate": 0.0,
+        "net_pnl": -265.2,
+        "avg_win": null,
+        "avg_loss": -265.2,
+        "expectancy": -265.2,
+        "low_confidence": true
+      }
+    },
+    "cvd_agrees": {
+      "yes": {
+        "count": 1,
+        "wins": 0,
+        "losses": 1,
+        "breakeven": 0,
+        "win_rate": 0.0,
+        "net_pnl": -265.2,
+        "avg_win": null,
+        "avg_loss": -265.2,
+        "expectancy": -265.2,
+        "low_confidence": true
+      }
+    },
+    "rvol_spike": {
+      "no": {
+        "count": 1,
+        "wins": 0,
+        "losses": 1,
+        "breakeven": 0,
+        "win_rate": 0.0,
+        "net_pnl": -265.2,
+        "avg_win": null,
+        "avg_loss": -265.2,
+        "expectancy": -265.2,
+        "low_confidence": true
+      }
+    },
+    "vwap_aligned": {
+      "yes": {
+        "count": 1,
+        "wins": 0,
+        "losses": 1,
+        "breakeven": 0,
+        "win_rate": 0.0,
+        "net_pnl": -265.2,
+        "avg_win": null,
+        "avg_loss": -265.2,
+        "expectancy": -265.2,
+        "low_confidence": true
+      }
+    },
+    "ema50_aligned": {
+      "yes": {
+        "count": 1,
+        "wins": 0,
+        "losses": 1,
+        "breakeven": 0,
+        "win_rate": 0.0,
+        "net_pnl": -265.2,
+        "avg_win": null,
+        "avg_loss": -265.2,
+        "expectancy": -265.2,
+        "low_confidence": true
+      }
+    },
+    "vwap_ema50_aligned": {
+      "yes": {
+        "count": 1,
+        "wins": 0,
+        "losses": 1,
+        "breakeven": 0,
+        "win_rate": 0.0,
+        "net_pnl": -265.2,
+        "avg_win": null,
+        "avg_loss": -265.2,
+        "expectancy": -265.2,
+        "low_confidence": true
+      }
+    },
+    "confidence_band": {
+      "0.7-0.8": {
+        "count": 1,
+        "wins": 0,
+        "losses": 1,
+        "breakeven": 0,
+        "win_rate": 0.0,
+        "net_pnl": -265.2,
+        "avg_win": null,
+        "avg_loss": -265.2,
+        "expectancy": -265.2,
+        "low_confidence": true
+      }
+    },
+    "symbol": {
+      "EURUSD": {
+        "count": 1,
+        "wins": 0,
+        "losses": 1,
+        "breakeven": 0,
+        "win_rate": 0.0,
+        "net_pnl": -265.2,
+        "avg_win": null,
+        "avg_loss": -265.2,
+        "expectancy": -265.2,
+        "low_confidence": true
+      }
+    },
+    "exit_reason": {
+      "gemini_close": {
+        "count": 1,
+        "wins": 0,
+        "losses": 1,
+        "breakeven": 0,
+        "win_rate": 0.0,
+        "net_pnl": -265.2,
+        "avg_win": null,
+        "avg_loss": -265.2,
+        "expectancy": -265.2,
+        "low_confidence": true
+      }
+    }
   },
-  "top_combinations": [],
+  "top_combinations": [
+    {
+      "session": "LONDON_SESSION",
+      "value_area_position": "inside",
+      "cvd_agrees": "yes",
+      "count": 1,
+      "wins": 0,
+      "losses": 1,
+      "breakeven": 0,
+      "win_rate": 0.0,
+      "net_pnl": -265.2,
+      "avg_win": null,
+      "avg_loss": -265.2,
+      "expectancy": -265.2,
+      "low_confidence": true
+    }
+  ],
   "breaches": [],
   "skips": {
     "count": 0,
@@ -43,15 +189,15 @@
     "reset_at": "2026-11-12T01:26:22.307439+00:00",
     "reason": "reset4: exit-prompt-v2 (closed-bar invalidation, wall harvest, giveback ratchet)",
     "post_reset": {
-      "count": 0,
+      "count": 1,
       "wins": 0,
-      "losses": 0,
+      "losses": 1,
       "breakeven": 0,
-      "win_rate": null,
-      "net_pnl": 0,
+      "win_rate": 0.0,
+      "net_pnl": -265.2,
       "avg_win": null,
-      "avg_loss": null,
-      "expectancy": null,
+      "avg_loss": -265.2,
+      "expectancy": -265.2,
       "low_confidence": true
     },
     "pre_reset": {
@@ -67,15 +213,15 @@
       "low_confidence": true
     },
     "all": {
-      "count": 11,
+      "count": 12,
       "wins": 2,
-      "losses": 9,
+      "losses": 10,
       "breakeven": 0,
-      "win_rate": 0.181818,
-      "net_pnl": -4819.25,
+      "win_rate": 0.166667,
+      "net_pnl": -5084.45,
       "avg_win": 746.73,
-      "avg_loss": -701.41,
-      "expectancy": -438.11,
+      "avg_loss": -657.79,
+      "expectancy": -423.7,
       "low_confidence": true
     },
     "pre_reset_by_symbol": {
@@ -130,7 +276,7 @@
     },
     "pre_reset_skips": 498
   },
-  "generated_at_utc": "2026-11-12T08:24:34.090816+00:00",
-  "generated_at_dubai": "2026-11-12 12:24:34",
+  "generated_at_utc": "2026-11-12T08:26:33.472707+00:00",
+  "generated_at_dubai": "2026-11-12 12:26:33",
   "malformed_lines": []
 }

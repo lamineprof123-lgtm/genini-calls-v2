@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-12T08:24:34.095106+00:00",
+  "updated_at": "2026-11-12T08:26:33.492906+00:00",
   "paper_only": true,
   "plan": "LucidPro 100K (DLL on)",
   "exit_mode": "gemini_only",
@@ -16,20 +16,20 @@
     "no": 1,
     "phase": "eval",
     "start_balance": 100000.0,
-    "balance": 99937.8,
-    "equity": 100923.8,
-    "realized_pnl_since_reset": 0.0,
-    "open_pnl": 986.0,
-    "commission_on_open": 62.2,
-    "trades_since_reset": 0,
+    "balance": 99730.2,
+    "equity": 100755.2,
+    "realized_pnl_since_reset": -265.2,
+    "open_pnl": 1025.0,
+    "commission_on_open": 4.6,
+    "trades_since_reset": 1,
     "wins": 0,
-    "losses": 0,
+    "losses": 1,
     "mll_floor": 97000.0,
-    "mll_room": 3923.8,
+    "mll_room": 3755.2,
     "dll": 1800.0,
-    "day_realized": 0.0,
+    "day_realized": -265.2,
     "day_locked": null,
-    "to_target": 6062.2
+    "to_target": 6269.8
   },
   "open_positions": [
     {
@@ -41,29 +41,28 @@
       "entry": 3955.8,
       "stop": null,
       "target": null,
-      "last": 3953.42,
-      "unrealized": 476.0,
-      "risk_usd": null,
-      "target_usd_net": null,
-      "target_source": "none (gemini_only)"
-    },
-    {
-      "symbol": "EURUSD",
-      "contract": "6E",
-      "qty": 24,
-      "side": "LONG",
-      "entry_time": "2026-11-12T08:19:00+00:00",
-      "entry": 1.1088,
-      "stop": null,
-      "target": null,
-      "last": 1.10897,
-      "unrealized": 510.0,
+      "last": 3950.675,
+      "unrealized": 1025.0,
       "risk_usd": null,
       "target_usd_net": null,
       "target_source": "none (gemini_only)"
     }
   ],
   "pending": 0,
-  "recent_trades": [],
-  "last_processed": "2026-11-12T08:23:00+00:00"
+  "recent_trades": [
+    {
+      "t_exit": "2026-11-12T08:23:00+00:00",
+      "symbol": "EURUSD",
+      "contract": "6E",
+      "qty": 24,
+      "side": "LONG",
+      "entry_time": "2026-11-12T08:19:00+00:00",
+      "entry": 1.1088,
+      "exit": 1.10875,
+      "reason": "gemini_close",
+      "net": -265.2,
+      "balance_after": 99730.2
+    }
+  ],
+  "last_processed": "2026-11-12T08:25:00+00:00"
 }

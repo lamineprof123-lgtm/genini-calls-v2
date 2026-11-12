@@ -2,7 +2,7 @@
 
 Post-reset account only (pre-reset trades listed separately); paper trades only; net P&L after round-trip commission
 
-Updated: 2026-11-12 12:24:34 (Dubai UTC+4)
+Updated: 2026-11-12 12:26:33 (Dubai UTC+4)
 
 **Every bucket with n < 20 is LOW CONFIDENCE. Descriptive only; no proven edge.**
 
@@ -10,9 +10,9 @@ Account reset at 2026-11-12T01:26:22.307439+00:00 (reset4: exit-prompt-v2 (close
 
 | Group | n | Win rate | Net P&L | Avg win | Avg loss | Expectancy | Sample |
 |---|---:|---:|---:|---:|---:|---:|---|
-| Post-reset (since 2026-11-12T01:26Z) | 0 | n/a | $0.00 | n/a | n/a | n/a | LOW CONFIDENCE |
+| Post-reset (since 2026-11-12T01:26Z) | 1 | 0.0% | $-265.20 | n/a | $-265.20 | $-265.20 | LOW CONFIDENCE |
 | Pre-reset (archived account history) | 11 | 18.2% | $-4,819.25 | $746.73 | $-701.41 | $-438.11 | LOW CONFIDENCE |
-| All closed trades (both) | 11 | 18.2% | $-4,819.25 | $746.73 | $-701.41 | $-438.11 | LOW CONFIDENCE |
+| All closed trades (both) | 12 | 16.7% | $-5,084.45 | $746.73 | $-657.79 | $-423.70 | LOW CONFIDENCE |
 
 ## Pre-reset history by symbol
 
@@ -25,53 +25,73 @@ Account reset at 2026-11-12T01:26:22.307439+00:00 (reset4: exit-prompt-v2 (close
 
 Pre-reset entry skips: 498
 
-No closed paper trades yet. Win rate/expectancy are unavailable, not zero.
-
 ## Session
 
-No observations yet.
+| Group | n | Win rate | Net P&L | Avg win | Avg loss | Expectancy | Sample |
+|---|---:|---:|---:|---:|---:|---:|---|
+| LONDON_SESSION | 1 | 0.0% | $-265.20 | n/a | $-265.20 | $-265.20 | LOW CONFIDENCE |
 
 ## Value Area Position
 
-No observations yet.
+| Group | n | Win rate | Net P&L | Avg win | Avg loss | Expectancy | Sample |
+|---|---:|---:|---:|---:|---:|---:|---|
+| inside | 1 | 0.0% | $-265.20 | n/a | $-265.20 | $-265.20 | LOW CONFIDENCE |
 
 ## Cvd Agrees
 
-No observations yet.
+| Group | n | Win rate | Net P&L | Avg win | Avg loss | Expectancy | Sample |
+|---|---:|---:|---:|---:|---:|---:|---|
+| yes | 1 | 0.0% | $-265.20 | n/a | $-265.20 | $-265.20 | LOW CONFIDENCE |
 
 ## Rvol Spike
 
-No observations yet.
+| Group | n | Win rate | Net P&L | Avg win | Avg loss | Expectancy | Sample |
+|---|---:|---:|---:|---:|---:|---:|---|
+| no | 1 | 0.0% | $-265.20 | n/a | $-265.20 | $-265.20 | LOW CONFIDENCE |
 
 ## Vwap Aligned
 
-No observations yet.
+| Group | n | Win rate | Net P&L | Avg win | Avg loss | Expectancy | Sample |
+|---|---:|---:|---:|---:|---:|---:|---|
+| yes | 1 | 0.0% | $-265.20 | n/a | $-265.20 | $-265.20 | LOW CONFIDENCE |
 
 ## Ema50 Aligned
 
-No observations yet.
+| Group | n | Win rate | Net P&L | Avg win | Avg loss | Expectancy | Sample |
+|---|---:|---:|---:|---:|---:|---:|---|
+| yes | 1 | 0.0% | $-265.20 | n/a | $-265.20 | $-265.20 | LOW CONFIDENCE |
 
 ## Vwap Ema50 Aligned
 
-No observations yet.
+| Group | n | Win rate | Net P&L | Avg win | Avg loss | Expectancy | Sample |
+|---|---:|---:|---:|---:|---:|---:|---|
+| yes | 1 | 0.0% | $-265.20 | n/a | $-265.20 | $-265.20 | LOW CONFIDENCE |
 
 ## Confidence Band
 
-No observations yet.
+| Group | n | Win rate | Net P&L | Avg win | Avg loss | Expectancy | Sample |
+|---|---:|---:|---:|---:|---:|---:|---|
+| 0.7-0.8 | 1 | 0.0% | $-265.20 | n/a | $-265.20 | $-265.20 | LOW CONFIDENCE |
 
 ## Symbol
 
-No observations yet.
+| Group | n | Win rate | Net P&L | Avg win | Avg loss | Expectancy | Sample |
+|---|---:|---:|---:|---:|---:|---:|---|
+| EURUSD | 1 | 0.0% | $-265.20 | n/a | $-265.20 | $-265.20 | LOW CONFIDENCE |
 
 ## Exit Reason
 
-No observations yet.
+| Group | n | Win rate | Net P&L | Avg win | Avg loss | Expectancy | Sample |
+|---|---:|---:|---:|---:|---:|---:|---|
+| gemini_close | 1 | 0.0% | $-265.20 | n/a | $-265.20 | $-265.20 | LOW CONFIDENCE |
 
 ## Top combinations: Session × Value area × CVD agreement
 
 Ranked by net P&L; small samples are not a strategy recommendation.
 
-No observations yet.
+| Group | n | Win rate | Net P&L | Avg win | Avg loss | Expectancy | Sample |
+|---|---:|---:|---:|---:|---:|---:|---|
+| LONDON_SESSION × inside × CVD yes | 1 | 0.0% | $-265.20 | n/a | $-265.20 | $-265.20 | LOW CONFIDENCE |
 
 ## DLL / MLL / breaker breaches (log-only, 0)
 

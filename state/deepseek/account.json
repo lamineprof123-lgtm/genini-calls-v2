@@ -1,13 +1,13 @@
 {
   "version": 1,
   "created_at": "2026-11-12T18:11:32.211543+00:00",
-  "last_processed": "2026-11-12T20:52:00+00:00",
+  "last_processed": "2026-11-12T20:54:00+00:00",
   "account": {
     "no": 1,
     "phase": "eval",
     "started_at": "2026-11-12T18:11:32.211543+00:00",
     "start_balance": 100000.0,
-    "balance": 99995.4,
+    "balance": 98330.8,
     "highest_close": 100000.0,
     "mll_floor": 97000.0,
     "mll_locked": false,
@@ -18,207 +18,22 @@
     "cycle_day_pnl": {},
     "payouts": [],
     "trading_days": 0,
-    "realized_pnl": 0.0,
-    "trades": 0
+    "realized_pnl": -1669.2,
+    "trades": 1
   },
-  "positions": [
-    {
-      "id": 1,
-      "symbol": "XAUUSD",
-      "contract": "GC",
-      "qty": 2,
-      "side": 1,
-      "entry": 3885.1,
-      "stop": 3876.9,
-      "notional_risk_usd": 1320.0,
-      "target": 3893.3,
-      "entry_time": "2026-11-12T20:16:11.164365+00:00",
-      "exit_mode": "uniform-1atr-v1",
-      "fill_source": "live_quote:dukascopy:tick",
-      "fill_check": {
-        "fill_minute": "2026-11-12T20:16:00+00:00",
-        "fill_t": "2026-11-12T20:16:11.164365+00:00",
-        "ref_price": 3884.99,
-        "booked": 3885.1,
-        "slippage_ticks": 1,
-        "tick": 0.1,
-        "signal_entry": 3885.68,
-        "adverse_ticks_vs_quote": 1.1,
-        "m1_bar_open": 3884.99,
-        "quote_price": 3884.99,
-        "quote_ts": "2026-11-12T20:16:10.381000+00:00",
-        "quote_source": "dukascopy:tick",
-        "quote_age_s": 0.78,
-        "quote_fetched_at": "2026-11-12T20:16:11.164365+00:00",
-        "bar_open_minus_quote": 0.0,
-        "tolerance_ticks": 1.5,
-        "within_slippage": true
-      },
-      "risk_usd": null,
-      "target_usd": null,
-      "target_source": "none (gemini_only)",
-      "sizing": "gemini_only: notional 0.8 ATR = 6.6 x 100/pt = $660 per GC; 2 GC ~ $1,320 notional <= $1500 (reference only; NO stop, NO target, exit = Gemini CLOSE)",
-      "target_usd_gross": null,
-      "commission_rt": 9.2,
-      "atr": 8.195,
-      "gemini": {
-        "action": "BUY",
-        "entry": 3885.68,
-        "stop_loss": 3877.49,
-        "take_profit": 3893.88,
-        "confidence": 0.55,
-        "rr": null,
-        "shown_on_site": true,
-        "basis": "site signal",
-        "run_at_utc": "2026-11-12T20:15:20.003476+00:00",
-        "session": "NEW_YORK_SESSION",
-        "rationale": "Trend continuation blocked: -5.15 ATR from VWAP (>2.0) and only 0.204 ATR room to EMA20. Fade qualifies: F1 VAL 3881.94 rejected on the last closed bar, F2 VWAP magnet 5 ATR away. S1 room 1.796 up, S2 no (RVOL 0.749), S3 cvd_slope +1.64 turning up, S4 NY, S5 GEX POSITIVE_DAMPENING.",
-        "model": "deepseek-flash"
-      },
-      "scalp": {
-        "action": "BUY",
-        "side": 1,
-        "entry": 3884.99,
-        "stop_loss": 3880.43,
-        "take_profit": 3886.24,
-        "sdist": 4.55974999999944,
-        "tdist": 1.25,
-        "stop_source": "structure",
-        "target_source": "fixed",
-        "rr": 0.274,
-        "structure_stop": 3880.4302500000003,
-        "atr_stop": 3878.4339999999997,
-        "fixed_tp": 3886.24,
-        "structure_tp": 3924.2000000000003,
-        "structure_label": "S/R",
-        "candle": {
-          "high": 3886.25,
-          "low": 3880.84
-        },
-        "levels": [
-          {
-            "price": 3924.3,
-            "label": "S/R"
-          },
-          {
-            "price": 3968.55,
-            "label": "S/R"
-          },
-          {
-            "price": 3977.99,
-            "label": "Prev Low"
-          },
-          {
-            "price": 3852.35,
-            "label": "Session Low"
-          }
-        ],
-        "vp": {
-          "poc": 3978.13,
-          "vah": 4000.33,
-          "val": 3881.94
-        }
-      },
-      "telemetry": {
-        "symbol": "XAUUSD",
-        "session": "NEW_YORK_SESSION",
-        "last_close": 3886.1,
-        "atr": 8.195,
-        "vwap": 3927.89,
-        "ema20": 3884.01,
-        "ema50": 3905.77,
-        "price_vs_vwap": {
-          "side": "below",
-          "dist_atr": -5.0995
-        },
-        "price_vs_ema50": {
-          "side": "below",
-          "dist_atr": -2.4002
-        },
-        "vwap_aligned_with_side": false,
-        "ema50_aligned_with_side": false,
-        "poc": 3978.13,
-        "vah": 4000.33,
-        "val": 3881.94,
-        "price_vs_value_area": "inside",
-        "dist_to_poc_atr": -11.23,
-        "cvd": -4.36,
-        "cvd_label": "BEARISH",
-        "cvd_slope": 1.64,
-        "cvd_agrees_with_side": false,
-        "rvol": 0.749,
-        "rvol_spike": false,
-        "rvol_bars_since_spike": 25,
-        "atr_band_z": 0.255,
-        "atr_upper": 3900.4,
-        "atr_lower": 3867.62,
-        "nearest_sr": {
-          "above": {
-            "price": 3924.3,
-            "label": "S/R",
-            "dist_atr": 4.6614
-          },
-          "below": {
-            "price": 3852.35,
-            "label": "Session Low",
-            "dist_atr": 4.1184
-          }
-        },
-        "gemini": {
-          "action": "BUY",
-          "confidence": 0.55,
-          "confidence_band": "<0.6",
-          "rationale": "Trend continuation blocked: -5.15 ATR from VWAP (>2.0) and only 0.204 ATR room to EMA20. Fade qualifies: F1 VAL 3881.94 rejected on the last closed bar, F2 VWAP magnet 5 ATR away. S1 room 1.796 up, S2 no (RVOL 0.749), S3 cvd_slope +1.64 turning up, S4 NY, S5 GEX POSITIVE_DAMPENING.",
-          "model": "deepseek-flash",
-          "model_action": "BUY"
-        },
-        "scalp": {
-          "stop_basis": "structure",
-          "target_basis": "fixed",
-          "tdist": null,
-          "sdist": null,
-          "structure_label": "S/R",
-          "target_source": "none (gemini_only)"
-        },
-        "planned": {
-          "tdist": null,
-          "sdist": null,
-          "qty": 2,
-          "contract": "GC",
-          "target_usd_net": null,
-          "risk_usd": null,
-          "target_source": "none (gemini_only)",
-          "sizing": "gemini_only: notional 0.8 ATR = 6.6 x 100/pt = $660 per GC; 2 GC ~ $1,320 notional <= $1500 (reference only; NO stop, NO target, exit = Gemini CLOSE)"
-        },
-        "run_at_utc": "2026-11-12T20:15:20.003476+00:00",
-        "chart_path": null
-      },
-      "mfe": 1.6779999999998836,
-      "mae": 8.025000000000091,
-      "mfe_min": 0.0,
-      "time_cut_deadline": null,
-      "time_cut_candles": 0,
-      "time_cut_rule": "none: exit = Gemini CLOSE (1-strike) or hard stop -$500 NET; no target, no max hold, no 16:45 flat; DLL/MLL/breaker log-only",
-      "stop_note": "uniform_1atr",
-      "mech_target_atr": 1.0,
-      "uniform_exit": "uniform-1atr-v1",
-      "deadline": "2026-11-12T21:46:11.164365+00:00",
-      "model": "deepseek-flash",
-      "book": "DS-FLASH"
-    }
-  ],
+  "positions": [],
   "pending": [],
   "next_pos_id": 2,
   "day": {
     "id": "2026-11-12",
     "start_balance": 100000.0,
-    "realized": 0.0,
+    "realized": -1669.2,
     "locked": null,
     "eod_done": null,
     "traded": true
   },
   "last_price": {
-    "XAUUSD": 3877.855
+    "XAUUSD": 3876.295
   },
   "history": [],
   "ledger": {
@@ -233,13 +48,13 @@
     "payouts_gross": 0.0,
     "payouts_received": 0.0,
     "payout_count": 0,
-    "trades": 0,
+    "trades": 1,
     "wins": 0,
-    "losses": 0,
+    "losses": 1,
     "gross_win": 0.0,
-    "gross_loss": 0.0,
-    "commissions": 4.6,
-    "net_trade_pnl": 0.0,
+    "gross_loss": -1669.2,
+    "commissions": 9.2,
+    "net_trade_pnl": -1669.2,
     "skipped_signals": 0,
     "accepted_signals": 1
   },

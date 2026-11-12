@@ -1,7 +1,7 @@
 {
   "version": 1,
   "created_at": "2026-11-12T10:14:47.081605+00:00",
-  "last_processed": "2026-11-12T15:22:00+00:00",
+  "last_processed": "2026-11-12T15:24:00+00:00",
   "account": {
     "no": 1,
     "phase": "eval",
@@ -409,26 +409,26 @@
     {
       "symbol": "EURUSD",
       "side": -1,
-      "created": "2026-11-12T15:22:32.288352+00:00",
-      "fill_after": "2026-11-12T15:23:00+00:00",
+      "created": "2026-11-12T15:24:33.978504+00:00",
+      "fill_after": "2026-11-12T15:25:00+00:00",
       "reserved_risk": 0.0,
       "planned": null,
-      "expires": "2026-11-12T15:33:00+00:00",
+      "expires": "2026-11-12T15:35:00+00:00",
       "atr": 0.000799,
       "scalp": {
         "action": "SELL",
         "side": -1,
-        "entry": 1.10573,
+        "entry": 1.10555,
         "stop_loss": 1.10758,
-        "take_profit": 1.10448,
-        "sdist": 0.001849949999999767,
+        "take_profit": 1.1043,
+        "sdist": 0.002029949999999836,
         "tdist": 0.00125,
         "stop_source": "structure",
         "target_source": "fixed",
-        "rr": 0.676,
+        "rr": 0.616,
         "structure_stop": 1.1075799499999999,
-        "atr_stop": 1.1063692,
-        "fixed_tp": 1.1044800000000001,
+        "atr_stop": 1.1061892,
+        "fixed_tp": 1.1043,
         "structure_tp": null,
         "structure_label": null,
         "candle": {
@@ -458,15 +458,15 @@
           "vah": 1.10973,
           "val": 1.10789
         },
-        "target_scalp": 1.10448,
+        "target_scalp": 1.1043,
         "lucid_plan": {
           "contract": "6E",
           "qty": 5,
           "tdist": 0.00125,
           "target_usd": 757.25,
-          "risk_usd": 1156.25,
+          "risk_usd": 1281.25,
           "target_source": "fixed",
-          "sizing": "fixed target 0.00125 reaches $757 net with 5 6E (risk $1156)"
+          "sizing": "fixed target 0.00125 reaches $757 net with 5 6E (risk $1281)"
         }
       },
       "session": "LONDON_NY_OVERLAP",
@@ -515,7 +515,7 @@
           "action": "SELL",
           "confidence": 0.72,
           "confidence_band": "0.7-0.8",
-          "rationale": "EURUSD is trading well below VAL (1.10789) and POC (1.10946). Price and the forming candle are breaking below Session Low (1.10643) and trading beneath the lower ATR band (1.10688). CVD is NEUTRAL (-6448) with sharp negative acceleration (slope -11953) confirming fresh downside flow in LONDON_NY_OVERLAP. Price is rejected firmly below VWAP (1.10858) and EMA50 (1.10872). While RVOL is moderate (1.28) without yellow spikes, downward momentum expansion supports continued scalping downside.",
+          "rationale": "Price is below VAL (1.10789) and below POC (1.10946). CVD is NEUTRAL (-6448.27) with accelerating negative slope (-11953.21). Session is LONDON_NY_OVERLAP. Price broke decisively below VWAP (1.10858) and EMA50 (1.10872). Expanding below the lower ATR band (1.10688) with live price breaking Session Low (1.10643). RVOL is 1.283 (no yellow spike yet, but strong momentum flush). SELL continuation favored.",
           "model": "gemini-3.8-flash",
           "model_action": "SELL"
         },
@@ -523,180 +523,32 @@
           "stop_basis": "structure",
           "target_basis": "fixed",
           "tdist": 0.00125,
-          "sdist": 0.001849949999999767,
+          "sdist": 0.002029949999999836,
           "structure_label": null
         },
         "planned": {
           "tdist": 0.00125,
-          "sdist": 0.001849949999999767,
+          "sdist": 0.002029949999999836,
           "qty": null,
           "contract": null,
           "target_usd_net": null,
           "risk_usd": null
         },
-        "run_at_utc": "2026-11-12T15:22:20.291637+00:00",
-        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-12/cycles/192220.json/EURUSD.png"
+        "run_at_utc": "2026-11-12T15:24:20.254295+00:00",
+        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-12/cycles/192420.json/EURUSD.png"
       },
       "gemini": {
         "action": "SELL",
-        "entry": 1.10573,
+        "entry": 1.10555,
         "stop_loss": 1.10758,
-        "take_profit": 1.10448,
+        "take_profit": 1.1043,
         "confidence": 0.72,
-        "rr": 0.676,
+        "rr": 0.616,
         "shown_on_site": true,
         "basis": "site signal",
-        "run_at_utc": "2026-11-12T15:22:20.291637+00:00",
+        "run_at_utc": "2026-11-12T15:24:20.254295+00:00",
         "session": "LONDON_NY_OVERLAP",
-        "rationale": "EURUSD is trading well below VAL (1.10789) and POC (1.10946). Price and the forming candle are breaking below Session Low (1.10643) and trading beneath the lower ATR band (1.10688). CVD is NEUTRAL (-6448) with sharp negative acceleration (slope -11953) confirming fresh downside flow in LONDON_NY_OVERLAP. Price is rejected firmly below VWAP (1.10858) and EMA50 (1.10872). While RVOL is moderate (1.28) without yellow spikes, downward momentum expansion supports continued scalping downside.",
-        "model": "gemini-3.8-flash"
-      }
-    },
-    {
-      "symbol": "US100",
-      "side": 1,
-      "created": "2026-11-12T15:22:32.288352+00:00",
-      "fill_after": "2026-11-12T15:23:00+00:00",
-      "reserved_risk": 0.0,
-      "planned": null,
-      "expires": "2026-11-12T15:33:00+00:00",
-      "atr": 96.021,
-      "scalp": {
-        "action": "BUY",
-        "side": 1,
-        "entry": 28206.87,
-        "stop_loss": 28098.02,
-        "take_profit": 28207.25,
-        "sdist": 108.85104999999749,
-        "tdist": 0.3795800000007148,
-        "stop_source": "structure",
-        "target_source": "structure:S/R",
-        "rr": 0.003,
-        "structure_stop": 28098.01895,
-        "atr_stop": 28130.0532,
-        "fixed_tp": 28211.87,
-        "structure_tp": 28207.24958,
-        "structure_label": "S/R",
-        "candle": {
-          "high": 28266.81,
-          "low": 28102.82
-        },
-        "levels": [
-          {
-            "price": 28209.17,
-            "label": "S/R"
-          },
-          {
-            "price": 28295.74,
-            "label": "Session High"
-          },
-          {
-            "price": 28596.5,
-            "label": "Prev High"
-          },
-          {
-            "price": 28083.64,
-            "label": "S/R"
-          },
-          {
-            "price": 28030.0,
-            "label": "S/R"
-          },
-          {
-            "price": 27912.13,
-            "label": "Session Low"
-          }
-        ],
-        "vp": {
-          "poc": 28115.45,
-          "vah": 28203.68,
-          "val": 28073.25
-        }
-      },
-      "session": "LONDON_NY_OVERLAP",
-      "telemetry": {
-        "symbol": "US100",
-        "session": "LONDON_NY_OVERLAP",
-        "last_close": 28157.54,
-        "atr": 96.021,
-        "vwap": 28123.64,
-        "ema20": 28104.75,
-        "ema50": 28129.04,
-        "price_vs_vwap": {
-          "side": "above",
-          "dist_atr": 0.353
-        },
-        "price_vs_ema50": {
-          "side": "above",
-          "dist_atr": 0.2968
-        },
-        "vwap_aligned_with_side": true,
-        "ema50_aligned_with_side": true,
-        "poc": 28115.45,
-        "vah": 28203.68,
-        "val": 28073.25,
-        "price_vs_value_area": "inside",
-        "dist_to_poc_atr": 0.4383,
-        "cvd": -2.32,
-        "cvd_label": "NEUTRAL",
-        "cvd_slope": 1.8,
-        "cvd_agrees_with_side": true,
-        "rvol": 1.91,
-        "rvol_spike": false,
-        "rvol_bars_since_spike": 1,
-        "atr_band_z": 0.5498,
-        "atr_upper": 28296.79,
-        "atr_lower": 27912.71,
-        "nearest_sr": {
-          "above": {
-            "price": 28209.17,
-            "label": "S/R",
-            "dist_atr": 0.5377
-          },
-          "below": {
-            "price": 28083.64,
-            "label": "S/R",
-            "dist_atr": 0.7696
-          }
-        },
-        "gemini": {
-          "action": "BUY",
-          "confidence": 0.75,
-          "confidence_band": "0.7-0.8",
-          "rationale": "US100 trades inside the Value Area (VAL 28073.25 to VAH 28203.68) and above POC (28115.45). Session is LONDON_NY_OVERLAP. Price reclaimed VWAP (28123.64) and EMA50 (28129.04). GEX regime is POSITIVE_DAMPENING with price holding above Gamma Flip (28149.94) and pushing toward Call Wall #1 at 28427.0 with ample runway. CVD slope is positive (+1.8). RVOL is elevated at 1.91 (approaching 2.0, robust for Dukascopy index CFD). Intrabar pullback offers long scalp continuation toward VAH and upper ATR band.",
-          "model": "gemini-3.8-flash",
-          "model_action": "BUY"
-        },
-        "scalp": {
-          "stop_basis": "structure",
-          "target_basis": "structure:S/R",
-          "tdist": 0.3795800000007148,
-          "sdist": 108.85104999999749,
-          "structure_label": "S/R"
-        },
-        "planned": {
-          "tdist": 0.3795800000007148,
-          "sdist": 108.85104999999749,
-          "qty": null,
-          "contract": null,
-          "target_usd_net": null,
-          "risk_usd": null
-        },
-        "run_at_utc": "2026-11-12T15:22:20.291637+00:00",
-        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-12/cycles/192220.json/US100.png"
-      },
-      "gemini": {
-        "action": "BUY",
-        "entry": 28206.87,
-        "stop_loss": 28098.02,
-        "take_profit": 28207.25,
-        "confidence": 0.75,
-        "rr": 0.003,
-        "shown_on_site": true,
-        "basis": "site signal",
-        "run_at_utc": "2026-11-12T15:22:20.291637+00:00",
-        "session": "LONDON_NY_OVERLAP",
-        "rationale": "US100 trades inside the Value Area (VAL 28073.25 to VAH 28203.68) and above POC (28115.45). Session is LONDON_NY_OVERLAP. Price reclaimed VWAP (28123.64) and EMA50 (28129.04). GEX regime is POSITIVE_DAMPENING with price holding above Gamma Flip (28149.94) and pushing toward Call Wall #1 at 28427.0 with ample runway. CVD slope is positive (+1.8). RVOL is elevated at 1.91 (approaching 2.0, robust for Dukascopy index CFD). Intrabar pullback offers long scalp continuation toward VAH and upper ATR band.",
+        "rationale": "Price is below VAL (1.10789) and below POC (1.10946). CVD is NEUTRAL (-6448.27) with accelerating negative slope (-11953.21). Session is LONDON_NY_OVERLAP. Price broke decisively below VWAP (1.10858) and EMA50 (1.10872). Expanding below the lower ATR band (1.10688) with live price breaking Session Low (1.10643). RVOL is 1.283 (no yellow spike yet, but strong momentum flush). SELL continuation favored.",
         "model": "gemini-3.8-flash"
       }
     }
@@ -711,9 +563,9 @@
     "traded": true
   },
   "last_price": {
-    "US100": 28159.35,
+    "US100": 28198.76,
     "XAUUSD": 3859.66,
-    "EURUSD": 1.10582,
+    "EURUSD": 1.10563,
     "GBPUSD": 1.32366
   },
   "history": [],
@@ -743,8 +595,8 @@
     "gross_loss": -12707.85,
     "commissions": 611.6,
     "net_trade_pnl": -1899.8,
-    "skipped_signals": 16,
-    "accepted_signals": 80
+    "skipped_signals": 18,
+    "accepted_signals": 81
   },
   "reset_token": "2026-11-12-profit-lock",
   "reset_at": "2026-11-12T10:14:47.081605+00:00",

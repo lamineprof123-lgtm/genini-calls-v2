@@ -67,9 +67,9 @@
   ],
   "last_price": {
     "US100": 28176.49,
-    "XAUUSD": 3855.75,
+    "XAUUSD": 3853.05,
     "EURUSD": 1.10821,
-    "GBPUSD": 1.32253
+    "GBPUSD": 1.32256
   },
   "books": {
     "1-strike": {
@@ -98,15 +98,15 @@
           "fill_source": "live_quote:dukascopy:tick",
           "book": "1-strike",
           "strikes": 0,
-          "mfe": 0.0018299999999999983,
+          "mfe": 0.0018400000000000638,
           "mae": 0.00024000000000001798,
-          "scan_from": "2026-11-12T15:20:00+00:00",
-          "checks": 45,
+          "scan_from": "2026-11-12T15:22:00+00:00",
+          "checks": 52,
           "opened_at": "2026-11-12T15:09:11.498404+00:00",
-          "hard_stop_ok_t": "2026-11-12T15:22:21.893787+00:00",
+          "hard_stop_ok_t": "2026-11-12T15:24:27.893682+00:00",
           "giveback_hist": [
-            6.6,
-            8.7
+            7.1,
+            10.9
           ]
         },
         {
@@ -132,12 +132,12 @@
           "fill_source": "live_quote:dukascopy:tick",
           "book": "1-strike",
           "strikes": 0,
-          "mfe": 2.5899999999996908,
+          "mfe": 5.281999999999698,
           "mae": 2.5700000000001637,
-          "scan_from": "2026-11-12T15:20:00+00:00",
-          "checks": 12,
+          "scan_from": "2026-11-12T15:22:00+00:00",
+          "checks": 19,
           "opened_at": "2026-11-12T15:19:11.117226+00:00",
-          "hard_stop_ok_t": "2026-11-12T15:22:21.893787+00:00",
+          "hard_stop_ok_t": "2026-11-12T15:24:27.893682+00:00",
           "giveback_hist": [
             0.0,
             0.0
@@ -194,14 +194,14 @@
           "fill_source": "live_quote:dukascopy:tick",
           "book": "nostop",
           "strikes": 0,
-          "mfe": 0.0018299999999999983,
+          "mfe": 0.0018400000000000638,
           "mae": 0.00024000000000001798,
-          "scan_from": "2026-11-12T15:20:00+00:00",
-          "checks": 45,
+          "scan_from": "2026-11-12T15:22:00+00:00",
+          "checks": 52,
           "opened_at": "2026-11-12T15:09:11.498404+00:00",
           "giveback_hist": [
-            6.6,
-            8.7
+            7.1,
+            10.9
           ]
         },
         {
@@ -225,10 +225,10 @@
           "fill_source": "live_quote:dukascopy:tick",
           "book": "nostop",
           "strikes": 0,
-          "mfe": 2.5899999999996908,
+          "mfe": 5.281999999999698,
           "mae": 2.5700000000001637,
-          "scan_from": "2026-11-12T15:20:00+00:00",
-          "checks": 12,
+          "scan_from": "2026-11-12T15:22:00+00:00",
+          "checks": 19,
           "opened_at": "2026-11-12T15:19:11.117226+00:00",
           "giveback_hist": [
             0.0,
@@ -335,73 +335,7 @@
     59,
     61
   ],
-  "post_exit": [
-    {
-      "book": "1-strike",
-      "id": 59,
-      "symbol": "XAUUSD",
-      "contract": "GC",
-      "qty": 1,
-      "side": "SHORT",
-      "exit": 3858.1,
-      "t_exit": "2026-11-12T15:16:39.878258+00:00",
-      "reason": "gemini_close",
-      "net": 775.4,
-      "due": "2026-11-12T15:21:39.878258+00:00"
-    },
-    {
-      "book": "nostop",
-      "id": 59,
-      "symbol": "XAUUSD",
-      "contract": "GC",
-      "qty": 1,
-      "side": "SHORT",
-      "exit": 3858.1,
-      "t_exit": "2026-11-12T15:16:39.878258+00:00",
-      "reason": "gemini_close",
-      "net": 775.4,
-      "due": "2026-11-12T15:21:39.878258+00:00"
-    },
-    {
-      "book": "1-strike",
-      "id": 61,
-      "symbol": "US100",
-      "contract": "NQ",
-      "qty": 1,
-      "side": "LONG",
-      "exit": 28176.25,
-      "t_exit": "2026-11-12T15:17:51.889071+00:00",
-      "reason": "gemini_close",
-      "net": -383.5,
-      "due": "2026-11-12T15:22:51.889071+00:00"
-    },
-    {
-      "book": "nostop",
-      "id": 61,
-      "symbol": "US100",
-      "contract": "NQ",
-      "qty": 1,
-      "side": "LONG",
-      "exit": 28176.25,
-      "t_exit": "2026-11-12T15:17:51.889071+00:00",
-      "reason": "gemini_close",
-      "net": -383.5,
-      "due": "2026-11-12T15:22:51.889071+00:00"
-    },
-    {
-      "book": "baseline",
-      "id": 61,
-      "symbol": "US100",
-      "contract": "NQ",
-      "qty": 1,
-      "side": "LONG",
-      "exit": 28176.25,
-      "t_exit": "2026-11-12T15:18:00+00:00",
-      "reason": "gemini_close",
-      "net": -383.5,
-      "due": "2026-11-12T15:23:00+00:00"
-    }
-  ],
+  "post_exit": [],
   "retired_books": {
     "2-strike": {
       "balance": 96846.25,

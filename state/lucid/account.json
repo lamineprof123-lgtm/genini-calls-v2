@@ -1,7 +1,7 @@
 {
   "version": 1,
   "created_at": "2026-11-12T09:00:41.662867+00:00",
-  "last_processed": "2026-11-12T09:30:00+00:00",
+  "last_processed": "2026-11-12T09:32:00+00:00",
   "account": {
     "no": 1,
     "phase": "eval",
@@ -184,14 +184,165 @@
         "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-12/cycles/132020.json/XAUUSD.png"
       },
       "mfe": 0.0,
-      "mae": 8.565000000000055,
+      "mae": 9.574999999999818,
       "mfe_min": 0.0,
       "time_cut_deadline": null,
       "time_cut_candles": 0,
       "time_cut_rule": "none: exit = Gemini CLOSE only (1-strike); no stop, no target, no max hold, no 16:45 flat; DLL/MLL/breaker log-only"
     }
   ],
-  "pending": [],
+  "pending": [
+    {
+      "symbol": "US100",
+      "side": 1,
+      "created": "2026-11-12T09:32:34.027072+00:00",
+      "fill_after": "2026-11-12T09:33:00+00:00",
+      "reserved_risk": 0.0,
+      "planned": {
+        "contract": "NQ",
+        "qty": 1,
+        "risk_usd": null,
+        "tdist": null,
+        "target_source": "none (gemini_only)"
+      },
+      "expires": "2026-11-12T09:43:00+00:00",
+      "atr": 49.177,
+      "scalp": {
+        "action": "BUY",
+        "side": 1,
+        "entry": 28189.71,
+        "stop_loss": 28112.55,
+        "take_profit": 28194.71,
+        "sdist": 77.1588499999998,
+        "tdist": 5.0,
+        "stop_source": "structure",
+        "target_source": "fixed",
+        "rr": 0.065,
+        "structure_stop": 28112.55115,
+        "atr_stop": 28150.3684,
+        "fixed_tp": 28194.71,
+        "structure_tp": 28264.726459999998,
+        "structure_label": "Session High",
+        "candle": {
+          "high": 28164.21,
+          "low": 28115.01
+        },
+        "levels": [
+          {
+            "price": 28265.71,
+            "label": "Session High"
+          },
+          {
+            "price": 28596.5,
+            "label": "Prev High"
+          },
+          {
+            "price": 28083.64,
+            "label": "S/R"
+          },
+          {
+            "price": 28030.0,
+            "label": "Session Low"
+          },
+          {
+            "price": 27992.31,
+            "label": "S/R"
+          }
+        ],
+        "vp": {
+          "poc": 28117.21,
+          "vah": 28166.71,
+          "val": 28072.42
+        }
+      },
+      "session": "LONDON_SESSION",
+      "telemetry": {
+        "symbol": "US100",
+        "session": "LONDON_SESSION",
+        "last_close": 28163.54,
+        "atr": 49.177,
+        "vwap": 28127.18,
+        "ema20": 28120.19,
+        "ema50": 28161.47,
+        "price_vs_vwap": {
+          "side": "above",
+          "dist_atr": 0.7394
+        },
+        "price_vs_ema50": {
+          "side": "above",
+          "dist_atr": 0.0421
+        },
+        "vwap_aligned_with_side": true,
+        "ema50_aligned_with_side": true,
+        "poc": 28117.21,
+        "vah": 28166.71,
+        "val": 28072.42,
+        "price_vs_value_area": "inside",
+        "dist_to_poc_atr": 0.9421,
+        "cvd": -2.22,
+        "cvd_label": "BEARISH",
+        "cvd_slope": 0.96,
+        "cvd_agrees_with_side": false,
+        "rvol": 1.048,
+        "rvol_spike": false,
+        "rvol_bars_since_spike": 68,
+        "atr_band_z": 0.8815,
+        "atr_upper": 28218.54,
+        "atr_lower": 28021.83,
+        "nearest_sr": {
+          "above": {
+            "price": 28265.71,
+            "label": "Session High",
+            "dist_atr": 2.0776
+          },
+          "below": {
+            "price": 28083.64,
+            "label": "S/R",
+            "dist_atr": 1.6247
+          }
+        },
+        "gemini": {
+          "action": "BUY",
+          "confidence": 0.72,
+          "confidence_band": "0.7-0.8",
+          "rationale": "Evaluated checklist: 1) VP context: Price has broken out above VAH 28166.71 and is above POC 28117.21. 2) CVD is -2.22 (BEARISH label) but slope is positive (+0.96) and tick volume is naturally small on Dukascopy index CFD. 3) Session is LONDON_SESSION. 4) Price decisively crossed and closed above VWAP (28127.18) and EMA50 (28161.47) with expanding green candles. 5) Price is expanding toward ATR upper band (28218.54). 6) RVOL is 1.048, adhering to the US100 caveat where index CFD tick volume rarely prints yellow spikes. 7) Clear structural reclaim of EMA50 with room to Session High at 28265.71. GEX is null outside NY cash hours.",
+          "model": "gemini-3.8-flash",
+          "model_action": "BUY"
+        },
+        "scalp": {
+          "stop_basis": "structure",
+          "target_basis": "fixed",
+          "tdist": 5.0,
+          "sdist": 77.1588499999998,
+          "structure_label": "Session High"
+        },
+        "planned": {
+          "tdist": 5.0,
+          "sdist": 77.1588499999998,
+          "qty": null,
+          "contract": null,
+          "target_usd_net": null,
+          "risk_usd": null
+        },
+        "run_at_utc": "2026-11-12T09:32:20.186471+00:00",
+        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-12/cycles/133220.json/US100.png"
+      },
+      "gemini": {
+        "action": "BUY",
+        "entry": 28189.71,
+        "stop_loss": 28112.55,
+        "take_profit": 28194.71,
+        "confidence": 0.72,
+        "rr": 0.065,
+        "shown_on_site": true,
+        "basis": "site signal",
+        "run_at_utc": "2026-11-12T09:32:20.186471+00:00",
+        "session": "LONDON_SESSION",
+        "rationale": "Evaluated checklist: 1) VP context: Price has broken out above VAH 28166.71 and is above POC 28117.21. 2) CVD is -2.22 (BEARISH label) but slope is positive (+0.96) and tick volume is naturally small on Dukascopy index CFD. 3) Session is LONDON_SESSION. 4) Price decisively crossed and closed above VWAP (28127.18) and EMA50 (28161.47) with expanding green candles. 5) Price is expanding toward ATR upper band (28218.54). 6) RVOL is 1.048, adhering to the US100 caveat where index CFD tick volume rarely prints yellow spikes. 7) Clear structural reclaim of EMA50 with room to Session High at 28265.71. GEX is null outside NY cash hours.",
+        "model": "gemini-3.8-flash"
+      }
+    }
+  ],
   "next_pos_id": 4,
   "day": {
     "id": "2026-11-12",
@@ -202,7 +353,7 @@
     "traded": true
   },
   "last_price": {
-    "XAUUSD": 3937.925,
+    "XAUUSD": 3939.025,
     "EURUSD": 1.10917
   },
   "history": [],
@@ -233,7 +384,7 @@
     "commissions": 129.0,
     "net_trade_pnl": -604.4,
     "skipped_signals": 0,
-    "accepted_signals": 3
+    "accepted_signals": 4
   },
   "reset_token": "2026-11-12-exitcheck-fix",
   "reset_at": "2026-11-12T09:00:41.662867+00:00",

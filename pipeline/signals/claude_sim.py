@@ -129,7 +129,7 @@ async def _default_render(payloads: list[dict]) -> dict[str, bytes]:
 class ClaudeEngine:
     def __init__(self, cfg: dict, io_lock: asyncio.Lock | None = None, *, state_dir=None, logs_dir=None,
                  site_dir=None, snapshot=None, m1_fetch=None, h1_fetch=None, render=None, entry_api=None,
-                 exit_api=None, rng: random.Random | None = None, key_fn=None):
+                 exit_api=None, rng: random.Random | None = None, key_fn=None, quote_fetch=None):
         self.cfg = cfg
         self.cc = claude_cfg(cfg)
         self.r = rules_cfg(self.cc)
@@ -145,6 +145,7 @@ class ClaudeEngine:
         self.io_lock = io_lock or asyncio.Lock()
         self.mu = asyncio.Lock()
         self._snapshot = snapshot or _default_snapshot
+        self._quote_fetch = quote_fetch
         self._m1 = m1_fetch or _default_m1
         self._h1 = h1_fetch or _default_h1
         self._render = render or _default_render
@@ -395,9 +396,22 @@ class ClaudeEngine:
         await self.publish(now)
         return out
 
+    async def _fill_quotes(self, syms: list[str], t: datetime) -> dict[str, dict]:
+        """Fresh live quotes from the SAME path the 18 s exit checks use (enrich_live_prices: Dukascopy tick bid /
+        FirmTape NQ + basis). With an injected snapshot (tests / dry runs) the quote is read from it."""
+        from .live_price import fetch_fill_quotes, fill_quote_from_context
+        if self._quote_fetch is not None:
+            return await self._quote_fetch(syms, self.cfg, t)
+        if self._snapshot is _default_snapshot:
+            return await fetch_fill_quotes(syms, self.cfg, t)
+        got = await asyncio.gather(*[self._snapshot(s, self.cfg, t) for s in syms], return_exceptions=True)
+        return {s: fill_quote_from_context(s, r[0].get("context") or {}) for s, r in zip(syms, got)
+                if not isinstance(r, BaseException) and r and r[0]}
+
     async def _refresh_live(self, res, now: datetime) -> None:
-        """Fresh M1 price for symbols with a tradable signal, so the fill is at the price when the answer
-        arrives (entry calls can take 20-60 s), not at the price the charts were drawn with."""
+        """Fresh live quote for symbols with a tradable signal, taken when the answer arrives (entry calls take
+        20-60 s), so the fill is at the market at fill time, not at the price the charts were drawn with. The
+        last finished M1 close is NOT used: it is 1-2 minutes old (same bug as the Gemini sim, 12 Nov)."""
         want = set()
         for r in res:
             if isinstance(r, dict):
@@ -405,13 +419,19 @@ class ClaudeEngine:
                     if isinstance(s, dict) and s.get("action") in ("BUY", "SELL"):
                         want.add(str(s.get("symbol") or "").upper())
         want &= set(self.symmap)
+        fq = self.eng.setdefault("fill_quotes", {})
+        fq.clear()
         if not want:
             return
         t = datetime.now(UTC)
-        got = await asyncio.gather(*[self._m1(s, self.cfg, t) for s in want], return_exceptions=True)
-        for s, df in zip(want, got):
-            if not isinstance(df, Exception) and df is not None and len(df):
-                self.eng.setdefault("live", {})[s] = {"price": float(df["close"].iloc[-1]), "t": _iso(t)}
+        try:
+            quotes = await self._fill_quotes(sorted(want), t)
+        except Exception as e:
+            log.warning("claude fill quotes failed: %s", e)
+            quotes = {}
+        for s, q in (quotes or {}).items():
+            if q and q.get("price") is not None:
+                fq[s] = {**q, "at": q.get("fetched_at") or _iso(t)}
 
     def _log_call(self, sid: str, kind: str, model: str, r: dict, t: datetime, **extra) -> None:
         u = r.get("usage") or {}
@@ -508,13 +528,28 @@ class ClaudeEngine:
         if lr:
             return lr
         ref = float(ctx.get("live_price") or ctx.get("last_close"))
-        last = (self.eng.get("live") or {}).get(sym)
-        fill_ref = ref
-        if last and last.get("t") and (now - _dt(last["t"])).total_seconds() < 30:
-            fill_ref = float(last["price"])
+        # Fill at the fresh live quote taken when the answer arrived (same feed as the exit checks / stop).
+        from .live_price import FILL_QUOTE_MAX_AGE_S, FILL_QUOTE_SOURCES, fill_quote_problem
+        q = (self.eng.get("fill_quotes") or {}).get(sym)
+        bad = fill_quote_problem(q, sources=tuple(self.L.get("fill_quote_sources") or FILL_QUOTE_SOURCES),
+                                 max_age_s=float(self.L.get("fill_quote_max_age_s", FILL_QUOTE_MAX_AGE_S)))
+        if not bad and (now - _dt(q["at"])).total_seconds() > 30:
+            bad = f"live quote taken {(now - _dt(q['at'])).total_seconds():.0f}s before the fill"
+        if bad:
+            return f"no fresh live quote at fill time: {bad}"
+        fill_ref, fill_t = float(q["price"]), _dt(q["at"])
         if side * (fill_ref - ref) > self.r["max_chase_atr"] * atr:
             return f"price ran {side * (fill_ref - ref) / atr:.2f} ATR past the signal (> {self.r['max_chase_atr']})"
-        fill = round_tick(fill_ref + side * int(self.r["slippage_ticks"]) * float(sp["tick"]), float(sp["tick"]))
+        tick = float(sp["tick"])
+        fill = round_tick(fill_ref + side * int(self.r["slippage_ticks"]) * tick, tick)
+        fill_source = f"live_quote:{q.get('source')}"
+        fill_check = {"fill_t": _iso(fill_t), "quote_price": fill_ref, "quote_ts": q.get("ts"),
+                      "quote_source": q.get("source"), "quote_age_s": q.get("age_s"), "booked": fill,
+                      "slippage_ticks": int(self.r["slippage_ticks"]), "tick": tick,
+                      "adverse_ticks_vs_quote": round(side * (fill - fill_ref) / tick, 3),
+                      "tolerance_ticks": int(self.r["slippage_ticks"]) + 0.5,   # slippage + half-tick grid rounding
+                      "within_slippage": abs(fill - fill_ref) <= tick * (int(self.r["slippage_ticks"]) + 0.5) + 1e-9,
+                      "chart_live_price": ref}
         stop, dist, note = clamp_stop(side, fill, v.get("stop_loss"), atr, self.r)
         if stop is None:
             return note
@@ -529,9 +564,10 @@ class ClaudeEngine:
             return g
         pid = sim["next_id"]
         sim["next_id"] = pid + 1
-        pos = self._vtrade("real", sim["sim"], sym, side, fill, stop, atr, now, qty=qty,
+        pos = self._vtrade("real", sim["sim"], sym, side, fill, stop, atr, fill_t, qty=qty,
                            setup_type=v["setup_type"], score=v["score"], confidence=v["confidence"],
-                           session=ctx.get("session"), model=v["model"], bar=v["bar"], stop_note=note)
+                           session=ctx.get("session"), model=v["model"], bar=v["bar"], stop_note=note,
+                           fill_source=fill_source, fill_check=fill_check)
         pos.update({"id": pid, "model_stop": v.get("stop_loss"), "take_profit": v.get("take_profit"),
                     "rationale": (v.get("rationale") or "")[:300], "risk_usd": round(new_risk, 2),
                     "signal_price": ref, "exit_fail": 0, "checks": 0, "server_only": False})
@@ -545,7 +581,8 @@ class ClaudeEngine:
                                             "symbol": sym, "side": _side_word(side), "qty": qty, "contract": c,
                                             "entry": fill, "stop": stop, "stop_note": note,
                                             "risk_usd": round(new_risk, 2), "score": v["score"],
-                                            "setup_type": v["setup_type"]}, now)
+                                            "setup_type": v["setup_type"], "fill_source": fill_source,
+                                            "fill_check": fill_check}, now)
         log.info("claude %s OPEN #%d %s %s %d %s @ %s stop %s (%s) risk $%.0f", sim["sim"], pid, sym,
                  _side_word(side), qty, c, fill, stop, note, new_risk)
         return None
@@ -587,7 +624,8 @@ class ClaudeEngine:
                 "mfe_atr": round(float(t.get("mfe_pts") or 0) / atr, 3), "mae_atr": round(float(t.get("mae_pts") or 0) / atr, 3),
                 "reach_05_before_stop": t.get("reach_05"), "setup_type": t.get("setup_type"), "score": t.get("score"),
                 "confidence": t.get("confidence"), "session": t.get("session"), "gated": t.get("gated"),
-                "model": t.get("model"), "bar": t.get("bar"), "hold_seconds": int(hold), **(extra or {})}
+                "model": t.get("model"), "bar": t.get("bar"), "hold_seconds": int(hold),
+                "fill_source": t.get("fill_source"), "fill_check": t.get("fill_check"), **(extra or {})}
 
     # ---------------- exit tick (18 s)
     def has_work(self) -> bool:

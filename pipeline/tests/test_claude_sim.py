@@ -176,6 +176,7 @@ def _payload(sym, price, atr, bar="2026-11-11T14:45:00+00:00", session="NEW_YORK
     return {"symbol": sym, "source": "dukascopy", "ticker": sym.lower(), "timeframe": "M15", "digits": 2,
             "style": {"template": "chart_v2.html", "width": 1280, "height": 720}, "candles": [],
             "context": {"last_closed_bar_utc": bar, "digits": 2, "atr": atr, "live_price": price,
+                        "live_price_source": "dukascopy:tick", "live_price_age_s": 0.4,
                         "last_close": price, "live_price_stale": False, "session": session,
                         "session_blocks_automation": session in ("ASIAN_SESSION_CHOP", "LOW_LIQUIDITY_DEADZONE"),
                         "signal_candle": {"open": price, "high": price + 1, "low": price - 1, "close": price},
@@ -362,3 +363,54 @@ def test_gha_loop_claude_isolated(tmp_path):
     g.start_claude()
     assert g.claude is None
     g.schedule_claude({"payloads": PAYLOADS})      # no engine -> no-op, no error
+
+
+# ------------------------------------------------------------------ fills at the live quote (12 Nov fix)
+def _eur_sell_answers():
+    return {OPUS: [_sig("XAUUSD"), _sig("EURUSD", "SELL", 7, "fade", 0.62, stop=1.1006), _sig("GBPUSD"),
+                   _sig("US100")],
+            SON: [_sig("XAUUSD"), _sig("EURUSD"), _sig("GBPUSD"), _sig("US100")]}
+
+
+def test_claude_fill_at_fresh_live_quote_minus_one_tick(tmp_path):
+    eng, _ = _engine(tmp_path, _eur_sell_answers())
+    asked = []
+
+    async def quotes(syms, cfg, t):
+        asked.append(list(syms))
+        return {"EURUSD": {"price": 1.10012, "ts": t.isoformat(), "fetched_at": t.isoformat(),
+                           "source": "dukascopy:tick", "age_s": 0.8, "stale": False}}
+    eng._quote_fetch = quotes
+    asyncio.run(eng.on_cycle(PAYLOADS, now=T0))
+    assert asked == [["EURUSD"]]
+    p = eng.sims["C-OPUS"]["positions"][0]
+    assert p["entry"] == pytest.approx(1.10005)                 # 1.10012 - 1 tick (0.00005), on the tick grid
+    assert p["fill_source"] == "live_quote:dukascopy:tick"
+    fc = p["fill_check"]
+    assert fc["quote_price"] == 1.10012 and fc["booked"] == p["entry"] and fc["within_slippage"] is True
+    assert fc["chart_live_price"] == 1.1                        # the chart price is NOT the fill
+    assert p["entry_time"] == eng.eng["fill_quotes"]["EURUSD"]["at"]
+    ev = [json.loads(l) for l in open(next((tmp_path / "logs").glob("*/claude_events.jsonl")))]
+    assert [e for e in ev if e["event"] == "open"][0]["fill_check"]["within_slippage"] is True
+
+
+def test_claude_no_fill_on_stale_m1_quote(tmp_path):
+    eng, _ = _engine(tmp_path, _eur_sell_answers())
+
+    async def quotes(syms, cfg, t):
+        return {"EURUSD": {"price": 1.0990, "ts": t.isoformat(), "fetched_at": t.isoformat(),
+                           "source": "dukascopy:m1", "age_s": 70.0, "stale": False}}
+    eng._quote_fetch = quotes
+    asyncio.run(eng.on_cycle(PAYLOADS, now=T0))
+    assert eng.sims["C-OPUS"]["positions"] == []
+    sig = [json.loads(l) for l in open(next((tmp_path / "logs").glob("*/claude_signals.jsonl")))]
+    eur = [s for s in sig if s["symbol"] == "EURUSD" and s["sim"] == "C-OPUS"][0]
+    assert eur["decision"].startswith("skip: no fresh live quote at fill time")
+
+
+def test_claude_default_quote_path_is_the_exit_check_snapshot(tmp_path):
+    """With an injected snapshot (as the exit checks use), the fill quote comes from that same snapshot."""
+    eng, _ = _engine(tmp_path, _eur_sell_answers())
+    asyncio.run(eng.on_cycle(PAYLOADS, now=T0))
+    p = eng.sims["C-OPUS"]["positions"][0]
+    assert p["fill_source"] == "live_quote:dukascopy:tick" and p["fill_check"]["quote_price"] == 1.1

@@ -92,6 +92,10 @@ class LucidSim:
         self.path = self.state_dir / "account.json"
         self.s = self._load()
         self._close_requests = {}
+        # Live quotes for market-entry fills ({symbol: quote}, see live_price.fetch_fill_quotes). None = no live
+        # path wired (offline replays / unit tests that call process() directly): fill at the M1 bar open.
+        # The live replays (_fetch_and_replay / apply_due_fills) always set it, so live entries never use a bar.
+        self.fill_quotes: dict | None = None
 
     # ------------------------------------------------------------------ state
     def _new_account(self, phase: str, now: datetime, no: int) -> dict:
@@ -514,6 +518,7 @@ class LucidSim:
                "exit": round(price, 6), "reason": reason, "gross": gross, "commission": round(2 * comm, 2),
                "net": net, "hold_seconds": int(hold), "balance_after": a["balance"],
                "hard_stop_px": p.get("hard_stop_px"), "stopped": str(reason).startswith("hard_stop"),
+               "fill_source": p.get("fill_source"), "fill_check": p.get("fill_check"),
                "risk_usd": p["risk_usd"], "target_usd": p["target_usd"],  # planned NET of RT commission
                "target_usd_is_net": True,
                "max_minis": self.L["max_minis"],
@@ -776,6 +781,22 @@ class LucidSim:
             t += timedelta(minutes=1)
         self.s["last_processed"] = _iso(t)
         self._roll_day(t - timedelta(minutes=1))
+        self._late_quote_fills()
+
+    def _late_quote_fills(self) -> None:
+        """A pending deferred earlier in the current minute (no usable quote then) is retried on the next 18 s
+        replay with its fresh quote, even though that minute was already replayed (no minute is re-run)."""
+        if not self.live_quote_fill or not self.s["pending"]:
+            return
+        last = floor_min(_dt(self.s["last_processed"])) - timedelta(minutes=1)
+        for pe in list(self.s["pending"]):
+            q = (self.fill_quotes or {}).get(pe["symbol"]) or {}
+            at = _dt(q.get("at") or q.get("fetched_at"))
+            if at is None or floor_min(at) != last or pe.get("quote_tried") == q.get("fetched_at"):
+                continue
+            if at < _dt(pe["fill_after"]) or last > _dt(pe["expires"]) or not self.in_session(last):
+                continue
+            self._try_fill(pe, None, last)
 
     def _load_close_requests(self) -> dict:
         """Gemini CLOSE requests written by the exit manager (state/lucid/close_requests.json), keyed by position id."""
@@ -803,11 +824,13 @@ class LucidSim:
             for pe in list(self.s["pending"]):
                 if t > _dt(pe["expires"]):
                     self.s["pending"].remove(pe); self._event(t, "pending_expired", symbol=pe["symbol"]); continue
-                if t < _dt(pe["fill_after"]) or bar.get(pe["symbol"]) is None:
+                if t < _dt(pe["fill_after"]) or (bar.get(pe["symbol"]) is None and not self.live_quote_fill):
                     continue
-                self._try_fill(pe, bar[pe["symbol"]], t)
+                self._try_fill(pe, bar.get(pe["symbol"]), t)
         for p in list(self.s["positions"]):
             b = bar.get(p["symbol"])
+            if b is not None and _dt(p["entry_time"]) > t:
+                b = None   # filled inside this minute at a live quote: this bar's range is mostly pre-entry
             if b is not None:
                 o, h, l, c = b
                 fav, adv = (h, l) if p["side"] > 0 else (l, h)
@@ -858,16 +881,16 @@ class LucidSim:
         for pe in list(self.s["pending"]):
             if t > _dt(pe["expires"]):
                 self.s["pending"].remove(pe); self._event(t, "pending_expired", symbol=pe["symbol"]); continue
-            if t < _dt(pe["fill_after"]) or bar.get(pe["symbol"]) is None:
+            if t < _dt(pe["fill_after"]) or (bar.get(pe["symbol"]) is None and not self.live_quote_fill):
                 continue
-            self._try_fill(pe, bar[pe["symbol"]], t)
+            self._try_fill(pe, bar.get(pe["symbol"]), t)
         # 3. exits: stop has priority when both levels are inside one bar; target never on the entry bar.
         #    Also: MFE tracking, time/momentum cut, 15m VWAP/EMA50 cross exits (scalp framework).
         sc = self.cfg.get("scalp") or {}
         for p in list(self.s["positions"]):
             b = bar.get(p["symbol"])
-            if b is None:
-                continue
+            if b is None or _dt(p["entry_time"]) > t:
+                continue   # (filled inside this minute at a live quote: this bar's range is mostly pre-entry)
             o, h, l, c = b
             sd = p["side"]
             # Favourable / adverse extremes this minute (MFE / MAE in price points)
@@ -938,15 +961,32 @@ class LucidSim:
         if why and "pending" not in why:
             # Don't double-count if on_record already skipped; this is a late block at fill time.
             self._skip_entry(t, sym, why, snapshot=snap); return
+        if b is None:   # late quote fill (_late_quote_fills): no bar needed, the quote is the price
+            qp = float(((self.fill_quotes or {}).get(sym) or {}).get("price") or 0.0)
+            b = (qp, qp, qp, qp)
         o, h, l, c = b
         g = pe["gemini"]
+        fill_t, quote = t, None
         if self.L.get("entry_mode") == "limit":
             touched = (l <= g["entry"]) if side > 0 else (h >= g["entry"])
             if not touched:
                 self.s["pending"].append(pe); return
             px = min(o, g["entry"]) if side > 0 else max(o, g["entry"])
+            fill_source = "m1_limit_touch"
+        elif self.live_quote_fill:
+            quote, wait, why = self._fill_quote(sym, t)
+            if not wait:
+                pe["quote_tried"] = ((self.fill_quotes or {}).get(sym) or {}).get("fetched_at") or "none"
+            if quote is None:
+                self.s["pending"].append(pe)
+                if not wait:
+                    self._defer_fill(pe, t, why)
+                return
+            px, fill_t = float(quote["price"]), quote["_at"]
+            fill_source = f"live_quote:{quote.get('source')}"
         else:
             px = o
+            fill_source = "m1_bar_open"
         scalp = pe.get("scalp") or {}
         tdist = scalp.get("tdist")
         sdist = scalp.get("sdist")
@@ -980,8 +1020,10 @@ class LucidSim:
             self._skip_entry(t, sym, why, snapshot=snap, tdist=tdist, sdist=sdist)
             return
         tick = self.spec(size["contract"])["tick"]
+        ref_px = px
         px = self._round_tick(px + side * self.L.get("slippage_ticks", 0) * tick, tick) if self.L.get("entry_mode") != "limit" \
             else self._round_tick(px, tick)
+        fill_check = self._fill_check(sym, side, px, ref_px, tick, t, fill_t, quote, b, g)
         if self.L.get("entry_mode") != "limit" and side * (px - g["entry"]) > self.L["max_chase_atr"] * pe["atr"]:
             why = f"price ran {abs(px - g['entry']):.5g} past Gemini entry (chase)"
             self._skip_entry(t, sym, why, snapshot=snap)
@@ -1019,7 +1061,8 @@ class LucidSim:
              "entry": px, "stop": (None if size.get("sdist") is None else self._round_tick(px - side * size["sdist"], tick)),
              "notional_risk_usd": size.get("notional_risk_usd"),
              "target": (None if size.get("tdist") is None else self._round_tick(px + side * size["tdist"], tick)),
-             "entry_time": _iso(t), "exit_mode": ("gemini_only" if self.gemini_only else "gemini" if self.gemini_exit else "server"),
+             "entry_time": _iso(fill_t), "exit_mode": ("gemini_only" if self.gemini_only else "gemini" if self.gemini_exit else "server"),
+             "fill_source": fill_source, "fill_check": fill_check,
              "risk_usd": size["risk_usd"], "target_usd": size["target_usd"],  # NET of RT commission
              "target_source": size.get("target_source"), "sizing": size.get("sizing"),
              "target_usd_gross": size.get("target_usd_gross", size["target_usd"]),
@@ -1044,12 +1087,13 @@ class LucidSim:
                                        "entry_time", "risk_usd", "atr")}
                     | {"candle": (scalp or {}).get("candle"), "gemini_run_at_utc": g.get("run_at_utc"),
                        "gemini_confidence": g.get("confidence"), "hard_stop_px": p.get("hard_stop_px"),
-                       "hard_stop_armed_at": p.get("hard_stop_armed_at")})
+                       "hard_stop_armed_at": p.get("hard_stop_armed_at"), "fill_source": fill_source})
         del feed[:-50]
         self.s["day"]["traded"] = True
-        self.s["last_price"][sym] = c
-        self._event(t, "entry", symbol=sym, contract=p["contract"], qty=p["qty"], side="LONG" if side > 0 else "SHORT",
-                    entry=px, stop=p["stop"], target=p["target"], risk_usd=p["risk_usd"],
+        self.s["last_price"][sym] = float(quote["price"]) if quote else c
+        self._event(fill_t, "entry", symbol=sym, contract=p["contract"], qty=p["qty"], side="LONG" if side > 0 else "SHORT",
+                    entry=px, fill_source=fill_source, fill_check=fill_check,
+                    stop=p["stop"], target=p["target"], risk_usd=p["risk_usd"],
                     hard_stop_px=p.get("hard_stop_px"), hard_stop_usd=p.get("hard_stop_usd"),
                     target_usd_net=p["target_usd"], target_usd_gross=p["target_usd_gross"],
                     commission_rt=p["commission_rt"],
@@ -1058,6 +1102,56 @@ class LucidSim:
                     max_minis=self.L["max_minis"],
                     max_minis_note="LucidPro 100K cap: 6 full-size minis (NQ, GC, 6E, 6B); no micros",
                     telemetry_keys=sorted((snap or {}).keys()))
+
+    @property
+    def live_quote_fill(self) -> bool:
+        """Market entries fill at the live quote at fill time (+ slippage), not at an M1 bar open."""
+        return (self.fill_quotes is not None and self.L.get("entry_mode") != "limit"
+                and str(self.L.get("entry_fill", "live_quote")) == "live_quote")
+
+    def _fill_quote(self, sym: str, t: datetime) -> tuple[dict | None, bool, str | None]:
+        """(quote, wait, why). wait=True: the quote belongs to a later minute of this replay (fill there)."""
+        from .live_price import FILL_QUOTE_MAX_AGE_S, FILL_QUOTE_SOURCES, fill_quote_problem
+        q = (self.fill_quotes or {}).get(sym)
+        why = fill_quote_problem(q, sources=tuple(self.L.get("fill_quote_sources") or FILL_QUOTE_SOURCES),
+                                 max_age_s=float(self.L.get("fill_quote_max_age_s", FILL_QUOTE_MAX_AGE_S)))
+        if why:
+            return None, False, why
+        at = _dt(q.get("at") or q.get("fetched_at"))
+        if at is None:
+            return None, False, "live quote has no fetch time"
+        if floor_min(at) > t:
+            return None, True, None
+        if floor_min(at) < t:
+            return None, False, f"live quote fetched {_iso(at)} is before the fill minute {_iso(t)}"
+        return {**q, "_at": at}, False, None
+
+    def _defer_fill(self, pe: dict, t: datetime, why: str | None) -> None:
+        """No usable live quote: keep the pending (next 18 s replay retries until it expires). Logged once per
+        distinct reason so a dead feed cannot flood the event log."""
+        pe["fill_deferrals"] = int(pe.get("fill_deferrals") or 0) + 1
+        if pe.get("fill_deferred_why") != why:
+            pe["fill_deferred_why"] = why
+            q = (self.fill_quotes or {}).get(pe["symbol"]) or {}
+            self._event(t, "fill_deferred", symbol=pe["symbol"], why=why, deferrals=pe["fill_deferrals"],
+                        quote={k: q.get(k) for k in ("price", "source", "ts", "age_s", "stale", "fetched_at")})
+
+    def _fill_check(self, sym, side, px, ref_px, tick, t, fill_t, quote, b, g) -> dict:
+        """Audit record for an entry fill: what the market was at fill time vs what was booked."""
+        o = float(b[0]) if b is not None else None
+        n = int(self.L.get("slippage_ticks", 0) or 0)
+        out = {"fill_minute": _iso(t), "fill_t": _iso(fill_t), "ref_price": ref_px, "booked": px,
+               "slippage_ticks": n, "tick": tick, "signal_entry": g.get("entry"),
+               "adverse_ticks_vs_quote": round(side * (px - ref_px) / tick, 3) if tick else None,
+               "m1_bar_open": o}
+        if quote:
+            out.update({"quote_price": float(quote["price"]), "quote_ts": quote.get("ts"),
+                        "quote_source": quote.get("source"), "quote_age_s": quote.get("age_s"),
+                        "quote_fetched_at": quote.get("fetched_at"),
+                        "bar_open_minus_quote": (round(o - float(quote["price"]), 10) if o is not None else None),
+                        "tolerance_ticks": n + 0.5,   # slippage + half a tick of rounding onto the contract grid
+                        "within_slippage": abs(px - float(quote["price"])) <= tick * (n + 0.5) + 1e-9})
+        return out
 
     def _breach_check(self, t: datetime, bar: dict) -> None:
         a = self.s["account"]
@@ -1355,7 +1449,7 @@ def inject_live_bars(bars: dict[str, pd.DataFrame], sim: LucidSim, now: datetime
     out = dict(bars)
     end = floor_min(now)
     for pe in due_pendings(sim, now):
-        sym, px = pe["symbol"], live_prices.get(pe["symbol"])
+        sym, px = pe["symbol"], _quote_price(live_prices.get(pe["symbol"]))
         if px is None:
             continue
         t = floor_min(_dt(pe["fill_after"]))
@@ -1380,6 +1474,37 @@ def inject_live_bars(bars: dict[str, pd.DataFrame], sim: LucidSim, now: datetime
     return out
 
 
+def _quote_price(q) -> float | None:
+    if q is None:
+        return None
+    if isinstance(q, dict):
+        return None if q.get("price") is None else float(q["price"])
+    return float(q)
+
+
+def normalize_fill_quotes(live_prices: dict | None, now: datetime) -> dict[str, dict]:
+    """{symbol: quote dict}. Plain floats (explicit prices from a caller / test) become quotes taken at `now`."""
+    out = {}
+    for s, q in (live_prices or {}).items():
+        if q is None:
+            continue
+        if isinstance(q, dict):
+            out[s] = dict(q)
+        else:
+            out[s] = {"symbol": s, "price": float(q), "ts": _iso(now), "fetched_at": _iso(now), "age_s": 0.0,
+                      "stale": False, "source": "injected:live_prices", "injected": True}
+    return out
+
+
+def _quotes_until(quotes: dict | None, until: datetime) -> datetime:
+    """Extend a replay so it reaches the minute in which the fill quotes were fetched."""
+    for q in (quotes or {}).values():
+        at = _dt(q.get("at") or q.get("fetched_at")) if isinstance(q, dict) else None
+        if at is not None:
+            until = max(until, floor_min(at) + timedelta(minutes=1))
+    return until
+
+
 def lucid_needs_replay(sim: LucidSim) -> bool:
     """True when a short replay should run between 2-min entry cycles: due/queued fills or unapplied CLOSEs."""
     if sim.s.get("pending"):
@@ -1401,31 +1526,30 @@ def apply_due_fills(sim: LucidSim, bars: dict[str, pd.DataFrame], now: datetime,
                     m15: dict[str, pd.DataFrame] | None = None) -> list[int]:
     """Process far enough to fill any pending whose fill_after has passed. Returns new position ids."""
     before = {p["id"] for p in sim.s.get("positions") or []}
+    quotes = normalize_fill_quotes(live_prices, now)
     until = due_fill_until(sim, now)
-    if until <= floor_min(_dt(sim.s["last_processed"])):
+    if due_pendings(sim, now):
+        until = _quotes_until(quotes, until)
+    if until <= floor_min(_dt(sim.s["last_processed"])) and not quotes:
         return []
-    bars = inject_live_bars(bars, sim, now, live_prices)
+    until = max(until, floor_min(_dt(sim.s["last_processed"])))
+    sim.fill_quotes = quotes
+    bars = inject_live_bars(bars, sim, max(now, until - timedelta(minutes=1)), quotes)
     sim.process(bars, until, m15=m15)
     return [p["id"] for p in sim.s.get("positions") or [] if p["id"] not in before]
 
 
-async def _default_live_prices(cfg: dict, symbols: set[str], now: datetime) -> dict[str, float]:
+async def _default_live_prices(cfg: dict, symbols: set[str], now: datetime) -> dict[str, dict]:
+    """Fill quotes from the exit-check live path (Dukascopy tick / FirmTape NQ + basis), fetched now.
+    NOT the last finished M1 close: that is 1-2 minutes old and mis-booked entries by $200-640 on 12 Nov."""
     if not symbols:
         return {}
     try:
-        from .live_price import fetch_symbol_m1
+        from .live_price import fetch_fill_quotes
+        return await fetch_fill_quotes(sorted(symbols), cfg, now)
     except Exception:
+        log.exception("lucid fill quotes failed (pendings stay queued)")
         return {}
-    res = await asyncio.gather(*[fetch_symbol_m1(s, cfg, now) for s in symbols], return_exceptions=True)
-    out: dict[str, float] = {}
-    for s, r in zip(symbols, res):
-        if isinstance(r, Exception) or not r or r[0] is None or not len(r[0]):
-            continue
-        try:
-            out[s] = float(r[0]["close"].iloc[-1])
-        except Exception:
-            continue
-    return out
 
 
 async def _fetch_and_replay(sim: LucidSim, cfg: dict, now: datetime,
@@ -1464,12 +1588,15 @@ async def _fetch_and_replay(sim: LucidSim, cfg: dict, now: datetime,
         until = max(until, since)
     # A lagging closed-bar feed used to cap `until` before the fill minute, so the pending
     # sat until the next 2-min cycle. Extend to the current minute and inject live prices.
+    sim.fill_quotes = {}
     if due:
         until = max(until, due_fill_until(sim, now))
         missing = {pe["symbol"] for pe in due}
         if live_prices is None:
             live_prices = await _default_live_prices(cfg, missing, now)
-        bars = inject_live_bars(bars, sim, now, live_prices)
+        sim.fill_quotes = normalize_fill_quotes(live_prices, now)
+        until = _quotes_until(sim.fill_quotes, until)
+        bars = inject_live_bars(bars, sim, max(now, until - timedelta(minutes=1)), sim.fill_quotes)
     sim.process(bars, until, m15=m15)
     new_ids = [p["id"] for p in sim.s.get("positions") or [] if p["id"] not in before]
     return bars, until, new_ids
@@ -1527,6 +1654,8 @@ async def lucid_step(cfg: dict, record: dict | None = None, now: datetime | None
             dec = sim.on_record(record, now) if record else []
             # Same-step fill: on_record queues with fill_after = next minute; if that
             # minute is already due (or live prices cover it), fill before we return.
+            if live_prices is None and due_pendings(sim, now):
+                live_prices = await _default_live_prices(cfg, {pe["symbol"] for pe in due_pendings(sim, now)}, now)
             more = apply_due_fills(sim, bars, now, live_prices)
             new_ids = new_ids + more
             await _persist_sim(sim, cfg)

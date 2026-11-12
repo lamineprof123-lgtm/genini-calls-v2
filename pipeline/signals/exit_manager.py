@@ -607,7 +607,13 @@ class Books:
         if p.get("stop") is None and p.get("hard_stop_armed_at"):
             armed = pd.Timestamp(datetime.fromisoformat(p["hard_stop_armed_at"])).ceil("min")
         last_ts = None
+        # A live-quote fill lands inside its minute (entry_time hh:mm:ss): that bar's range is mostly pre-entry,
+        # so it never feeds MFE/MAE or the stop (the 18 s live-price checks cover the rest of the minute).
+        entered = pd.Timestamp(datetime.fromisoformat(p["entry_time"])) if p.get("entry_time") else None
         for ts, row in bars[bars.index >= start].iterrows():
+            if entered is not None and ts < entered:
+                last_ts = ts
+                continue
             o, h, l = float(row["open"]), float(row["high"]), float(row["low"])
             fav, adv = (h, l) if sd > 0 else (l, h)
             p["mfe"] = max(float(p.get("mfe") or 0.0), max(0.0, sd * (fav - p["entry"])))

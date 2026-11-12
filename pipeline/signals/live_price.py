@@ -391,3 +391,55 @@ async def enrich_live_prices(payloads: list[dict], cfg: dict, now: datetime | No
     ms = round((time.monotonic() - t0) * 1000, 1)
     log.info("timing live_total=%.1fms stale=%d/%d prices=%s", ms, stale_n, len(payloads), timings)
     return {"ms": ms, "stale": stale_n, "n": len(payloads), "prices": timings, "m1": m1_frames}
+
+
+# ---------------------------------------------------------------------------------------------- paper fills
+# Paper entry fills must use the SAME live quote the 18 s exit checks and the hard stop use (enrich_live_prices:
+# Dukascopy tick BID / FirmTape NQ + basis in NY RTH), read at fill time. The last finished M1 close is 1-2 min
+# old (12 Nov 2026: gold shorts booked $200-640 away from market), so M1 / last-close fallbacks never fill.
+FILL_QUOTE_SOURCES = ("dukascopy:tick", "firmtape:NQ")
+FILL_QUOTE_MAX_AGE_S = 60.0
+
+
+def fill_quote_from_context(sym: str, ctx: dict) -> dict:
+    """Compact quote record from a payload context that went through enrich_live_prices."""
+    return {"symbol": sym, "price": ctx.get("live_price"), "ts": ctx.get("live_price_ts_utc"),
+            "source": ctx.get("live_price_source"), "stale": bool(ctx.get("live_price_stale")),
+            "fetched_at": ctx.get("live_price_fetched_at_utc"), "age_s": ctx.get("live_price_age_s"),
+            **({"fallback": ctx["live_price_fallback"]} if ctx.get("live_price_fallback") else {}),
+            **({"firmtape_status": ctx["firmtape_status"]} if ctx.get("firmtape_status") else {})}
+
+
+def fill_quote_problem(q: dict | None, *, sources=FILL_QUOTE_SOURCES, max_age_s: float = FILL_QUOTE_MAX_AGE_S) -> str | None:
+    """None when the quote may be used for a paper fill, else why not. Quotes marked ``injected`` (tests /
+    callers that pass an explicit price) skip the source check."""
+    if not q or q.get("price") is None:
+        return "no live quote"
+    if q.get("stale"):
+        return f"live quote stale ({q.get('source')})"
+    if not q.get("injected") and not any(str(q.get("source") or "").startswith(s) for s in sources):
+        return f"live quote source {q.get('source')} is not a tick-level feed (would fill at an old M1 close)"
+    age = q.get("age_s")
+    if age is not None and float(age) > float(max_age_s):
+        return f"live quote {float(age):.1f}s old > {float(max_age_s):g}s"
+    return None
+
+
+async def fetch_fill_quotes(symbols, cfg: dict, now: datetime | None = None) -> dict[str, dict]:
+    """{symbol: quote} from the exit-check live path, fetched now. Never raises (failed symbols are absent or
+    stale)."""
+    symbols = [s for s in dict.fromkeys(symbols or [])]
+    if not symbols:
+        return {}
+    now = _now_utc(now)
+    payloads = []
+    for s in symbols:
+        scfg = (cfg.get("symbols") or {}).get(s) or {}
+        payloads.append({"symbol": s, "source": "dukascopy" if scfg.get("dukascopy") else None,
+                         "context": {"digits": int(scfg.get("digits") or 5)}})
+    try:
+        await enrich_live_prices(payloads, cfg, now)
+    except Exception as e:
+        log.warning("fill quotes failed: %s", e)
+        return {}
+    return {p["symbol"]: fill_quote_from_context(p["symbol"], p["context"]) for p in payloads}

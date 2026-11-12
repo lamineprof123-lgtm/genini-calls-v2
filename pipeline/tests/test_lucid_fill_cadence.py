@@ -70,7 +70,9 @@ def test_lagging_closed_m1_plus_live_price_fills_immediately(sim):
     filled = apply_due_fills(sim, closed, T_NOW, live_prices={"US100": PX})
     assert filled and sim.s["positions"] and not sim.s["pending"]
     p = sim.s["positions"][0]
-    assert p["symbol"] == "US100" and p["entry_time"].startswith("2026-11-12T08:19:00")
+    # filled at the live quote taken at T_NOW (08:19:05), not at a bar open stamped 08:19:00
+    assert p["symbol"] == "US100" and p["entry_time"].startswith("2026-11-12T08:19:05")
+    assert p["fill_source"].startswith("live_quote:")
     assert p["id"] in {f["id"] for f in sim.s["book_feed"]}
 
 

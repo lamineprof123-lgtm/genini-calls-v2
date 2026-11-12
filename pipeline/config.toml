@@ -322,7 +322,16 @@ respect_mll_room = false        # false = a stop may exceed the room above the M
 dll_safety_usd = 50.0           # keep (open risk + new stop) under remaining DLL minus this
 min_confidence = 0.55
 max_entry_distance_atr = 1.0    # Gemini entry must be within N x ATR of the last M15 close
-entry_mode = "market"           # "market": next M1 open after the signal; "limit": wait for Gemini's entry price
+entry_mode = "market"           # "market": fill at/after the minute after the signal; "limit": wait for Gemini's entry price
+# FILL PRICE (2026-11-12 fix, no rule change): market entries fill at the LIVE quote read at fill time from the
+# same path as the 18 s exit checks and the hard stop (live_price.enrich_live_prices: Dukascopy tick BID, US100
+# in NY RTH FirmTape NQ + basis), + slippage_ticks, entry_time = quote fetch time. The old fill used the M1 bar
+# open of the fill minute, or (when the closed-M1 feed lagged) the LAST FINISHED M1 CLOSE, 1-2 min stale:
+# gold shorts on 12 Nov were booked $200-480 better / $640 worse than market. No usable quote (M1/last-close
+# fallback, stale, older than fill_quote_max_age_s) = no fill yet: the pending retries every 18 s until it expires.
+entry_fill = "live_quote"
+fill_quote_sources = ["dukascopy:tick", "firmtape:NQ"]
+fill_quote_max_age_s = 60
 max_chase_atr = 0.5             # market mode: skip if the fill is > N x ATR worse than Gemini's entry
 pending_expiry_minutes = 10
 slippage_ticks = 1              # adverse ticks on market entries and stop / forced exits

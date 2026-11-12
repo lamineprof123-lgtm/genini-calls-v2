@@ -141,7 +141,12 @@ def advance(t: dict, bars: pd.DataFrame | None, r: dict, *, flat_et: str = "16:4
     slip = int(r.get("slippage_ticks") or 0) * tick
     last_ts = None
     now_ts = pd.Timestamp(now or datetime.now(UTC))
+    entered = pd.Timestamp(datetime.fromisoformat(t["entry_time"]))
     for ts, row in bars[bars.index >= start].iterrows():
+        if ts < entered:
+            # entry minute of a live-quote fill (entry_time hh:mm:ss): the bar's range is mostly pre-entry, so it
+            # never triggers the stop or feeds MFE/MAE (the 18 s live-price exit checks cover that minute)
+            continue
         o, h, l, c = float(row["open"]), float(row["high"]), float(row["low"]), float(row["close"])
         fav, adv = (h, l) if sd > 0 else (l, h)
         stop = effective_stop(t)

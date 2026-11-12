@@ -3,33 +3,33 @@
   "created_at": "2026-11-12T16:52:53.616485+00:00",
   "spend": {
     "2026-11-12": {
-      "usd": 0.026148,
-      "calls": 10,
+      "usd": 0.028334,
+      "calls": 11,
       "failed": 0,
       "tokens": {
-        "prompt": 89175,
-        "cache_hit": 22528,
-        "cache_miss": 66647,
-        "completion": 26806,
-        "reasoning": 10990
+        "prompt": 97206,
+        "cache_hit": 25344,
+        "cache_miss": 71862,
+        "completion": 29131,
+        "reasoning": 11693
       }
     }
   },
   "last_call": {
-    "t": "2026-11-12T17:12:20.014969+00:00",
+    "t": "2026-11-12T17:14:20.018018+00:00",
     "ok": true,
-    "cost_usd": 0.0017924,
-    "spend_today_usd": 0.0261,
+    "cost_usd": 0.0021857,
+    "spend_today_usd": 0.0283,
     "band": "off_peak",
     "tokens": {
-      "prompt": 7853,
+      "prompt": 8031,
       "cache_hit": 2816,
-      "cache_miss": 5037,
-      "completion": 1714,
-      "reasoning": 450,
-      "total": 9567
+      "cache_miss": 5215,
+      "completion": 2325,
+      "reasoning": 703,
+      "total": 10356
     },
-    "latency_s": 10.729,
+    "latency_s": 13.925,
     "error": null,
     "model": "deepseek-flash",
     "symbols": [
@@ -43,23 +43,23 @@
     {
       "symbol": "XAUUSD",
       "action": "HOLD",
-      "confidence": 0.55,
-      "entry": 3872.82,
-      "rationale": "VP: price is BELOW VAL (3905.62), below POC 3978.13, i.e. breakout to the downside but with RVOL only 0.80 and 12 bars since last yellow spike \u2014 no volume confirmation, so the break is suspect. CVD -7.90 BEARISH, mildly agreeing with the do"
+      "confidence": 0.56,
+      "entry": 3873.32,
+      "rationale": "Checklist: (1) Value area \u2014 price_vs_value_area = below_val and close_vs_poc below: price 3873.32 sits under VAL 3905.62 and far under POC 3978.13, i.e. outside value in a low-volume downside node (bearish context). (2) CVD -7.90 BEARISH bu"
     },
     {
       "symbol": "EURUSD",
       "action": "HOLD",
       "confidence": 0.55,
-      "entry": 1.10566,
-      "rationale": "VP: price is BELOW VAL (1.10740) and below POC 1.10943 \u2014 downside breakout, but RVOL last only 0.665 with 14 bars since the last spike, so no yellow-bar confirmation and the break is suspect. CVD -2,011 NEUTRAL and cvd_slope +843 positive \u2014"
+      "entry": 1.10552,
+      "rationale": "Checklist: (1) Value area \u2014 price_vs_value_area = below_val, close_vs_poc below: 1.10552 is below VAL 1.10740 and far below POC 1.10943; outside value on the downside but no breakout RVOL. (2) CVD -2,011 NEUTRAL with cvd_slope +843.38 \u2014 flo"
     },
     {
       "symbol": "GBPUSD",
       "action": "HOLD",
       "confidence": 0.55,
-      "entry": 1.32359,
-      "rationale": "VP: price is BELOW VAL (1.32533) and below POC 1.32731 \u2014 breakdown, but RVOL last 0.817 with 14 bars since the spike, so no yellow-bar confirmation \u2192 treat break as suspect. CVD -8,172 BEARISH agrees with trend direction, though cvd_slope +"
+      "entry": 1.32342,
+      "rationale": "Checklist: (1) Value area \u2014 price_vs_value_area = below_val, close_vs_poc below: 1.32342 under VAL 1.32533 and well under POC 1.32731, outside value in a lower node. (2) CVD -8,172 BEARISH agrees with the downtrend, but cvd_slope +2,959.34 "
     }
   ],
   "last_bars": {

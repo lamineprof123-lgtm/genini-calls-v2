@@ -1,13 +1,13 @@
 {
   "version": 1,
   "created_at": "2026-11-12T10:14:47.081605+00:00",
-  "last_processed": "2026-11-12T14:18:00+00:00",
+  "last_processed": "2026-11-12T14:20:00+00:00",
   "account": {
     "no": 1,
     "phase": "eval",
     "started_at": "2026-11-12T10:14:47.081605+00:00",
     "start_balance": 100000.0,
-    "balance": 97476.8,
+    "balance": 97665.05,
     "highest_close": 100000.0,
     "mll_floor": 97000.0,
     "mll_locked": false,
@@ -18,199 +18,10 @@
     "cycle_day_pnl": {},
     "payouts": [],
     "trading_days": 0,
-    "realized_pnl": -2519.15,
-    "trades": 45
+    "realized_pnl": -2332.65,
+    "trades": 46
   },
   "positions": [
-    {
-      "id": 46,
-      "symbol": "US100",
-      "contract": "NQ",
-      "qty": 1,
-      "side": -1,
-      "entry": 27981.5,
-      "stop": null,
-      "notional_risk_usd": 1090.0,
-      "target": null,
-      "entry_time": "2026-11-12T14:15:14.861740+00:00",
-      "exit_mode": "gemini_only",
-      "fill_source": "live_quote:dukascopy:tick",
-      "fill_check": {
-        "fill_minute": "2026-11-12T14:15:00+00:00",
-        "fill_t": "2026-11-12T14:15:14.861740+00:00",
-        "ref_price": 27981.67,
-        "booked": 27981.5,
-        "slippage_ticks": 1,
-        "tick": 0.25,
-        "signal_entry": 27960.04,
-        "adverse_ticks_vs_quote": 0.68,
-        "m1_bar_open": 27981.67,
-        "quote_price": 27981.67,
-        "quote_ts": "2026-11-12T14:15:14.473000+00:00",
-        "quote_source": "dukascopy:tick",
-        "quote_age_s": 0.39,
-        "quote_fetched_at": "2026-11-12T14:15:14.861740+00:00",
-        "bar_open_minus_quote": 0.0,
-        "tolerance_ticks": 1.5,
-        "within_slippage": true
-      },
-      "risk_usd": null,
-      "target_usd": null,
-      "target_source": "none (gemini_only)",
-      "sizing": "gemini_only: notional 0.8 ATR = 54.5 x 20/pt = $1,090 per NQ; 1 NQ ~ $1,090 notional <= $1500 (reference only; NO stop, NO target, exit = Gemini CLOSE)",
-      "target_usd_gross": null,
-      "commission_rt": 3.5,
-      "atr": 67.937,
-      "gemini": {
-        "action": "SELL",
-        "entry": 27960.04,
-        "stop_loss": 28064.61,
-        "take_profit": 27955.04,
-        "confidence": 0.76,
-        "rr": 0.048,
-        "shown_on_site": true,
-        "basis": "site signal",
-        "run_at_utc": "2026-11-12T14:14:20.024807+00:00",
-        "session": "LONDON_NY_OVERLAP",
-        "rationale": "Price is trading well below VAL (28081.85) and POC (28120.74). CVD is BEARISH (-3.27), matching directional pressure during the LONDON_NY_OVERLAP session. Structurally, price is holding cleanly below both VWAP (28121.69) and downward-sloping EMA50 (28130.78). Signal candle and live forming bar have sliced below the lower ATR band (27953.94) and cleared local support at 28030.0. Accounting for the Dukascopy US100 index CFD tick volume caveat (where RVOL > 2.0 rarely triggers), the break is cleanly structured with strong directional momentum heading toward Session Low (27912.13). High-probability continuation scalp.",
-        "model": "gemini-3.8-flash"
-      },
-      "scalp": {
-        "action": "SELL",
-        "side": -1,
-        "entry": 27981.67,
-        "stop_loss": 28064.61,
-        "take_profit": 27976.67,
-        "sdist": 82.93685000000187,
-        "tdist": 5.0,
-        "stop_source": "structure",
-        "target_source": "fixed",
-        "rr": 0.06,
-        "structure_stop": 28064.60685,
-        "atr_stop": 28036.0196,
-        "fixed_tp": 27976.67,
-        "structure_tp": 27912.38,
-        "structure_label": "Session Low",
-        "candle": {
-          "high": 28061.21,
-          "low": 27954.53
-        },
-        "levels": [
-          {
-            "price": 28083.64,
-            "label": "S/R"
-          },
-          {
-            "price": 28209.17,
-            "label": "S/R"
-          },
-          {
-            "price": 28265.71,
-            "label": "Session High"
-          },
-          {
-            "price": 28030.0,
-            "label": "S/R"
-          },
-          {
-            "price": 27912.13,
-            "label": "Session Low"
-          },
-          {
-            "price": 27753.51,
-            "label": "Prev Low"
-          }
-        ],
-        "vp": {
-          "poc": 28120.74,
-          "vah": 28194.99,
-          "val": 28081.85
-        }
-      },
-      "telemetry": {
-        "symbol": "US100",
-        "session": "LONDON_NY_OVERLAP",
-        "last_close": 28036.25,
-        "atr": 67.937,
-        "vwap": 28121.69,
-        "ema20": 28089.82,
-        "ema50": 28130.78,
-        "price_vs_vwap": {
-          "side": "below",
-          "dist_atr": -1.2576
-        },
-        "price_vs_ema50": {
-          "side": "below",
-          "dist_atr": -1.3914
-        },
-        "vwap_aligned_with_side": true,
-        "ema50_aligned_with_side": true,
-        "poc": 28120.74,
-        "vah": 28194.99,
-        "val": 28081.85,
-        "price_vs_value_area": "below_val",
-        "dist_to_poc_atr": -1.2437,
-        "cvd": -3.27,
-        "cvd_label": "BEARISH",
-        "cvd_slope": 0.83,
-        "cvd_agrees_with_side": true,
-        "rvol": 1.249,
-        "rvol_spike": false,
-        "rvol_bars_since_spike": 86,
-        "atr_band_z": -0.7885,
-        "atr_upper": 28225.69,
-        "atr_lower": 27953.94,
-        "nearest_sr": {
-          "above": {
-            "price": 28083.64,
-            "label": "S/R",
-            "dist_atr": 0.6976
-          },
-          "below": {
-            "price": 28030.0,
-            "label": "S/R",
-            "dist_atr": 0.092
-          }
-        },
-        "gemini": {
-          "action": "SELL",
-          "confidence": 0.76,
-          "confidence_band": "0.7-0.8",
-          "rationale": "Price is trading well below VAL (28081.85) and POC (28120.74). CVD is BEARISH (-3.27), matching directional pressure during the LONDON_NY_OVERLAP session. Structurally, price is holding cleanly below both VWAP (28121.69) and downward-sloping EMA50 (28130.78). Signal candle and live forming bar have sliced below the lower ATR band (27953.94) and cleared local support at 28030.0. Accounting for the Dukascopy US100 index CFD tick volume caveat (where RVOL > 2.0 rarely triggers), the break is cleanly structured with strong directional momentum heading toward Session Low (27912.13). High-probability continuation scalp.",
-          "model": "gemini-3.8-flash",
-          "model_action": "SELL"
-        },
-        "scalp": {
-          "stop_basis": "structure",
-          "target_basis": "fixed",
-          "tdist": null,
-          "sdist": null,
-          "structure_label": "Session Low",
-          "target_source": "none (gemini_only)"
-        },
-        "planned": {
-          "tdist": null,
-          "sdist": null,
-          "qty": 1,
-          "contract": "NQ",
-          "target_usd_net": null,
-          "risk_usd": null,
-          "target_source": "none (gemini_only)",
-          "sizing": "gemini_only: notional 0.8 ATR = 54.5 x 20/pt = $1,090 per NQ; 1 NQ ~ $1,090 notional <= $1500 (reference only; NO stop, NO target, exit = Gemini CLOSE)"
-        },
-        "run_at_utc": "2026-11-12T14:14:20.024807+00:00",
-        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-12/cycles/181420.json/US100.png"
-      },
-      "mfe": 26.879000000000815,
-      "mae": 4.486000000000786,
-      "mfe_min": 0.0,
-      "time_cut_deadline": null,
-      "time_cut_candles": 0,
-      "time_cut_rule": "none: exit = Gemini CLOSE (1-strike) or hard stop -$500 NET; no target, no max hold, no 16:45 flat; DLL/MLL/breaker log-only",
-      "hard_stop_px": 28006.5,
-      "hard_stop_armed_at": "2026-11-12T14:15:14.861740+00:00",
-      "hard_stop_usd": 500.0
-    },
     {
       "id": 47,
       "symbol": "XAUUSD",
@@ -392,8 +203,8 @@
         "run_at_utc": "2026-11-12T14:16:20.234694+00:00",
         "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-12/cycles/181620.json/XAUUSD.png"
       },
-      "mfe": 0.0,
-      "mae": 0.0,
+      "mfe": 2.744999999999891,
+      "mae": 2.019999999999982,
       "mfe_min": 0.0,
       "time_cut_deadline": null,
       "time_cut_candles": 0,
@@ -403,19 +214,184 @@
       "hard_stop_usd": 500.0
     }
   ],
-  "pending": [],
+  "pending": [
+    {
+      "symbol": "US100",
+      "side": -1,
+      "created": "2026-11-12T14:20:36.245263+00:00",
+      "fill_after": "2026-11-12T14:21:00+00:00",
+      "reserved_risk": 0.0,
+      "planned": {
+        "contract": "NQ",
+        "qty": 1,
+        "risk_usd": null,
+        "tdist": null,
+        "target_source": "none (gemini_only)"
+      },
+      "expires": "2026-11-12T14:31:00+00:00",
+      "atr": 69.079,
+      "scalp": {
+        "action": "SELL",
+        "side": -1,
+        "entry": 27985.92,
+        "stop_loss": 28044.47,
+        "take_profit": 27948.17,
+        "sdist": 58.55395000000135,
+        "tdist": 37.75,
+        "stop_source": "structure",
+        "target_source": "extended:aim_net",
+        "rr": 0.645,
+        "structure_stop": 28044.47395,
+        "atr_stop": 28041.1832,
+        "fixed_tp": 27980.92,
+        "structure_tp": 27913.511580000002,
+        "structure_label": "Session Low",
+        "candle": {
+          "high": 28041.02,
+          "low": 27957.1
+        },
+        "levels": [
+          {
+            "price": 28030.0,
+            "label": "S/R"
+          },
+          {
+            "price": 28083.64,
+            "label": "S/R"
+          },
+          {
+            "price": 28209.17,
+            "label": "S/R"
+          },
+          {
+            "price": 27912.13,
+            "label": "Session Low"
+          },
+          {
+            "price": 27753.51,
+            "label": "Prev Low"
+          },
+          {
+            "price": 27420.02,
+            "label": "S/R"
+          }
+        ],
+        "vp": {
+          "poc": 28120.74,
+          "vah": 28194.99,
+          "val": 28081.85
+        },
+        "target_scalp": 27980.92,
+        "lucid_plan": {
+          "contract": "NQ",
+          "qty": 1,
+          "tdist": 37.75,
+          "target_usd": 751.5,
+          "risk_usd": 1175.0,
+          "target_source": "extended:aim_net",
+          "sizing": "fixed target 5 cannot reach $381 net within $1500 risk; extended:aim_net: 1 NQ (fewest that fit) target 37.75 -> $752 net, risk $1175"
+        }
+      },
+      "session": "LONDON_NY_OVERLAP",
+      "telemetry": {
+        "symbol": "US100",
+        "session": "LONDON_NY_OVERLAP",
+        "last_close": 27980.11,
+        "atr": 69.079,
+        "vwap": 28118.71,
+        "ema20": 28078.07,
+        "ema50": 28124.27,
+        "price_vs_vwap": {
+          "side": "below",
+          "dist_atr": -2.0064
+        },
+        "price_vs_ema50": {
+          "side": "below",
+          "dist_atr": -2.0869
+        },
+        "vwap_aligned_with_side": true,
+        "ema50_aligned_with_side": true,
+        "poc": 28120.74,
+        "vah": 28194.99,
+        "val": 28081.85,
+        "price_vs_value_area": "below_val",
+        "dist_to_poc_atr": -2.0358,
+        "cvd": -4.12,
+        "cvd_label": "BEARISH",
+        "cvd_slope": 1.02,
+        "cvd_agrees_with_side": true,
+        "rvol": 1.321,
+        "rvol_spike": false,
+        "rvol_bars_since_spike": 87,
+        "atr_band_z": -1.4181,
+        "atr_upper": 28216.22,
+        "atr_lower": 27939.91,
+        "nearest_sr": {
+          "above": {
+            "price": 28030.0,
+            "label": "S/R",
+            "dist_atr": 0.7222
+          },
+          "below": {
+            "price": 27912.13,
+            "label": "Session Low",
+            "dist_atr": 0.9841
+          }
+        },
+        "gemini": {
+          "action": "SELL",
+          "confidence": 0.78,
+          "confidence_band": "0.7-0.8",
+          "rationale": "Evaluating confluence checklist: 1) Price is breaking down below VAL (28081.85) and significantly below POC (28120.74). 2) CVD is -4.12 (BEARISH), confirming consistent negative distribution. 3) Market SESSION is LONDON_NY_OVERLAP, ideal trading conditions. 4) Price trades strongly below declining VWAP (28118.71) and EMA50 (28124.27), with EMA20 pointing steeply down. 5) ATR bands are expanding, with price pressing the lower ATR band (27939.91). 6) RVOL is 1.321; noting Dukascopy index CFD tick volume caveat where yellow RVOL > 2.0 spikes are rare, strong multi-bar displacement provides confluence. 7) Lost previous S/R levels (28083.64, 28030.00) cleanly, targeting Session Low liquidity at 27912.13. Clear downward continuation setup.",
+          "model": "gemini-3.8-flash",
+          "model_action": "SELL"
+        },
+        "scalp": {
+          "stop_basis": "structure",
+          "target_basis": "extended:aim_net",
+          "tdist": 37.75,
+          "sdist": 58.55395000000135,
+          "structure_label": "Session Low"
+        },
+        "planned": {
+          "tdist": 37.75,
+          "sdist": 58.55395000000135,
+          "qty": null,
+          "contract": null,
+          "target_usd_net": null,
+          "risk_usd": null
+        },
+        "run_at_utc": "2026-11-12T14:20:20.204918+00:00",
+        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-12/cycles/182020.json/US100.png"
+      },
+      "gemini": {
+        "action": "SELL",
+        "entry": 27985.92,
+        "stop_loss": 28044.47,
+        "take_profit": 27948.17,
+        "confidence": 0.78,
+        "rr": 0.645,
+        "shown_on_site": true,
+        "basis": "site signal",
+        "run_at_utc": "2026-11-12T14:20:20.204918+00:00",
+        "session": "LONDON_NY_OVERLAP",
+        "rationale": "Evaluating confluence checklist: 1) Price is breaking down below VAL (28081.85) and significantly below POC (28120.74). 2) CVD is -4.12 (BEARISH), confirming consistent negative distribution. 3) Market SESSION is LONDON_NY_OVERLAP, ideal trading conditions. 4) Price trades strongly below declining VWAP (28118.71) and EMA50 (28124.27), with EMA20 pointing steeply down. 5) ATR bands are expanding, with price pressing the lower ATR band (27939.91). 6) RVOL is 1.321; noting Dukascopy index CFD tick volume caveat where yellow RVOL > 2.0 spikes are rare, strong multi-bar displacement provides confluence. 7) Lost previous S/R levels (28083.64, 28030.00) cleanly, targeting Session Low liquidity at 27912.13. Clear downward continuation setup.",
+        "model": "gemini-3.8-flash"
+      }
+    }
+  ],
   "next_pos_id": 48,
   "day": {
     "id": "2026-11-12",
     "start_balance": 100000.0,
-    "realized": -2519.15,
+    "realized": -2332.65,
     "locked": null,
     "eod_done": null,
     "traded": true
   },
   "last_price": {
-    "US100": 27983.543,
-    "XAUUSD": 3903.09,
+    "US100": 27969.131,
+    "XAUUSD": 3904.9,
     "EURUSD": 1.10852,
     "GBPUSD": 1.32618
   },
@@ -439,15 +415,15 @@
     "payouts_gross": 0.0,
     "payouts_received": 0.0,
     "payout_count": 0,
-    "trades": 45,
-    "wins": 20,
+    "trades": 46,
+    "wins": 21,
     "losses": 25,
-    "gross_win": 7522.25,
+    "gross_win": 7708.75,
     "gross_loss": -10041.4,
-    "commissions": 446.95,
-    "net_trade_pnl": -2519.15,
+    "commissions": 448.7,
+    "net_trade_pnl": -2332.65,
     "skipped_signals": 8,
-    "accepted_signals": 55
+    "accepted_signals": 56
   },
   "reset_token": "2026-11-12-profit-lock",
   "reset_at": "2026-11-12T10:14:47.081605+00:00",
@@ -1488,7 +1464,8 @@
     42,
     43,
     44,
-    45
+    45,
+    46
   ],
   "breaches": [
     {

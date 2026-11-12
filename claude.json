@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-12T14:18:33.762299+00:00",
+  "updated_at": "2026-11-12T14:20:36.253216+00:00",
   "paper_only": true,
   "key_present": true,
   "status": "running",
@@ -10,7 +10,7 @@
   ],
   "last_entry_bar": "2026-11-12T14:00:00+00:00",
   "last_entry_skipped": null,
-  "rules": "Binding server rules: hard stop = model stop clamped 0.6-1.5 ATR; $900 risk sizing (NQ 1, GC 1, 6E/6B up to 4, 6 max); break-even at +0.5 ATR; profit lock 50% of best at +1.0 ATR, 60% at +1.5 ATR; 45-min time stop; daily -$1,500; trailing $300 buffer; re-entry lock; one entry per M15 close (score >= 5). Exit model every 18 s.",
+  "rules": "Binding server rules: hard stop = model stop clamped 0.6-1.5 ATR; $900 risk sizing (NQ 1, GC 1, 6E/6B up to 4, 6 max); break-even at +0.5 ATR; profit lock 50% of best at +1.0 ATR, 60% at +1.5 ATR; 45-min time stop; daily -$1,500; trailing $300 buffer; re-entry lock; one entry per M15 close (score >= 5). Until the first M15 bar close after entry, a Haiku CLOSE is ignored (hard stop and account limits still apply). Exit model every 18 s.",
   "reset": {
     "at": "2026-11-12T12:14:51.993423+00:00",
     "token": "claude-v2-1"
@@ -55,6 +55,7 @@
           "hold_seconds": 3,
           "setup_type": "fade",
           "score": 5,
+          "exit_prompt_version": "v2-pre-grace",
           "held": "3s"
         },
         {
@@ -72,6 +73,7 @@
           "hold_seconds": 268,
           "setup_type": "trend",
           "score": 6,
+          "exit_prompt_version": "v2-pre-grace",
           "held": "4m 28s"
         },
         {
@@ -89,6 +91,7 @@
           "hold_seconds": 45,
           "setup_type": "trend",
           "score": 7,
+          "exit_prompt_version": "v2-pre-grace",
           "held": "45s"
         },
         {
@@ -106,6 +109,7 @@
           "hold_seconds": 44,
           "setup_type": "trend",
           "score": 5,
+          "exit_prompt_version": "v2-pre-grace",
           "held": "44s"
         }
       ],
@@ -180,6 +184,15 @@
           }
         }
       },
+      "since_fix": {
+        "n": 0,
+        "wins": 0,
+        "losses": 0,
+        "net": 0,
+        "r_total": 0,
+        "r_avg": null
+      },
+      "exit_prompt_version": "v2-grace",
       "last_entry_call": {
         "bar": "2026-11-12T14:00:00+00:00",
         "t": "2026-11-12T14:16:36.118523+00:00",
@@ -262,6 +275,7 @@
           "hold_seconds": 22,
           "setup_type": "trend",
           "score": 7,
+          "exit_prompt_version": "v2-pre-grace",
           "held": "22s"
         }
       ],
@@ -336,6 +350,15 @@
           }
         }
       },
+      "since_fix": {
+        "n": 0,
+        "wins": 0,
+        "losses": 0,
+        "net": 0,
+        "r_total": 0,
+        "r_avg": null
+      },
+      "exit_prompt_version": "v2-grace",
       "last_entry_call": {
         "bar": "2026-11-12T14:00:00+00:00",
         "t": "2026-11-12T14:16:36.118523+00:00",

@@ -2,7 +2,7 @@
 
 Post-reset account only (pre-reset trades listed separately); paper trades only; net P&L after round-trip commission
 
-Updated: 2026-11-12 13:26:36 (Dubai UTC+4)
+Updated: 2026-11-12 13:28:35 (Dubai UTC+4)
 
 **Every bucket with n < 20 is LOW CONFIDENCE. Descriptive only; no proven edge.**
 
@@ -97,9 +97,9 @@ Ranked by net P&L; small samples are not a strategy recommendation.
 | LONDON_SESSION × below_val × CVD yes | 1 | 100.0% | $110.80 | $110.80 | n/a | $110.80 | LOW CONFIDENCE |
 | LONDON_SESSION × above_vah × CVD yes | 1 | 0.0% | $-715.20 | n/a | $-715.20 | $-715.20 | LOW CONFIDENCE |
 
-## DLL / MLL / breaker breaches (log-only, 0)
+## DLL / MLL / breaker breaches (log-only, 1)
 
-None.
+- 2026-11-12T09:26:00+00:00 DLL: equity $98,164.00 vs level $98,200.00 (log-only (gemini_only): no block, no forced close)
 
 ## Entry skips (0)
 

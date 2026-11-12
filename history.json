@@ -1,24 +1,5 @@
 [
   {
-    "signal_at": "2026-11-12T08:30:20.008514+00:00",
-    "tz": "Asia/Dubai",
-    "model": "gemini-3.8-flash",
-    "dry_run": false,
-    "trades": [],
-    "no_trade": [
-      "EURUSD",
-      "GBPUSD",
-      "BTCUSD"
-    ],
-    "in_position": [
-      "US100",
-      "XAUUSD"
-    ],
-    "analysis_failed": false,
-    "breaker_halted": false,
-    "written_at": "2026-11-12T08:30:31.917614+00:00"
-  },
-  {
     "signal_at": "2026-11-12T08:32:20.001528+00:00",
     "tz": "Asia/Dubai",
     "model": "gemini-3.8-flash",
@@ -1156,5 +1137,37 @@
     "analysis_failed": false,
     "breaker_halted": false,
     "written_at": "2026-11-12T10:08:32.392016+00:00"
+  },
+  {
+    "signal_at": "2026-11-12T10:10:20.270103+00:00",
+    "tz": "Asia/Dubai",
+    "model": "gemini-3.8-flash",
+    "dry_run": false,
+    "trades": [
+      {
+        "symbol": "BTCUSD",
+        "name": "BITCOIN",
+        "action": "SELL",
+        "entry": 73302.5,
+        "stop_loss": 73424.43,
+        "take_profit": 73287.97,
+        "rr": 0.119,
+        "confidence": 0.72,
+        "digits": 2,
+        "session": "LONDON_SESSION",
+        "cvd_label": "BEARISH"
+      }
+    ],
+    "no_trade": [
+      "EURUSD",
+      "GBPUSD"
+    ],
+    "in_position": [
+      "US100",
+      "XAUUSD"
+    ],
+    "analysis_failed": false,
+    "breaker_halted": false,
+    "written_at": "2026-11-12T10:10:29.560787+00:00"
   }
 ]

@@ -220,9 +220,13 @@
     }
   ],
   "skips": {
-    "count": 0,
-    "by_reason": {},
-    "exact_reasons": {}
+    "count": 1,
+    "by_reason": {
+      "sizing_unreachable": 1
+    },
+    "exact_reasons": {
+      "cannot reach $381 NET within max_minis=6 at tdist=0.000280000000000058 / risk budget (SKIP): max_minis=6 already used by open positions": 1
+    }
   },
   "definitions": {
     "win": "net > 0; breakeven is not a win or a loss",
@@ -323,7 +327,7 @@
     },
     "pre_reset_skips": 498
   },
-  "generated_at_utc": "2026-11-12T10:56:32.257238+00:00",
-  "generated_at_dubai": "2026-11-12 14:56:32",
+  "generated_at_utc": "2026-11-12T10:58:31.074899+00:00",
+  "generated_at_dubai": "2026-11-12 14:58:31",
   "malformed_lines": []
 }

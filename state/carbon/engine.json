@@ -3,8 +3,8 @@
   "created_at": "2026-11-12T15:30:53.246609+00:00",
   "spend": {
     "2026-11-12": {
-      "usd": 0.27007,
-      "calls": 6,
+      "usd": 0.301286,
+      "calls": 7,
       "failed": 0,
       "by_kind": {
         "entry": {
@@ -12,23 +12,23 @@
           "usd": 0.179896
         },
         "trigger": {
-          "calls": 3,
-          "usd": 0.090174
+          "calls": 4,
+          "usd": 0.12139
         }
       },
       "tokens": {
-        "input": 48250,
-        "output": 4781,
-        "thoughts": 12576
+        "input": 54198,
+        "output": 5456,
+        "thoughts": 13833
       }
     }
   },
   "last_scan_bar": "2026-11-12T16:00:00+00:00",
   "triggers": {
     "day": "2026-11-12",
-    "n": 3,
+    "n": 4,
     "per_bar": {
-      "US100": "2026-11-12T16:00:00+00:00",
+      "US100": "2026-11-12T16:15:00+00:00",
       "XAUUSD": "2026-11-12T16:15:00+00:00"
     }
   },
@@ -126,12 +126,12 @@
     "US100": {
       "bar": "2026-11-12T16:00:00+00:00",
       "atr": 112.265,
-      "price": 28492.42,
+      "price": 28540.02,
       "levels": [
         [
           "Session High",
           28528.49,
-          -1
+          1
         ],
         [
           "Prev High",
@@ -152,6 +152,26 @@
           "VAL",
           28060.06,
           1
+        ],
+        [
+          "Call Wall #1",
+          28435.83,
+          1
+        ],
+        [
+          "Call Wall #2",
+          28275.83,
+          1
+        ],
+        [
+          "Put Wall #1",
+          28005.83,
+          1
+        ],
+        [
+          "Put Wall #2",
+          28115.83,
+          1
         ]
       ],
       "vol_avg": 1.437025,
@@ -162,43 +182,43 @@
   "whatif": [],
   "next_vid": 3,
   "last_call": {
-    "t": "2026-11-12T16:18:07.871396+00:00",
-    "t_dubai": "2026-11-12T20:18:07.871396+04:00",
+    "t": "2026-11-12T16:21:11.605101+00:00",
+    "t_dubai": "2026-11-12T20:21:11.605101+04:00",
     "kind": "trigger",
     "model": "gemini-4-carbon",
     "model_version": "gemini-4-carbon",
     "thinking": "medium",
     "ok": true,
     "error": null,
-    "latency_s": 20.278,
+    "latency_s": 26.943,
     "finish_reason": "FinishReason.STOP",
     "tokens": {
-      "input": 5903,
-      "output": 708,
-      "thoughts": 719,
-      "total": 7330
+      "input": 5948,
+      "output": 675,
+      "thoughts": 1257,
+      "total": 7880
     },
-    "thoughts_token_count": 719,
+    "thoughts_token_count": 1257,
     "price_per_mtok": [
       2.0,
       10.0
     ],
-    "cost_usd": 0.026076,
-    "spend_today_usd": 0.2701,
+    "cost_usd": 0.031216,
+    "spend_today_usd": 0.3013,
     "symbols": [
-      "XAUUSD"
+      "US100"
     ],
-    "render_ms": 101,
+    "render_ms": 105,
     "parse_error": null,
     "trigger": {
       "trigger": "level_cross",
-      "level": "Put Wall #2",
-      "level_price": 3876.28,
-      "price": 3874.99,
-      "direction": "down",
-      "symbol": "XAUUSD",
+      "level": "Session High",
+      "level_price": 28528.49,
+      "price": 28540.02,
+      "direction": "up",
+      "symbol": "US100",
       "bar": "2026-11-12T16:15:00+00:00",
-      "n_today": 3
+      "n_today": 4
     }
   },
   "first_call": {
@@ -234,42 +254,39 @@
     "parse_error": null,
     "trigger": null
   },
-  "calls_total": 6,
+  "calls_total": 7,
   "last_scan": {
-    "kind": "entry",
-    "t": "2026-11-12T16:15:20.003632+00:00",
-    "trigger": null,
+    "kind": "trigger",
+    "t": "2026-11-12T16:17:47.492396+00:00",
+    "trigger": {
+      "trigger": "level_cross",
+      "level": "Put Wall #2",
+      "level_price": 3876.28,
+      "price": 3874.99,
+      "direction": "down",
+      "symbol": "XAUUSD",
+      "bar": "2026-11-12T16:15:00+00:00",
+      "n_today": 3
+    },
     "sent": [
-      "XAUUSD",
-      "EURUSD",
-      "US100"
+      "XAUUSD"
     ],
     "blocked_session": [],
     "ok": true,
-    "latency_s": 47.399,
-    "cost_usd": 0.052322,
+    "latency_s": 20.278,
+    "cost_usd": 0.026076,
     "tokens": {
-      "input": 10036,
-      "output": 180,
-      "thoughts": 3045,
-      "total": 13261
+      "input": 5903,
+      "output": 708,
+      "thoughts": 719,
+      "total": 7330
     },
     "error": null,
     "signals": [
       {
         "symbol": "XAUUSD",
         "action": "HOLD",
-        "confidence": 0.5
-      },
-      {
-        "symbol": "EURUSD",
-        "action": "HOLD",
-        "confidence": null
-      },
-      {
-        "symbol": "US100",
-        "action": "HOLD",
-        "confidence": null
+        "confidence": 0.72
       }
     ]
   }

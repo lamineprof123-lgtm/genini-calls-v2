@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-12T15:44:38.645876+00:00",
+  "updated_at": "2026-11-12T15:46:40.121165+00:00",
   "paper_only": true,
   "key_present": true,
   "status": "running",
@@ -8,7 +8,7 @@
     "claude-opus-5-5",
     "claude-sonnet-5-5"
   ],
-  "last_entry_bar": "2026-11-12T15:15:00+00:00",
+  "last_entry_bar": "2026-11-12T15:30:00+00:00",
   "last_entry_skipped": null,
   "rules": "Binding server rules: hard stop = model stop clamped 0.6-1.5 ATR; $900 risk sizing (NQ 1, GC 1, 6E/6B up to 4, 6 max); break-even at +0.5 ATR; profit lock 50% of best at +1.0 ATR, 60% at +1.5 ATR; 45-min time stop; daily -$1,500; trailing $300 buffer; re-entry lock; USD-group cap (one open per long-USD / short-USD group; 30-min lock after a stop-out); skip fill if the live quote is >0.3 ATR worse than the chart; one entry per M15 close +20s (score >= 5). Phase A (never +0.25 ATR): Haiku CLOSE is ignored; server exits on a closed M15 after entry beyond invalidation or wrong-side of both VWAP and EMA20. Phases B/C ignore a CLOSE until the first M15 close after entry. Exit confidence is logged, never acted on. Exit model every 18 s.",
   "reset": {
@@ -181,25 +181,25 @@
         }
       },
       "signals": {
-        "rows": 56,
+        "rows": 60,
         "buy_sell": 10,
         "gated": 10,
         "opened": 6
       },
       "ops": {
         "entry": {
-          "calls": 14,
+          "calls": 15,
           "failed": 0,
-          "latency_p50_ms": 25678.0,
-          "latency_p95_ms": 36452.8,
-          "cost_usd": 1.379,
+          "latency_p50_ms": 25642.0,
+          "latency_p95_ms": 36372.4,
+          "cost_usd": 1.4631,
           "by_utc_day": {
             "2026-11-12": {
-              "calls": 14,
-              "cost_usd": 1.3789,
-              "input_tokens": 165338,
-              "output_tokens": 35880,
-              "thinking_tokens": 19091
+              "calls": 15,
+              "cost_usd": 1.4631,
+              "input_tokens": 177381,
+              "output_tokens": 37680,
+              "thinking_tokens": 19832
             }
           }
         },
@@ -230,11 +230,11 @@
       },
       "exit_prompt_version": "v3",
       "last_entry_call": {
-        "bar": "2026-11-12T15:15:00+00:00",
-        "t": "2026-11-12T15:32:37.280549+00:00",
+        "bar": "2026-11-12T15:30:00+00:00",
+        "t": "2026-11-12T15:45:20.003644+00:00",
         "ok": true,
-        "latency_ms": 35890,
-        "cost_usd": 0.099852,
+        "latency_ms": 17811,
+        "cost_usd": 0.084172,
         "error": null,
         "signals": [
           {
@@ -249,7 +249,7 @@
             "symbol": "EURUSD",
             "action": "HOLD",
             "setup_type": "none",
-            "score": 2,
+            "score": 0,
             "confidence": 0.0,
             "decision": "HOLD"
           },
@@ -257,7 +257,7 @@
             "symbol": "GBPUSD",
             "action": "HOLD",
             "setup_type": "none",
-            "score": 2,
+            "score": 0,
             "confidence": 0.0,
             "decision": "HOLD"
           },
@@ -265,7 +265,7 @@
             "symbol": "US100",
             "action": "HOLD",
             "setup_type": "none",
-            "score": 2,
+            "score": 0,
             "confidence": 0.0,
             "decision": "HOLD"
           }
@@ -347,24 +347,24 @@
         }
       },
       "signals": {
-        "rows": 56,
+        "rows": 60,
         "buy_sell": 1,
         "gated": 1,
         "opened": 1
       },
       "ops": {
         "entry": {
-          "calls": 14,
+          "calls": 15,
           "failed": 0,
-          "latency_p50_ms": 8734.0,
-          "latency_p95_ms": 15506.3,
-          "cost_usd": 0.5083,
+          "latency_p50_ms": 8695.0,
+          "latency_p95_ms": 14969.3,
+          "cost_usd": 0.5433,
           "by_utc_day": {
             "2026-11-12": {
-              "calls": 14,
-              "cost_usd": 0.5084,
-              "input_tokens": 165338,
-              "output_tokens": 17758,
+              "calls": 15,
+              "cost_usd": 0.5434,
+              "input_tokens": 177381,
+              "output_tokens": 18849,
               "thinking_tokens": 1558
             }
           }
@@ -396,11 +396,11 @@
       },
       "exit_prompt_version": "v3",
       "last_entry_call": {
-        "bar": "2026-11-12T15:15:00+00:00",
-        "t": "2026-11-12T15:32:37.280549+00:00",
+        "bar": "2026-11-12T15:30:00+00:00",
+        "t": "2026-11-12T15:45:20.003644+00:00",
         "ok": true,
-        "latency_ms": 8773,
-        "cost_usd": 0.036016,
+        "latency_ms": 7779,
+        "cost_usd": 0.034996,
         "error": null,
         "signals": [
           {

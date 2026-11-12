@@ -1,13 +1,13 @@
 {
   "version": 1,
   "created_at": "2026-11-12T10:14:47.081605+00:00",
-  "last_processed": "2026-11-12T14:10:00+00:00",
+  "last_processed": "2026-11-12T14:12:00+00:00",
   "account": {
     "no": 1,
     "phase": "eval",
     "started_at": "2026-11-12T10:14:47.081605+00:00",
     "start_balance": 100000.0,
-    "balance": 97461.65,
+    "balance": 97459.9,
     "highest_close": 100000.0,
     "mll_floor": 97000.0,
     "mll_locked": false,
@@ -212,39 +212,75 @@
       "hard_stop_px": 3892.0,
       "hard_stop_armed_at": "2026-11-12T14:09:15.022363+00:00",
       "hard_stop_usd": 500.0
-    }
-  ],
-  "pending": [
+    },
     {
+      "id": 45,
       "symbol": "US100",
+      "contract": "NQ",
+      "qty": 1,
       "side": -1,
-      "created": "2026-11-12T14:10:47.468213+00:00",
-      "fill_after": "2026-11-12T14:11:00+00:00",
-      "reserved_risk": 0.0,
-      "planned": {
-        "contract": "NQ",
-        "qty": 1,
-        "risk_usd": null,
-        "tdist": null,
-        "target_source": "none (gemini_only)"
+      "entry": 27997.25,
+      "stop": null,
+      "notional_risk_usd": 1090.0,
+      "target": null,
+      "entry_time": "2026-11-12T14:11:04.721121+00:00",
+      "exit_mode": "gemini_only",
+      "fill_source": "live_quote:dukascopy:tick",
+      "fill_check": {
+        "fill_minute": "2026-11-12T14:11:00+00:00",
+        "fill_t": "2026-11-12T14:11:04.721121+00:00",
+        "ref_price": 27997.5,
+        "booked": 27997.25,
+        "slippage_ticks": 1,
+        "tick": 0.25,
+        "signal_entry": 28006.51,
+        "adverse_ticks_vs_quote": 1.0,
+        "m1_bar_open": 27997.5,
+        "quote_price": 27997.5,
+        "quote_ts": "2026-11-12T14:11:02.542000+00:00",
+        "quote_source": "dukascopy:tick",
+        "quote_age_s": 2.18,
+        "quote_fetched_at": "2026-11-12T14:11:04.721121+00:00",
+        "bar_open_minus_quote": 0.0,
+        "tolerance_ticks": 1.5,
+        "within_slippage": true
       },
-      "expires": "2026-11-12T14:21:00+00:00",
+      "risk_usd": null,
+      "target_usd": null,
+      "target_source": "none (gemini_only)",
+      "sizing": "gemini_only: notional 0.8 ATR = 54.5 x 20/pt = $1,090 per NQ; 1 NQ ~ $1,090 notional <= $1500 (reference only; NO stop, NO target, exit = Gemini CLOSE)",
+      "target_usd_gross": null,
+      "commission_rt": 3.5,
       "atr": 67.937,
-      "scalp": {
+      "gemini": {
         "action": "SELL",
-        "side": -1,
         "entry": 28006.51,
         "stop_loss": 28064.61,
         "take_profit": 27968.76,
-        "sdist": 58.09685000000172,
-        "tdist": 37.75,
-        "stop_source": "structure",
-        "target_source": "extended:aim_net",
+        "confidence": 0.72,
         "rr": 0.65,
+        "shown_on_site": true,
+        "basis": "site signal",
+        "run_at_utc": "2026-11-12T14:10:20.235661+00:00",
+        "session": "LONDON_NY_OVERLAP",
+        "rationale": "US100 is trading below VAL (28081.85) and well below POC (28120.74). Cumulative Delta is BEARISH (-3.27) with a slight positive slope. Session is LONDON_NY_OVERLAP. Trend is solidly bearish under both VWAP (28121.69) and EMA50 (28130.78). ATR channel is expanding with price hugging the lower red ATR band (27953.94). Dukascopy tick volume RVOL is 1.249 (absence of yellow bars expected on this CFD feed). Signal bar pushed down through S/R 28030.0 and the forming bar is confirming acceptance under 28030.0 targeting Session Low 27912.13. GEX context is null. Valid momentum short setup.",
+        "model": "gemini-3.8-flash"
+      },
+      "scalp": {
+        "action": "SELL",
+        "side": -1,
+        "entry": 27997.5,
+        "stop_loss": 28064.61,
+        "take_profit": 27992.5,
+        "sdist": 67.10685000000012,
+        "tdist": 5.0,
+        "stop_source": "structure",
+        "target_source": "fixed",
+        "rr": 0.075,
         "structure_stop": 28064.60685,
-        "atr_stop": 28060.8596,
-        "fixed_tp": 28001.51,
-        "structure_tp": 27913.48874,
+        "atr_stop": 28051.8496,
+        "fixed_tp": 27992.5,
+        "structure_tp": 27912.38,
         "structure_label": "Session Low",
         "candle": {
           "high": 28061.21,
@@ -292,7 +328,6 @@
           "sizing": "fixed target 5 cannot reach $381 net within $1500 risk; extended:aim_net: 1 NQ (fewest that fit) target 37.75 -> $752 net, risk $1165"
         }
       },
-      "session": "LONDON_NY_OVERLAP",
       "telemetry": {
         "symbol": "US100",
         "session": "LONDON_NY_OVERLAP",
@@ -348,39 +383,38 @@
         },
         "scalp": {
           "stop_basis": "structure",
-          "target_basis": "extended:aim_net",
-          "tdist": 37.75,
-          "sdist": 58.09685000000172,
-          "structure_label": "Session Low"
+          "target_basis": "fixed",
+          "tdist": null,
+          "sdist": null,
+          "structure_label": "Session Low",
+          "target_source": "none (gemini_only)"
         },
         "planned": {
-          "tdist": 37.75,
-          "sdist": 58.09685000000172,
-          "qty": null,
-          "contract": null,
+          "tdist": null,
+          "sdist": null,
+          "qty": 1,
+          "contract": "NQ",
           "target_usd_net": null,
-          "risk_usd": null
+          "risk_usd": null,
+          "target_source": "none (gemini_only)",
+          "sizing": "gemini_only: notional 0.8 ATR = 54.5 x 20/pt = $1,090 per NQ; 1 NQ ~ $1,090 notional <= $1500 (reference only; NO stop, NO target, exit = Gemini CLOSE)"
         },
         "run_at_utc": "2026-11-12T14:10:20.235661+00:00",
         "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-12/cycles/181020.json/US100.png"
       },
-      "gemini": {
-        "action": "SELL",
-        "entry": 28006.51,
-        "stop_loss": 28064.61,
-        "take_profit": 27968.76,
-        "confidence": 0.72,
-        "rr": 0.65,
-        "shown_on_site": true,
-        "basis": "site signal",
-        "run_at_utc": "2026-11-12T14:10:20.235661+00:00",
-        "session": "LONDON_NY_OVERLAP",
-        "rationale": "US100 is trading below VAL (28081.85) and well below POC (28120.74). Cumulative Delta is BEARISH (-3.27) with a slight positive slope. Session is LONDON_NY_OVERLAP. Trend is solidly bearish under both VWAP (28121.69) and EMA50 (28130.78). ATR channel is expanding with price hugging the lower red ATR band (27953.94). Dukascopy tick volume RVOL is 1.249 (absence of yellow bars expected on this CFD feed). Signal bar pushed down through S/R 28030.0 and the forming bar is confirming acceptance under 28030.0 targeting Session Low 27912.13. GEX context is null. Valid momentum short setup.",
-        "model": "gemini-3.8-flash"
-      }
+      "mfe": 0.0,
+      "mae": 0.0,
+      "mfe_min": 0.0,
+      "time_cut_deadline": null,
+      "time_cut_candles": 0,
+      "time_cut_rule": "none: exit = Gemini CLOSE (1-strike) or hard stop -$500 NET; no target, no max hold, no 16:45 flat; DLL/MLL/breaker log-only",
+      "hard_stop_px": 28022.25,
+      "hard_stop_armed_at": "2026-11-12T14:11:04.721121+00:00",
+      "hard_stop_usd": 500.0
     }
   ],
-  "next_pos_id": 45,
+  "pending": [],
+  "next_pos_id": 46,
   "day": {
     "id": "2026-11-12",
     "start_balance": 100000.0,
@@ -390,7 +424,7 @@
     "traded": true
   },
   "last_price": {
-    "US100": 28023.075,
+    "US100": 27997.5,
     "XAUUSD": 3887.11,
     "EURUSD": 1.10852,
     "GBPUSD": 1.32618
@@ -420,7 +454,7 @@
     "losses": 24,
     "gross_win": 7466.85,
     "gross_loss": -10002.9,
-    "commissions": 437.1,
+    "commissions": 438.85,
     "net_trade_pnl": -2536.05,
     "skipped_signals": 8,
     "accepted_signals": 53
@@ -1350,6 +1384,28 @@
       "gemini_confidence": 0.82,
       "hard_stop_px": 3892.0,
       "hard_stop_armed_at": "2026-11-12T14:09:15.022363+00:00",
+      "fill_source": "live_quote:dukascopy:tick"
+    },
+    {
+      "id": 45,
+      "symbol": "US100",
+      "contract": "NQ",
+      "qty": 1,
+      "side": -1,
+      "entry": 27997.25,
+      "stop": null,
+      "target": null,
+      "entry_time": "2026-11-12T14:11:04.721121+00:00",
+      "risk_usd": null,
+      "atr": 67.937,
+      "candle": {
+        "high": 28061.21,
+        "low": 27954.53
+      },
+      "gemini_run_at_utc": "2026-11-12T14:10:20.235661+00:00",
+      "gemini_confidence": 0.72,
+      "hard_stop_px": 28022.25,
+      "hard_stop_armed_at": "2026-11-12T14:11:04.721121+00:00",
       "fill_source": "live_quote:dukascopy:tick"
     }
   ],

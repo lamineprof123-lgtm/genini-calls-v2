@@ -1,14 +1,29 @@
 {
-  "signal_at": "2026-11-12T13:16:20.432369+00:00",
+  "signal_at": "2026-11-12T13:18:20.443626+00:00",
   "tz": "Asia/Dubai",
   "model": "gemini-3.8-flash",
   "dry_run": false,
   "trades": [
     {
-      "symbol": "EURUSD",
-      "name": "EURO",
+      "symbol": "XAUUSD",
+      "name": "GOLD",
       "action": "SELL",
-      "entry": 1.10783,
+      "entry": 3931.0,
+      "stop_loss": null,
+      "take_profit": null,
+      "rr": null,
+      "confidence": 0.78,
+      "digits": 2,
+      "exit": "Gemini",
+      "card": "Hard stop \u2212$500 net \u00b7 TP: none \u00b7 exit: Gemini",
+      "session": "LONDON_NY_OVERLAP",
+      "cvd_label": "BEARISH"
+    },
+    {
+      "symbol": "GBPUSD",
+      "name": "POUND",
+      "action": "SELL",
+      "entry": 1.32612,
       "stop_loss": null,
       "take_profit": null,
       "rr": null,
@@ -17,32 +32,28 @@
       "exit": "Gemini",
       "card": "Hard stop \u2212$500 net \u00b7 TP: none \u00b7 exit: Gemini",
       "session": "LONDON_NY_OVERLAP",
-      "cvd_label": "NEUTRAL"
+      "cvd_label": "BEARISH"
     },
     {
-      "symbol": "GBPUSD",
-      "name": "POUND",
+      "symbol": "BTCUSD",
+      "name": "BITCOIN",
       "action": "SELL",
-      "entry": 1.32528,
-      "stop_loss": null,
-      "take_profit": null,
-      "rr": null,
-      "confidence": 0.85,
-      "digits": 5,
-      "exit": "Gemini",
-      "card": "Hard stop \u2212$500 net \u00b7 TP: none \u00b7 exit: Gemini",
+      "entry": 72443.9,
+      "stop_loss": 72879.44,
+      "take_profit": 72343.9,
+      "rr": 0.23,
+      "confidence": 0.76,
+      "digits": 2,
       "session": "LONDON_NY_OVERLAP",
       "cvd_label": "BEARISH"
     }
   ],
-  "no_trade": [
-    "BTCUSD"
-  ],
+  "no_trade": [],
   "in_position": [
-    "US100",
-    "XAUUSD"
+    "EURUSD",
+    "US100"
   ],
   "analysis_failed": false,
   "breaker_halted": false,
-  "written_at": "2026-11-12T13:16:38.072736+00:00"
+  "written_at": "2026-11-12T13:18:34.581955+00:00"
 }

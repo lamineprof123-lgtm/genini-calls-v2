@@ -4,9 +4,9 @@
   "reset_token": "bracket-v1",
   "created_at": "2026-11-12T13:12:49.149672+00:00",
   "start_balance": 100000.0,
-  "balance": 99986.25,
+  "balance": 99536.75,
   "peak_balance": 100000.0,
-  "max_drawdown": 0.0,
+  "max_drawdown": -463.25,
   "next_id": 3,
   "positions": [
     {
@@ -34,63 +34,34 @@
       "deadline": "2026-11-12T14:44:38.400416+00:00",
       "risk_usd": 998.5,
       "target_usd": 991.5,
-      "mfe": 19.81000000000131,
-      "mae": 15.2599999999984,
-      "scan_from": "2026-11-12T13:14:00+00:00",
-      "checks": 8,
-      "last_check_at": "2026-11-12T13:16:38.076195+00:00"
-    },
-    {
-      "symbol": "EURUSD",
-      "side": -1,
-      "contract": "6E",
-      "qty": 5,
-      "atr": 0.00064,
-      "confidence": 0.82,
-      "signal_entry": 1.10783,
-      "signal_at": "2026-11-12T13:16:20.432369+00:00",
-      "queued_at": "2026-11-12T13:16:38.076195+00:00",
-      "level_event": "acceptance below VAL 1.10793 and testing S/R 1.10710",
-      "session": "LONDON_NY_OVERLAP",
-      "rationale": "1) VP: Price is trading below VAL (1.10793) and far below POC (1.10928), confirming value breakdown. 2) CVD: CVD is -1,944 (NEUTRAL) but with an accelerating negative slope of -4,109.92, showing increasing aggressive selling pressure. 3) SESSION: LONDON_NY_OVERLAP provides optimal liquidity and brea",
-      "id": 2,
-      "book": "bracket",
-      "entry": 1.1078,
-      "entry_time": "2026-11-12T13:16:39.510604+00:00",
-      "quote_price": 1.10784,
-      "quote_source": "dukascopy:tick",
-      "quote_age_s": 1.33,
-      "stop": 1.10845,
-      "target": 1.10715,
-      "deadline": "2026-11-12T14:46:39.510604+00:00",
-      "risk_usd": 430.25,
-      "target_usd": 382.25,
-      "mfe": 0.0,
-      "mae": 4.0000000000040004e-05,
-      "scan_from": "2026-11-12T13:16:39.510604+00:00",
-      "checks": 1,
-      "last_check_at": "2026-11-12T13:16:38.076195+00:00"
+      "mfe": 25.618999999998778,
+      "mae": 28.790000000000873,
+      "scan_from": "2026-11-12T13:16:00+00:00",
+      "checks": 15,
+      "last_check_at": "2026-11-12T13:18:31.159223+00:00"
     }
   ],
   "pending": [],
   "last_price": {
-    "US100": 27917.94,
-    "EURUSD": 1.10784
+    "US100": 27966.54,
+    "EURUSD": 1.10845
   },
   "seen_cycles": [
     "2026-11-12T13:14:20.285273+00:00",
     "2026-11-12T13:16:20.432369+00:00"
   ],
   "stats": {
-    "trades": 0,
+    "trades": 1,
     "wins": 0,
-    "losses": 0,
+    "losses": 1,
     "gross_win": 0.0,
-    "gross_loss": 0.0,
-    "net_pnl": 0.0,
-    "commissions": 13.75,
-    "hold_seconds": 0,
-    "exit_reasons": {},
+    "gross_loss": -461.5,
+    "net_pnl": -461.5,
+    "commissions": 25.75,
+    "hold_seconds": 93,
+    "exit_reasons": {
+      "stop_1atr": 1
+    },
     "signals_seen": 4,
     "signals_taken": 2,
     "skips": {

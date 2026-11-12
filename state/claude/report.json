@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-12T13:14:37.550509+00:00",
+  "generated_at": "2026-11-12T13:17:44.621374+00:00",
   "since": "2026-11-12T12:14:51.993423+00:00",
   "sims": {
     "C-OPUS": {
@@ -268,12 +268,12 @@
         }
       },
       "signals": {
-        "rows": 16,
-        "buy_sell": 2,
-        "gated": 2,
-        "opened": 1
+        "rows": 20,
+        "buy_sell": 5,
+        "gated": 5,
+        "opened": 2
       },
-      "whatif_open": 0,
+      "whatif_open": 3,
       "entry_calibration": {
         "0.5-0.6": {
           "n": 2,
@@ -304,33 +304,33 @@
       },
       "ops": {
         "entry": {
-          "calls": 4,
+          "calls": 5,
           "failed": 0,
-          "latency_p50_ms": 23048.5,
-          "latency_p95_ms": 25373.6,
-          "cost_usd": 0.3703,
+          "latency_p50_ms": 23853.0,
+          "latency_p95_ms": 31418.8,
+          "cost_usd": 0.4769,
           "by_utc_day": {
             "2026-11-12": {
-              "calls": 4,
-              "cost_usd": 0.3703,
-              "input_tokens": 46743,
-              "output_tokens": 9168,
-              "thinking_tokens": 4590
+              "calls": 5,
+              "cost_usd": 0.4769,
+              "input_tokens": 58409,
+              "output_tokens": 12165,
+              "thinking_tokens": 6344
             }
           }
         },
         "exit": {
-          "calls": 3,
+          "calls": 5,
           "failed": 0,
-          "latency_p50_ms": 1612.0,
-          "latency_p95_ms": 1744.3,
-          "cost_usd": 0.0011,
+          "latency_p50_ms": 1759.0,
+          "latency_p95_ms": 2833.6,
+          "cost_usd": 0.0019,
           "by_utc_day": {
             "2026-11-12": {
-              "calls": 3,
-              "cost_usd": 0.0012,
-              "input_tokens": 9999,
-              "output_tokens": 243,
+              "calls": 5,
+              "cost_usd": 0.002,
+              "input_tokens": 16635,
+              "output_tokens": 396,
               "thinking_tokens": 0
             }
           }
@@ -339,17 +339,62 @@
     },
     "C-SONNET": {
       "real": {
-        "n": 0,
+        "n": 1,
         "wins": 0,
-        "losses": 0,
-        "net": 0,
-        "r_total": 0,
-        "r_avg": null,
-        "by_symbol": {},
-        "by_side": {},
-        "by_setup_type": {},
-        "by_session": {},
-        "by_reason": {}
+        "losses": 1,
+        "net": -144.2,
+        "r_total": -0.452,
+        "r_avg": -0.452,
+        "by_symbol": {
+          "EURUSD": {
+            "n": 1,
+            "wins": 0,
+            "losses": 1,
+            "net": -144.2,
+            "r_total": -0.452,
+            "r_avg": -0.452
+          }
+        },
+        "by_side": {
+          "SHORT": {
+            "n": 1,
+            "wins": 0,
+            "losses": 1,
+            "net": -144.2,
+            "r_total": -0.452,
+            "r_avg": -0.452
+          }
+        },
+        "by_setup_type": {
+          "trend": {
+            "n": 1,
+            "wins": 0,
+            "losses": 1,
+            "net": -144.2,
+            "r_total": -0.452,
+            "r_avg": -0.452
+          }
+        },
+        "by_session": {
+          "LONDON_NY_OVERLAP": {
+            "n": 1,
+            "wins": 0,
+            "losses": 1,
+            "net": -144.2,
+            "r_total": -0.452,
+            "r_avg": -0.452
+          }
+        },
+        "by_reason": {
+          "claude_close": {
+            "n": 1,
+            "wins": 0,
+            "losses": 1,
+            "net": -144.2,
+            "r_total": -0.452,
+            "r_avg": -0.452
+          }
+        }
       },
       "mech": {
         "n": 0,
@@ -399,12 +444,12 @@
         "by_reason": {}
       },
       "signals": {
-        "rows": 16,
-        "buy_sell": 0,
-        "gated": 0,
-        "opened": 0
+        "rows": 20,
+        "buy_sell": 1,
+        "gated": 1,
+        "opened": 1
       },
-      "whatif_open": 0,
+      "whatif_open": 1,
       "entry_calibration": {
         "0.5-0.6": {
           "n": 0,
@@ -426,28 +471,36 @@
       "exit_calibration": {},
       "ops": {
         "entry": {
-          "calls": 4,
+          "calls": 5,
           "failed": 0,
-          "latency_p50_ms": 8337.0,
-          "latency_p95_ms": 9101.0,
-          "cost_usd": 0.1363,
+          "latency_p50_ms": 8659.0,
+          "latency_p95_ms": 19826.2,
+          "cost_usd": 0.1871,
           "by_utc_day": {
             "2026-11-12": {
-              "calls": 4,
-              "cost_usd": 0.1363,
-              "input_tokens": 46743,
-              "output_tokens": 4286,
-              "thinking_tokens": 0
+              "calls": 5,
+              "cost_usd": 0.1871,
+              "input_tokens": 58409,
+              "output_tokens": 7028,
+              "thinking_tokens": 1558
             }
           }
         },
         "exit": {
-          "calls": 0,
+          "calls": 2,
           "failed": 0,
-          "latency_p50_ms": null,
-          "latency_p95_ms": null,
-          "cost_usd": 0,
-          "by_utc_day": {}
+          "latency_p50_ms": 1473.5,
+          "latency_p95_ms": 1776.3,
+          "cost_usd": 0.0008,
+          "by_utc_day": {
+            "2026-11-12": {
+              "calls": 2,
+              "cost_usd": 0.0008,
+              "input_tokens": 6696,
+              "output_tokens": 191,
+              "thinking_tokens": 0
+            }
+          }
         }
       }
     }

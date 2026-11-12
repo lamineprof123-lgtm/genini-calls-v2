@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-12T13:14:37.569725+00:00",
+  "updated_at": "2026-11-12T13:18:34.585511+00:00",
   "paper_only": true,
   "key_present": true,
   "status": "running",
@@ -8,7 +8,7 @@
     "claude-opus-5-5",
     "claude-sonnet-5-5"
   ],
-  "last_entry_bar": "2026-11-12T12:45:00+00:00",
+  "last_entry_bar": "2026-11-12T13:00:00+00:00",
   "last_entry_skipped": null,
   "rules": "Binding server rules: hard stop = model stop clamped 0.6-1.5 ATR; $900 risk sizing (NQ 1, GC 1, 6E/6B up to 4, 6 max); break-even at +0.5 ATR; profit lock 50% of best at +1.0 ATR, 60% at +1.5 ATR; 45-min time stop; daily -$1,500; trailing $300 buffer; re-entry lock; one entry per M15 close (score >= 5). Exit model every 18 s.",
   "reset": {
@@ -24,21 +24,41 @@
       "account": {
         "start_balance": 100000.0,
         "balance": 99930.8,
-        "equity": 99930.8,
+        "equity": 99537.8,
         "realized_pnl": -69.2,
-        "open_pnl": 0.0,
+        "open_pnl": -393.0,
         "trades": 1,
         "wins": 0,
         "losses": 1,
         "r_total": -0.283,
         "r_per_trade": -0.283,
         "mll_floor": 97000.0,
-        "mll_room": 2930.8,
+        "mll_room": 2537.8,
         "day_realized": -69.2,
         "day_flattened": false,
         "blown": null
       },
-      "open_positions": [],
+      "open_positions": [
+        {
+          "symbol": "XAUUSD",
+          "contract": "GC",
+          "qty": 1,
+          "side": "SHORT",
+          "entry_time": "2026-11-12T13:17:14.327002+00:00",
+          "entry": 3925.6,
+          "stop": 3931.0,
+          "floor": null,
+          "floor_label": null,
+          "last": 3929.53,
+          "unrealized": -393.0,
+          "risk_usd": 544.6,
+          "phase": "A",
+          "setup_type": "trend",
+          "score": 7,
+          "server_only": false,
+          "target": 3904.0
+        }
+      ],
       "recent_trades": [
         {
           "t_exit": "2026-11-12T12:31:50.459431+00:00",
@@ -90,68 +110,68 @@
         }
       },
       "signals": {
-        "rows": 16,
-        "buy_sell": 2,
-        "gated": 2,
-        "opened": 1
+        "rows": 20,
+        "buy_sell": 5,
+        "gated": 5,
+        "opened": 2
       },
       "ops": {
         "entry": {
-          "calls": 4,
+          "calls": 5,
           "failed": 0,
-          "latency_p50_ms": 23048.5,
-          "latency_p95_ms": 25373.6,
-          "cost_usd": 0.3703,
+          "latency_p50_ms": 23853.0,
+          "latency_p95_ms": 31418.8,
+          "cost_usd": 0.4769,
           "by_utc_day": {
             "2026-11-12": {
-              "calls": 4,
-              "cost_usd": 0.3703,
-              "input_tokens": 46743,
-              "output_tokens": 9168,
-              "thinking_tokens": 4590
+              "calls": 5,
+              "cost_usd": 0.4769,
+              "input_tokens": 58409,
+              "output_tokens": 12165,
+              "thinking_tokens": 6344
             }
           }
         },
         "exit": {
-          "calls": 3,
+          "calls": 5,
           "failed": 0,
-          "latency_p50_ms": 1612.0,
-          "latency_p95_ms": 1744.3,
-          "cost_usd": 0.0011,
+          "latency_p50_ms": 1759.0,
+          "latency_p95_ms": 2833.6,
+          "cost_usd": 0.0019,
           "by_utc_day": {
             "2026-11-12": {
-              "calls": 3,
-              "cost_usd": 0.0012,
-              "input_tokens": 9999,
-              "output_tokens": 243,
+              "calls": 5,
+              "cost_usd": 0.002,
+              "input_tokens": 16635,
+              "output_tokens": 396,
               "thinking_tokens": 0
             }
           }
         }
       },
       "last_entry_call": {
-        "bar": "2026-11-12T12:45:00+00:00",
-        "t": "2026-11-12T13:00:37.571202+00:00",
+        "bar": "2026-11-12T13:00:00+00:00",
+        "t": "2026-11-12T13:16:38.076136+00:00",
         "ok": true,
-        "latency_ms": 19730,
-        "cost_usd": 0.084536,
+        "latency_ms": 32863,
+        "cost_usd": 0.106604,
         "error": null,
         "signals": [
           {
             "symbol": "XAUUSD",
-            "action": "HOLD",
-            "setup_type": "none",
-            "score": 0,
-            "confidence": 0.0,
-            "decision": "HOLD"
+            "action": "SELL",
+            "setup_type": "trend",
+            "score": 7,
+            "confidence": 0.55,
+            "decision": "OPENED"
           },
           {
             "symbol": "EURUSD",
-            "action": "HOLD",
-            "setup_type": "none",
-            "score": 4,
-            "confidence": 0.0,
-            "decision": "HOLD"
+            "action": "SELL",
+            "setup_type": "trend",
+            "score": 7,
+            "confidence": 0.55,
+            "decision": "skip: one new entry per cycle"
           },
           {
             "symbol": "GBPUSD",
@@ -163,11 +183,11 @@
           },
           {
             "symbol": "US100",
-            "action": "HOLD",
-            "setup_type": "none",
-            "score": 3,
-            "confidence": 0.0,
-            "decision": "HOLD"
+            "action": "SELL",
+            "setup_type": "trend",
+            "score": 5,
+            "confidence": 0.52,
+            "decision": "skip: one new entry per cycle"
           }
         ]
       }
@@ -179,23 +199,41 @@
       "exit_model": "claude-haiku-5-5",
       "account": {
         "start_balance": 100000.0,
-        "balance": 100000.0,
-        "equity": 100000.0,
-        "realized_pnl": 0.0,
+        "balance": 99855.8,
+        "equity": 99855.8,
+        "realized_pnl": -144.2,
         "open_pnl": 0.0,
-        "trades": 0,
+        "trades": 1,
         "wins": 0,
-        "losses": 0,
-        "r_total": 0.0,
-        "r_per_trade": null,
+        "losses": 1,
+        "r_total": -0.452,
+        "r_per_trade": -0.452,
         "mll_floor": 97000.0,
-        "mll_room": 3000.0,
-        "day_realized": 0.0,
+        "mll_room": 2855.8,
+        "day_realized": -144.2,
         "day_flattened": false,
         "blown": null
       },
       "open_positions": [],
-      "recent_trades": [],
+      "recent_trades": [
+        {
+          "t_exit": "2026-11-12T13:17:37.164482+00:00",
+          "entry_time": "2026-11-12T13:17:14.327002+00:00",
+          "symbol": "EURUSD",
+          "contract": "6E",
+          "qty": 4,
+          "side": "SHORT",
+          "entry": 1.108,
+          "exit": 1.10825,
+          "reason": "claude_close",
+          "net": -144.2,
+          "R": -0.452,
+          "hold_seconds": 22,
+          "setup_type": "trend",
+          "score": 7,
+          "held": "22s"
+        }
+      ],
       "books": {
         "mech": {
           "n": 0,
@@ -228,43 +266,51 @@
         }
       },
       "signals": {
-        "rows": 16,
-        "buy_sell": 0,
-        "gated": 0,
-        "opened": 0
+        "rows": 20,
+        "buy_sell": 1,
+        "gated": 1,
+        "opened": 1
       },
       "ops": {
         "entry": {
-          "calls": 4,
+          "calls": 5,
           "failed": 0,
-          "latency_p50_ms": 8337.0,
-          "latency_p95_ms": 9101.0,
-          "cost_usd": 0.1363,
+          "latency_p50_ms": 8659.0,
+          "latency_p95_ms": 19826.2,
+          "cost_usd": 0.1871,
           "by_utc_day": {
             "2026-11-12": {
-              "calls": 4,
-              "cost_usd": 0.1363,
-              "input_tokens": 46743,
-              "output_tokens": 4286,
-              "thinking_tokens": 0
+              "calls": 5,
+              "cost_usd": 0.1871,
+              "input_tokens": 58409,
+              "output_tokens": 7028,
+              "thinking_tokens": 1558
             }
           }
         },
         "exit": {
-          "calls": 0,
+          "calls": 2,
           "failed": 0,
-          "latency_p50_ms": null,
-          "latency_p95_ms": null,
-          "cost_usd": 0,
-          "by_utc_day": {}
+          "latency_p50_ms": 1473.5,
+          "latency_p95_ms": 1776.3,
+          "cost_usd": 0.0008,
+          "by_utc_day": {
+            "2026-11-12": {
+              "calls": 2,
+              "cost_usd": 0.0008,
+              "input_tokens": 6696,
+              "output_tokens": 191,
+              "thinking_tokens": 0
+            }
+          }
         }
       },
       "last_entry_call": {
-        "bar": "2026-11-12T12:45:00+00:00",
-        "t": "2026-11-12T13:00:37.571202+00:00",
+        "bar": "2026-11-12T13:00:00+00:00",
+        "t": "2026-11-12T13:16:38.076136+00:00",
         "ok": true,
-        "latency_ms": 7941,
-        "cost_usd": 0.033838,
+        "latency_ms": 22488,
+        "cost_usd": 0.050752,
         "error": null,
         "signals": [
           {
@@ -277,11 +323,11 @@
           },
           {
             "symbol": "EURUSD",
-            "action": "HOLD",
-            "setup_type": "none",
-            "score": 0,
-            "confidence": 0.0,
-            "decision": "HOLD"
+            "action": "SELL",
+            "setup_type": "trend",
+            "score": 7,
+            "confidence": 0.55,
+            "decision": "OPENED"
           },
           {
             "symbol": "GBPUSD",

@@ -1,9 +1,71 @@
 {
-  "updated_at": "2026-11-12T12:14:35.980922+00:00",
+  "updated_at": "2026-11-12T12:16:39.586497+00:00",
   "paper_only": true,
   "plan": "LucidPro 100K (DLL on)",
   "exit_mode": "gemini_only",
-  "card": "SL: none \u00b7 TP: none \u00b7 exit: Gemini",
+  "card": "Hard stop \u2212$500 net \u00b7 TP: none \u00b7 exit: Gemini",
+  "hard_stop_net_usd": 500.0,
+  "comparison": [
+    {
+      "book": "main",
+      "label": "Main (stop)",
+      "hard_stop_net_usd": 500.0,
+      "balance": 97645.4,
+      "equity": 97645.4,
+      "net_pnl": -2354.6,
+      "open_pnl": 0.0,
+      "trades": 12,
+      "wins": 7,
+      "losses": 5,
+      "stopped": 0,
+      "open_positions": 0
+    },
+    {
+      "book": "1-strike",
+      "label": "1-strike",
+      "hard_stop_net_usd": 500.0,
+      "balance": 97645.4,
+      "equity": 97645.4,
+      "net_pnl": -2354.6,
+      "open_pnl": 0.0,
+      "trades": 12,
+      "wins": 7,
+      "losses": 5,
+      "stopped": 0,
+      "open_positions": 0,
+      "overlap_trades": 0
+    },
+    {
+      "book": "2-strike",
+      "label": "2-strike",
+      "hard_stop_net_usd": 500.0,
+      "balance": 97455.4,
+      "equity": 97455.4,
+      "net_pnl": -2544.6,
+      "open_pnl": 0.0,
+      "trades": 12,
+      "wins": 7,
+      "losses": 5,
+      "stopped": 0,
+      "open_positions": 0,
+      "overlap_trades": 0
+    },
+    {
+      "book": "nostop",
+      "label": "No-stop shadow",
+      "hard_stop_net_usd": null,
+      "balance": 97645.4,
+      "equity": 97645.4,
+      "net_pnl": -2354.6,
+      "open_pnl": 0.0,
+      "trades": 12,
+      "wins": 7,
+      "losses": 5,
+      "stopped": 0,
+      "open_positions": 0,
+      "overlap_trades": 0
+    }
+  ],
   "breaches": [
     {
       "t": "2026-11-12T10:44:00+00:00",
@@ -23,7 +85,7 @@
     }
   ],
   "breach_note": "DLL / MLL / 3.5% breaker are log-only (no block, no forced close)",
-  "sizing_rule": "full-size futures only (NQ, GC, 6E, 6B), 1-6 contracts sized as if risk were 0.8 ATR at $1500 (notional reference only); no stop, no target, exit = Gemini CLOSE only",
+  "sizing_rule": "full-size futures only (NQ, GC, 6E, 6B), 1-6 contracts sized as if risk were 0.8 ATR at $1500 (notional reference only); hard stop \u2212$500 NET of commission, no target, exit = Gemini CLOSE or the stop",
   "reset": {
     "at": "2026-11-12T10:14:47.081605+00:00",
     "reason": "reset6: profit-lock exit rules",
@@ -33,40 +95,40 @@
     "no": 1,
     "phase": "eval",
     "start_balance": 100000.0,
-    "balance": 97670.0,
-    "equity": 97959.0,
-    "realized_pnl_since_reset": -2325.4,
-    "open_pnl": 289.0,
-    "commission_on_open": 4.6,
-    "trades_since_reset": 11,
+    "balance": 97645.4,
+    "equity": 97645.4,
+    "realized_pnl_since_reset": -2354.6,
+    "open_pnl": 0.0,
+    "commission_on_open": 0.0,
+    "trades_since_reset": 12,
     "wins": 7,
-    "losses": 4,
+    "losses": 5,
     "mll_floor": 97000.0,
-    "mll_room": 959.0,
+    "mll_room": 645.4,
     "dll": 1800.0,
-    "day_realized": -2325.4,
+    "day_realized": -2354.6,
     "day_locked": null,
-    "to_target": 8330.0
+    "to_target": 8354.6
   },
-  "open_positions": [
+  "open_positions": [],
+  "pending": 2,
+  "recent_trades": [
     {
+      "t_exit": "2026-11-12T12:14:00+00:00",
       "symbol": "XAUUSD",
       "contract": "GC",
       "qty": 2,
       "side": "SHORT",
       "entry_time": "2026-11-12T12:11:00+00:00",
       "entry": 3944.8,
-      "stop": null,
-      "target": null,
-      "last": 3943.355,
-      "unrealized": 289.0,
-      "risk_usd": null,
-      "target_usd_net": null,
-      "target_source": "none (gemini_only)"
-    }
-  ],
-  "pending": 0,
-  "recent_trades": [
+      "exit": 3944.9,
+      "reason": "gemini_close",
+      "net": -29.2,
+      "balance_after": 97645.4,
+      "hold_seconds": 180,
+      "held": "3m 00s",
+      "stopped": false
+    },
     {
       "t_exit": "2026-11-12T12:08:00+00:00",
       "symbol": "XAUUSD",
@@ -80,7 +142,8 @@
       "net": 290.8,
       "balance_after": 97674.6,
       "hold_seconds": 300,
-      "held": "5m 00s"
+      "held": "5m 00s",
+      "stopped": false
     },
     {
       "t_exit": "2026-11-12T12:05:00+00:00",
@@ -95,7 +158,8 @@
       "net": 1013.0,
       "balance_after": 97379.2,
       "hold_seconds": 120,
-      "held": "2m 00s"
+      "held": "2m 00s",
+      "stopped": false
     },
     {
       "t_exit": "2026-11-12T11:55:00+00:00",
@@ -110,7 +174,8 @@
       "net": 170.8,
       "balance_after": 96370.8,
       "hold_seconds": 600,
-      "held": "10m 00s"
+      "held": "10m 00s",
+      "stopped": false
     },
     {
       "t_exit": "2026-11-12T11:46:00+00:00",
@@ -125,7 +190,8 @@
       "net": -69.2,
       "balance_after": 96195.4,
       "hold_seconds": 660,
-      "held": "11m 00s"
+      "held": "11m 00s",
+      "stopped": false
     },
     {
       "t_exit": "2026-11-12T11:38:00+00:00",
@@ -140,7 +206,8 @@
       "net": 110.8,
       "balance_after": 96259.6,
       "hold_seconds": 180,
-      "held": "3m 00s"
+      "held": "3m 00s",
+      "stopped": false
     },
     {
       "t_exit": "2026-11-12T11:28:00+00:00",
@@ -155,7 +222,8 @@
       "net": 150.8,
       "balance_after": 96158.4,
       "hold_seconds": 420,
-      "held": "7m 00s"
+      "held": "7m 00s",
+      "stopped": false
     },
     {
       "t_exit": "2026-11-12T11:22:00+00:00",
@@ -170,7 +238,8 @@
       "net": -272.1,
       "balance_after": 96003.0,
       "hold_seconds": 1860,
-      "held": "31m 00s"
+      "held": "31m 00s",
+      "stopped": false
     },
     {
       "t_exit": "2026-11-12T11:01:00+00:00",
@@ -185,7 +254,8 @@
       "net": -1849.2,
       "balance_after": 96274.9,
       "hold_seconds": 1800,
-      "held": "30m 00s"
+      "held": "30m 00s",
+      "stopped": false
     },
     {
       "t_exit": "2026-11-12T11:00:00+00:00",
@@ -200,23 +270,9 @@
       "net": -2087.0,
       "balance_after": 98119.5,
       "hold_seconds": 2340,
-      "held": "39m 00s"
-    },
-    {
-      "t_exit": "2026-11-12T10:47:00+00:00",
-      "symbol": "EURUSD",
-      "contract": "6E",
-      "qty": 2,
-      "side": "LONG",
-      "entry_time": "2026-11-12T10:41:00+00:00",
-      "entry": 1.11,
-      "exit": 1.11005,
-      "reason": "gemini_close",
-      "net": 2.9,
-      "balance_after": 100207.8,
-      "hold_seconds": 360,
-      "held": "6m 00s"
+      "held": "39m 00s",
+      "stopped": false
     }
   ],
-  "last_processed": "2026-11-12T12:14:00+00:00"
+  "last_processed": "2026-11-12T12:16:00+00:00"
 }

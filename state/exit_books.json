@@ -77,6 +77,41 @@
           "gemini_close": 12
         }
       }
+    },
+    "nostop": {
+      "balance": 97645.4,
+      "positions": [],
+      "day": {
+        "id": "2026-11-12",
+        "start_balance": 100000.0,
+        "realized": -2354.6,
+        "halted": null,
+        "breach_logged": {
+          "t": "2026-11-12T10:59:39.148958+00:00",
+          "equity": 96494.2,
+          "note": "3.5% breaker breached (log-only)"
+        }
+      },
+      "stats": {
+        "trades": 12,
+        "wins": 7,
+        "losses": 5,
+        "gross_win": 1952.1,
+        "gross_loss": -4306.7,
+        "net_pnl": -2354.6,
+        "commissions": 114.6,
+        "hold_seconds": 9177,
+        "exit_reasons": {
+          "gemini_close": 12
+        }
+      },
+      "cloned_from": {
+        "book": "1-strike",
+        "at": "2026-11-12T12:14:51.988645+00:00",
+        "balance": 97645.4,
+        "trades": 12,
+        "open_ids": []
+      }
     }
   },
   "reset_token": "2026-11-12-profit-lock",
@@ -95,32 +130,6 @@
     11
   ],
   "post_exit": [
-    {
-      "book": "1-strike",
-      "id": 10,
-      "symbol": "XAUUSD",
-      "contract": "GC",
-      "qty": 2,
-      "side": "SHORT",
-      "exit": 3946.6,
-      "t_exit": "2026-11-12T12:08:02.795616+00:00",
-      "reason": "gemini_close",
-      "net": 290.8,
-      "due": "2026-11-12T12:13:02.795616+00:00"
-    },
-    {
-      "book": "2-strike",
-      "id": 10,
-      "symbol": "XAUUSD",
-      "contract": "GC",
-      "qty": 2,
-      "side": "SHORT",
-      "exit": 3946.3,
-      "t_exit": "2026-11-12T12:08:21.263980+00:00",
-      "reason": "gemini_close",
-      "net": 350.8,
-      "due": "2026-11-12T12:13:21.263980+00:00"
-    },
     {
       "book": "1-strike",
       "id": 12,

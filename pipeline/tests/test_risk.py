@@ -50,6 +50,7 @@ def test_breaker_overrides_all_signals_to_hold():
 
 def test_validator_rules():
     cfg = load_config()
+    cfg["lucid"]["exit_mode"] = "server"  # stop/target geometry is skipped in gemini_only
     ctx = {"last_close": 100.0, "atr": 1.0}
     base = {"symbol": "EURUSD", "entry": 100.0, "confidence": 0.8}
     # Scalp mode: default min_rr=0. Explicit override still enforces a floor.
@@ -66,3 +67,28 @@ def test_validator_rules():
     bad = validate_signal({**base, "action": "BUY", "stop_loss": 99, "take_profit": 101.5},
                           "EURUSD", ctx, cfg, 100_000, min_rr=2.5)
     assert bad["action"] == "HOLD" and "R:R" in bad["reasons"][0]
+
+def test_validator_gemini_only_skips_stop_target_gates():
+    """gemini_only must not reject a Gemini direction because of SL/TP geometry."""
+    cfg = load_config()
+    assert cfg["lucid"]["exit_mode"] == "gemini_only"
+    ctx = {"last_close": 100.0, "atr": 1.0}
+    base = {"symbol": "EURUSD", "entry": 100.0, "confidence": 0.8, "action": "BUY"}
+    # Live bug: scalp floor rounded to a hair under min_stop_distance_atr (0.25).
+    tight = validate_signal({**base, "stop_loss": 99.75 - 1e-9, "take_profit": 100.5},
+                            "EURUSD", ctx, cfg, 100_000)
+    assert tight["action"] == "BUY" and not tight["downgraded"]
+    # Wrong-side and zero SL/TP are also stop/target gates — ignored here.
+    assert validate_signal({**base, "stop_loss": 101, "take_profit": 103},
+                           "EURUSD", ctx, cfg, 100_000)["action"] == "BUY"
+    assert validate_signal({**base, "stop_loss": 0, "take_profit": 0},
+                           "EURUSD", ctx, cfg, 100_000)["action"] == "BUY"
+    missing = validate_signal({"action": "BUY", "confidence": 0.8, "stop_loss": 99, "take_profit": 103},
+                              "EURUSD", ctx, cfg, 100_000)
+    assert missing["action"] == "HOLD" and "missing entry" in missing["reasons"][0]
+    far = validate_signal({**base, "stop_loss": 99, "take_profit": 103, "entry": 102.5},
+                          "EURUSD", ctx, cfg, 100_000)
+    assert far["action"] == "HOLD" and "entry" in far["reasons"][0]
+    low = validate_signal({**base, "stop_loss": 99.8, "take_profit": 100.5, "confidence": 0.3},
+                          "EURUSD", ctx, cfg, 100_000)
+    assert low["action"] == "HOLD" and "confidence" in low["reasons"][0]

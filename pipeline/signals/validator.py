@@ -45,7 +45,12 @@ def _hold(out: dict, reason: str) -> dict:
 def validate_signal(sig: dict | None, symbol: str, ctx: dict, cfg: dict, equity: float,
                     min_rr: float | None = None, min_confidence: float | None = None) -> dict:
     """min_rr / min_confidence override [risk] for callers other than the public site (the Lucid paper sim
-    passes min_rr=0 to skip the R:R minimum; the site path never passes overrides)."""
+    passes min_rr=0 to skip the R:R minimum; the site path never passes overrides).
+
+    When lucid.exit_mode is gemini_only there is no stop or target, so stop/target
+    geometry must not reject an entry (missing SL/TP, side order, min stop distance, R:R).
+    Entry presence, confidence, and max entry distance still apply; Lucid sizes on the
+    notional 0.8 ATR reference."""
     r = dict(cfg["risk"])
     # Server-side scalp levels are the SL/TP source of truth (low / negative R:R thesis).
     if (cfg.get("scalp") or {}).get("enabled", False) and min_rr is None:
@@ -78,23 +83,34 @@ def validate_signal(sig: dict | None, symbol: str, ctx: dict, cfg: dict, equity:
         out.update(position_units=0.0, position_lots=0.0)
         return out
     e, sl, tp = out["entry"], out["stop_loss"], out["take_profit"]
-    if None in (e, sl, tp):
-        return _hold(out, "missing entry/stop_loss/take_profit")
-    if action == "BUY" and not (sl < e < tp):
-        return _hold(out, "BUY requires stop_loss < entry < take_profit")
-    if action == "SELL" and not (tp < e < sl):
-        return _hold(out, "SELL requires take_profit < entry < stop_loss")
-    risk, reward = abs(e - sl), abs(tp - e)
-    out["rr_local"] = round(reward / risk, 3)
+    # gemini_only: no SL/TP. A rounded scalp floor just under min_stop_distance_atr
+    # used to reject live entries (XAUUSD/US100 at 2026-11-11T20:22Z).
+    skip_sl_tp = str((cfg.get("lucid") or {}).get("exit_mode", "")) == "gemini_only"
+    if not skip_sl_tp:
+        if None in (e, sl, tp):
+            return _hold(out, "missing entry/stop_loss/take_profit")
+        if action == "BUY" and not (sl < e < tp):
+            return _hold(out, "BUY requires stop_loss < entry < take_profit")
+        if action == "SELL" and not (tp < e < sl):
+            return _hold(out, "SELL requires take_profit < entry < stop_loss")
+        risk, reward = abs(e - sl), abs(tp - e)
+        out["rr_local"] = round(reward / risk, 3)
+    else:
+        if e is None:
+            return _hold(out, "missing entry")
+        risk = abs(e - sl) if sl is not None else None
+        if sl is not None and tp is not None and risk:
+            out["rr_local"] = round(abs(tp - e) / risk, 3)
     atr = ctx["atr"] or 0
     market = ctx.get("live_price") if ctx.get("live_price") is not None else ctx["last_close"]
     if atr > 0 and abs(e - market) > r["max_entry_distance_atr"] * atr:
         return _hold(out, f"entry {abs(e - market) / atr:.2f} ATR from market "
                           f"(max {r['max_entry_distance_atr']})")
-    if atr > 0 and risk < r["min_stop_distance_atr"] * atr:
-        return _hold(out, f"stop {risk / atr:.2f} ATR from entry (min {r['min_stop_distance_atr']})")
-    if out["rr_local"] < r["min_rr"]:
-        return _hold(out, f"R:R 1:{out['rr_local']} below minimum 1:{r['min_rr']}")
+    if not skip_sl_tp:
+        if atr > 0 and risk < r["min_stop_distance_atr"] * atr:
+            return _hold(out, f"stop {risk / atr:.2f} ATR from entry (min {r['min_stop_distance_atr']})")
+        if out["rr_local"] < r["min_rr"]:
+            return _hold(out, f"R:R 1:{out['rr_local']} below minimum 1:{r['min_rr']}")
     if out["confidence"] is None or out["confidence"] < r["min_confidence"]:
         return _hold(out, f"confidence {out['confidence']} below {r['min_confidence']}")
     # local position sizing: risk% of equity / stop distance. Units are base units (oz, EUR, GBP, index pts x $1, BTC)
@@ -102,9 +118,10 @@ def validate_signal(sig: dict | None, symbol: str, ctx: dict, cfg: dict, equity:
     rp = min(rp, r["max_risk_pct"])
     out["risk_pct"] = rp
     out["risk_amount"] = round(equity * rp / 100, 2)
-    units = out["risk_amount"] / risk
-    out["position_units"] = round(units, 6)
-    out["position_lots"] = math.floor(units / scfg.get("contract_size", 1) * 100) / 100  # 0.01 lot step
+    if risk:
+        units = out["risk_amount"] / risk
+        out["position_units"] = round(units, 6)
+        out["position_lots"] = math.floor(units / scfg.get("contract_size", 1) * 100) / 100  # 0.01 lot step
     return out
 
 

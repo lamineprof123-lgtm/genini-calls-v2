@@ -150,7 +150,8 @@ def test_reset2_archive_discards_positions(cfg, tmp_path):
     a = s2.s["account"]
     assert (a["balance"], a["mll_floor"], a["trades"]) == (100000.0, 97000.0, 0)
     assert s2.s["positions"] == [] and s2.s["pending"] == []
-    arch = st / "account_pre_reset3_2026-11-11.json"
+    day = datetime.now(UTC).astimezone(s2.tz_local).strftime("%Y-%m-%d")
+    arch = st / f"account_pre_reset3_{day}.json"
     assert arch.exists() and json.loads(arch.read_text())["positions"][0]["contract"] == "GC"
     ev = [e for e in _events(s2) if e["event"] == "reset"]
     assert ev[-1]["reason"] == "gemini-only: no SL/TP"
@@ -279,7 +280,8 @@ def test_reset3(gcfg, tmp_path):
     s.save()
     s2 = LucidSim(gcfg, st, tmp_path / "logs")
     assert s2.s["account"]["balance"] == 100000.0 and s2.s["positions"] == []
-    assert (st / "account_pre_reset3_2026-11-11.json").exists()
+    day = datetime.now(UTC).astimezone(s2.tz_local).strftime("%Y-%m-%d")
+    assert (st / f"account_pre_reset3_{day}.json").exists()
     assert [e for e in _events(s2) if e["event"] == "reset"][-1]["reason"] == "gemini-only: no SL/TP"
 
 
@@ -302,3 +304,30 @@ def test_books_wait_for_account_reset_then_adopt_open_positions(gcfg, tmp_path):
     opened = mgr._sync_account(t0 + timedelta(minutes=45))
     assert mgr.books.open_ids() == {1} and len(opened) == 2
     assert mgr._sync_account(t0 + timedelta(minutes=46)) == []
+
+
+def test_gemini_only_accepts_tight_or_missing_stop(gsim):
+    """Regression 2026-11-11T20:22Z: XAUUSD and US100 were skipped with
+    'stop 0.25 ATR from entry (min 0.25)' after the site validator downgraded
+    them to HOLD. gemini_only has no stop; sizing uses the notional 0.8 ATR
+    reference, so stop/target geometry must not block the entry."""
+    px, atr = 28500.0, 60.0
+    stop_dist = 0.25 * atr - 0.25  # 14.75 pts = 0.2458 ATR, the rounded-floor case
+    rec = {"run_at_utc": T.isoformat(), "signals": [{
+        "symbol": "US100", "action": "HOLD", "model_action": "BUY",
+        "entry": px, "stop_loss": px - stop_dist, "take_profit": px + 5.0,
+        "confidence": 0.8, "rr_local": 5.0 / stop_dist, "last_close": px, "atr": atr,
+        "model_risk_pct": None,
+        "reasons": [f"stop {stop_dist / atr:.2f} ATR from entry (min 0.25)"],
+        "signal_candle": {"high": px + 2, "low": px - stop_dist + 2}, "levels": []}]}
+    out = gsim.on_record(rec, T)
+    assert out and out[0]["taken"] and "stop" not in (out[0].get("why") or "").lower(), out
+    # Wrong-side / zero SL/TP (another stop/target gate) on a second symbol.
+    rec2 = {"run_at_utc": T.isoformat(), "signals": [{
+        "symbol": "XAUUSD", "action": "HOLD", "model_action": "SELL",
+        "entry": 3985.2, "stop_loss": 0, "take_profit": 0,
+        "confidence": 0.8, "rr_local": None, "last_close": 3985.2, "atr": 6.3,
+        "model_risk_pct": None, "reasons": ["SELL requires take_profit < entry < stop_loss"],
+        "signal_candle": {"high": 3988.0, "low": 3982.0}, "levels": []}]}
+    out2 = gsim.on_record(rec2, T)
+    assert out2 and out2[0]["taken"], out2

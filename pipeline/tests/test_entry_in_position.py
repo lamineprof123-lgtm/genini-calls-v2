@@ -121,16 +121,24 @@ def test_overlay_strips_stale_signal_without_history(tmp_path):
 def test_entry_and_exit_models_are_independent(monkeypatch, tmp_path):
     monkeypatch.setenv("GEMINI_ENTRY_MODEL", "gemini-3.8-pro")
     monkeypatch.setenv("GEMINI_EXIT_MODEL", "gemini-3.8-flash")
-    monkeypatch.delenv("GEMINI_MODEL", raising=False)
+    monkeypatch.setenv("GEMINI_MODEL", "gemini-3.6-flash")  # must not override ENTRY
     cfg = load_config()
     assert entry_model(cfg) == "gemini-3.8-pro"
     assert exit_model(cfg) == "gemini-3.8-flash"
     # --model / override is entry-only; exit stays flash
     assert entry_model(cfg, "gemini-other") == "gemini-other"
     assert exit_model(cfg) == "gemini-3.8-flash"
-    # config default exit_model is flash even without env
+    # config defaults are both 3.8-flash; legacy GEMINI_MODEL still must not win over ENTRY
     monkeypatch.delenv("GEMINI_ENTRY_MODEL", raising=False)
     monkeypatch.delenv("GEMINI_EXIT_MODEL", raising=False)
+    monkeypatch.delenv("GEMINI_MODEL", raising=False)
     cfg = load_config()
+    assert entry_model(cfg) == "gemini-3.8-flash"
     assert exit_model(cfg) == "gemini-3.8-flash"
-    assert entry_model(cfg) != exit_model(cfg)
+
+
+def test_legacy_gemini_model_does_not_override_entry_env(monkeypatch):
+    monkeypatch.setenv("GEMINI_ENTRY_MODEL", "gemini-3.8-flash")
+    monkeypatch.setenv("GEMINI_MODEL", "gemini-3.6-flash")
+    cfg = load_config()
+    assert entry_model(cfg) == "gemini-3.8-flash"

@@ -89,12 +89,14 @@ line_style = "dashed"        # "dashed" | "dotted"
 [gemini]
 # Entry scans (batched 2-min / M15 call covering all eligible charts) use `model`.
 # 18-second exit checks (exit manager, both books + Lucid) use `exit_model`.
-# Override with GEMINI_ENTRY_MODEL / GEMINI_EXIT_MODEL (legacy GEMINI_MODEL overrides entry only).
+# Override with GEMINI_ENTRY_MODEL / GEMINI_EXIT_MODEL.
+# Legacy GEMINI_MODEL is ignored when GEMINI_ENTRY_MODEL is set (workflow pins entry to 3.8-flash
+# and no longer exports GEMINI_MODEL, so it cannot silently revert entry to 3.6-flash).
 # On retryable errors (429/5xx/UNAVAILABLE) the SAME model is retried with backoff.
 # A 404 / unknown ID is not retried and is not silently replaced by another model.
 # History: gemini-2.0-flash shut down 2026-06-01; gemini-2.5-flash returns 404 "no longer available to new users".
-model = "gemini-3.6-flash"            # entry default; set to gemini-3.8-pro after the ID verifies
-exit_model = "gemini-3.8-flash"       # exit checks only
+model = "gemini-3.8-flash"            # 15-min / batched entry scans
+exit_model = "gemini-3.8-flash"       # 18s exit checks
 fallback_models = []                  # entry: no cross-model fallback
 exit_fallback_models = []             # exit: no cross-model fallback
 thinking_level = "low"                # Gemini 3.x: "minimal" | "low" | "medium" | "high" (low = faster)

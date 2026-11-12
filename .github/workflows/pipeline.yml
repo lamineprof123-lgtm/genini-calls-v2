@@ -140,9 +140,8 @@ jobs:
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           FIRMTAPE_API_KEY: ${{ secrets.FIRMTAPE_API_KEY }}
-          GEMINI_ENTRY_MODEL: ${{ vars.GEMINI_ENTRY_MODEL }}
-          GEMINI_EXIT_MODEL: ${{ vars.GEMINI_EXIT_MODEL }}
-          GEMINI_MODEL: ${{ vars.GEMINI_MODEL }}
+          GEMINI_ENTRY_MODEL: ${{ vars.GEMINI_ENTRY_MODEL || 'gemini-3.8-flash' }}
+          GEMINI_EXIT_MODEL: ${{ vars.GEMINI_EXIT_MODEL || 'gemini-3.8-flash' }}
           GITHUB_TOKEN: ${{ github.token }}
           GH_TOKEN: ${{ github.token }}
           PYTHONUNBUFFERED: '1'

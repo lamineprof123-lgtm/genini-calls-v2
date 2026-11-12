@@ -42,14 +42,18 @@ def load_config(path: str | os.PathLike | None = None) -> dict:
         cfg["site"]["dir"] = str(d)
         cfg.setdefault("publish", {})["enabled"] = False   # the GHA loop commits + deploys itself
         cfg["general"]["log_mode"] = os.environ.get("SIGNALS_LOG_MODE", "compact")
-    # Entry and exit models are independent. GEMINI_ENTRY_MODEL wins over legacy GEMINI_MODEL
-    # (entry only). A rejected ID is not rewritten here — callers must not silently fall back.
-    if os.environ.get("GEMINI_ENTRY_MODEL"):
-        cfg["gemini"]["model"] = os.environ["GEMINI_ENTRY_MODEL"].strip()
-    elif os.environ.get("GEMINI_MODEL"):
-        cfg["gemini"]["model"] = os.environ["GEMINI_MODEL"].strip()
-    if os.environ.get("GEMINI_EXIT_MODEL"):
-        cfg["gemini"]["exit_model"] = os.environ["GEMINI_EXIT_MODEL"].strip()
+    # Entry and exit models are independent. GEMINI_ENTRY_MODEL always wins over legacy
+    # GEMINI_MODEL (entry only). Blank values are ignored. A rejected ID is not rewritten
+    # here — callers must not silently fall back.
+    entry_env = (os.environ.get("GEMINI_ENTRY_MODEL") or "").strip()
+    legacy_env = (os.environ.get("GEMINI_MODEL") or "").strip()
+    if entry_env:
+        cfg["gemini"]["model"] = entry_env
+    elif legacy_env:
+        cfg["gemini"]["model"] = legacy_env
+    exit_env = (os.environ.get("GEMINI_EXIT_MODEL") or "").strip()
+    if exit_env:
+        cfg["gemini"]["exit_model"] = exit_env
     if os.environ.get("SIGNALS_INTERVAL_MINUTES"):
         cfg["scheduler"]["interval_minutes"] = int(os.environ["SIGNALS_INTERVAL_MINUTES"])
     vis = int(cfg["chart"]["visible_candles"])

@@ -163,11 +163,13 @@ async def call_gemini(cfg: dict, payloads: list[dict], pngs: dict[str, bytes], m
                     raise RuntimeError(f"empty response (finish_reason="
                                        f"{resp.candidates[0].finish_reason if resp.candidates else None})")
                 usage = resp.usage_metadata.model_dump(exclude_none=True) if resp.usage_metadata else None
-                attempts.append({"model": m, "attempt": n, "ok": True})
+                latency_s = round(time.monotonic() - t0, 3)
+                attempts.append({"model": m, "attempt": n, "ok": True, "latency_s": latency_s})
                 answered = getattr(resp, "model_version", None) or m
-                log.info("Gemini answered: requested=%s model_version=%s (attempt %d)", m, answered, n)
+                log.info("Gemini answered: requested=%s model_version=%s (attempt %d) latency=%.3fs",
+                         m, answered, n, latency_s)
                 return {"model": m, "model_version": answered, "raw_text": resp.text, "usage": usage,
-                        "attempts": attempts}
+                        "latency_s": latency_s, "attempts": attempts}
             except Exception as e:
                 err = f"{type(e).__name__}: {str(e)[:300]}"
                 retry = _is_retryable(e)

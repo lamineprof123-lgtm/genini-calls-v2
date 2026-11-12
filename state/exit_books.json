@@ -8,13 +8,13 @@
     4
   ],
   "last_price": {
-    "XAUUSD": 3938.19,
+    "XAUUSD": 3939.19,
     "EURUSD": 1.10916,
-    "US100": 28204.56
+    "US100": 28195.7
   },
   "books": {
     "1-strike": {
-      "balance": 99389.25,
+      "balance": 99467.5,
       "positions": [
         {
           "id": 3,
@@ -38,54 +38,28 @@
           "strikes": 0,
           "mfe": 0.0,
           "mae": 11.664999999999964,
-          "scan_from": "2026-11-12T09:36:00+00:00",
-          "checks": 58,
+          "scan_from": "2026-11-12T09:38:00+00:00",
+          "checks": 65,
           "opened_at": "2026-11-12T09:21:06.976234+00:00"
-        },
-        {
-          "id": 4,
-          "symbol": "US100",
-          "contract": "NQ",
-          "qty": 1,
-          "side": 1,
-          "entry": 28191.5,
-          "stop": null,
-          "target": null,
-          "entry_time": "2026-11-12T09:33:00+00:00",
-          "risk_usd": null,
-          "atr": 49.177,
-          "candle": {
-            "high": 28164.21,
-            "low": 28115.01
-          },
-          "gemini_run_at_utc": "2026-11-12T09:32:20.186471+00:00",
-          "gemini_confidence": 0.72,
-          "book": "1-strike",
-          "strikes": 0,
-          "mfe": 13.06499999999869,
-          "mae": 15.33599999999933,
-          "scan_from": "2026-11-12T09:37:00+00:00",
-          "checks": 18,
-          "opened_at": "2026-11-12T09:33:06.978554+00:00"
         }
       ],
       "day": {
         "id": "2026-11-12",
         "start_balance": 100000.0,
-        "realized": -604.4,
+        "realized": -527.9,
         "halted": null
       },
       "stats": {
-        "trades": 2,
-        "wins": 1,
+        "trades": 3,
+        "wins": 2,
         "losses": 1,
-        "gross_win": 110.8,
+        "gross_win": 187.3,
         "gross_loss": -715.2,
-        "net_pnl": -604.4,
-        "commissions": 130.75,
-        "hold_seconds": 1090,
+        "net_pnl": -527.9,
+        "commissions": 132.5,
+        "hold_seconds": 1528,
         "exit_reasons": {
-          "gemini_close": 2
+          "gemini_close": 3
         }
       }
     },
@@ -114,8 +88,8 @@
           "strikes": 0,
           "mfe": 0.0,
           "mae": 11.664999999999964,
-          "scan_from": "2026-11-12T09:36:00+00:00",
-          "checks": 58,
+          "scan_from": "2026-11-12T09:38:00+00:00",
+          "checks": 65,
           "opened_at": "2026-11-12T09:21:06.976234+00:00"
         },
         {
@@ -137,11 +111,11 @@
           "gemini_run_at_utc": "2026-11-12T09:32:20.186471+00:00",
           "gemini_confidence": 0.72,
           "book": "2-strike",
-          "strikes": 0,
-          "mfe": 13.06499999999869,
+          "strikes": 1,
+          "mfe": 17.674999999999272,
           "mae": 15.33599999999933,
-          "scan_from": "2026-11-12T09:37:00+00:00",
-          "checks": 18,
+          "scan_from": "2026-11-12T09:38:00+00:00",
+          "checks": 25,
           "opened_at": "2026-11-12T09:33:06.978554+00:00"
         }
       ],
@@ -172,5 +146,19 @@
     1,
     2
   ],
-  "post_exit": []
+  "post_exit": [
+    {
+      "book": "1-strike",
+      "id": 4,
+      "symbol": "US100",
+      "contract": "NQ",
+      "qty": 1,
+      "side": "LONG",
+      "exit": 28195.5,
+      "t_exit": "2026-11-12T09:40:18.591706+00:00",
+      "reason": "gemini_close",
+      "net": 76.5,
+      "due": "2026-11-12T09:45:18.591706+00:00"
+    }
+  ]
 }

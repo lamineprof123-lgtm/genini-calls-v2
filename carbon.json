@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-12T17:43:29.654495+00:00",
+  "updated_at": "2026-11-12T17:44:59.649486+00:00",
   "paper_only": true,
   "model": "gemini-4-carbon",
   "entry_thinking": "high",
@@ -18,11 +18,11 @@
   "min_confidence": 0.75,
   "spend": {
     "day_dubai": "2026-11-12",
-    "usd": 0.7542,
+    "usd": 0.8173,
     "soft_usd": 15,
     "hard_usd": 19,
     "state": "ok",
-    "calls": 16,
+    "calls": 17,
     "failed": 1,
     "by_kind": {
       "entry": {
@@ -30,21 +30,21 @@
         "usd": 0.45292
       },
       "trigger": {
-        "calls": 8,
-        "usd": 0.301324
+        "calls": 9,
+        "usd": 0.36433
       }
     },
     "tokens": {
-      "input": 132922,
-      "output": 14220,
-      "thoughts": 34620
+      "input": 138645,
+      "output": 14940,
+      "thoughts": 39056
     },
     "price_per_mtok": [
       2.0,
       10.0
     ],
     "history": {
-      "2026-11-12": 0.7542
+      "2026-11-12": 0.8173
     }
   },
   "triggers_today": 10,
@@ -52,43 +52,43 @@
   "next_scan_at": "2026-11-12T17:45:20+00:00",
   "in_window": true,
   "last_call": {
-    "t": "2026-11-12T17:41:44.043012+00:00",
-    "t_dubai": "2026-11-12T21:41:44.043012+04:00",
+    "t": "2026-11-12T17:43:50.880274+00:00",
+    "t_dubai": "2026-11-12T21:43:50.880274+04:00",
     "kind": "trigger",
     "model": "gemini-4-carbon",
     "model_version": "gemini-4-carbon",
     "thinking": "high",
     "ok": true,
     "error": null,
-    "latency_s": 61.269,
+    "latency_s": 60.209,
     "finish_reason": "FinishReason.STOP",
     "tokens": {
-      "input": 5949,
-      "output": 691,
-      "thoughts": 5204,
-      "total": 11844
+      "input": 5723,
+      "output": 720,
+      "thoughts": 4436,
+      "total": 10879
     },
-    "thoughts_token_count": 5204,
+    "thoughts_token_count": 4436,
     "price_per_mtok": [
       2.0,
       10.0
     ],
-    "cost_usd": 0.070848,
-    "spend_today_usd": 0.7542,
+    "cost_usd": 0.063006,
+    "spend_today_usd": 0.8173,
     "symbols": [
-      "US100"
+      "EURUSD"
     ],
-    "render_ms": 276,
-    "parse_error": "invalid JSON: Expecting value: line 1 column 1 (char 0)",
+    "render_ms": 251,
+    "parse_error": null,
     "trigger": {
       "trigger": "level_cross",
-      "level": "Call Wall #1",
-      "level_price": 28431.3,
-      "price": 28443.83,
-      "direction": "up",
-      "symbol": "US100",
+      "level": "Session Low",
+      "level_price": 1.1053,
+      "price": 1.10517,
+      "direction": "down",
+      "symbol": "EURUSD",
       "bar": "2026-11-12T17:30:00+00:00",
-      "n_today": 9
+      "n_today": 10
     }
   },
   "first_call": {
@@ -124,39 +124,39 @@
     "parse_error": null,
     "trigger": null
   },
-  "calls_total": 16,
+  "calls_total": 17,
   "last_scan": {
     "kind": "trigger",
-    "t": "2026-11-12T17:40:42.498012+00:00",
+    "t": "2026-11-12T17:42:50.420274+00:00",
     "trigger": {
       "trigger": "level_cross",
-      "level": "Call Wall #1",
-      "level_price": 28431.3,
-      "price": 28443.83,
-      "direction": "up",
-      "symbol": "US100",
+      "level": "Session Low",
+      "level_price": 1.1053,
+      "price": 1.10517,
+      "direction": "down",
+      "symbol": "EURUSD",
       "bar": "2026-11-12T17:30:00+00:00",
-      "n_today": 9
+      "n_today": 10
     },
     "sent": [
-      "US100"
+      "EURUSD"
     ],
     "blocked_session": [],
     "ok": true,
-    "latency_s": 61.269,
-    "cost_usd": 0.070848,
+    "latency_s": 60.209,
+    "cost_usd": 0.063006,
     "tokens": {
-      "input": 5949,
-      "output": 691,
-      "thoughts": 5204,
-      "total": 11844
+      "input": 5723,
+      "output": 720,
+      "thoughts": 4436,
+      "total": 10879
     },
-    "error": "invalid JSON: Expecting value: line 1 column 1 (char 0)",
+    "error": null,
     "signals": [
       {
-        "symbol": "US100",
+        "symbol": "EURUSD",
         "action": "HOLD",
-        "confidence": null,
+        "confidence": 0.72,
         "thinking_level": "high"
       }
     ],

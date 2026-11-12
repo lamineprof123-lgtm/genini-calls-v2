@@ -15,33 +15,33 @@
       }
     },
     "2026-11-13": {
-      "usd": 0.007971,
-      "calls": 3,
+      "usd": 0.010279,
+      "calls": 4,
       "failed": 0,
       "tokens": {
-        "prompt": 34764,
-        "cache_hit": 5376,
-        "cache_miss": 29388,
-        "completion": 5911,
-        "reasoning": 2719
+        "prompt": 46368,
+        "cache_hit": 7168,
+        "cache_miss": 39200,
+        "completion": 7296,
+        "reasoning": 3163
       }
     }
   },
   "last_call": {
-    "t": "2026-11-12T20:30:20.004586+00:00",
+    "t": "2026-11-12T20:45:20.005131+00:00",
     "ok": true,
-    "cost_usd": 0.00240268,
-    "spend_today_usd": 0.008,
+    "cost_usd": 0.00230818,
+    "spend_today_usd": 0.0103,
     "band": "off_peak",
     "tokens": {
-      "prompt": 11602,
+      "prompt": 11604,
       "cache_hit": 1792,
-      "cache_miss": 9810,
-      "completion": 1543,
-      "reasoning": 399,
-      "total": 13145
+      "cache_miss": 9812,
+      "completion": 1385,
+      "reasoning": 444,
+      "total": 12989
     },
-    "latency_s": 6.488,
+    "latency_s": 6.564,
     "error": null,
     "model": "deepseek-flash",
     "symbols": [
@@ -52,11 +52,11 @@
     ],
     "http_status": 200,
     "prompt_version": "bracket-v1",
-    "snapshot_id": "m15-20261112201500-5bcb3e6a3671",
-    "bar_close_ts": "2026-11-12T20:30:00+00:00",
-    "snapshot_ts": "2026-11-12T20:30:23.589166+00:00",
-    "call_start": "2026-11-12T20:30:24.544979+00:00",
-    "answer_ts": "2026-11-12T20:30:31.033400+00:00"
+    "snapshot_id": "m15-20261112203000-b1a58e276d85",
+    "bar_close_ts": "2026-11-12T20:45:00+00:00",
+    "snapshot_ts": "2026-11-12T20:45:21.789730+00:00",
+    "call_start": "2026-11-12T20:45:22.262664+00:00",
+    "answer_ts": "2026-11-12T20:45:28.827030+00:00"
   },
   "last_signals": [
     {
@@ -67,7 +67,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "T1 no: 1.10556 below VWAP 1.10757 and EMA50 1.10687, and -3.42 ATR from VWAP is beyond the 2.0 chase limit. T2 no: every level untouched on the last closed bar. Room up 0.375 ATR also fails S1. HOLD."
+      "rationale": "T1 no: price 1.10548 below VWAP 1.10756 (-3.7 ATR) and EMA50 1.10681. T2 no: every labelled level untouched on the last closed bar. Room up 0.501 ATR and room down 1.503 ATR; no fade wick at an extreme. S1 fails for any BUY. HOLD."
     },
     {
       "symbol": "US100",
@@ -77,7 +77,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "T1 marginal: above VWAP 28193.92 but live 28241.98 has slipped back below EMA50 28254.03. Room up only 0.146 ATR to EMA50 and 0.397 ATR down to S/R 28209.17, both under 1.0 ATR. S1 fails hard gate. HOLD."
+      "rationale": "T1 yes: 28260.48 above VWAP 28194.46 (+0.81 ATR) and just above EMA50 28253.38. T2 weak: only touches, no closed_through in the trade direction. Hard gate fails: room up 0.064 ATR to S/R 28265.71, room down 0.087 ATR. S2 awarded (US100). HO"
     },
     {
       "symbol": "XAGUSD",
@@ -87,7 +87,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "T1 no: 50.031 sits below VWAP 50.951 and EMA50 50.468, -5.55 ATR from VWAP. T2 no: all levels untouched on the last closed bar. Room up 0.69 ATR also under the 1.0 ATR gate. No fresh event. HOLD."
+      "rationale": "T1 no: price 50.035 below VWAP 50.943 (-5.6 ATR) and EMA50 50.451. T2 no: all labelled levels untouched on the last closed bar; no rejection wick at a labelled extreme either. Room up 0.617 ATR, room down 1.383 ATR; S1 fails for a BUY. HOLD"
     },
     {
       "symbol": "BTCUSD",
@@ -97,7 +97,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "T1 no: 71356.9 is far below VWAP 72668.31 and EMA50 72211.62. T2 no: every level untouched on the last closed bar. Room down 0.756 ATR to Session Low 71141.0 fails the 1.0 ATR gate. No fresh level event. HOLD."
+      "rationale": "T1 no: price 71416 below VWAP 72652 (-4.5 ATR) and EMA50 72180. T2 no: every key level untouched on the last closed bar. Room up 0.950 ATR to EMA20 and room down 1.004 ATR to Session Low; no fade rejection at an extreme. HOLD."
     }
   ],
   "last_bars": {

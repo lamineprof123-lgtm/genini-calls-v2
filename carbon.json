@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-12T17:51:17.653606+00:00",
+  "updated_at": "2026-11-12T17:53:05.649671+00:00",
   "paper_only": true,
   "model": "gemini-4-carbon",
   "entry_thinking": "high",
@@ -256,11 +256,11 @@
   "whatif": {
     "CB-BRACKET": {
       "all": {
-        "n": 2,
-        "r_avg": -0.007,
-        "r_total": -0.014,
-        "net_1c": 776.9,
-        "win_rate": 0.5
+        "n": 3,
+        "r_avg": -0.339,
+        "r_total": -1.016,
+        "net_1c": -1481.6,
+        "win_rate": 0.333
       },
       "conf>=min": {
         "n": 0,
@@ -270,11 +270,11 @@
         "win_rate": null
       },
       "conf<min": {
-        "n": 2,
-        "r_avg": -0.007,
-        "r_total": -0.014,
-        "net_1c": 776.9,
-        "win_rate": 0.5
+        "n": 3,
+        "r_avg": -0.339,
+        "r_total": -1.016,
+        "net_1c": -1481.6,
+        "win_rate": 0.333
       },
       "site_only": {
         "n": 0,
@@ -284,20 +284,20 @@
         "win_rate": null
       },
       "tradeable": {
-        "n": 2,
-        "r_avg": -0.007,
-        "r_total": -0.014,
-        "net_1c": 776.9,
-        "win_rate": 0.5
+        "n": 3,
+        "r_avg": -0.339,
+        "r_total": -1.016,
+        "net_1c": -1481.6,
+        "win_rate": 0.333
       }
     },
     "CB-RUNNER": {
       "all": {
-        "n": 2,
-        "r_avg": -0.305,
-        "r_total": -0.611,
-        "net_1c": -408.1,
-        "win_rate": 0.5
+        "n": 3,
+        "r_avg": -0.538,
+        "r_total": -1.613,
+        "net_1c": -2666.6,
+        "win_rate": 0.333
       },
       "conf>=min": {
         "n": 0,
@@ -307,11 +307,11 @@
         "win_rate": null
       },
       "conf<min": {
-        "n": 2,
-        "r_avg": -0.305,
-        "r_total": -0.611,
-        "net_1c": -408.1,
-        "win_rate": 0.5
+        "n": 3,
+        "r_avg": -0.538,
+        "r_total": -1.613,
+        "net_1c": -2666.6,
+        "win_rate": 0.333
       },
       "site_only": {
         "n": 0,
@@ -321,45 +321,64 @@
         "win_rate": null
       },
       "tradeable": {
-        "n": 2,
-        "r_avg": -0.305,
-        "r_total": -0.611,
-        "net_1c": -408.1,
-        "win_rate": 0.5
+        "n": 3,
+        "r_avg": -0.538,
+        "r_total": -1.613,
+        "net_1c": -2666.6,
+        "win_rate": 0.333
       }
     },
-    "open": 2,
-    "open_rows": [
+    "open": 0,
+    "open_rows": [],
+    "recent": [
       {
-        "vid": 5,
-        "exit": "CB-BRACKET",
+        "t_exit": "2026-11-12T17:52:00+00:00",
+        "vid": 6,
+        "exit_rules": "CB-RUNNER",
         "symbol": "US100",
         "side": "SHORT",
-        "entry": 28358.5,
-        "stop": 28471.0,
-        "target": 28246.0,
         "confidence": 0.72,
+        "passes_filter": false,
+        "kind": "entry",
+        "signal_at": "2026-11-12T16:45:46.214777+00:00",
+        "entry_time": "2026-11-12T16:45:53.100091+00:00",
+        "entry": 28358.5,
+        "exit": 28471.25,
+        "reason": "stop_1atr",
+        "net_1c": -2258.5,
+        "R": -1.002,
+        "atr": 112.397,
+        "chase_atr": 0.092,
+        "mfe_atr": 0.226,
         "site_only": false,
         "flag": null,
         "unit": null,
         "thinking_level": null
       },
       {
-        "vid": 6,
-        "exit": "CB-RUNNER",
+        "t_exit": "2026-11-12T17:52:00+00:00",
+        "vid": 5,
+        "exit_rules": "CB-BRACKET",
         "symbol": "US100",
         "side": "SHORT",
-        "entry": 28358.5,
-        "stop": 28471.0,
-        "target": 28077.5,
         "confidence": 0.72,
+        "passes_filter": false,
+        "kind": "entry",
+        "signal_at": "2026-11-12T16:45:46.214777+00:00",
+        "entry_time": "2026-11-12T16:45:53.100091+00:00",
+        "entry": 28358.5,
+        "exit": 28471.25,
+        "reason": "stop_1atr",
+        "net_1c": -2258.5,
+        "R": -1.002,
+        "atr": 112.397,
+        "chase_atr": 0.092,
+        "mfe_atr": 0.226,
         "site_only": false,
         "flag": null,
         "unit": null,
         "thinking_level": null
-      }
-    ],
-    "recent": [
+      },
       {
         "t_exit": "2026-11-12T16:54:59.622740+00:00",
         "vid": 4,

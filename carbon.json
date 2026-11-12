@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-12T18:34:43.522527+00:00",
+  "updated_at": "2026-11-12T18:45:20.009943+00:00",
   "paper_only": true,
   "model": "gemini-4-carbon",
   "entry_thinking": "high",
@@ -47,9 +47,9 @@
       "2026-11-12": 1.5653
     }
   },
-  "triggers_today": 1,
+  "triggers_today": 2,
   "max_triggers_per_day": 40,
-  "next_scan_at": "2026-11-12T18:45:20+00:00",
+  "next_scan_at": "2026-11-12T19:00:20+00:00",
   "in_window": true,
   "last_call": {
     "t": "2026-11-12T18:34:43.522527+00:00",
@@ -128,62 +128,39 @@
   },
   "calls_total": 3,
   "last_scan": {
-    "kind": "entry",
-    "t": "2026-11-12T18:30:20.005463+00:00",
-    "trigger": null,
-    "snapshot_id": "m15-20261112181500-6ffff8ddb3cf",
-    "snapshot_hash": "6ffff8ddb3cf2ebf6e63549e27b6c25b89605db83736979a290fc6ab25e91182",
-    "bar_close_ts": "2026-11-12T18:30:00+00:00",
-    "snapshot_ts": "2026-11-12T18:30:23.500663+00:00",
+    "kind": "trigger",
+    "t": "2026-11-12T18:33:44.401527+00:00",
+    "trigger": {
+      "trigger": "level_cross",
+      "level": "VAL",
+      "level_price": 71917.91,
+      "price": 71979.9,
+      "direction": "up",
+      "symbol": "BTCUSD",
+      "bar": "2026-11-12T18:30:00+00:00",
+      "n_today": 1
+    },
     "sent": [
-      "XAUUSD",
-      "EURUSD",
-      "US100",
-      "XAGUSD",
       "BTCUSD"
     ],
     "blocked_session": [],
     "ok": true,
-    "latency_s": 153.134,
-    "cost_usd": 0.172766,
+    "latency_s": 58.827,
+    "cost_usd": 0.059456,
     "tokens": {
-      "input": 14268,
-      "output": 2614,
-      "thoughts": 11809,
-      "total": 28691
+      "input": 5718,
+      "output": 688,
+      "thoughts": 4114,
+      "total": 10520
     },
     "error": null,
     "finish_reason": "FinishReason.STOP",
-    "answer_ts": "2026-11-12T18:32:53.139463+00:00",
+    "answer_ts": "2026-11-12T18:34:43.522527+00:00",
     "signals": [
-      {
-        "symbol": "XAUUSD",
-        "action": "HOLD",
-        "confidence": 0.38,
-        "thinking_level": "high"
-      },
-      {
-        "symbol": "EURUSD",
-        "action": "HOLD",
-        "confidence": 0.35,
-        "thinking_level": "high"
-      },
-      {
-        "symbol": "US100",
-        "action": "HOLD",
-        "confidence": 0.42,
-        "thinking_level": "high"
-      },
-      {
-        "symbol": "XAGUSD",
-        "action": "HOLD",
-        "confidence": 0.36,
-        "thinking_level": "high"
-      },
       {
         "symbol": "BTCUSD",
         "action": "HOLD",
-        "confidence": 0.35,
+        "confidence": 0.78,
         "thinking_level": "high"
       }
     ],

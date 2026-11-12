@@ -3,33 +3,33 @@
   "created_at": "2026-11-12T16:52:53.616485+00:00",
   "spend": {
     "2026-11-12": {
-      "usd": 0.045566,
-      "calls": 18,
+      "usd": 0.047966,
+      "calls": 19,
       "failed": 0,
       "tokens": {
-        "prompt": 170602,
-        "cache_hit": 38144,
-        "cache_miss": 132458,
-        "completion": 42639,
-        "reasoning": 17101
+        "prompt": 181917,
+        "cache_hit": 39936,
+        "cache_miss": 141981,
+        "completion": 44250,
+        "reasoning": 17801
       }
     }
   },
   "last_call": {
-    "t": "2026-11-12T18:30:20.005463+00:00",
+    "t": "2026-11-12T18:45:20.013607+00:00",
     "ok": true,
-    "cost_usd": 0.00244198,
-    "spend_today_usd": 0.0456,
+    "cost_usd": 0.00240043,
+    "spend_today_usd": 0.048,
     "band": "off_peak",
     "tokens": {
-      "prompt": 11560,
+      "prompt": 11315,
       "cache_hit": 1792,
-      "cache_miss": 9768,
-      "completion": 1619,
-      "reasoning": 598,
-      "total": 13179
+      "cache_miss": 9523,
+      "completion": 1611,
+      "reasoning": 700,
+      "total": 12926
     },
-    "latency_s": 9.585,
+    "latency_s": 9.234,
     "error": null,
     "model": "deepseek-flash",
     "symbols": [
@@ -41,11 +41,11 @@
     ],
     "http_status": 200,
     "prompt_version": "bracket-v1",
-    "snapshot_id": "m15-20261112181500-6ffff8ddb3cf",
-    "bar_close_ts": "2026-11-12T18:30:00+00:00",
-    "snapshot_ts": "2026-11-12T18:30:23.500663+00:00",
-    "call_start": "2026-11-12T18:30:24.348044+00:00",
-    "answer_ts": "2026-11-12T18:30:33.933093+00:00"
+    "snapshot_id": "m15-20261112183000-3a43d4be9f26",
+    "bar_close_ts": "2026-11-12T18:45:00+00:00",
+    "snapshot_ts": "2026-11-12T18:45:21.860080+00:00",
+    "call_start": "2026-11-12T18:45:22.225742+00:00",
+    "answer_ts": "2026-11-12T18:45:31.460251+00:00"
   },
   "last_signals": [
     {
@@ -56,7 +56,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "No trade. T1 yes (below VWAP and EMA50) but T2 missing: every level untouched on the last closed bar. Hard gates also block a trend short: vwap_distance_atr -5.22 exceeds 2.0 (chasing) and room_up is only 0.36 ATR. S4 only. HOLD."
+      "rationale": "TREND SELL structurally present: below VWAP 3931.8 and EMA50 3912.0, EMA20 rejected on last closed bar. But |vwap_distance_atr| = 5.15 exceeds the 2.0 cap \u2014 chasing an extended down move. Hard HOLD gate fails; no fade at a support with only"
     },
     {
       "symbol": "EURUSD",
@@ -66,17 +66,17 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "No trade. T2 missing: no level event on the last closed bar, all labelled levels untouched. Trend short also blocked by chase gate (vwap_distance_atr -3.35 > 2.0) and room_down 0.67 ATR < 1.0. Only S4. HOLD."
+      "rationale": "Price below VWAP 1.10776 and EMA50 1.10735 but every key level untouched on the last closed bar \u2014 no T2 trigger. vwap_distance_atr -3.85 also exceeds the 2.0 trend cap, and room_down is only 0.35 ATR to ATR lower. Nothing tradable."
     },
     {
       "symbol": "US100",
       "action": "HOLD",
       "confidence": 0.0,
-      "score": 0,
+      "score": 3,
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "No trade. T1 yes (above VWAP and EMA50) but T2 missing: all levels untouched on the last closed bar. Hard gates fail anyway: vwap_distance_atr +2.15 > 2.0 (chasing) and room_up only 0.21 ATR to Put Wall #2 28410.79. S2, S4, S5 partial. HOLD"
+      "rationale": "T1 yes: above VWAP 28183.89 and EMA50 28242.39. T2 no: last closed bar only rejected the call walls, an event against a BUY. S1 fails hard \u2014 room_up is 0.624 ATR to Put Wall #2, under 1.0 ATR. HOLD regardless of S2 award."
     },
     {
       "symbol": "XAGUSD",
@@ -86,17 +86,17 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "No trade. T2 arguably met by closed_through EMA20, but hard gates kill it: vwap_distance_atr -4.07 exceeds 2.0 (chasing). Fade not valid: event is not a rejection at a labelled extreme and closed_through shows acceptance. room_up 0.05 ATR. "
+      "rationale": "Price below VWAP 51.005 and EMA50 50.589, but last closed bar only touched EMA20 \u2014 no closed_through and no rejection, so no T2 event. vwap_distance_atr -4.31 far exceeds the 2.0 trend cap. No fade at this extended support. HOLD."
     },
     {
       "symbol": "BTCUSD",
       "action": "HOLD",
       "confidence": 0.0,
-      "score": 0,
+      "score": 3,
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "No trade. T1 yes and T2 yes (closed_through VAL), room_down 1.92 ATR, but hard gate blocks: vwap_distance_atr -2.56 > 2.0 (chasing a continuation this far below VWAP). Fade invalid: closed_through = acceptance, and room_up only 0.05 ATR. HO"
+      "rationale": "TREND SELL qualifies on structure: below VWAP 72757.28 and EMA50 72438.80, VAL closed_through on last bar, room_down 1.19 ATR. But |vwap_distance_atr| = 3.33 exceeds the 2.0 chasing cap. Hard HOLD gate overrides; not a fade since VAL was ac"
     }
   ],
   "last_bars": {

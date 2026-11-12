@@ -6,15 +6,15 @@
   "reset_token": "claude-v2-1",
   "created_at": "2026-11-12T12:14:51.993461+00:00",
   "start_balance": 100000.0,
-  "balance": 99207.0,
+  "balance": 99137.8,
   "highest_close": 100000.0,
   "mll_floor": 97000.0,
   "blown": null,
   "positions": [],
-  "next_id": 4,
+  "next_id": 5,
   "day": {
     "id": "2026-11-12",
-    "realized": -793.0,
+    "realized": -862.2,
     "flattened": false
   },
   "locks": {
@@ -33,18 +33,43 @@
       "level": 3931.0,
       "retested": false,
       "exit_t": "2026-11-12T13:18:00+00:00"
+    },
+    "EURUSD": {
+      "until": "2026-11-12T14:17:20.430886+00:00",
+      "loss": true,
+      "side": 1,
+      "level": 1.108,
+      "retested": false,
+      "exit_t": "2026-11-12T13:47:20.430886+00:00"
     }
   },
   "last_price": {
     "GBPUSD": 1.32621,
-    "XAUUSD": 3926.28
+    "XAUUSD": 3926.28,
+    "EURUSD": 1.10838
   },
-  "trades": 3,
+  "trades": 4,
   "wins": 0,
-  "losses": 3,
-  "realized_pnl": -793.0,
-  "r_total": -2.073,
+  "losses": 4,
+  "realized_pnl": -862.2,
+  "r_total": -2.356,
   "recent": [
+    {
+      "t_exit": "2026-11-12T13:47:20.430886+00:00",
+      "entry_time": "2026-11-12T13:47:16.599319+00:00",
+      "symbol": "EURUSD",
+      "contract": "6E",
+      "qty": 4,
+      "side": "LONG",
+      "entry": 1.10845,
+      "exit": 1.10835,
+      "reason": "claude_close",
+      "net": -69.2,
+      "R": -0.283,
+      "hold_seconds": 3,
+      "setup_type": "fade",
+      "score": 5
+    },
     {
       "t_exit": "2026-11-12T13:35:38.434922+00:00",
       "entry_time": "2026-11-12T13:31:10.302317+00:00",

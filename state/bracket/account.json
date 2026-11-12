@@ -4,10 +4,10 @@
   "reset_token": "bracket-v1",
   "created_at": "2026-11-12T13:12:49.149672+00:00",
   "start_balance": 100000.0,
-  "balance": 98965.4,
+  "balance": 99921.35,
   "peak_balance": 100174.45,
   "max_drawdown": -1467.3,
-  "next_id": 8,
+  "next_id": 9,
   "positions": [
     {
       "symbol": "EURUSD",
@@ -36,47 +36,47 @@
       "target_usd": 305.8,
       "mfe": 0.000280000000000058,
       "mae": 0.0005699999999999594,
-      "scan_from": "2026-11-12T13:44:00+00:00",
-      "checks": 69,
-      "last_check_at": "2026-11-12T13:46:44.431922+00:00"
+      "scan_from": "2026-11-12T13:47:00+00:00",
+      "checks": 76,
+      "last_check_at": "2026-11-12T13:48:32.436091+00:00"
     },
     {
-      "symbol": "XAUUSD",
+      "symbol": "US100",
       "side": -1,
-      "contract": "GC",
+      "contract": "NQ",
       "qty": 1,
-      "atr": 9.606,
-      "confidence": 0.82,
-      "signal_entry": 3902.28,
-      "signal_at": "2026-11-12T13:34:20.278043+00:00",
-      "queued_at": "2026-11-12T13:34:41.017915+00:00",
-      "level_event": "acceptance below Session Low",
+      "atr": 64.235,
+      "confidence": 0.75,
+      "signal_entry": 28028.61,
+      "signal_at": "2026-11-12T13:46:20.010662+00:00",
+      "queued_at": "2026-11-12T13:46:48.850148+00:00",
+      "level_event": "rejection at s/r resistance",
       "session": "LONDON_NY_OVERLAP",
-      "rationale": "Price is trading well below VAL (3950.76) and POC (3978.40) in clear trend expansion. CVD is BEARISH (-7.18) with negative slope (-2.42), confirming strong directional selling pressure. Timing is LONDON_NY_OVERLAP. Price and forming bar remain firmly below VWAP (3965.04) and EMA50 (3957.56). ATR ban",
-      "id": 7,
+      "rationale": "Price is below VAL (28081.85) and below POC (28120.74). CVD is BEARISH (-3.54). In LONDON_NY_OVERLAP, price remains capped below downward sloping VWAP (28123.84) and EMA50 (28135.06). Although the signal candle attempted a pullback from the lower ATR band, the forming bar is rejecting directly off S",
+      "id": 8,
       "book": "bracket",
-      "entry": 3903.6,
-      "entry_time": "2026-11-12T13:34:42.574276+00:00",
-      "quote_price": 3903.75,
+      "entry": 28022.25,
+      "entry_time": "2026-11-12T13:46:52.203677+00:00",
+      "quote_price": 28022.62,
       "quote_source": "dukascopy:tick",
-      "quote_age_s": 1.26,
-      "stop": 3913.3,
-      "target": 3893.9,
-      "deadline": "2026-11-12T15:04:42.574276+00:00",
-      "risk_usd": 974.6,
-      "target_usd": 965.4,
-      "mfe": 8.799999999999727,
-      "mae": 5.190000000000055,
-      "scan_from": "2026-11-12T13:44:00+00:00",
-      "checks": 41,
-      "last_check_at": "2026-11-12T13:46:44.431922+00:00"
+      "quote_age_s": 3.05,
+      "stop": 28086.5,
+      "target": 27958.0,
+      "deadline": "2026-11-12T15:16:52.203677+00:00",
+      "risk_usd": 1288.5,
+      "target_usd": 1281.5,
+      "mfe": 8.93999999999869,
+      "mae": 26.213999999999942,
+      "scan_from": "2026-11-12T13:47:00+00:00",
+      "checks": 7,
+      "last_check_at": "2026-11-12T13:48:32.436091+00:00"
     }
   ],
   "pending": [],
   "last_price": {
-    "US100": 28049.53,
-    "EURUSD": 1.10854,
-    "XAUUSD": 3894.8
+    "US100": 28013.31,
+    "EURUSD": 1.10844,
+    "XAUUSD": 3893.37
   },
   "seen_cycles": [
     "2026-11-12T13:14:20.285273+00:00",
@@ -94,30 +94,32 @@
     "2026-11-12T13:38:20.475441+00:00",
     "2026-11-12T13:40:20.327827+00:00",
     "2026-11-12T13:42:20.445337+00:00",
-    "2026-11-12T13:44:20.364638+00:00"
+    "2026-11-12T13:44:20.364638+00:00",
+    "2026-11-12T13:46:20.010662+00:00",
+    "2026-11-12T13:48:20.346261+00:00"
   ],
   "stats": {
-    "trades": 5,
-    "wins": 2,
+    "trades": 6,
+    "wins": 3,
     "losses": 3,
-    "gross_win": 1650.8,
+    "gross_win": 2606.2,
     "gross_loss": -2673.5,
-    "net_pnl": -1022.7,
-    "commissions": 52.1,
-    "hold_seconds": 2254,
+    "net_pnl": -67.3,
+    "commissions": 56.15,
+    "hold_seconds": 2980,
     "exit_reasons": {
       "stop_1atr": 3,
-      "target_1atr": 2
+      "target_1atr": 3
     },
-    "signals_seen": 20,
-    "signals_taken": 7,
+    "signals_seen": 25,
+    "signals_taken": 8,
     "skips": {
-      "symbol": 9,
-      "held_in_bracket": 2,
-      "confidence<min": 2
+      "symbol": 11,
+      "held_in_bracket": 3,
+      "confidence<min": 3
     },
     "missed_scans": {
-      "XAUUSD": 3,
+      "XAUUSD": 4,
       "EURUSD": 2
     }
   }

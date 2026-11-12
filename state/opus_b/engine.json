@@ -2,11 +2,11 @@
   "reset_token": "c-opus-b-v1",
   "created_at": "2026-11-12T17:19:59.566947+00:00",
   "last_call": {
-    "t": "2026-11-12T18:15:41.778968+00:00",
+    "t": "2026-11-12T18:30:39.731783+00:00",
     "ok": true,
-    "latency_ms": 17363,
-    "cost_usd": 0.106404,
-    "thinking_tokens": 568,
+    "latency_ms": 15387,
+    "cost_usd": 0.10444,
+    "thinking_tokens": 438,
     "usage": {
       "cache_creation": {
         "ephemeral_1h_input_tokens": 0,
@@ -15,10 +15,10 @@
       "cache_creation_input_tokens": 0,
       "cache_read_input_tokens": 0,
       "inference_geo": "global",
-      "input_tokens": 16886,
-      "output_tokens": 1943,
+      "input_tokens": 17195,
+      "output_tokens": 1783,
       "output_tokens_details": {
-        "thinking_tokens": 568
+        "thinking_tokens": 438
       },
       "service_tier": "standard",
       "speed": "standard"
@@ -26,14 +26,14 @@
     "error": null,
     "effort": "high",
     "prompt_version": "bracket-v1",
-    "snapshot_id": "m15-20261112180000-def4fa398ff3",
-    "snapshot_hash": "def4fa398ff39557b4a31de7af661cff6e9e2cd10531145b68893b928b94ca5f",
-    "package_id": "m15-20261112T181500-0309eb4b630d",
-    "package_hash": "0309eb4b630d6dcddc840cf85711cd00245f1bbfe391ed71f6bdf1a9c44d2865",
-    "bar_close_ts": "2026-11-12T18:15:00+00:00",
-    "snapshot_ts": "2026-11-12T18:15:22.886519+00:00",
-    "call_start": "2026-11-12T18:15:24.415448+00:00",
-    "answer_ts": "2026-11-12T18:15:41.778968+00:00",
+    "snapshot_id": "m15-20261112181500-6ffff8ddb3cf",
+    "snapshot_hash": "6ffff8ddb3cf2ebf6e63549e27b6c25b89605db83736979a290fc6ab25e91182",
+    "package_id": "m15-20261112T183000-310f05bb81d1",
+    "package_hash": "310f05bb81d1444deab02731c5b95d186f4ca44255e730df27e8c9422bf0fefc",
+    "bar_close_ts": "2026-11-12T18:30:00+00:00",
+    "snapshot_ts": "2026-11-12T18:30:23.500663+00:00",
+    "call_start": "2026-11-12T18:30:24.344430+00:00",
+    "answer_ts": "2026-11-12T18:30:39.731783+00:00",
     "model": "claude-opus-5-5"
   },
   "last_signals": [
@@ -45,7 +45,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "No level event on the last closed bar; every level is untouched. T2/F1 missing. Room up is only 0.58 ATR to EMA20, and the trend is 5.2 ATR from VWAP, so this would be a chase. HOLD.",
+      "rationale": "Every key level is untouched on the last closed bar, so neither T2 nor F1 is met. room_up is 0.36 ATR to EMA20, which fails the room gate for a BUY. Below VWAP by 5.2 ATR, so a trend SELL would be chasing. HOLD.",
       "gate_reasons": [],
       "issues": []
     },
@@ -53,11 +53,11 @@
       "symbol": "EURUSD",
       "action": "HOLD",
       "confidence": 0.0,
-      "score": 4,
+      "score": 0,
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "Fade BUY candidate. F1 yes: swept ATR Lower and closed back inside. F2 yes: VWAP magnet 3.5 ATR away, no high-RVOL acceptance. S1 yes (1.67 ATR room). S4 yes. S2 no, S3 no (neutral CVD, slope down), S5 no (h1 down). Score 4 <5, so HOLD.",
+      "rationale": "No level event on the last closed bar; all levels are untouched. T2 and F1 are both missing. room_down is only 0.67 ATR, and VWAP distance exceeds 2 ATR for a trend SELL. HOLD.",
       "gate_reasons": [],
       "issues": []
     },
@@ -69,7 +69,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "T1 yes: above VWAP and EMA50. T2 missing: every level is untouched on the last closed bar, and the bar was a bearish pullback inside the range. No fresh event means no trade. HOLD.",
+      "rationale": "T1 is met, but T2 is missing: all levels are untouched. VWAP distance of 2.15 ATR exceeds the 2.0 trend gate. room_up is 0.21 ATR to Put Wall #2 and room_down is 0.74 ATR, so the room gate fails both ways. HOLD.",
       "gate_reasons": [],
       "issues": []
     },
@@ -77,11 +77,11 @@
       "symbol": "XAGUSD",
       "action": "HOLD",
       "confidence": 0.0,
-      "score": 0,
+      "score": 2,
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "Every level is untouched on the last closed bar, so T2/F1 are missing. A short trend trade is 4.5 ATR from VWAP (chasing). Room up is only 0.56 ATR. HOLD.",
+      "rationale": "The EMA20 closed_through is bullish, but T1 fails for a BUY (below VWAP and EMA50). EMA20 is not a labelled extreme, so F1 fails. room_up is 0.05 ATR. A SELL has no bearish event and VWAP distance exceeds 2 ATR. HOLD.",
       "gate_reasons": [],
       "issues": []
     },
@@ -89,11 +89,11 @@
       "symbol": "BTCUSD",
       "action": "HOLD",
       "confidence": 0.0,
-      "score": 2,
+      "score": 3,
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "T1 yes for a short. T2 missing: EMA20 and VAL were only touched, not rejected or closed through. The VWAP distance of -2.58 ATR exceeds the 2.0 trend gate. A long has only 0.11 ATR of room to VAL. HOLD.",
+      "rationale": "The VAL reclaim could count as F1 for a fade BUY toward POC/VWAP, but room_up is 0.05 ATR (S1 hard gate fails) and live price is back below VAL. T1 fails for a trend BUY. h1 trend is down and RVOL is 0.70. HOLD.",
       "gate_reasons": [],
       "issues": []
     }

@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-12T18:11:18.361736+00:00",
+  "updated_at": "2026-11-12T18:15:32.684998+00:00",
   "paper_only": true,
   "plan": "LucidPro 100K (DLL on)",
   "exit_mode": "mech",
@@ -14,54 +14,37 @@
   "breach_note": "DLL / MLL / 3.5% breaker are log-only (no block, no forced close)",
   "sizing_rule": "full-size futures only (NQ, GC, 6E, 6B), 1-6 contracts sized as if risk were 0.8 ATR at $1500 (notional reference only); hard stop \u2212$500 NET, 1 ATR target, 90-min cap; Gemini exit calls paused \u2014 mechanical exits",
   "reset": {
-    "at": "2026-11-12T16:52:53.616174+00:00",
-    "reason": "DS-FLASH fresh $100k paper book",
-    "token": "2026-11-12-ds-flash"
+    "at": "2026-11-12T18:11:32.211543+00:00",
+    "reason": "t255u shared reset: DS-FLASH fresh $100k",
+    "token": "2026-11-12-uniform-reset"
   },
   "account": {
     "no": 1,
     "phase": "eval",
     "start_balance": 100000.0,
-    "balance": 99998.25,
-    "equity": 100895.95,
+    "balance": 100000.0,
+    "equity": 100000.0,
     "realized_pnl_since_reset": 0.0,
-    "open_pnl": 897.7,
-    "commission_on_open": 1.75,
+    "open_pnl": 0.0,
+    "commission_on_open": 0.0,
     "trades_since_reset": 0,
     "wins": 0,
     "losses": 0,
     "mll_floor": 97000.0,
-    "mll_room": 3895.95,
+    "mll_room": 3000.0,
     "dll": 1800.0,
     "day_realized": 0.0,
     "day_locked": null,
-    "to_target": 6001.75,
+    "to_target": 6000.0,
     "net_pnl": 0.0,
     "trades": 0,
-    "open_positions": 1,
+    "open_positions": 0,
     "stopped": 0
   },
-  "open_positions": [
-    {
-      "symbol": "US100",
-      "contract": "NQ",
-      "qty": 1,
-      "side": "SHORT",
-      "entry_time": "2026-11-12T17:05:14.999237+00:00",
-      "entry": 28419.75,
-      "stop": 28531.25,
-      "target": 28308.25,
-      "last": 28374.865,
-      "unrealized": 897.7,
-      "risk_usd": null,
-      "hard_stop_px": 28444.75,
-      "target_usd_net": null,
-      "target_source": "none (gemini_only)"
-    }
-  ],
+  "open_positions": [],
   "pending": 0,
   "recent_trades": [],
-  "last_processed": "2026-11-12T18:10:00+00:00",
+  "last_processed": "2026-11-12T18:11:00+00:00",
   "stop_txt": "\u2212$500 net \u00b7 1 ATR tgt \u00b7 90 min",
   "book": "DS-FLASH",
   "label": "DS-FLASH (deepseek-flash entries, mechanical exits)",
@@ -71,17 +54,17 @@
   "rules": "deepseek-flash entries (effort low), shared bracket-v1 package with C-OPUS-B (same charts, facts, 3 symbols, M15 close +20s); no model exits; All books: 1 ATR / 1 ATR bracket, no model exits; same fill and full-size sizing as main; spend soft-stop $5/day Dubai",
   "spend": {
     "day_dubai": "2026-11-12",
-    "usd": 0.0408,
+    "usd": 0.0431,
     "soft_usd": 5.0,
     "state": "ok",
-    "calls": 16,
+    "calls": 17,
     "failed": 0,
     "tokens": {
-      "prompt": 147720,
-      "cache_hit": 34560,
-      "cache_miss": 113160,
-      "completion": 39618,
-      "reasoning": 16110
+      "prompt": 159042,
+      "cache_hit": 36352,
+      "cache_miss": 122690,
+      "completion": 41020,
+      "reasoning": 16503
     },
     "pricing": {
       "off_peak": {
@@ -103,35 +86,36 @@
     }
   },
   "last_call": {
-    "t": "2026-11-12T18:00:20.006166+00:00",
+    "t": "2026-11-12T18:15:20.004172+00:00",
     "ok": true,
-    "cost_usd": 0.00315148,
-    "spend_today_usd": 0.0408,
+    "cost_usd": 0.00227608,
+    "spend_today_usd": 0.0431,
     "band": "off_peak",
     "tokens": {
-      "prompt": 11562,
+      "prompt": 11322,
       "cache_hit": 1792,
-      "cache_miss": 9770,
-      "completion": 2801,
-      "reasoning": 1674,
-      "total": 14363
+      "cache_miss": 9530,
+      "completion": 1402,
+      "reasoning": 393,
+      "total": 12724
     },
-    "latency_s": 14.357,
+    "latency_s": 7.527,
     "error": null,
     "model": "deepseek-flash",
     "symbols": [
       "XAUUSD",
       "EURUSD",
+      "US100",
       "XAGUSD",
       "BTCUSD"
     ],
     "http_status": 200,
     "prompt_version": "bracket-v1",
-    "snapshot_id": "m15-20261112174500-613be5ad8a9f",
-    "bar_close_ts": "2026-11-12T18:00:00+00:00",
-    "snapshot_ts": "2026-11-12T18:00:24.949427+00:00",
-    "call_start": "2026-11-12T18:00:31.273088+00:00",
-    "answer_ts": "2026-11-12T18:00:45.630747+00:00"
+    "snapshot_id": "m15-20261112180000-def4fa398ff3",
+    "bar_close_ts": "2026-11-12T18:15:00+00:00",
+    "snapshot_ts": "2026-11-12T18:15:22.886519+00:00",
+    "call_start": "2026-11-12T18:15:25.156398+00:00",
+    "answer_ts": "2026-11-12T18:15:32.683345+00:00"
   },
   "last_signals": [
     {
@@ -142,7 +126,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "T1 for SELL yes: below VWAP 3934.24 and EMA50 3915.74. T2 yes: closed_through Gamma Flip. But hard HOLD gates: vwap_distance_atr -5.81 (>2.0, chasing) and room_down_atr only 0.17 ATR. No fresh labelled-level event elsewhere. S4 present only"
+      "rationale": "T1 missing: price below VWAP 3933.36 and EMA50 3914.54. T2 missing: no level event on last closed bar (Session Low 3852.35 and Gamma Flip 3867.51 untouched). Hard gates fail: vwap_distance_atr -5.24 (>2.0, chasing) and room_up only 0.58 ATR"
     },
     {
       "symbol": "EURUSD",
@@ -152,7 +136,17 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "T1 for SELL yes: below VWAP 1.10791 and EMA50 1.10762. T2 no: only touches, no rejection or closed_through. Gates fail anyway: vwap_distance_atr -3.95 (>2.0 chasing) and room_down_atr 0.25 ATR. HOLD."
+      "rationale": "T1 missing: below VWAP 1.10785 and EMA50 1.10753. T2: closed_through ATR Lower shows extension, not a continuation entry. Hard gates fail: |vwap_distance_atr| -3.52 >2.0 and room_down only 0.333 ATR to ATR Lower. HOLD."
+    },
+    {
+      "symbol": "US100",
+      "action": "HOLD",
+      "confidence": 0.0,
+      "score": 0,
+      "setup_type": "none",
+      "gated": false,
+      "decision": "HOLD",
+      "rationale": "T1 yes: above VWAP 28177.99 and EMA50 28230.63, h1 up, price above VAH. T2 missing: no level event on the last closed bar (pullback held above VWAP/EMA20 without a rejection event). S1 S2(awarded) S4 S5 present but must-have T2 absent. HOLD"
     },
     {
       "symbol": "XAGUSD",
@@ -162,7 +156,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "Below VWAP 51.033 and EMA50 50.642, but no level event on the last closed bar (all untouched) and vwap_distance_atr -4.85 exceeds 2.0. Room up only 0.94 ATR. Nothing tradable."
+      "rationale": "T1 missing: below VWAP 51.022 and EMA50 50.62. T2 missing: no level event (Session Low 49.688 untouched). Hard gates fail: vwap_distance_atr -4.55 (chasing) and room_up only 0.561 ATR to EMA20 50.197. HOLD."
     },
     {
       "symbol": "BTCUSD",
@@ -172,7 +166,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "T1 for SELL yes: below VWAP 72796.87 and EMA50 72511.89. T2 arguable: pullback rejected EMA20. Gate fails: vwap_distance_atr -2.71 (>2.0 chasing). Room up only 0.31 ATR and RVOL 0.75. HOLD."
+      "rationale": "T1 missing: below VWAP 72781.64 and EMA50 72489.92, h1 down. T2 missing: EMA20/VAL only touched, no closed_through or rejection event. Hard gates fail: |vwap_distance_atr| 2.58 >2.0 and room_up only 0.114 ATR to VAL 71917.91. HOLD."
     }
   ]
 }

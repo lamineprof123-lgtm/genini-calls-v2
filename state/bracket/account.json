@@ -4,42 +4,11 @@
   "reset_token": "bracket-v1",
   "created_at": "2026-11-12T13:12:49.149672+00:00",
   "start_balance": 100000.0,
-  "balance": 101195.55,
+  "balance": 100835.95,
   "peak_balance": 101199.6,
   "max_drawdown": -1467.3,
   "next_id": 11,
   "positions": [
-    {
-      "symbol": "EURUSD",
-      "side": -1,
-      "contract": "6E",
-      "qty": 4,
-      "atr": 0.00064,
-      "confidence": 0.76,
-      "signal_entry": 1.10836,
-      "signal_at": "2026-11-12T13:26:20.463149+00:00",
-      "queued_at": "2026-11-12T13:26:34.823045+00:00",
-      "level_event": "rejection at Prev Low resistance 1.10824",
-      "session": "LONDON_NY_OVERLAP",
-      "rationale": "Evaluating the 7-point confluence checklist: 1) Volume Profile: Signal close (1.10764) is below VAL (1.10793) and well below POC (1.10928), entering lower distribution. 2) Cumulative Delta: CVD is NEUTRAL (-1944.21) but cvd_slope is sharply negative (-4109.92), demonstrating aggressive selling accel",
-      "id": 6,
-      "book": "bracket",
-      "entry": 1.1084,
-      "entry_time": "2026-11-12T13:26:43.008256+00:00",
-      "quote_price": 1.10847,
-      "quote_source": "dukascopy:tick",
-      "quote_age_s": 8.14,
-      "stop": 1.10905,
-      "target": 1.10775,
-      "deadline": "2026-11-12T14:56:43.008256+00:00",
-      "risk_usd": 344.2,
-      "target_usd": 305.8,
-      "mfe": 0.0003500000000000725,
-      "mae": 0.0005699999999999594,
-      "scan_from": "2026-11-12T13:56:00+00:00",
-      "checks": 110,
-      "last_check_at": "2026-11-12T13:58:25.832064+00:00"
-    },
     {
       "symbol": "XAUUSD",
       "side": -1,
@@ -66,10 +35,10 @@
       "risk_usd": 1014.6,
       "target_usd": 1005.4,
       "mfe": 0.0,
-      "mae": 5.890000000000327,
-      "scan_from": "2026-11-12T13:56:00+00:00",
-      "checks": 14,
-      "last_check_at": "2026-11-12T13:58:25.832064+00:00"
+      "mae": 6.039999999999964,
+      "scan_from": "2026-11-12T13:58:00+00:00",
+      "checks": 20,
+      "last_check_at": "2026-11-12T14:00:31.832597+00:00"
     },
     {
       "symbol": "US100",
@@ -96,18 +65,18 @@
       "deadline": "2026-11-12T15:24:41.272587+00:00",
       "risk_usd": 1303.5,
       "target_usd": 1296.5,
-      "mfe": 9.746999999999389,
+      "mfe": 25.924999999999272,
       "mae": 29.598000000001775,
-      "scan_from": "2026-11-12T13:57:00+00:00",
-      "checks": 14,
-      "last_check_at": "2026-11-12T13:58:25.832064+00:00"
+      "scan_from": "2026-11-12T13:59:00+00:00",
+      "checks": 20,
+      "last_check_at": "2026-11-12T14:00:31.832597+00:00"
     }
   ],
   "pending": [],
   "last_price": {
-    "US100": 28018.49,
-    "EURUSD": 1.10839,
-    "XAUUSD": 3889.97
+    "US100": 28012.44,
+    "EURUSD": 1.10909,
+    "XAUUSD": 3891.74
   },
   "seen_cycles": [
     "2026-11-12T13:14:20.285273+00:00",
@@ -132,25 +101,26 @@
     "2026-11-12T13:52:20.366344+00:00",
     "2026-11-12T13:54:20.012204+00:00",
     "2026-11-12T13:56:21.145353+00:00",
-    "2026-11-12T13:58:20.230864+00:00"
+    "2026-11-12T13:58:20.230864+00:00",
+    "2026-11-12T14:00:20.283181+00:00"
   ],
   "stats": {
-    "trades": 7,
+    "trades": 8,
     "wins": 4,
-    "losses": 3,
+    "losses": 4,
     "gross_win": 3882.7,
-    "gross_loss": -2673.5,
-    "net_pnl": 1209.2,
-    "commissions": 61.95,
-    "hold_seconds": 3047,
+    "gross_loss": -3042.7,
+    "net_pnl": 840.0,
+    "commissions": 71.55,
+    "hold_seconds": 5057,
     "exit_reasons": {
-      "stop_1atr": 3,
+      "stop_1atr": 4,
       "target_1atr": 4
     },
-    "signals_seen": 33,
+    "signals_seen": 34,
     "signals_taken": 10,
     "skips": {
-      "symbol": 15,
+      "symbol": 16,
       "held_in_bracket": 5,
       "confidence<min": 3
     },

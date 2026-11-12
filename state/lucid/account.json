@@ -1,13 +1,13 @@
 {
   "version": 1,
   "created_at": "2026-11-12T10:14:47.081605+00:00",
-  "last_processed": "2026-11-12T13:58:00+00:00",
+  "last_processed": "2026-11-12T14:00:00+00:00",
   "account": {
     "no": 1,
     "phase": "eval",
     "started_at": "2026-11-12T10:14:47.081605+00:00",
     "start_balance": 100000.0,
-    "balance": 97638.8,
+    "balance": 97636.5,
     "highest_close": 100000.0,
     "mll_floor": 97000.0,
     "mll_locked": false,
@@ -211,7 +211,7 @@
         "run_at_utc": "2026-11-12T13:56:21.145353+00:00",
         "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-12/cycles/175621.json/US100.png"
       },
-      "mfe": 0.0,
+      "mfe": 38.92499999999927,
       "mae": 0.0,
       "mfe_min": 0.0,
       "time_cut_deadline": null,
@@ -220,38 +220,74 @@
       "hard_stop_px": 28064.5,
       "hard_stop_armed_at": "2026-11-12T13:57:15.299370+00:00",
       "hard_stop_usd": 500.0
-    }
-  ],
-  "pending": [
+    },
     {
+      "id": 42,
       "symbol": "XAUUSD",
+      "contract": "GC",
+      "qty": 1,
       "side": -1,
-      "created": "2026-11-12T13:58:34.339573+00:00",
-      "fill_after": "2026-11-12T13:59:00+00:00",
-      "reserved_risk": 0.0,
-      "planned": {
-        "contract": "GC",
-        "qty": 1,
-        "risk_usd": null,
-        "tdist": null,
-        "target_source": "none (gemini_only)"
+      "entry": 3890.9,
+      "stop": null,
+      "notional_risk_usd": 810.0,
+      "target": null,
+      "entry_time": "2026-11-12T13:59:06.454009+00:00",
+      "exit_mode": "gemini_only",
+      "fill_source": "live_quote:dukascopy:tick",
+      "fill_check": {
+        "fill_minute": "2026-11-12T13:59:00+00:00",
+        "fill_t": "2026-11-12T13:59:06.454009+00:00",
+        "ref_price": 3890.99,
+        "booked": 3890.9,
+        "slippage_ticks": 1,
+        "tick": 0.1,
+        "signal_entry": 3889.29,
+        "adverse_ticks_vs_quote": 0.9,
+        "m1_bar_open": 3890.99,
+        "quote_price": 3890.99,
+        "quote_ts": "2026-11-12T13:59:02.627000+00:00",
+        "quote_source": "dukascopy:tick",
+        "quote_age_s": 3.83,
+        "quote_fetched_at": "2026-11-12T13:59:06.454009+00:00",
+        "bar_open_minus_quote": 0.0,
+        "tolerance_ticks": 1.5,
+        "within_slippage": true
       },
-      "expires": "2026-11-12T14:09:00+00:00",
+      "risk_usd": null,
+      "target_usd": null,
+      "target_source": "none (gemini_only)",
+      "sizing": "gemini_only: notional 0.8 ATR = 8.1 x 100/pt = $810 per GC; 1 GC ~ $810 notional <= $1500 (reference only; NO stop, NO target, exit = Gemini CLOSE)",
+      "target_usd_gross": null,
+      "commission_rt": 4.6,
       "atr": 10.093,
-      "scalp": {
+      "gemini": {
         "action": "SELL",
-        "side": -1,
         "entry": 3889.29,
         "stop_loss": 3917.72,
         "take_profit": 3888.04,
-        "sdist": 28.434649999999692,
+        "confidence": 0.86,
+        "rr": 0.044,
+        "shown_on_site": true,
+        "basis": "site signal",
+        "run_at_utc": "2026-11-12T13:58:20.230864+00:00",
+        "session": "LONDON_NY_OVERLAP",
+        "rationale": "Price is trading well below VAL (3948.58) and POC (3979.43), indicating aggressive value migration lower. CVD is -7.92 with BEARISH label and negative slope (-3.14), agreeing with strong downside pressure during LONDON_NY_OVERLAP. Price broke cleanly below the EMA50 baseline (3955.51) and VWAP (3963.10), expanding outside the lower ATR band (3917.32). The breakout is confirmed by a massive yellow RVOL spike of 2.01, validating acceptance below previous Session Low support at 3900.80 as forming bar prints lower at 3889.29. GEX context is null.",
+        "model": "gemini-3.8-flash"
+      },
+      "scalp": {
+        "action": "SELL",
+        "side": -1,
+        "entry": 3890.99,
+        "stop_loss": 3917.72,
+        "take_profit": 3889.74,
+        "sdist": 26.734649999999874,
         "tdist": 1.25,
         "stop_source": "structure",
         "target_source": "fixed",
-        "rr": 0.044,
+        "rr": 0.047,
         "structure_stop": 3917.7246499999997,
-        "atr_stop": 3897.3644,
-        "fixed_tp": 3888.04,
+        "atr_stop": 3899.0643999999998,
+        "fixed_tp": 3889.74,
         "structure_tp": null,
         "structure_label": null,
         "candle": {
@@ -282,7 +318,6 @@
           "val": 3948.58
         }
       },
-      "session": "LONDON_NY_OVERLAP",
       "telemetry": {
         "symbol": "XAUUSD",
         "session": "LONDON_NY_OVERLAP",
@@ -339,38 +374,37 @@
         "scalp": {
           "stop_basis": "structure",
           "target_basis": "fixed",
-          "tdist": 1.25,
-          "sdist": 28.434649999999692,
-          "structure_label": null
+          "tdist": null,
+          "sdist": null,
+          "structure_label": null,
+          "target_source": "none (gemini_only)"
         },
         "planned": {
-          "tdist": 1.25,
-          "sdist": 28.434649999999692,
-          "qty": null,
-          "contract": null,
+          "tdist": null,
+          "sdist": null,
+          "qty": 1,
+          "contract": "GC",
           "target_usd_net": null,
-          "risk_usd": null
+          "risk_usd": null,
+          "target_source": "none (gemini_only)",
+          "sizing": "gemini_only: notional 0.8 ATR = 8.1 x 100/pt = $810 per GC; 1 GC ~ $810 notional <= $1500 (reference only; NO stop, NO target, exit = Gemini CLOSE)"
         },
         "run_at_utc": "2026-11-12T13:58:20.230864+00:00",
         "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-12/cycles/175820.json/XAUUSD.png"
       },
-      "gemini": {
-        "action": "SELL",
-        "entry": 3889.29,
-        "stop_loss": 3917.72,
-        "take_profit": 3888.04,
-        "confidence": 0.86,
-        "rr": 0.044,
-        "shown_on_site": true,
-        "basis": "site signal",
-        "run_at_utc": "2026-11-12T13:58:20.230864+00:00",
-        "session": "LONDON_NY_OVERLAP",
-        "rationale": "Price is trading well below VAL (3948.58) and POC (3979.43), indicating aggressive value migration lower. CVD is -7.92 with BEARISH label and negative slope (-3.14), agreeing with strong downside pressure during LONDON_NY_OVERLAP. Price broke cleanly below the EMA50 baseline (3955.51) and VWAP (3963.10), expanding outside the lower ATR band (3917.32). The breakout is confirmed by a massive yellow RVOL spike of 2.01, validating acceptance below previous Session Low support at 3900.80 as forming bar prints lower at 3889.29. GEX context is null.",
-        "model": "gemini-3.8-flash"
-      }
+      "mfe": 0.0,
+      "mae": 0.0,
+      "mfe_min": 0.0,
+      "time_cut_deadline": null,
+      "time_cut_candles": 0,
+      "time_cut_rule": "none: exit = Gemini CLOSE (1-strike) or hard stop -$500 NET; no target, no max hold, no 16:45 flat; DLL/MLL/breaker log-only",
+      "hard_stop_px": 3895.9,
+      "hard_stop_armed_at": "2026-11-12T13:59:06.454009+00:00",
+      "hard_stop_usd": 500.0
     }
   ],
-  "next_pos_id": 42,
+  "pending": [],
+  "next_pos_id": 43,
   "day": {
     "id": "2026-11-12",
     "start_balance": 100000.0,
@@ -380,8 +414,8 @@
     "traded": true
   },
   "last_price": {
-    "US100": 28039.7,
-    "XAUUSD": 3889.425,
+    "US100": 28003.61,
+    "XAUUSD": 3890.99,
     "EURUSD": 1.10852,
     "GBPUSD": 1.32618
   },
@@ -410,7 +444,7 @@
     "losses": 22,
     "gross_win": 7115.35,
     "gross_loss": -9474.8,
-    "commissions": 424.95,
+    "commissions": 427.25,
     "net_trade_pnl": -2359.45,
     "skipped_signals": 8,
     "accepted_signals": 50
@@ -1274,6 +1308,28 @@
       "gemini_confidence": 0.76,
       "hard_stop_px": 28064.5,
       "hard_stop_armed_at": "2026-11-12T13:57:15.299370+00:00",
+      "fill_source": "live_quote:dukascopy:tick"
+    },
+    {
+      "id": 42,
+      "symbol": "XAUUSD",
+      "contract": "GC",
+      "qty": 1,
+      "side": -1,
+      "entry": 3890.9,
+      "stop": null,
+      "target": null,
+      "entry_time": "2026-11-12T13:59:06.454009+00:00",
+      "risk_usd": null,
+      "atr": 10.093,
+      "candle": {
+        "high": 3917.22,
+        "low": 3900.8
+      },
+      "gemini_run_at_utc": "2026-11-12T13:58:20.230864+00:00",
+      "gemini_confidence": 0.86,
+      "hard_stop_px": 3895.9,
+      "hard_stop_armed_at": "2026-11-12T13:59:06.454009+00:00",
       "fill_source": "live_quote:dukascopy:tick"
     }
   ],

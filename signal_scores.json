@@ -1,9 +1,9 @@
 {
-  "updated_at": "2026-11-12T21:12:50.408013+00:00",
+  "updated_at": "2026-11-12T21:18:00.487529+00:00",
   "exit_mode": "uniform-1atr-v1",
   "paper_only": true,
-  "pending": 3900,
-  "n_scored": 5755,
+  "pending": 3897,
+  "n_scored": 5801,
   "models": {
     "gemini-3.6-flash": {
       "n": 474,
@@ -204,19 +204,19 @@
       }
     },
     "deepseek-flash": {
-      "n": 2,
+      "n": 4,
       "label": "deepseek-flash",
-      "win_pct": 1.0,
-      "avg_R": 0.305,
-      "twin_avg_R": -0.314,
-      "edge_R": 0.619,
+      "win_pct": 0.75,
+      "avg_R": 0.126,
+      "twin_avg_R": -0.183,
+      "edge_R": 0.309,
       "by_band": {
         "<0.55": {
-          "n": 1,
-          "win_pct": 1.0,
-          "avg_R": 0.578,
-          "twin_avg_R": -0.586,
-          "edge_R": 1.164
+          "n": 3,
+          "win_pct": 0.667,
+          "avg_R": 0.157,
+          "twin_avg_R": -0.231,
+          "edge_R": 0.388
         },
         "0.55-0.75": {
           "n": 1,
@@ -228,19 +228,19 @@
       },
       "excursions": {
         "2h": {
-          "avg_mfe_atr": 1.393,
-          "avg_mae_atr": 0.39,
-          "n": 2
+          "avg_mfe_atr": 1.014,
+          "avg_mae_atr": 0.615,
+          "n": 4
         },
         "3h": {
-          "avg_mfe_atr": 1.674,
-          "avg_mae_atr": 0.39,
-          "n": 2
+          "avg_mfe_atr": 1.179,
+          "avg_mae_atr": 0.615,
+          "n": 4
         },
         "4h": {
-          "avg_mfe_atr": 2.034,
-          "avg_mae_atr": 0.39,
-          "n": 2
+          "avg_mfe_atr": 1.392,
+          "avg_mae_atr": 0.615,
+          "n": 4
         }
       }
     }

@@ -1,7 +1,7 @@
 {
   "reset_token": "2026-11-12-uniform-reset",
   "created_at": "2026-11-12T18:11:32.204243+00:00",
-  "last_entry_bar": "2026-11-12T20:45:00+00:00",
+  "last_entry_bar": "2026-11-12T21:00:00+00:00",
   "shadow": [
     {
       "vid": 11,
@@ -16,7 +16,7 @@
       "init_stop": 28230.0,
       "atr": 79.019,
       "entry_time": "2026-11-12T21:00:48.324098+00:00",
-      "scan_from": "2026-11-12T21:11:00+00:00",
+      "scan_from": "2026-11-12T21:14:00+00:00",
       "tick": 0.25,
       "comm_pts": 0.175,
       "mfe_pts": 63.74399999999878,
@@ -50,7 +50,7 @@
       "init_stop": 28354.64,
       "atr": 79.019,
       "entry_time": "2026-11-12T21:00:48.324098+00:00",
-      "scan_from": "2026-11-12T21:11:00+00:00",
+      "scan_from": "2026-11-12T21:14:00+00:00",
       "tick": 0.25,
       "comm_pts": 0.175,
       "mfe_pts": 16.31000000000131,
@@ -75,135 +75,9 @@
   "probes": [],
   "next_vid": 13,
   "last_entry": {
-    "bar": "2026-11-12T20:45:00+00:00",
-    "t": "2026-11-12T21:00:20.003855+00:00",
-    "render_ms": 0,
-    "sims": {
-      "C-OPUS": {
-        "ok": true,
-        "latency_ms": 22610,
-        "cost_usd": 0.106928,
-        "error": null,
-        "model": "claude-opus-5-5",
-        "answer_ts": "2026-11-12T21:00:48.324098+00:00",
-        "thinking_tokens": 1123,
-        "stop_reason": "end_turn",
-        "signals": [
-          {
-            "symbol": "XAUUSD",
-            "action": "HOLD",
-            "setup_type": "none",
-            "score": 0,
-            "confidence": 0.0,
-            "decision": "HOLD"
-          },
-          {
-            "symbol": "EURUSD",
-            "action": "HOLD",
-            "setup_type": "none",
-            "score": 0,
-            "confidence": 0.0,
-            "decision": "HOLD"
-          },
-          {
-            "symbol": "GBPUSD",
-            "action": "HOLD",
-            "setup_type": "none",
-            "score": 0,
-            "confidence": 0.0,
-            "decision": "HOLD"
-          },
-          {
-            "symbol": "US100",
-            "action": "BUY",
-            "setup_type": "trend",
-            "score": 6,
-            "confidence": 0.52,
-            "decision": "skip: 1 NQ would risk $1,488 > $900"
-          },
-          {
-            "symbol": null,
-            "action": "HOLD",
-            "setup_type": "none",
-            "score": 0,
-            "confidence": 0.0,
-            "decision": "HOLD"
-          },
-          {
-            "symbol": null,
-            "action": "HOLD",
-            "setup_type": "none",
-            "score": 0,
-            "confidence": 0.0,
-            "decision": "HOLD"
-          }
-        ]
-      },
-      "C-SONNET": {
-        "ok": true,
-        "latency_ms": 9907,
-        "cost_usd": 0.046434,
-        "error": null,
-        "model": "claude-sonnet-5-5",
-        "answer_ts": "2026-11-12T21:00:48.324098+00:00",
-        "thinking_tokens": 0,
-        "stop_reason": "end_turn",
-        "signals": [
-          {
-            "symbol": "XAUUSD",
-            "action": "HOLD",
-            "setup_type": "none",
-            "score": 0,
-            "confidence": 0.0,
-            "decision": "HOLD"
-          },
-          {
-            "symbol": "EURUSD",
-            "action": "HOLD",
-            "setup_type": "none",
-            "score": 0,
-            "confidence": 0.0,
-            "decision": "HOLD"
-          },
-          {
-            "symbol": "GBPUSD",
-            "action": "HOLD",
-            "setup_type": "none",
-            "score": 0,
-            "confidence": 0.0,
-            "decision": "HOLD"
-          },
-          {
-            "symbol": "US100",
-            "action": "HOLD",
-            "setup_type": "none",
-            "score": 0,
-            "confidence": 0.0,
-            "decision": "HOLD"
-          },
-          {
-            "symbol": "XAGUSD",
-            "action": "HOLD",
-            "setup_type": "none",
-            "score": 0,
-            "confidence": 0.0,
-            "decision": "HOLD"
-          },
-          {
-            "symbol": "BTCUSD",
-            "action": "HOLD",
-            "setup_type": "none",
-            "score": 0,
-            "confidence": 0.0,
-            "decision": "HOLD"
-          }
-        ]
-      }
-    },
-    "snapshot_id": "m15-20261112204500-1358c8d796d6",
-    "snapshot_hash": "1358c8d796d67c552ea644a4e755eaa91e5c806f4fa9668f4e70f97198abbb52",
-    "bar_close_ts": "2026-11-12T21:00:00+00:00",
-    "snapshot_ts": "2026-11-12T21:00:24.131536+00:00"
+    "bar": "2026-11-12T21:00:00+00:00",
+    "t": "2026-11-12T21:15:20.005794+00:00",
+    "skipped": "all symbols in a blocked session (ASIAN_SESSION_CHOP / LOW_LIQUIDITY_DEADZONE): the v2 prompt would HOLD every one"
   },
   "fill_quotes": {
     "US100": {
@@ -231,8 +105,8 @@
       "t": "2026-11-12T21:00:14.839689+00:00"
     },
     "US100": {
-      "price": 28332.353,
-      "t": "2026-11-12T21:13:26.838656+00:00"
+      "price": 28333.354,
+      "t": "2026-11-12T21:17:56.839563+00:00"
     }
   }
 }

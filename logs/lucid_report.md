@@ -2,7 +2,7 @@
 
 Post-reset account only (pre-reset trades listed separately); paper trades only; net P&L after round-trip commission
 
-Updated: 2026-11-13 01:11:28 (Dubai UTC+4)
+Updated: 2026-11-13 01:13:44 (Dubai UTC+4)
 
 **Every bucket with n < 20 is LOW CONFIDENCE. Descriptive only; no proven edge.**
 
@@ -97,11 +97,11 @@ Ranked by net P&L; small samples are not a strategy recommendation.
 
 - 2026-11-12T19:41:00+00:00 DLL: equity $98,096.50 vs level $98,200.00 (log-only (gemini_only): no block, no forced close)
 
-## Entry skips (1)
+## Entry skips (2)
 
 | Reason | Count |
 |---|---:|
-| session_blocked | 1 |
+| session_blocked | 2 |
 
 Legacy records without telemetry remain in the totals and are grouped as unknown.
 MFE/MAE are gross price excursions, not hypothetical net realized P&L. Bar-data exit-bar extremes are ambiguous.

@@ -3,27 +3,33 @@
   "created_at": "2026-11-12T15:30:53.246609+00:00",
   "spend": {
     "2026-11-12": {
-      "usd": 0.070626,
-      "calls": 1,
+      "usd": 0.101158,
+      "calls": 2,
       "failed": 0,
       "by_kind": {
         "entry": {
           "calls": 1,
           "usd": 0.070626
+        },
+        "trigger": {
+          "calls": 1,
+          "usd": 0.030532
         }
       },
       "tokens": {
-        "input": 10203,
-        "output": 1220,
-        "thoughts": 3802
+        "input": 16149,
+        "output": 1900,
+        "thoughts": 4986
       }
     }
   },
   "last_scan_bar": "2026-11-12T15:30:00+00:00",
   "triggers": {
     "day": "2026-11-12",
-    "n": 0,
-    "per_bar": {}
+    "n": 1,
+    "per_bar": {
+      "US100": "2026-11-12T15:45:00+00:00"
+    }
   },
   "cache": {
     "XAUUSD": {
@@ -119,12 +125,12 @@
     "US100": {
       "bar": "2026-11-12T15:30:00+00:00",
       "atr": 98.8,
-      "price": 28241.67,
+      "price": 28326.02,
       "levels": [
         [
           "Session High",
           28295.74,
-          -1
+          1
         ],
         [
           "Prev High",
@@ -148,22 +154,22 @@
         ],
         [
           "Call Wall #1",
-          28429.0,
+          28432.33,
           -1
         ],
         [
           "Call Wall #2",
-          28439.0,
+          28442.33,
           -1
         ],
         [
           "Put Wall #1",
-          27999.0,
+          28002.33,
           1
         ],
         [
           "Put Wall #2",
-          28109.0,
+          28112.33,
           1
         ]
       ],
@@ -187,9 +193,9 @@
       "queued_at": "2026-11-12T15:46:09.306718+00:00",
       "entry": 28249.0,
       "entry_time": "2026-11-12T15:46:14.764782+00:00",
-      "scan_from": "2026-11-12T15:50:00+00:00",
-      "best": 28308.75,
-      "mfe": 59.75,
+      "scan_from": "2026-11-12T15:52:00+00:00",
+      "best": 28333.89,
+      "mfe": 84.88999999999942,
       "mae": 36.419999999998254,
       "locked": false,
       "checks": 0,
@@ -201,7 +207,7 @@
       "risk_usd": 1983.5,
       "chase_atr": 0.074,
       "risk_1c_usd": 1976.0,
-      "last_check_at": "2026-11-12T15:52:35.850235+00:00"
+      "last_check_at": "2026-11-12T15:54:23.839339+00:00"
     },
     {
       "vid": 2,
@@ -217,9 +223,9 @@
       "queued_at": "2026-11-12T15:46:09.306718+00:00",
       "entry": 28249.0,
       "entry_time": "2026-11-12T15:46:14.764782+00:00",
-      "scan_from": "2026-11-12T15:50:00+00:00",
-      "best": 28308.75,
-      "mfe": 59.75,
+      "scan_from": "2026-11-12T15:52:00+00:00",
+      "best": 28333.89,
+      "mfe": 84.88999999999942,
       "mae": 36.419999999998254,
       "locked": false,
       "checks": 0,
@@ -231,42 +237,49 @@
       "risk_usd": 1983.5,
       "chase_atr": 0.074,
       "risk_1c_usd": 1976.0,
-      "last_check_at": "2026-11-12T15:52:35.850235+00:00"
+      "last_check_at": "2026-11-12T15:54:23.839339+00:00"
     }
   ],
   "next_vid": 3,
   "last_call": {
-    "t": "2026-11-12T15:46:09.306718+00:00",
-    "t_dubai": "2026-11-12T19:46:09.306718+04:00",
-    "kind": "entry",
+    "t": "2026-11-12T15:54:23.825454+00:00",
+    "t_dubai": "2026-11-12T19:54:23.825454+04:00",
+    "kind": "trigger",
     "model": "gemini-4-carbon",
     "model_version": "gemini-4-carbon",
     "thinking": "medium",
     "ok": true,
     "error": null,
-    "latency_s": 48.497,
+    "latency_s": 26.611,
     "finish_reason": "FinishReason.STOP",
     "tokens": {
-      "input": 10203,
-      "output": 1220,
-      "thoughts": 3802,
-      "total": 15225
+      "input": 5946,
+      "output": 680,
+      "thoughts": 1184,
+      "total": 7810
     },
-    "thoughts_token_count": 3802,
+    "thoughts_token_count": 1184,
     "price_per_mtok": [
       2.0,
       10.0
     ],
-    "cost_usd": 0.070626,
-    "spend_today_usd": 0.0706,
+    "cost_usd": 0.030532,
+    "spend_today_usd": 0.1012,
     "symbols": [
-      "XAUUSD",
-      "EURUSD",
       "US100"
     ],
-    "render_ms": 806,
+    "render_ms": 117,
     "parse_error": null,
-    "trigger": null
+    "trigger": {
+      "trigger": "level_cross",
+      "level": "Session High",
+      "level_price": 28295.74,
+      "price": 28326.02,
+      "direction": "up",
+      "symbol": "US100",
+      "bar": "2026-11-12T15:45:00+00:00",
+      "n_today": 1
+    }
   },
   "first_call": {
     "t": "2026-11-12T15:46:09.306718+00:00",
@@ -301,7 +314,7 @@
     "parse_error": null,
     "trigger": null
   },
-  "calls_total": 1,
+  "calls_total": 2,
   "last_scan": {
     "kind": "entry",
     "t": "2026-11-12T15:45:20.003718+00:00",

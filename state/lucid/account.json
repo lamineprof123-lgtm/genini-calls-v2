@@ -1,7 +1,7 @@
 {
   "version": 1,
   "created_at": "2026-11-12T10:14:47.081605+00:00",
-  "last_processed": "2026-11-12T15:52:00+00:00",
+  "last_processed": "2026-11-12T15:54:00+00:00",
   "account": {
     "no": 1,
     "phase": "eval",
@@ -22,7 +22,158 @@
     "trades": 67
   },
   "positions": [],
-  "pending": [],
+  "pending": [
+    {
+      "symbol": "US100",
+      "side": 1,
+      "created": "2026-11-12T15:54:34.949612+00:00",
+      "fill_after": "2026-11-12T15:55:00+00:00",
+      "reserved_risk": 0.0,
+      "planned": {
+        "contract": "NQ",
+        "qty": 1,
+        "risk_usd": null,
+        "tdist": null,
+        "target_source": "none (gemini_only)"
+      },
+      "expires": "2026-11-12T16:05:00+00:00",
+      "atr": 98.8,
+      "scalp": {
+        "action": "BUY",
+        "side": 1,
+        "entry": 28331.96,
+        "stop_loss": 28139.61,
+        "take_profit": 28336.96,
+        "sdist": 192.34999999999854,
+        "tdist": 5.0,
+        "stop_source": "structure",
+        "target_source": "fixed",
+        "rr": 0.026,
+        "structure_stop": 28139.61,
+        "atr_stop": 28252.92,
+        "fixed_tp": 28336.96,
+        "structure_tp": 28594.524,
+        "structure_label": "Prev High",
+        "candle": {
+          "high": 28278.39,
+          "low": 28144.55
+        },
+        "levels": [
+          {
+            "price": 28295.74,
+            "label": "Session High"
+          },
+          {
+            "price": 28596.5,
+            "label": "Prev High"
+          },
+          {
+            "price": 28209.17,
+            "label": "S/R"
+          },
+          {
+            "price": 28083.64,
+            "label": "S/R"
+          },
+          {
+            "price": 28030.0,
+            "label": "S/R"
+          }
+        ],
+        "vp": {
+          "poc": 28115.45,
+          "vah": 28203.68,
+          "val": 28073.25
+        }
+      },
+      "session": "LONDON_NY_OVERLAP",
+      "telemetry": {
+        "symbol": "US100",
+        "session": "LONDON_NY_OVERLAP",
+        "last_close": 28273.4,
+        "atr": 98.8,
+        "vwap": 28129.07,
+        "ema20": 28131.33,
+        "ema50": 28138.34,
+        "price_vs_vwap": {
+          "side": "above",
+          "dist_atr": 1.4608
+        },
+        "price_vs_ema50": {
+          "side": "above",
+          "dist_atr": 1.367
+        },
+        "vwap_aligned_with_side": true,
+        "ema50_aligned_with_side": true,
+        "poc": 28115.45,
+        "vah": 28203.68,
+        "val": 28073.25,
+        "price_vs_value_area": "above_vah",
+        "dist_to_poc_atr": 1.5987,
+        "cvd": 0.47,
+        "cvd_label": "NEUTRAL",
+        "cvd_slope": 3.29,
+        "cvd_agrees_with_side": true,
+        "rvol": 1.412,
+        "rvol_spike": false,
+        "rvol_bars_since_spike": 2,
+        "atr_band_z": 1.438,
+        "atr_upper": 28328.93,
+        "atr_lower": 27933.73,
+        "nearest_sr": {
+          "above": {
+            "price": 28295.74,
+            "label": "Session High",
+            "dist_atr": 0.2261
+          },
+          "below": {
+            "price": 28209.17,
+            "label": "S/R",
+            "dist_atr": 0.6501
+          }
+        },
+        "gemini": {
+          "action": "BUY",
+          "confidence": 0.76,
+          "confidence_band": "0.7-0.8",
+          "rationale": "Price has broken out above VAH (28203.68) and POC (28115.45). CVD is NEUTRAL (+0.47) but with accelerating positive slope (+3.29). Session is LONDON_NY_OVERLAP. Price is cleanly holding above rising VWAP (28129.07) and EMA50 (28138.34). Price breached upper ATR band (28328.93) and cleared Session High (28295.74). Volume confirms with Dukascopy index CFD context noted. GEX is POSITIVE_DAMPENING above Gamma Flip (28178.61), with ample runway up to Call Wall #1 at 28432.02. Momentum is strong and the forming candle is pushing fresh highs with room to run into Call Wall. BUY.",
+          "model": "gemini-3.8-flash",
+          "model_action": "BUY"
+        },
+        "scalp": {
+          "stop_basis": "structure",
+          "target_basis": "fixed",
+          "tdist": 5.0,
+          "sdist": 192.34999999999854,
+          "structure_label": "Prev High"
+        },
+        "planned": {
+          "tdist": 5.0,
+          "sdist": 192.34999999999854,
+          "qty": null,
+          "contract": null,
+          "target_usd_net": null,
+          "risk_usd": null
+        },
+        "run_at_utc": "2026-11-12T15:54:20.017725+00:00",
+        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-12/cycles/195420.json/US100.png"
+      },
+      "gemini": {
+        "action": "BUY",
+        "entry": 28331.96,
+        "stop_loss": 28139.61,
+        "take_profit": 28336.96,
+        "confidence": 0.76,
+        "rr": 0.026,
+        "shown_on_site": true,
+        "basis": "site signal",
+        "run_at_utc": "2026-11-12T15:54:20.017725+00:00",
+        "session": "LONDON_NY_OVERLAP",
+        "rationale": "Price has broken out above VAH (28203.68) and POC (28115.45). CVD is NEUTRAL (+0.47) but with accelerating positive slope (+3.29). Session is LONDON_NY_OVERLAP. Price is cleanly holding above rising VWAP (28129.07) and EMA50 (28138.34). Price breached upper ATR band (28328.93) and cleared Session High (28295.74). Volume confirms with Dukascopy index CFD context noted. GEX is POSITIVE_DAMPENING above Gamma Flip (28178.61), with ample runway up to Call Wall #1 at 28432.02. Momentum is strong and the forming candle is pushing fresh highs with room to run into Call Wall. BUY.",
+        "model": "gemini-3.8-flash"
+      }
+    }
+  ],
   "next_pos_id": 68,
   "day": {
     "id": "2026-11-12",
@@ -66,7 +217,7 @@
     "commissions": 669.8,
     "net_trade_pnl": -1447.3,
     "skipped_signals": 24,
-    "accepted_signals": 91
+    "accepted_signals": 92
   },
   "reset_token": "2026-11-12-profit-lock",
   "reset_at": "2026-11-12T10:14:47.081605+00:00",

@@ -1,50 +1,5 @@
 [
   {
-    "signal_at": "2026-11-12T10:56:20.367195+00:00",
-    "tz": "Asia/Dubai",
-    "model": "gemini-3.8-flash",
-    "dry_run": false,
-    "trades": [
-      {
-        "symbol": "GBPUSD",
-        "name": "POUND",
-        "action": "BUY",
-        "entry": 1.3275,
-        "stop_loss": null,
-        "take_profit": null,
-        "rr": null,
-        "confidence": 0.72,
-        "digits": 5,
-        "exit": "Gemini",
-        "card": "SL: none \u00b7 TP: none \u00b7 exit: Gemini",
-        "session": "LONDON_SESSION",
-        "cvd_label": "NEUTRAL"
-      },
-      {
-        "symbol": "BTCUSD",
-        "name": "BITCOIN",
-        "action": "SELL",
-        "entry": 73348.8,
-        "stop_loss": 73527.51,
-        "take_profit": 73288.0,
-        "rr": 0.34,
-        "confidence": 0.75,
-        "digits": 2,
-        "session": "LONDON_SESSION",
-        "cvd_label": "BEARISH"
-      }
-    ],
-    "no_trade": [],
-    "in_position": [
-      "EURUSD",
-      "US100",
-      "XAUUSD"
-    ],
-    "analysis_failed": false,
-    "breaker_halted": false,
-    "written_at": "2026-11-12T10:56:31.799858+00:00"
-  },
-  {
     "signal_at": "2026-11-12T10:58:20.373071+00:00",
     "tz": "Asia/Dubai",
     "model": "gemini-3.8-flash",
@@ -1396,5 +1351,39 @@
     "analysis_failed": false,
     "breaker_halted": false,
     "written_at": "2026-11-12T12:34:33.888388+00:00"
+  },
+  {
+    "signal_at": "2026-11-12T12:36:20.316959+00:00",
+    "tz": "Asia/Dubai",
+    "model": "gemini-3.8-flash",
+    "dry_run": false,
+    "trades": [
+      {
+        "symbol": "US100",
+        "name": "NASDAQ",
+        "action": "SELL",
+        "entry": 28105.92,
+        "stop_loss": null,
+        "take_profit": null,
+        "rr": null,
+        "confidence": 0.72,
+        "digits": 2,
+        "exit": "Gemini",
+        "card": "Hard stop \u2212$500 net \u00b7 TP: none \u00b7 exit: Gemini",
+        "session": "LONDON_SESSION",
+        "cvd_label": "BEARISH"
+      }
+    ],
+    "no_trade": [
+      "EURUSD",
+      "BTCUSD"
+    ],
+    "in_position": [
+      "GBPUSD",
+      "XAUUSD"
+    ],
+    "analysis_failed": false,
+    "breaker_halted": false,
+    "written_at": "2026-11-12T12:36:40.383397+00:00"
   }
 ]

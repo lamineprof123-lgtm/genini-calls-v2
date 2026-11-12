@@ -1,0 +1,280 @@
+{
+  "updated_at": "2026-11-12T12:18:32.052220+00:00",
+  "paper_only": true,
+  "key_present": true,
+  "status": "running",
+  "exit_model": "claude-haiku-5-5",
+  "entry_models": [
+    "claude-opus-5-5",
+    "claude-sonnet-5-5"
+  ],
+  "last_entry_bar": "2026-11-12T12:00:00+00:00",
+  "last_entry_skipped": null,
+  "rules": "Binding server rules: hard stop = model stop clamped 0.6-1.5 ATR; $900 risk sizing (NQ 1, GC 1, 6E/6B up to 4, 6 max); break-even at +0.5 ATR; profit lock 50% of best at +1.0 ATR, 60% at +1.5 ATR; 45-min time stop; daily -$1,500; trailing $300 buffer; re-entry lock; one entry per M15 close (score >= 5). Exit model every 18 s.",
+  "reset": {
+    "at": "2026-11-12T12:14:51.993423+00:00",
+    "token": "claude-v2-1"
+  },
+  "sims": [
+    {
+      "id": "C-OPUS",
+      "label": "Claude Opus",
+      "entry_model": "claude-opus-5-5",
+      "exit_model": "claude-haiku-5-5",
+      "account": {
+        "start_balance": 100000.0,
+        "balance": 100000.0,
+        "equity": 100000.0,
+        "realized_pnl": 0.0,
+        "open_pnl": 0.0,
+        "trades": 0,
+        "wins": 0,
+        "losses": 0,
+        "r_total": 0.0,
+        "r_per_trade": null,
+        "mll_floor": 97000.0,
+        "mll_room": 3000.0,
+        "day_realized": 0.0,
+        "day_flattened": false,
+        "blown": null
+      },
+      "open_positions": [],
+      "recent_trades": [],
+      "books": {
+        "mech": {
+          "n": 0,
+          "wins": 0,
+          "losses": 0,
+          "net": 0,
+          "r_total": 0,
+          "r_avg": null
+        },
+        "whatif": {
+          "n": 0,
+          "wins": 0,
+          "losses": 0,
+          "net": 0,
+          "r_total": 0,
+          "r_avg": null
+        },
+        "twin": {
+          "n": 0,
+          "wins": 0,
+          "losses": 0,
+          "net": 0,
+          "r_total": 0,
+          "r_avg": null
+        },
+        "whatif_gated": {
+          "n": 0,
+          "r_total": 0,
+          "r_avg": null
+        }
+      },
+      "signals": {
+        "rows": 4,
+        "buy_sell": 0,
+        "gated": 0,
+        "opened": 0
+      },
+      "ops": {
+        "entry": {
+          "calls": 1,
+          "failed": 0,
+          "latency_p50_ms": 23853.0,
+          "latency_p95_ms": 23853.0,
+          "cost_usd": 0.093,
+          "by_utc_day": {
+            "2026-11-12": {
+              "calls": 1,
+              "cost_usd": 0.093,
+              "input_tokens": 11699,
+              "output_tokens": 2312,
+              "thinking_tokens": 1169
+            }
+          }
+        },
+        "exit": {
+          "calls": 0,
+          "failed": 0,
+          "latency_p50_ms": null,
+          "latency_p95_ms": null,
+          "cost_usd": 0,
+          "by_utc_day": {}
+        }
+      },
+      "last_entry_call": {
+        "bar": "2026-11-12T12:00:00+00:00",
+        "t": "2026-11-12T12:16:39.486647+00:00",
+        "ok": true,
+        "latency_ms": 23853,
+        "cost_usd": 0.093036,
+        "error": null,
+        "signals": [
+          {
+            "symbol": "XAUUSD",
+            "action": "HOLD",
+            "setup_type": "none",
+            "score": 0,
+            "confidence": 0.0,
+            "decision": "HOLD"
+          },
+          {
+            "symbol": "EURUSD",
+            "action": "HOLD",
+            "setup_type": "none",
+            "score": 0,
+            "confidence": 0.0,
+            "decision": "HOLD"
+          },
+          {
+            "symbol": "GBPUSD",
+            "action": "HOLD",
+            "setup_type": "none",
+            "score": 0,
+            "confidence": 0.0,
+            "decision": "HOLD"
+          },
+          {
+            "symbol": "US100",
+            "action": "HOLD",
+            "setup_type": "none",
+            "score": 3,
+            "confidence": 0.0,
+            "decision": "HOLD"
+          }
+        ]
+      }
+    },
+    {
+      "id": "C-SONNET",
+      "label": "Claude Sonnet",
+      "entry_model": "claude-sonnet-5-5",
+      "exit_model": "claude-haiku-5-5",
+      "account": {
+        "start_balance": 100000.0,
+        "balance": 100000.0,
+        "equity": 100000.0,
+        "realized_pnl": 0.0,
+        "open_pnl": 0.0,
+        "trades": 0,
+        "wins": 0,
+        "losses": 0,
+        "r_total": 0.0,
+        "r_per_trade": null,
+        "mll_floor": 97000.0,
+        "mll_room": 3000.0,
+        "day_realized": 0.0,
+        "day_flattened": false,
+        "blown": null
+      },
+      "open_positions": [],
+      "recent_trades": [],
+      "books": {
+        "mech": {
+          "n": 0,
+          "wins": 0,
+          "losses": 0,
+          "net": 0,
+          "r_total": 0,
+          "r_avg": null
+        },
+        "whatif": {
+          "n": 0,
+          "wins": 0,
+          "losses": 0,
+          "net": 0,
+          "r_total": 0,
+          "r_avg": null
+        },
+        "twin": {
+          "n": 0,
+          "wins": 0,
+          "losses": 0,
+          "net": 0,
+          "r_total": 0,
+          "r_avg": null
+        },
+        "whatif_gated": {
+          "n": 0,
+          "r_total": 0,
+          "r_avg": null
+        }
+      },
+      "signals": {
+        "rows": 4,
+        "buy_sell": 0,
+        "gated": 0,
+        "opened": 0
+      },
+      "ops": {
+        "entry": {
+          "calls": 1,
+          "failed": 0,
+          "latency_p50_ms": 9179.0,
+          "latency_p95_ms": 9179.0,
+          "cost_usd": 0.0348,
+          "by_utc_day": {
+            "2026-11-12": {
+              "calls": 1,
+              "cost_usd": 0.0348,
+              "input_tokens": 11699,
+              "output_tokens": 1140,
+              "thinking_tokens": 0
+            }
+          }
+        },
+        "exit": {
+          "calls": 0,
+          "failed": 0,
+          "latency_p50_ms": null,
+          "latency_p95_ms": null,
+          "cost_usd": 0,
+          "by_utc_day": {}
+        }
+      },
+      "last_entry_call": {
+        "bar": "2026-11-12T12:00:00+00:00",
+        "t": "2026-11-12T12:16:39.486647+00:00",
+        "ok": true,
+        "latency_ms": 9179,
+        "cost_usd": 0.034798,
+        "error": null,
+        "signals": [
+          {
+            "symbol": "XAUUSD",
+            "action": "HOLD",
+            "setup_type": "none",
+            "score": 0,
+            "confidence": 0.0,
+            "decision": "HOLD"
+          },
+          {
+            "symbol": "EURUSD",
+            "action": "HOLD",
+            "setup_type": "none",
+            "score": 0,
+            "confidence": 0.0,
+            "decision": "HOLD"
+          },
+          {
+            "symbol": "GBPUSD",
+            "action": "HOLD",
+            "setup_type": "none",
+            "score": 0,
+            "confidence": 0.0,
+            "decision": "HOLD"
+          },
+          {
+            "symbol": "US100",
+            "action": "HOLD",
+            "setup_type": "none",
+            "score": 0,
+            "confidence": 0.0,
+            "decision": "HOLD"
+          }
+        ]
+      }
+    }
+  ]
+}

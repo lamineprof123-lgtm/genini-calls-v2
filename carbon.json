@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-12T18:00:20.002902+00:00",
+  "updated_at": "2026-11-12T18:03:06.435894+00:00",
   "paper_only": true,
   "model": "gemini-4-carbon",
   "entry_thinking": "high",
@@ -22,15 +22,15 @@
     "soft_usd": 15,
     "hard_usd": 19,
     "state": "ok",
-    "calls": 19,
-    "failed": 2,
+    "calls": 20,
+    "failed": 3,
     "by_kind": {
       "entry": {
         "calls": 9,
         "usd": 0.541092
       },
       "trigger": {
-        "calls": 10,
+        "calls": 11,
         "usd": 0.432396
       }
     },
@@ -52,43 +52,43 @@
   "next_scan_at": "2026-11-12T18:15:20+00:00",
   "in_window": true,
   "last_call": {
-    "t": "2026-11-12T17:50:53.798897+00:00",
-    "t_dubai": "2026-11-12T21:50:53.798897+04:00",
+    "t": "2026-11-12T18:03:06.435894+00:00",
+    "t_dubai": "2026-11-12T22:03:06.435894+04:00",
     "kind": "trigger",
     "model": "gemini-4-carbon",
-    "model_version": "gemini-4-carbon",
+    "model_version": null,
     "thinking": "high",
-    "ok": true,
-    "error": null,
-    "latency_s": 68.229,
-    "finish_reason": "FinishReason.STOP",
+    "ok": false,
+    "error": "ServerError: 504 DEADLINE_EXCEEDED. {'error': {'code': 504, 'message': 'Deadline expired before operation could complete.', 'status': 'DEADLINE_EXCEEDED'}}",
+    "latency_s": 179.182,
+    "finish_reason": null,
     "tokens": {
-      "input": 5948,
-      "output": 912,
-      "thoughts": 4705,
-      "total": 11565
+      "input": 0,
+      "output": 0,
+      "thoughts": 0,
+      "total": 0
     },
-    "thoughts_token_count": 4705,
+    "thoughts_token_count": 0,
     "price_per_mtok": [
       2.0,
       10.0
     ],
-    "cost_usd": 0.068066,
+    "cost_usd": 0.0,
     "spend_today_usd": 0.9735,
     "symbols": [
       "US100"
     ],
-    "render_ms": 143,
-    "parse_error": null,
+    "render_ms": 336,
+    "parse_error": "ServerError: 504 DEADLINE_EXCEEDED. {'error': {'code': 504, 'message': 'Deadline expired before operation could complete.', 'status': 'DEADLINE_EXCEEDED'}}",
     "trigger": {
       "trigger": "level_cross",
-      "level": "Call Wall #2",
-      "level_price": 28441.17,
-      "price": 28452.54,
-      "direction": "up",
+      "level": "Call Wall #1",
+      "level_price": 28430.63,
+      "price": 28414.71,
+      "direction": "down",
       "symbol": "US100",
-      "bar": "2026-11-12T17:45:00+00:00",
-      "n_today": 11
+      "bar": "2026-11-12T18:00:00+00:00",
+      "n_today": 12
     }
   },
   "first_call": {
@@ -124,7 +124,7 @@
     "parse_error": null,
     "trigger": null
   },
-  "calls_total": 19,
+  "calls_total": 20,
   "last_scan": {
     "kind": "trigger",
     "t": "2026-11-12T17:49:45.426897+00:00",

@@ -1,126 +1,38 @@
 {
-  "updated_at": "2026-11-12T10:14:33.130983+00:00",
+  "updated_at": "2026-11-12T10:16:38.470279+00:00",
   "paper_only": true,
   "plan": "LucidPro 100K (DLL on)",
   "exit_mode": "gemini_only",
   "card": "SL: none \u00b7 TP: none \u00b7 exit: Gemini",
-  "breaches": [
-    {
-      "t": "2026-11-12T09:26:00+00:00",
-      "day": "2026-11-12",
-      "kind": "DLL",
-      "level": 98200.0,
-      "equity": 98164.0,
-      "note": "log-only (gemini_only): no block, no forced close"
-    },
-    {
-      "t": "2026-11-12T09:44:00+00:00",
-      "day": "2026-11-12",
-      "kind": "MLL",
-      "level": 97000.0,
-      "equity": 96890.81,
-      "note": "log-only (gemini_only): no block, no forced close"
-    }
-  ],
+  "breaches": [],
   "breach_note": "DLL / MLL / 3.5% breaker are log-only (no block, no forced close)",
   "sizing_rule": "full-size futures only (NQ, GC, 6E, 6B), 1-6 contracts sized as if risk were 0.8 ATR at $1500 (notional reference only); no stop, no target, exit = Gemini CLOSE only",
   "reset": {
-    "at": "2026-11-12T09:00:41.662867+00:00",
-    "reason": "reset5: exit-check start-delay fix",
-    "token": "2026-11-12-exitcheck-fix"
+    "at": "2026-11-12T10:14:47.081605+00:00",
+    "reason": "reset6: profit-lock exit rules",
+    "token": "2026-11-12-profit-lock"
   },
   "account": {
     "no": 1,
     "phase": "eval",
     "start_balance": 100000.0,
-    "balance": 99465.75,
-    "equity": 95571.27,
-    "realized_pnl_since_reset": -527.9,
-    "open_pnl": -3894.48,
-    "commission_on_open": 6.35,
-    "trades_since_reset": 3,
-    "wins": 2,
-    "losses": 1,
+    "balance": 100000.0,
+    "equity": 100000.0,
+    "realized_pnl_since_reset": 0.0,
+    "open_pnl": 0.0,
+    "commission_on_open": 0.0,
+    "trades_since_reset": 0,
+    "wins": 0,
+    "losses": 0,
     "mll_floor": 97000.0,
-    "mll_room": -1428.73,
+    "mll_room": 3000.0,
     "dll": 1800.0,
-    "day_realized": -527.9,
+    "day_realized": 0.0,
     "day_locked": null,
-    "to_target": 6534.25
+    "to_target": 6000.0
   },
-  "open_positions": [
-    {
-      "symbol": "XAUUSD",
-      "contract": "GC",
-      "qty": 2,
-      "side": "SHORT",
-      "entry_time": "2026-11-12T09:21:00+00:00",
-      "entry": 3929.5,
-      "stop": null,
-      "target": null,
-      "last": 3946.775,
-      "unrealized": -3455.0,
-      "risk_usd": null,
-      "target_usd_net": null,
-      "target_source": "none (gemini_only)"
-    },
-    {
-      "symbol": "US100",
-      "contract": "NQ",
-      "qty": 1,
-      "side": "LONG",
-      "entry_time": "2026-11-12T09:43:00+00:00",
-      "entry": 28196.75,
-      "stop": null,
-      "target": null,
-      "last": 28174.776,
-      "unrealized": -439.48,
-      "risk_usd": null,
-      "target_usd_net": null,
-      "target_source": "none (gemini_only)"
-    }
-  ],
-  "pending": 0,
-  "recent_trades": [
-    {
-      "t_exit": "2026-11-12T09:40:00+00:00",
-      "symbol": "US100",
-      "contract": "NQ",
-      "qty": 1,
-      "side": "LONG",
-      "entry_time": "2026-11-12T09:33:00+00:00",
-      "entry": 28191.5,
-      "exit": 28195.5,
-      "reason": "gemini_close",
-      "net": 76.5,
-      "balance_after": 99467.5
-    },
-    {
-      "t_exit": "2026-11-12T09:15:00+00:00",
-      "symbol": "EURUSD",
-      "contract": "6E",
-      "qty": 24,
-      "side": "LONG",
-      "entry_time": "2026-11-12T09:03:00+00:00",
-      "entry": 1.1093,
-      "exit": 1.1091,
-      "reason": "gemini_close",
-      "net": -715.2,
-      "balance_after": 99395.6
-    },
-    {
-      "t_exit": "2026-11-12T09:09:00+00:00",
-      "symbol": "XAUUSD",
-      "contract": "GC",
-      "qty": 2,
-      "side": "SHORT",
-      "entry_time": "2026-11-12T09:03:00+00:00",
-      "entry": 3930.6,
-      "exit": 3930.0,
-      "reason": "gemini_close",
-      "net": 110.8,
-      "balance_after": 100053.2
-    }
-  ],
-  "last_processed": "2026-11-12T10:14:00+00:00"
+  "open_positions": [],
+  "pending": 1,
+  "recent_trades": [],
+  "last_processed": "2026-11-12T10:16:00+00:00"
 }

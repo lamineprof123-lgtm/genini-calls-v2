@@ -288,6 +288,7 @@ def test_post_exit_queue_books_and_baseline(cfg, tmp_path):
     r = asyncio.run(mgr.tick(t0 + timedelta(minutes=4)))            # not due yet; baseline queued
     assert not r["post_exit"] and {x["book"] for x in mgr.books.s["post_exit"]} == {"baseline", em.BOOK_1}
     mgr.books.s["books"][em.BOOK_2]["positions"] = []                 # nothing open -> idle tick still tracks
+    mgr.books.s["books"].get("nostop", {"positions": []})["positions"] = []
     r2 = asyncio.run(mgr.tick(t0 + timedelta(minutes=9)))
     got = {x["book"]: x for x in r2["post_exit"]}
     assert set(got) == {"baseline", em.BOOK_1} and not mgr.books.s["post_exit"]

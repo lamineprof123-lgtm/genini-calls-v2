@@ -39,7 +39,13 @@ def latest_signal_from_record(record: dict, cfg: dict) -> dict:
                 row["take_profit"] = None
                 row["rr"] = None
                 row["exit"] = "Gemini"
-                row["card"] = "SL: none · TP: none · exit: Gemini"
+                hs = L.get("hard_stop_net_usd")
+                try:
+                    hs = float(hs) if hs else None
+                except (TypeError, ValueError):
+                    hs = None
+                row["card"] = (f"Hard stop −${hs:,.0f} net · TP: none · exit: Gemini" if hs and hs > 0
+                               else "SL: none · TP: none · exit: Gemini")
             elif L.get("enabled") and sym in (L.get("symbols") or {}) and L.get("exit_mode") == "gemini":
                 # USER RULE: Gemini entry + Gemini exit. No take-profit on the panel: hard stop + "exit: Gemini".
                 row["take_profit"] = None

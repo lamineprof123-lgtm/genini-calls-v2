@@ -225,6 +225,7 @@ def test_gemini_only_qty_capped_at_lucidpro_six(gsim):
 
 
 def test_gemini_only_no_stop_no_forced_exits_dll_log_only(gsim):
+    gsim.L["hard_stop_net_usd"] = 0                                      # pre-2026-11-12 rule: no stop at all
     gsim.s["account"]["balance"] = 98000.0                               # already past the DLL: not blocked
     assert gsim.on_record(_rec(T), T)[0]["taken"]
     t1 = T.replace(second=0) + timedelta(minutes=1)
@@ -245,6 +246,7 @@ def test_gemini_only_no_stop_no_forced_exits_dll_log_only(gsim):
 
 
 def test_gemini_only_books_no_stop_no_max_hold_breaker_log_only(gcfg, tmp_path):
+    gcfg = copy.deepcopy(gcfg); gcfg["lucid"]["hard_stop_net_usd"] = 0   # pre-2026-11-12 rule: no stop at all
     st = tmp_path / "state"; (st / "lucid").mkdir(parents=True)
     t0 = T.replace(second=0)
     feed = [{"id": 1, "symbol": "US100", "contract": "NQ", "qty": 10, "side": 1, "entry": 28500.0, "stop": None,
@@ -279,6 +281,7 @@ def test_gemini_only_books_no_stop_no_max_hold_breaker_log_only(gcfg, tmp_path):
 
 
 def test_gemini_only_site_card(gcfg):
+    gcfg = copy.deepcopy(gcfg); gcfg["lucid"]["hard_stop_net_usd"] = 0   # stop off -> legacy card
     rec = {"run_at_utc": T.isoformat(), "signals": [
         {"symbol": "US100", "action": "BUY", "entry": 28500.0, "stop_loss": 28454.0, "take_profit": 28505.0,
          "rr_local": 0.1, "confidence": 0.8}]}
@@ -318,7 +321,7 @@ def test_books_wait_for_account_reset_then_adopt_open_positions(gcfg, tmp_path):
     acct["reset_token"] = cfg["lucid"]["reset_token"]
     (st / "lucid" / "account.json").write_text(_j.dumps(acct))
     opened = mgr._sync_account(t0 + timedelta(minutes=45))
-    assert mgr.books.open_ids() == {1} and len(opened) == 2
+    assert mgr.books.open_ids() == {1} and len(opened) == len(cfg["exit_manager"]["books"])
     assert mgr._sync_account(t0 + timedelta(minutes=46)) == []
 
 

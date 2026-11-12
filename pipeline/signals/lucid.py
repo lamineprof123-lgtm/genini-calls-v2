@@ -20,6 +20,7 @@ from .scalp_levels import (compute_scalp_levels, size_for_target, fixed_target_d
                            structure_distances)
 from .indicators import market_session, session_blocks_automation
 from .telemetry import build_entry_snapshot, enrich_close_metrics
+from .hard_stop import hard_stop_level, hard_stop_reason, hard_stop_usd
 
 log = logging.getLogger("signals.lucid")
 ET = ZoneInfo("America/New_York")
@@ -225,6 +226,50 @@ class LucidSim:
         """USER RULE (2026-11-11 23:00 Dubai): 100% Gemini. No stop loss, no take profit, no max hold, no 16:45 flat,
         no server-forced exit of any kind. DLL / MLL / 3.5% breaker are LOG-ONLY (breach events, panel, report)."""
         return str(self.L.get("exit_mode", "server")) == "gemini_only"
+
+    @property
+    def hard_stop_usd(self) -> float | None:
+        """USER RULE (2026-11-12 ~15:55 Dubai): hard stop at -$N NET of RT commission on the main account (and the
+        1-strike / 2-strike books). Gemini still makes every other close. None = no stop."""
+        return hard_stop_usd(self.cfg)
+
+    def _arm_hard_stops(self, at: datetime) -> None:
+        """Positions opened before the stop existed get it now (armed at `at`, never applied to earlier bars)."""
+        if not self.hard_stop_usd:
+            return
+        for p in self.s["positions"]:
+            if p.get("stop") is not None:
+                continue
+            if p.get("hard_stop_px") is None:
+                p["hard_stop_px"] = hard_stop_level(self.cfg, p)
+            if p.get("hard_stop_armed_at") is None:
+                p["hard_stop_armed_at"] = _iso(at)
+                p["hard_stop_armed_late"] = True
+                self._event(at, "hard_stop_armed", symbol=p["symbol"], id=p["id"], level=p["hard_stop_px"],
+                            usd=self.hard_stop_usd, note="open at deploy: armed from now (not retroactive)")
+
+    def _hard_stop_m1(self, p: dict, b, t: datetime) -> bool:
+        """M1-path hard stop for the main account (fallback to the exit manager's 18 s live-price check, which
+        mirrors its stop onto this account via close_requests.json). Fill at the level, or the bar open if it
+        gapped through, minus slippage."""
+        lvl = p.get("hard_stop_px")
+        if lvl is None or b is None or p.get("stop") is not None or not p.get("hard_stop_armed_at"):
+            return False
+        if t < ceil_min(_dt(p["hard_stop_armed_at"])):
+            return False
+        o, h, l, c = b
+        sd = p["side"]
+        if not ((l <= lvl) if sd > 0 else (h >= lvl)):
+            return False
+        gap = (o <= lvl) if sd > 0 else (o >= lvl)
+        tick = self.spec(p["contract"])["tick"]
+        px = self._round_tick(self._slip(p, sd, o if gap else lvl), tick)
+        reason = hard_stop_reason(self.cfg)
+        self._close(p, px, t, reason)
+        self.s.setdefault("close_done", []).append(p["id"])
+        self._event(t, "hard_stop", symbol=p["symbol"], id=p["id"], level=lvl, price=px, trigger="m1_path",
+                    usd=self.hard_stop_usd)
+        return True
 
     def _log_breach(self, t: datetime, kind: str, level: float, equity: float, note: str = "") -> None:
         day = self.s["day"].get("id")
@@ -468,6 +513,7 @@ class LucidSim:
                "entry_time": p["entry_time"], "entry": p["entry"], "stop": p["stop"], "target": p["target"],
                "exit": round(price, 6), "reason": reason, "gross": gross, "commission": round(2 * comm, 2),
                "net": net, "hold_seconds": int(hold), "balance_after": a["balance"],
+               "hard_stop_px": p.get("hard_stop_px"), "stopped": str(reason).startswith("hard_stop"),
                "risk_usd": p["risk_usd"], "target_usd": p["target_usd"],  # planned NET of RT commission
                "target_usd_is_net": True,
                "max_minis": self.L["max_minis"],
@@ -724,6 +770,7 @@ class LucidSim:
                           for ts, row in df[cols].iterrows()}
         self._m15_idx = m15_idx
         self._close_requests = self._load_close_requests()
+        self._arm_hard_stops(max(until, datetime.now(UTC)))
         while t < until:
             self._minute(t, {s: m.get(int(t.timestamp())) for s, m in idx.items()})
             t += timedelta(minutes=1)
@@ -768,11 +815,14 @@ class LucidSim:
                 p["mae"] = max(float(p.get("mae") or 0.0), max(0.0, -p["side"] * (adv - p["entry"])))
             req = self._close_requests.get(p["id"])
             if req and floor_min(_dt(req["t"])) <= t:
-                self._close(p, float(req["price"]), t, "gemini_close")
+                why = req.get("reason") or "gemini_close"
+                self._close(p, float(req["price"]), t, why)
                 self.s.setdefault("close_done", []).append(p["id"])
-                self._event(t, "gemini_close", symbol=p["symbol"], id=p["id"], price=req["price"],
-                            request_t=req["t"], book=req.get("book"), rule=req.get("rule"),
-                            reason_text=req.get("reason_text"))
+                self._event(t, "hard_stop" if why.startswith("hard_stop") else "gemini_close", symbol=p["symbol"],
+                            id=p["id"], price=req["price"], request_t=req["t"], book=req.get("book"),
+                            rule=req.get("rule"), trigger=req.get("trigger"), reason_text=req.get("reason_text"))
+                continue
+            self._hard_stop_m1(p, b, t)
         for s, b in bar.items():
             if b is not None:
                 self.s["last_price"][s] = float(b[3])
@@ -940,8 +990,11 @@ class LucidSim:
         sc = self.cfg.get("scalp") or {}
         if self.gemini_only:
             cut_bars, mfe_min = 0, 0.0
-            cut_rule = (f"none: exit = Gemini CLOSE only ({self.L.get('gemini_exit_book', '1-strike')}); no stop, no "
-                        "target, no max hold, no 16:45 flat; DLL/MLL/breaker log-only")
+            cut_rule = ((f"none: exit = Gemini CLOSE ({self.L.get('gemini_exit_book', '1-strike')}) or hard stop "
+                         f"-${self.hard_stop_usd:g} NET; no target, no max hold, no 16:45 flat; DLL/MLL/breaker log-only")
+                        if self.hard_stop_usd else
+                        (f"none: exit = Gemini CLOSE only ({self.L.get('gemini_exit_book', '1-strike')}); no stop, no "
+                         "target, no max hold, no 16:45 flat; DLL/MLL/breaker log-only"))
         elif self.gemini_exit:
             cut_bars, mfe_min = 0, 0.0
             cut_rule = (f"none: exit = Gemini CLOSE ({self.L.get('gemini_exit_book', '1-strike')}); safety = hard stop, "
@@ -975,6 +1028,10 @@ class LucidSim:
              "mfe": 0.0, "mae": 0.0, "mfe_min": mfe_min,
              "time_cut_deadline": _iso(t + timedelta(minutes=15 * cut_bars)) if cut_bars else None,
              "time_cut_candles": cut_bars, "time_cut_rule": cut_rule}
+        if self.hard_stop_usd and p["stop"] is None:
+            p["hard_stop_px"] = hard_stop_level(self.cfg, p)
+            p["hard_stop_armed_at"] = p["entry_time"]
+            p["hard_stop_usd"] = self.hard_stop_usd
         self.s["next_pos_id"] += 1
         comm = round(sp["commission"] * p["qty"], 2)
         self.s["account"]["balance"] = round(self.s["account"]["balance"] - comm, 2)
@@ -986,12 +1043,14 @@ class LucidSim:
         feed.append({k: p[k] for k in ("id", "symbol", "contract", "qty", "side", "entry", "stop", "target",
                                        "entry_time", "risk_usd", "atr")}
                     | {"candle": (scalp or {}).get("candle"), "gemini_run_at_utc": g.get("run_at_utc"),
-                       "gemini_confidence": g.get("confidence")})
+                       "gemini_confidence": g.get("confidence"), "hard_stop_px": p.get("hard_stop_px"),
+                       "hard_stop_armed_at": p.get("hard_stop_armed_at")})
         del feed[:-50]
         self.s["day"]["traded"] = True
         self.s["last_price"][sym] = c
         self._event(t, "entry", symbol=sym, contract=p["contract"], qty=p["qty"], side="LONG" if side > 0 else "SHORT",
                     entry=px, stop=p["stop"], target=p["target"], risk_usd=p["risk_usd"],
+                    hard_stop_px=p.get("hard_stop_px"), hard_stop_usd=p.get("hard_stop_usd"),
                     target_usd_net=p["target_usd"], target_usd_gross=p["target_usd_gross"],
                     commission_rt=p["commission_rt"],
                     target_source=size.get("target_source"), sizing=size.get("sizing"),
@@ -1061,26 +1120,33 @@ class LucidSim:
                         "side": "LONG" if p["side"] > 0 else "SHORT", "entry_time": p.get("entry_time"),
                         "entry": p["entry"], "stop": p["stop"], "target": p["target"], "last": px,
                         "unrealized": round(self.pnl(p, px), 2), "risk_usd": p.get("risk_usd"),
+                        "hard_stop_px": p.get("hard_stop_px"),
                         "target_usd_net": p.get("target_usd"), "target_source": p.get("target_source")})
         keep = ("t_exit", "symbol", "contract", "qty", "side", "entry_time", "entry", "exit", "reason", "net",
-                "balance_after", "hold_seconds", "held")
+                "balance_after", "hold_seconds", "held", "stopped")
         recent_rows = []
         for trow in trades[-recent:][::-1]:
             row = {k: trow.get(k) for k in keep}
             hs = trade_hold_seconds(trow)
             row["hold_seconds"] = hs
             row["held"] = format_held(hs)
+            row["stopped"] = str(trow.get("reason") or "").startswith("hard_stop")
             recent_rows.append(row)
         return {
             "updated_at": datetime.now(UTC).isoformat(), "paper_only": True, "plan": self.L.get("plan"),
             "exit_mode": ("gemini_only" if self.gemini_only else "gemini" if self.gemini_exit else "server"),
-            "card": "SL: none · TP: none · exit: Gemini" if self.gemini_only else None,
+            "card": ((f"Hard stop −${self.hard_stop_usd:,.0f} net · TP: none · exit: Gemini" if self.hard_stop_usd
+                      else "SL: none · TP: none · exit: Gemini") if self.gemini_only else None),
+            "hard_stop_net_usd": self.hard_stop_usd,
+            "comparison": self.books_comparison(eq, trades),
             "breaches": [b for b in (self.s.get("breaches") or [])][-20:],
             "breach_note": "DLL / MLL / 3.5% breaker are log-only (no block, no forced close)" if self.gemini_only else None,
             "sizing_rule": (f"full-size futures only (NQ, GC, 6E, 6B), 1-{self.L['max_minis']:g} contracts sized as "
                             f"if risk were {(self.cfg.get('scalp') or {}).get('atr_stop_mult', 0.8):g} ATR at "
-                            f"${self.L['max_risk_usd']:g} (notional reference only); no stop, no target, "
-                            f"exit = Gemini CLOSE only") if self.gemini_only else
+                            f"${self.L['max_risk_usd']:g} (notional reference only); "
+                            + (f"hard stop −${self.hard_stop_usd:,.0f} NET of commission, no target, exit = Gemini "
+                               f"CLOSE or the stop" if self.hard_stop_usd else
+                               "no stop, no target, exit = Gemini CLOSE only")) if self.gemini_only else
                            (f"full-size futures only (NQ, GC, 6E, 6B), 1-{self.L['max_minis']:g} contracts sized by "
                             f"the hard stop, max risk ${self.L['max_risk_usd']:g}; exit = Gemini CLOSE (no target), "
                             f"{self.L.get('max_hold_minutes', 90):g} min max hold") if self.gemini_exit else
@@ -1106,6 +1172,43 @@ class LucidSim:
             "recent_trades": recent_rows,
             "last_processed": self.s.get("last_processed"),
         }
+
+    def books_comparison(self, eq: float | None = None, trades: list | None = None) -> list[dict]:
+        """Main account vs the exit books (state/exit_books.json) on the same entries, for the panel."""
+        a = self.s["account"]
+        eq = self.equity() if eq is None else eq
+        trades = self.post_reset_trades() if trades is None else trades
+        rows = [{"book": "main", "label": "Main (stop)" if self.hard_stop_usd else "Main",
+                 "hard_stop_net_usd": self.hard_stop_usd, "balance": round(a["balance"], 2),
+                 "equity": round(eq, 2), "net_pnl": round(sum(float(t.get("net") or 0) for t in trades), 2),
+                 "open_pnl": round(eq - a["balance"], 2), "trades": len(trades),
+                 "wins": sum(1 for t in trades if float(t.get("net") or 0) > 0),
+                 "losses": sum(1 for t in trades if float(t.get("net") or 0) <= 0),
+                 "stopped": sum(1 for t in trades if str(t.get("reason") or "").startswith("hard_stop")),
+                 "open_positions": len(self.s["positions"])}]
+        try:
+            bs = json.loads((self.state_dir.parent / "exit_books.json").read_text())
+        except Exception:
+            return rows
+        lp = {**(self.s.get("last_price") or {}), **(bs.get("last_price") or {})}
+        labels = {"1-strike": "1-strike", "2-strike": "2-strike", "nostop": "No-stop shadow"}
+        for name, b in (bs.get("books") or {}).items():
+            st = b.get("stats") or {}
+            op = 0.0
+            for p in b.get("positions") or []:
+                sp = self.L["contracts"].get(p.get("contract")) or {}
+                op += p["side"] * (lp.get(p["symbol"], p["entry"]) - p["entry"]) * sp.get("point_value", 0) * p["qty"]
+            stop = self.hard_stop_usd if (self.hard_stop_usd and name not in
+                                          ((self.cfg.get("exit_manager") or {}).get("shadow_books") or ["nostop"])) else None
+            rows.append({"book": name, "label": labels.get(name, name), "hard_stop_net_usd": stop,
+                         "balance": round(float(b.get("balance") or 0), 2),
+                         "equity": round(float(b.get("balance") or 0) + op, 2),
+                         "net_pnl": round(float(st.get("net_pnl") or 0), 2), "open_pnl": round(op, 2),
+                         "trades": st.get("trades", 0), "wins": st.get("wins", 0), "losses": st.get("losses", 0),
+                         "stopped": sum(v for k, v in (st.get("exit_reasons") or {}).items() if k.startswith("hard_stop")),
+                         "open_positions": len(b.get("positions") or []),
+                         "overlap_trades": st.get("overlap_trades", 0)})
+        return rows
 
     def write_site(self, site_dir) -> Path:
         p = Path(site_dir) / "lucid.json"
@@ -1460,7 +1563,7 @@ def format_status(sm: dict, cfg: dict) -> str:
     L.append(f"Open positions: {len(sm['positions'])}  pending: {len(sm['pending'])}")
     for p in sm["positions"]:
         L.append(f"  {p['symbol']}->{p['contract']} x{p['qty']} {'LONG' if p['side'] > 0 else 'SHORT'} @ {p['entry']} "
-                 + (f"stop {p['stop']} (-${p['risk_usd']:,.0f}) " if p.get('stop') is not None else "SL: none ")
+                 + (f"stop {p['stop']} (-${p['risk_usd']:,.0f}) " if p.get('stop') is not None else (f"hard stop {p['hard_stop_px']} (-${p.get('hard_stop_usd') or 500:,.0f} net) " if p.get('hard_stop_px') is not None else "SL: none "))
                  + (f"target {p['target']} (+${p['target_usd']:,.0f} net)" if p.get('target') is not None
                     else "TP: none, exit: Gemini"))
     L.append("Strategy ledger (all accounts):")

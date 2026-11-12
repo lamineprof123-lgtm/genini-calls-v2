@@ -24,6 +24,7 @@ def cfg():
     c["lucid"]["slippage_ticks"] = 0
     c["exit_manager"]["enabled"] = True
     c["lucid"]["exit_mode"] = "gemini"          # legacy books with hard stop / max hold / breaker
+    c["exit_manager"]["books"] = [BOOK_1, BOOK_2]   # legacy two-book tests (nostop shadow: test_hard_stop_500.py)
     return c
 
 

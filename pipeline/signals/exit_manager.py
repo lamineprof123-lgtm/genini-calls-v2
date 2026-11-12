@@ -33,6 +33,8 @@ from pydantic import BaseModel, Field
 
 from .config import ROOT
 from .risk import _atomic_write
+from .hard_stop import (book_has_stop, beyond as stop_beyond, hard_stop_level, hard_stop_reason, hard_stop_usd,
+                        shadow_books)
 
 log = logging.getLogger("signals.exit")
 UTC = timezone.utc
@@ -41,6 +43,7 @@ STATE_VERSION = 1
 
 BOOK_1 = "1-strike"
 BOOK_2 = "2-strike"
+BOOK_NOSTOP = "nostop"   # shadow: identical entries, Gemini CLOSE only (1-strike rule), never stopped
 EXIT_FIELD_ORDER = ("structure", "reason", "decision", "confidence")
 STRUCTURES = ("expanding", "healthy_pullback", "wall_touch_harvest", "giveback_limit",
               "closed_bar_invalidated", "spike_hold_wait", "session_decay")
@@ -474,7 +477,14 @@ class Books:
         self.tz = ZoneInfo(cfg["general"]["session_tz"])
         self.s = state or self.fresh()
         for b in self.e["books"]:
-            self.s["books"].setdefault(b, self._new_book())
+            if b in self.s["books"]:
+                continue
+            if b in shadow_books(cfg) and state is not None and BOOK_1 in self.s["books"]:
+                # Added mid-run (hard-stop deploy): every earlier trade was already no-stop / Gemini-only, so the
+                # shadow continues the 1-strike book (balance, stats, open positions) and simply never stops.
+                self.s["books"][b] = self._clone_shadow(self.s["books"][BOOK_1], b)
+            else:
+                self.s["books"][b] = self._new_book()
         self.closed: list[dict] = []       # closes produced since the caller last drained them
 
     def _new_book(self) -> dict:
@@ -483,6 +493,34 @@ class Books:
                                                         "halted": None},
                 "stats": {"trades": 0, "wins": 0, "losses": 0, "gross_win": 0.0, "gross_loss": 0.0,
                           "net_pnl": 0.0, "commissions": 0.0, "hold_seconds": 0, "exit_reasons": {}}}
+
+    @staticmethod
+    def _clone_shadow(src: dict, name: str) -> dict:
+        import copy
+        b = copy.deepcopy(src)
+        for p in b["positions"]:
+            p["book"] = name
+            for k in ("hard_stop_px", "hard_stop_armed_at", "hard_stop_armed_late"):
+                p.pop(k, None)
+        b["cloned_from"] = {"book": BOOK_1, "at": datetime.now(UTC).isoformat(), "balance": src.get("balance"),
+                            "trades": (src.get("stats") or {}).get("trades"),
+                            "open_ids": [p["id"] for p in src.get("positions") or []]}
+        return b
+
+    def has_stop(self, name: str) -> bool:
+        return book_has_stop(self.cfg, name)
+
+    def arm_hard_stop(self, name: str, p: dict, now: datetime) -> float | None:
+        """Attach the -$N NET hard stop to a book position (no-op for shadow books / stop off). Positions that were
+        open before the stop existed are armed NOW (no retroactive stop-out from old M1 bars)."""
+        if not self.has_stop(name) or p.get("stop") is not None:
+            return None
+        if p.get("hard_stop_px") is None:
+            p["hard_stop_px"] = hard_stop_level(self.cfg, p)
+        if p.get("hard_stop_armed_at") is None:
+            p["hard_stop_armed_at"] = now.isoformat()
+            p["hard_stop_armed_late"] = True
+        return p["hard_stop_px"]
 
     def fresh(self) -> dict:
         return {"version": STATE_VERSION, "created_at": datetime.now(UTC).isoformat(), "seen_ids": [],
@@ -537,6 +575,17 @@ class Books:
                     continue
                 p = {**f, "book": name, "strikes": 0, "mfe": 0.0, "mae": 0.0, "scan_from": f["entry_time"],
                      "checks": 0, "opened_at": now.isoformat()}
+                if self.has_stop(name):
+                    if p.get("stop") is None:
+                        p["hard_stop_px"] = f.get("hard_stop_px") or hard_stop_level(self.cfg, p)
+                        p["hard_stop_armed_at"] = f.get("hard_stop_armed_at") or f["entry_time"]
+                else:
+                    for k in ("hard_stop_px", "hard_stop_armed_at"):
+                        p.pop(k, None)
+                    # Shadow re-entry: main was stopped and re-entered while the shadow still holds this symbol.
+                    # The pre-change sim could not have taken it (one per symbol) -> tagged, summarised apart.
+                    if any(q["symbol"] == f["symbol"] for q in b["positions"]):
+                        p["overlap"] = True
                 comm = round(self.spec(p["contract"])["commission"] * p["qty"], 2)
                 b["balance"] = round(b["balance"] - comm, 2)
                 b["stats"]["commissions"] = round(b["stats"]["commissions"] + comm, 2)
@@ -553,6 +602,10 @@ class Books:
             return None
         start = pd.Timestamp(datetime.fromisoformat(p["scan_from"])).floor("min")
         sd = p["side"]
+        level = p.get("stop") if p.get("stop") is not None else p.get("hard_stop_px")
+        armed = None
+        if p.get("stop") is None and p.get("hard_stop_armed_at"):
+            armed = pd.Timestamp(datetime.fromisoformat(p["hard_stop_armed_at"])).ceil("min")
         last_ts = None
         for ts, row in bars[bars.index >= start].iterrows():
             o, h, l = float(row["open"]), float(row["high"]), float(row["low"])
@@ -560,12 +613,14 @@ class Books:
             p["mfe"] = max(float(p.get("mfe") or 0.0), max(0.0, sd * (fav - p["entry"])))
             p["mae"] = max(float(p.get("mae") or 0.0), max(0.0, -sd * (adv - p["entry"])))
             last_ts = ts
-            if p.get("stop") is None:          # gemini_only: no hard stop, MFE/MAE tracking only
+            if level is None:                  # no stop (shadow book / stop off): MFE/MAE tracking only
                 continue
-            hit = (l <= p["stop"]) if sd > 0 else (h >= p["stop"])
+            if armed is not None and ts < armed:
+                continue                       # bar before the stop was armed: never a retroactive stop-out
+            hit = (l <= level) if sd > 0 else (h >= level)
             if hit:
-                gap = (o <= p["stop"]) if sd > 0 else (o >= p["stop"])
-                return self.slip_exit(p, o if gap else p["stop"]), ts.to_pydatetime()
+                gap = (o <= level) if sd > 0 else (o >= level)
+                return self.slip_exit(p, o if gap else level), ts.to_pydatetime()
         if last_ts is not None:
             p["scan_from"] = last_ts.isoformat()   # re-scan the (possibly forming) last minute next time
         return None
@@ -588,6 +643,9 @@ class Books:
         hold = int((t - datetime.fromisoformat(p["entry_time"])).total_seconds())
         st["hold_seconds"] += max(0, hold)
         st["exit_reasons"][reason] = st["exit_reasons"].get(reason, 0) + 1
+        if p.get("overlap"):
+            st["overlap_trades"] = st.get("overlap_trades", 0) + 1
+            st["overlap_net"] = round(st.get("overlap_net", 0.0) + net, 2)
         b["day"]["realized"] = round(b["day"]["realized"] + net, 2)
         b["positions"] = [q for q in b["positions"] if q["id"] != p["id"]]
         atr = p.get("atr") or 0
@@ -600,7 +658,8 @@ class Books:
                "mfe_atr": round(p.get("mfe", 0) / atr, 3) if atr else None,
                "mae_atr": round(p.get("mae", 0) / atr, 3) if atr else None,
                "mfe_usd": round(p.get("mfe", 0) * self.usd_per_point(p), 2),
-               "checks": p.get("checks", 0), "strikes_at_exit": p.get("strikes", 0), **(extra or {})}
+               "checks": p.get("checks", 0), "strikes_at_exit": p.get("strikes", 0),
+               "hard_stop_px": p.get("hard_stop_px"), "overlap": bool(p.get("overlap")), **(extra or {})}
         rec["event"] = "close"
         self.closed.append(rec)
         self.queue_post_exit(rec)
@@ -649,7 +708,13 @@ class Books:
                          "commissions": st["commissions"],
                          "avg_hold_min": round(st["hold_seconds"] / n / 60, 1) if n else None,
                          "exit_reasons": st["exit_reasons"], "open_positions": len(b["positions"]),
-                         "day": b["day"]}
+                         "open_pnl": round(sum(p["side"] * (self.s["last_price"].get(p["symbol"], p["entry"])
+                                                            - p["entry"]) * self.usd_per_point(p)
+                                               for p in b["positions"]), 2),
+                         "hard_stop_net_usd": hard_stop_usd(self.cfg) if self.has_stop(name) else None,
+                         "overlap_trades": st.get("overlap_trades", 0), "overlap_net": st.get("overlap_net", 0.0),
+                         "net_pnl_excl_overlap": round(st["net_pnl"] - st.get("overlap_net", 0.0), 2),
+                         "cloned_from": b.get("cloned_from"), "day": b["day"]}
         return out
 
 
@@ -900,7 +965,12 @@ class ExitManager:
         ids = set(self.books.s["seen_ids"])
 
         return {"updated_at_utc": datetime.now(UTC).isoformat(), "paper_only": True,
-                "note": ("GEMINI ONLY: same Lucid entries; books A (1-strike) / B (2-strike) exit on Gemini CLOSE only - no "
+                "note": ((f"GEMINI EXITS + HARD STOP -${hard_stop_usd(self.cfg):g} NET: same Lucid entries; books "
+                          f"1-strike / 2-strike exit on Gemini CLOSE or the -${hard_stop_usd(self.cfg):g} net hard stop; "
+                          f"shadow book nostop = same entries, Gemini CLOSE only (never stopped). No target, no max "
+                          f"hold, no 16:45 flat; 3.5% breaker log-only. ")
+                         if gemini_only(self.cfg) and hard_stop_usd(self.cfg) else
+                         "GEMINI ONLY: same Lucid entries; books A (1-strike) / B (2-strike) exit on Gemini CLOSE only - no "
                          "stop, no target, no max hold, no 16:45 flat; 3.5% breaker log-only. " if gemini_only(self.cfg)
                          else "Same Lucid entries in all three; books exit via Gemini (hard stop, 16:45 ET flat, "
                          f"3.5% breaker, {self.e['max_hold_minutes']} min max hold). ") + "BASELINE = the main Lucid account "
@@ -1011,6 +1081,22 @@ class ExitManager:
                 self.lucid_close_requests = []
             self._write_books_files()
 
+    def _stop_request(self, pid: int, sym: str, hits: list[dict], rec: dict) -> None:
+        """Mirror a book hard stop onto the main Lucid account (same id / entry / qty -> same level). Prefers the
+        book the account follows (gemini_exit_book). The account applies it at its next minute replay."""
+        if not hits:
+            return
+        follow = (self.cfg.get("lucid") or {}).get("gemini_exit_book", BOOK_1)
+        h = next((x for x in hits if x["book"] == follow), hits[0])
+        reason = hard_stop_reason(self.cfg)
+        rec["hard_stop"] = {"books": [x["book"] for x in hits], "trigger": h["trigger"], "price": h["price"],
+                            "net": h["net"], "t": h["t"].isoformat()}
+        self.lucid_close_requests.append(
+            {"id": pid, "symbol": sym, "t": h["t"].isoformat(), "price": h["price"], "book": h["book"],
+             "rule": reason, "reason": reason, "trigger": h["trigger"],
+             "reason_text": f"hard stop -${hard_stop_usd(self.cfg):g} net ({h['trigger']})",
+             "account_token": (self.cfg.get("lucid") or {}).get("reset_token")})
+
     async def _check(self, pid: int, now: datetime) -> dict:
         t_mono = time.monotonic()
         held = self.books.positions_for(pid)
@@ -1036,13 +1122,19 @@ class ExitManager:
         if price is not None:
             self.books.s["last_price"][sym] = price
         book_out: dict[str, dict] = {}
-        # 1. hard stop (+MFE) on the M1 path since the last check, per book
+        # 1. hard stop (+MFE) on the M1 path since the last check, per book. Shadow books: MFE only.
+        stop_hits: list[dict] = []
+        hs_reason = hard_stop_reason(self.cfg)
         for name, p in list(held.items()):
+            self.books.arm_hard_stop(name, p, now)
             hit = self.books.scan_m1(p, m1)
             if hit:
                 px, t_hit = hit
-                c = self.books.close(name, p, px, t_hit, "hard_stop")
-                book_out[name] = {"action": "hard_stop", "exit": px, "net": c["net"]}
+                reason = "hard_stop" if p.get("stop") is not None else hs_reason
+                c = self.books.close(name, p, px, t_hit, reason,
+                                     extra={"stop_trigger": "m1_path", "hard_stop_armed_at": p.get("hard_stop_armed_at")})
+                book_out[name] = {"action": reason, "exit": px, "net": c["net"], "trigger": "m1_path"}
+                stop_hits.append({"book": name, "price": px, "t": t_hit, "trigger": "m1_path", "net": c["net"]})
                 held.pop(name)
         minutes = (now - datetime.fromisoformat(ref["entry_time"])).total_seconds() / 60.0
         rec["minutes_in_trade"] = round(minutes, 2)
@@ -1060,7 +1152,20 @@ class ExitManager:
                 book_out[name] = {"action": "none", "strikes_before": held[name]["strikes"],
                                   "strikes_after": held[name]["strikes"]}
             rec["books"] = book_out
+            self._stop_request(pid, sym, stop_hits, rec)
             return rec
+        # 1b. hard stop on the LIVE price (NET of RT commission <= -$N): fill at the live price - slippage
+        for name, p in list(held.items()):
+            lvl = p.get("hard_stop_px") if p.get("stop") is None and self.books.has_stop(name) else None
+            if lvl is not None and stop_beyond(p["side"], lvl, float(price)):
+                px = self.books.slip_exit(p, float(price))
+                c = self.books.close(name, p, px, now, hs_reason,
+                                     extra={"stop_trigger": "live_price", "live_price": price,
+                                            "hard_stop_armed_at": p.get("hard_stop_armed_at")})
+                book_out[name] = {"action": hs_reason, "exit": px, "net": c["net"], "trigger": "live_price"}
+                stop_hits.append({"book": name, "price": px, "t": now, "trigger": "live_price", "net": c["net"]})
+                held.pop(name)
+        self._stop_request(pid, sym, stop_hits, rec)
         if forced:
             for name, p in list(held.items()):
                 px = self.books.slip_exit(p, price)
@@ -1071,6 +1176,7 @@ class ExitManager:
             rec.update({"decision": None, "skipped_reason": rec.get("skipped_reason") or "no_open_book_position",
                         "books": book_out})
             return rec
+        rec["books_after_stop"] = sorted(held)   # e.g. ["nostop"] once main/1-strike/2-strike are stopped out
         # 3. Gemini decision (one call, shared by every book still holding this position)
         p0 = next(iter(held.values()))
         m = position_metrics(p0["side"], p0["entry"], price, p0.get("mfe", 0.0), p0.get("atr"),

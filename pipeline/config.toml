@@ -266,6 +266,14 @@ exit_books_archive = "exit_books_pre_reset6_{day}.json"
 # Size = full-size 1..6 as if risk were 0.8 ATR at max_risk_usd (notional reference only), capped at the LucidPro 100K max of 6 minis.
 exit_mode = "gemini_only"
 gemini_exit_book = "1-strike"
+# USER RULE (2026-11-12 ~15:55 Dubai): "apply the best stop you can think of, for max profit and low loss".
+# Hard stop at -$500 NET of round-trip commission on the main account + the 1-strike / 2-strike books (best variant
+# in the 22-trade replay: -$4,521 vs -$8,302 actual, worst loss -$715). Trigger: live price at every 18 s exit
+# check or the M1 path since the last scan; fill at the level / live price with slippage_ticks. Exit reason
+# "hard_stop_500". Gemini still makes every other close. Positions open at deploy are armed from deploy time.
+# After a stop-out the symbol re-enters the entry scan (main behaves like a real stop). The [exit_manager]
+# shadow book "nostop" copies every entry and exits on Gemini CLOSE only (never stopped). 0 / unset = no stop.
+hard_stop_net_usd = 500.0
 max_hold_minutes = 90
 start_balance = 100000.0
 eval_profit_target = 6000.0
@@ -356,7 +364,11 @@ max_daily_loss_pct = 3.5        # per-book circuit breaker vs book start-of-day 
 start_balance = 100000.0
 gemini_timeout_seconds = 12     # per exit call; on error/timeout the decision is HOLD (logged)
 max_feed_age_minutes = 20       # ignore Lucid entries older than this when first seen (e.g. after a deploy)
-books = ["1-strike", "2-strike"]
+# nostop = shadow book: identical entries, exits ONLY on Gemini CLOSE (1-strike rule), never hard-stopped. It keeps
+# getting Gemini exit checks after the main position was stopped, until Gemini closes it. Added mid-run it starts
+# as a copy of the 1-strike book (balance, stats, open positions: all pre-stop trades were no-stop).
+books = ["1-strike", "2-strike", "nostop"]
+shadow_books = ["nostop"]
 
 # ---------------------------------------------------------------------------------------------------------------
 # FirmTape options-gamma (GEX) levels + 1-second NQ price (signals/firmtape.py). Key: env FIRMTAPE_API_KEY only.

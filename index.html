@@ -255,6 +255,8 @@
   <div class="lu-wrap" id="luPos"></div>
   <h3>Recent trades since reset</h3>
   <div class="lu-wrap" id="luTrades"></div>
+  <h3>Stop vs no-stop · same entries</h3>
+  <div class="lu-wrap" id="luCmp"></div>
   <div class="lu-note" id="luNote"></div>
 </section>
 
@@ -539,21 +541,30 @@
       cell('Open P&L', usd(a.open_pnl, true), cls(a.open_pnl)),
       cell('Trades', `${a.trades_since_reset}${a.trades_since_reset ? ` <small>(${a.wins}W/${a.losses}L)</small>` : ''}`),
       cell('MLL floor', usd(a.mll_floor)), cell('Room to MLL', usd(a.mll_room), a.mll_room < 1000 ? 'neg' : ''),
+      cell('Hard stop', L.hard_stop_net_usd ? `−$${Number(L.hard_stop_net_usd).toLocaleString('en-US')} <small>net</small>` : 'none'),
     ].join('');
     const P = L.open_positions || [];
     $('luPos').innerHTML = P.length ? `<table class="lu-t"><tr><th>Symbol</th><th>Size</th><th>Side</th><th>Opened</th><th>Held</th><th>Entry</th>
       <th>Stop</th><th>Exit</th><th>Open P&amp;L</th></tr>${P.map(p => `<tr><td>${esc(p.symbol)}</td>
       <td>${p.qty} ${esc(p.contract)}</td><td>${esc(p.side)}</td><td>${dayhm(p.entry_time)}</td>
       <td data-entry-time="${esc(p.entry_time)}">${esc(heldSince(p.entry_time))}</td>
-      <td>${px(p.entry, 2)}</td><td>${p.stop != null ? px(p.stop, 2) : 'none'}</td>
+      <td>${px(p.entry, 2)}</td><td>${p.stop != null ? px(p.stop, 2) : p.hard_stop_px != null ? `${px(p.hard_stop_px, 2)} <small>(−$${Number(L.hard_stop_net_usd || 500).toLocaleString('en-US')})</small>` : 'none'}</td>
       <td>${p.target != null ? px(p.target, 2) : 'Gemini'}</td><td class="${cls(p.unrealized)}">${usd(p.unrealized, true)}</td></tr>`).join('')}</table>`
       : `<div class="lu-note">None${L.pending ? ` · ${L.pending} pending entry` : ''}</div>`;
     const T = L.recent_trades || [];
     $('luTrades').innerHTML = T.length ? `<table class="lu-t"><tr><th>Closed</th><th>Opened</th><th>Symbol</th><th>Size</th><th>Side</th>
       <th>Held</th><th>Exit</th><th>Net</th></tr>${T.map(t => `<tr><td>${dayhm(t.t_exit)}</td><td>${dayhm(t.entry_time)}</td><td>${esc(t.symbol)}</td>
-      <td>${t.qty} ${esc(t.contract)}</td><td>${esc(t.side)}</td><td>${esc(heldOf(t))}</td><td>${esc(t.reason)}</td>
+      <td>${t.qty} ${esc(t.contract)}</td><td>${esc(t.side)}</td><td>${esc(heldOf(t))}</td><td>${t.stopped ? '<b class="neg">STOPPED</b> ' : ''}${esc(t.reason)}</td>
       <td class="${cls(t.net)}">${usd(t.net, true)}</td></tr>`).join('')}</table>`
       : '<div class="lu-note">No closed trades since the reset yet.</div>';
+    const C = L.comparison || [];
+    $('luCmp').innerHTML = C.length ? `<table class="lu-t"><tr><th>Book</th><th>Stop</th><th>Balance</th><th>Net P&amp;L</th>
+      <th>Open P&amp;L</th><th>Trades</th><th>Stopped</th><th>Open</th></tr>${C.map(c => `<tr><td>${esc(c.label || c.book)}</td>
+      <td>${c.hard_stop_net_usd ? '−$' + Number(c.hard_stop_net_usd).toLocaleString('en-US') : 'none'}</td><td>${usd(c.balance)}</td>
+      <td class="${cls(c.net_pnl)}">${usd(c.net_pnl, true)}</td><td class="${cls(c.open_pnl)}">${usd(c.open_pnl, true)}</td>
+      <td>${c.trades}${c.trades ? ` <small>(${c.wins}W/${c.losses}L)</small>` : ''}</td><td>${c.stopped || 0}</td>
+      <td>${c.open_positions || 0}</td></tr>`).join('')}</table>`
+      : '<div class="lu-note">No comparison yet.</div>';
     const B = L.breaches || [];
     const brk = B.length ? ` · BREACHES (log-only): ` + B.map(b => `${b.kind} ${dayhm(b.t)} eq ${usd(b.equity)} vs ${usd(b.level)}`).join('; ') : '';
     const r = L.reset || {};

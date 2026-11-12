@@ -151,10 +151,10 @@ def test_reset2_archive_discards_positions(cfg, tmp_path):
     assert (a["balance"], a["mll_floor"], a["trades"]) == (100000.0, 97000.0, 0)
     assert s2.s["positions"] == [] and s2.s["pending"] == []
     day = datetime.now(UTC).astimezone(s2.tz_local).strftime("%Y-%m-%d")
-    arch = st / f"account_pre_reset3_{day}.json"
+    arch = st / (cfg["lucid"].get("reset_archive") or "account_pre_reset_{day}.json").format(day=day)
     assert arch.exists() and json.loads(arch.read_text())["positions"][0]["contract"] == "GC"
     ev = [e for e in _events(s2) if e["event"] == "reset"]
-    assert ev[-1]["reason"] == "gemini-only: no SL/TP"
+    assert ev[-1]["reason"] == cfg["lucid"]["reset_reason"]
 
 
 def test_site_row_shows_stop_and_gemini_exit(cfg):
@@ -281,8 +281,9 @@ def test_reset3(gcfg, tmp_path):
     s2 = LucidSim(gcfg, st, tmp_path / "logs")
     assert s2.s["account"]["balance"] == 100000.0 and s2.s["positions"] == []
     day = datetime.now(UTC).astimezone(s2.tz_local).strftime("%Y-%m-%d")
-    assert (st / f"account_pre_reset3_{day}.json").exists()
-    assert [e for e in _events(s2) if e["event"] == "reset"][-1]["reason"] == "gemini-only: no SL/TP"
+    arch = st / (gcfg["lucid"].get("reset_archive") or "account_pre_reset_{day}.json").format(day=day)
+    assert arch.exists()
+    assert [e for e in _events(s2) if e["event"] == "reset"][-1]["reason"] == gcfg["lucid"]["reset_reason"]
 
 
 def test_books_wait_for_account_reset_then_adopt_open_positions(gcfg, tmp_path):

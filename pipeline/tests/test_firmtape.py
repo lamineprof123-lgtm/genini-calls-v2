@@ -241,13 +241,13 @@ def test_exit_walls_use_gex_and_pin_rule(cfg):
            "entry_time": OPEN_T.isoformat()}
     m = em.position_metrics(1, 27905.0, 27940.0, 40.0, 40.0, 40.0)
     txt = em.build_exit_prompt(cfg, pos, ctx, m, w, OPEN_T + timedelta(minutes=10))
-    assert "DEALER GAMMA WALL PIN" in txt and txt.index("TARGET WALL REJECTION") < txt.index("DEALER GAMMA WALL PIN")
-    assert "c) PROFIT PROTECTION" in txt and "d) CLIMAX EXHAUSTION" in txt
-    assert "GEX: NEGATIVE_AMPLIFYING" in txt and "15-minute (M15)" in txt and "M1 EMA20" not in txt
+    assert "Call Wall #1" in txt and "GEX: NEGATIVE_AMPLIFYING" in txt
+    assert "Gamma Flip" in txt and "M1 EMA20" not in txt
+    assert em._PLACEHOLDER_RE.search(txt) is None
     ctx2 = {**ctx, "gex": None}
     w2 = em.find_walls(ctx2, 1, 27940.0, 27905.0, 40.0)
     t2 = em.build_exit_prompt(cfg, pos, ctx2, m, w2, OPEN_T + timedelta(minutes=10))
-    assert "DEALER GAMMA WALL PIN" not in t2 and "b) PROFIT PROTECTION" in t2 and "Options gamma" not in t2
+    assert em.GEX_UNAVAILABLE in t2 and "NEGATIVE_AMPLIFYING" not in t2
 
 
 # ------------------------------------------------------------------ post-exit tracking

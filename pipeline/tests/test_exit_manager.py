@@ -110,9 +110,14 @@ def test_schema_field_order_analysis_first():
 
 def test_parse_decision_ok_bad_and_clamped():
     d, err = parse_decision('{"structure":"expanding","reason":"rides EMA20","decision":"HOLD","confidence":1.4}')
-    assert err is None and d["decision"] == "HOLD"
+    assert err is None and d["decision"] == "HOLD" and d["confidence"] == 1.0
+    d_new, err_n = parse_decision(
+        '{"structure":"spike_hold_wait","reason":"[pnl=-0.90ATR, mfe=0.20ATR, giveback=0%] flush","decision":"HOLD","confidence":0.8}')
+    assert err_n is None and d_new["structure"] == "spike_hold_wait" and d_new["decision"] == "HOLD"
+    d_unk, err_u = parse_decision('{"structure":"moon","reason":"x","decision":"HOLD","confidence":0.5}')
+    assert err_u is None and d_unk["structure"] == "moon" and d_unk["decision"] == "HOLD"  # unknown structure is ok
     d2, err2 = parse_decision('{"structure":"moon","reason":"x","decision":"SELL","confidence":0.5}')
-    assert d2 is None and err2
+    assert d2 is None and err2  # invalid decision still errors (caller falls back to HOLD)
     d3, err3 = parse_decision("")
     assert d3 is None and err3 == "empty response"
 
@@ -127,11 +132,43 @@ def test_prompt_is_m15_with_values(cfg):
     m = position_metrics(-1, pos["entry"], 1.1140, pos["mfe"], pos["atr"], 625000.0)
     w = find_walls(ctx, -1, 1.1140, pos["entry"], pos["atr"], pos["candle"])
     txt = build_exit_prompt(cfg, pos, ctx, m, w, T0 + timedelta(minutes=7))
-    assert "15-minute (M15)" in txt and "EURUSD (SHORT)" in txt and "1.11455" in txt
+    assert "open M15 futures scalp" in txt and "EURUSD (SHORT)" in txt and "1.11455" in txt
     assert "M15 EMA20" in txt and "Time in Trade: 7.0 min" in txt and "BEARISH" in txt
+    assert "Current Session: LONDON_NY_OVERLAP" in txt and "6.5 min into forming M15 bar" in txt
     assert "M1 EMA20" not in txt and "M1 candles" not in txt
     assert '"structure"' in txt and txt.index('"reason"') < txt.index('"decision"')
-    assert "MFE < 0.8" in txt and "35%" in txt
+    # new thresholds / structures (verbatim in the prompt, with live metrics also substituted)
+    assert "MFE {mfe_atr}" not in txt and "+0.45 M15_ATR" in txt and "within 0.12 M15_ATR" in txt
+    assert "wall_touch_harvest" in txt and "spike_hold_wait" in txt and "session_decay" in txt
+    assert "CLOSE INTO STRENGTH" in txt and "NEVER on Forming Spikes" in txt
+    # no leftover braces; gex unavailable outside coverage
+    assert em._PLACEHOLDER_RE.search(txt) is None
+    assert em.GEX_UNAVAILABLE in txt
+
+
+def test_exit_prompt_fills_every_placeholder_never_empty(cfg):
+    """Sparse context still fills every {placeholder}; nothing renders empty or as literal braces."""
+    pos = {**feed_entry(), "mfe": 0.0}
+    ctx = {"digits": 5, "live_price": 1.1140, "levels": []}   # no session, vwap, forming bar, gex, rvol, VP, candle
+    m = position_metrics(-1, pos["entry"], 1.1140, 0.0, pos["atr"], 625000.0)
+    w = find_walls(ctx, -1, 1.1140, pos["entry"], pos["atr"], pos["candle"])
+    vals = em.exit_prompt_values(cfg, pos, ctx, m, w, T0 + timedelta(minutes=3))
+    assert set(vals) >= set(em.PROMPT_KEYS)
+    for k in em.PROMPT_KEYS:
+        assert vals[k] not in (None, ""), k
+        assert "{" not in str(vals[k]) and "}" not in str(vals[k]), k
+    assert vals["session"] == "n/a" and vals["vwap"] == "n/a" and vals["form_o"] == "n/a"
+    assert vals["gex_summary"] == em.GEX_UNAVAILABLE
+    txt = em.render_exit_prompt(vals)
+    leftover = em._PLACEHOLDER_RE.findall(txt)
+    assert leftover == []
+    # a missing key must raise rather than leave braces
+    bad = dict(vals); del bad["symbol"]
+    try:
+        em.render_exit_prompt(bad)
+        raise AssertionError("expected KeyError")
+    except KeyError:
+        pass
 
 
 # ------------------------------------------------------------------ book accounting

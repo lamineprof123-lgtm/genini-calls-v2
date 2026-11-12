@@ -22,14 +22,13 @@ Logs: logs/YYYY-MM-DD/exits.jsonl (every check), logs/YYYY-MM-DD/exit_book_trade
 state/exit_books.json (book state), books.json at the data root (per-book summary + baseline on the same entries).
 """
 from __future__ import annotations
-import asyncio, contextlib, glob, json, logging, math, os, time
+import asyncio, contextlib, glob, json, logging, math, os, re, time
 from datetime import date, datetime, time as dtime, timedelta, timezone
 from pathlib import Path
 from typing import Literal
 from zoneinfo import ZoneInfo
 
 import pandas as pd
-from jinja2 import Environment, FileSystemLoader, StrictUndefined
 from pydantic import BaseModel, Field
 
 from .config import ROOT
@@ -43,20 +42,33 @@ STATE_VERSION = 1
 BOOK_1 = "1-strike"
 BOOK_2 = "2-strike"
 EXIT_FIELD_ORDER = ("structure", "reason", "decision", "confidence")
-STRUCTURES = ("expanding", "healthy_pullback", "wall_rejection", "support_broken", "chopping")
+STRUCTURES = ("expanding", "healthy_pullback", "wall_touch_harvest", "giveback_limit",
+              "closed_bar_invalidated", "spike_hold_wait", "session_decay")
+# Prompt placeholders that must always render to a non-empty value (never literal braces).
+PROMPT_KEYS = (
+    "symbol", "side", "entry", "price", "minutes_into_bar", "pnl_atr", "pnl_usd", "mfe_atr",
+    "giveback_pct", "minutes", "session", "next_wall_label", "next_wall_price", "dist_to_wall_atr",
+    "invalid_level_label", "invalid_level_price", "vwap", "ema20", "ema50",
+    "last_o", "last_h", "last_l", "last_c", "rvol_last", "form_o", "form_h", "form_l",
+    "poc", "vah", "val", "cvd_label", "cvd_slope", "gex_summary",
+)
+_PLACEHOLDER_RE = re.compile(r"\{([A-Za-z_][A-Za-z0-9_]*)\}")
+GEX_UNAVAILABLE = "unavailable (outside NY cash hours or no coverage)"
 
 
 # ---------------------------------------------------------------------------------------------- schema / prompt
 class ExitDecision(BaseModel):
-    """Field order = Gemini propertyOrdering: analysis (structure, reason) BEFORE the decision."""
-    structure: Literal["expanding", "healthy_pullback", "wall_rejection", "support_broken", "chopping"]
-    reason: str = Field(description="max 15 words citing M15 candle / live price vs EMA20, VWAP or the target wall")
+    """Field order = Gemini propertyOrdering: analysis (structure, reason) BEFORE the decision.
+
+    structure is a free string so an unknown label does not fail the call (error => HOLD only
+    applies to missing/invalid decision or unparseable JSON). Known values are listed in STRUCTURES.
+    """
+    structure: str = Field(description="expanding | healthy_pullback | wall_touch_harvest | giveback_limit | "
+                                       "closed_bar_invalidated | spike_hold_wait | session_decay (or other)")
+    reason: str = Field(description="must start with [pnl=...ATR, mfe=...ATR, giveback=...%] then the rule "
+                                    "trigger (max 22 words total)")
     decision: Literal["HOLD", "CLOSE"]
     confidence: float = Field(description="0..1")
-
-
-_env = Environment(loader=FileSystemLoader(ROOT / "templates"), undefined=StrictUndefined,
-                   keep_trailing_newline=False)
 
 
 def gemini_only(cfg: dict) -> bool:
@@ -160,42 +172,16 @@ def find_walls(ctx: dict, side: int, price: float, entry: float, atr: float, can
             "invalid_level_label": inval[0], "invalid_level_price": inval[1]}
 
 
-def build_exit_prompt(cfg: dict, pos: dict, ctx: dict, m: dict, walls: dict, now: datetime) -> str:
-    """Render templates/exit_prompt.j2 (the user's draft adapted to the M15 chart)."""
-    e = em_cfg(cfg)
-    d = int(ctx.get("digits") or 5)
-    price = ctx.get("live_price") if ctx.get("live_price") is not None else ctx.get("last_close")
-    fmt = lambda x: "n/a" if x is None else f"{float(x):.{d}f}"
-    sc = ctx.get("signal_candle") or {}
-    rel = lambda a, b: "n/a" if (a is None or b is None) else ("above" if a > b else "below" if a < b else "at")
-    minutes = (now - datetime.fromisoformat(pos["entry_time"])).total_seconds() / 60.0
-    return _env.get_template("exit_prompt.j2").render(
-        background=cfg["chart"].get("background", "#0E1117"), vwap_color=cfg["chart"]["vwap"]["color"],
-        symbol=pos["symbol"], side=_side_word(pos["side"]), entry=fmt(pos["entry"]), price=fmt(price),
-        stale=bool(ctx.get("live_price_stale")), price_ts=ctx.get("live_price_ts_utc") or "n/a",
-        pnl_atr=f"{m['pnl_atr']:+.2f}" if m.get("pnl_atr") is not None else "n/a",
-        pnl_usd=f"{m['pnl_usd']:+,.2f}", mfe_atr=f"{m['mfe_atr']:.2f}" if m.get("mfe_atr") is not None else "n/a",
-        giveback_pct=f"{m['giveback_pct']:.0f}", minutes=f"{minutes:.1f}",
-        minutes_into_bar=ctx.get("minutes_into_bar", "n/a"),
-        next_wall_label=walls["next_wall_label"], next_wall_price=fmt(walls["next_wall_price"]),
-        has_wall=walls["next_wall_price"] is not None,
-        pin_wall=walls["next_wall_price"] is not None and walls["next_wall_label"] in PIN_WALLS,
-        gex=ctx.get("gex"), gex_fmt=_gex_fmt(ctx.get("gex"), fmt),
-        dist_to_wall_atr=walls["dist_to_wall_atr"] if walls["dist_to_wall_atr"] is not None else "n/a",
-        invalid_level_label=walls["invalid_level_label"], invalid_level_price=fmt(walls["invalid_level_price"]),
-        vwap=fmt(ctx.get("vwap")), price_vs_vwap=rel(price, ctx.get("vwap")),
-        ema20=fmt(ctx.get("ema20_baseline")), price_vs_ema20=rel(price, ctx.get("ema20_baseline")),
-        ema50=fmt(ctx.get("ema50")),
-        bar={k: fmt(sc.get(k)) for k in ("open", "high", "low", "close")},
-        rvol_last=ctx.get("rvol_last", "n/a"), rvol_bars_since_spike=ctx.get("rvol_bars_since_spike", "n/a"),
-        forming={"open": fmt(ctx.get("forming_m15_open")), "high": fmt(ctx.get("forming_m15_high")),
-                 "low": fmt(ctx.get("forming_m15_low"))},
-        poc=fmt(ctx.get("poc")), vah=fmt(ctx.get("vah")), val=fmt(ctx.get("val")),
-        session=ctx.get("session", "n/a"), cvd_label=ctx.get("cvd_label", "n/a"),
-        cvd_slope=ctx.get("cvd_slope", "n/a"), atr=fmt(pos.get("atr")),
-        runner_mfe_atr=e["runner_mfe_atr"], wall_reject_atr=f"{e['wall_reject_atr']:.2f}",
-        giveback_min_mfe_atr=e["giveback_min_mfe_atr"], giveback_threshold=f"{e['giveback_pct']:.0f}",
-        early_minutes=e["early_minutes"], no_stop=pos.get("stop") is None)
+def _filled(value, fallback="n/a") -> str:
+    """Never return empty or None — placeholders must always show a real token."""
+    if value is None:
+        return fallback
+    s = str(value).strip()
+    return s if s else fallback
+
+
+def _fmt_px(x, digits: int) -> str:
+    return "n/a" if x is None else f"{float(x):.{digits}f}"
 
 
 def _gex_fmt(gex: dict | None, fmt) -> dict:
@@ -207,6 +193,100 @@ def _gex_fmt(gex: dict | None, fmt) -> dict:
     orr = gex.get("ny_opening_range")
     return {"flip": fmt(gex.get("gamma_flip")), "calls": w(gex.get("call_walls")), "puts": w(gex.get("put_walls")),
             "orr": f"{fmt(orr['high'])} / {fmt(orr['low'])}" if orr else None}
+
+
+def gex_summary_text(gex: dict | None, fmt) -> str:
+    """One-line GEX context for the prompt. 'unavailable' outside NY hours / no coverage."""
+    if not gex:
+        return GEX_UNAVAILABLE
+    bits = _gex_fmt(gex, fmt)
+    parts = []
+    if gex.get("regime"):
+        parts.append(str(gex["regime"]))
+    if gex.get("gamma_flip") is not None:
+        vs = gex.get("price_vs_flip")
+        parts.append(f"Gamma Flip {bits['flip']}" + (f" (price {vs})" if vs else ""))
+    if bits.get("calls") and bits["calls"] != "n/a":
+        parts.append(f"Call Walls {bits['calls']}")
+    if bits.get("puts") and bits["puts"] != "n/a":
+        parts.append(f"Put Walls {bits['puts']}")
+    if bits.get("orr"):
+        parts.append(f"NY OR {bits['orr']}")
+    return " | ".join(parts) if parts else GEX_UNAVAILABLE
+
+
+def exit_prompt_values(cfg: dict, pos: dict, ctx: dict, m: dict, walls: dict, now: datetime) -> dict:
+    """Every PROMPT_KEYS entry as a non-empty string, ready to substitute into the template."""
+    d = int(ctx.get("digits") or 5)
+    price = ctx.get("live_price") if ctx.get("live_price") is not None else ctx.get("last_close")
+    sc = ctx.get("signal_candle") or {}
+    minutes = (now - datetime.fromisoformat(pos["entry_time"])).total_seconds() / 60.0
+    mib = ctx.get("minutes_into_bar")
+    vals = {
+        "symbol": _filled(pos.get("symbol")),
+        "side": _side_word(pos["side"]),
+        "entry": _fmt_px(pos.get("entry"), d),
+        "price": _fmt_px(price, d),
+        "minutes_into_bar": _filled(f"{float(mib):.1f}" if mib is not None else None),
+        "pnl_atr": f"{m['pnl_atr']:+.2f}" if m.get("pnl_atr") is not None else "n/a",
+        "pnl_usd": f"{m['pnl_usd']:+,.2f}" if m.get("pnl_usd") is not None else "n/a",
+        "mfe_atr": f"{m['mfe_atr']:.2f}" if m.get("mfe_atr") is not None else "n/a",
+        "giveback_pct": f"{m['giveback_pct']:.0f}" if m.get("giveback_pct") is not None else "n/a",
+        "minutes": f"{minutes:.1f}",
+        "session": _filled(ctx.get("session")),
+        "next_wall_label": _filled(walls.get("next_wall_label")),
+        "next_wall_price": _fmt_px(walls.get("next_wall_price"), d),
+        "dist_to_wall_atr": (f"{walls['dist_to_wall_atr']:.2f}"
+                             if walls.get("dist_to_wall_atr") is not None else "n/a"),
+        "invalid_level_label": _filled(walls.get("invalid_level_label")),
+        "invalid_level_price": _fmt_px(walls.get("invalid_level_price"), d),
+        "vwap": _fmt_px(ctx.get("vwap"), d),
+        "ema20": _fmt_px(ctx.get("ema20_baseline"), d),
+        "ema50": _fmt_px(ctx.get("ema50"), d),
+        "last_o": _fmt_px(sc.get("open"), d),
+        "last_h": _fmt_px(sc.get("high"), d),
+        "last_l": _fmt_px(sc.get("low"), d),
+        "last_c": _fmt_px(sc.get("close"), d),
+        "rvol_last": _filled(ctx.get("rvol_last")),
+        "form_o": _fmt_px(ctx.get("forming_m15_open"), d),
+        "form_h": _fmt_px(ctx.get("forming_m15_high"), d),
+        "form_l": _fmt_px(ctx.get("forming_m15_low"), d),
+        "poc": _fmt_px(ctx.get("poc"), d),
+        "vah": _fmt_px(ctx.get("vah"), d),
+        "val": _fmt_px(ctx.get("val"), d),
+        "cvd_label": _filled(ctx.get("cvd_label")),
+        "cvd_slope": _filled(ctx.get("cvd_slope")),
+        "gex_summary": gex_summary_text(ctx.get("gex"), lambda x: _fmt_px(x, d)),
+    }
+    for k in PROMPT_KEYS:
+        vals[k] = _filled(vals.get(k))
+    return vals
+
+
+def render_exit_prompt(values: dict) -> str:
+    """Substitute {name} placeholders. Raises if any key is missing, empty, or left as literal braces."""
+    tmpl = (ROOT / "templates" / "exit_prompt.j2").read_text()
+    missing = [k for k in PROMPT_KEYS if k not in values]
+    if missing:
+        raise KeyError(f"unwired exit-prompt placeholders: {missing}")
+    def repl(m):
+        k = m.group(1)
+        if k not in values:
+            raise KeyError(f"unwired exit-prompt placeholder {{{k}}}")
+        v = values[k]
+        if v is None or str(v).strip() == "":
+            raise ValueError(f"empty exit-prompt placeholder {{{k}}}")
+        return str(v)
+    out = _PLACEHOLDER_RE.sub(repl, tmpl)
+    leftover = _PLACEHOLDER_RE.findall(out)
+    if leftover:
+        raise ValueError(f"unsubstituted exit-prompt placeholders: {leftover}")
+    return out
+
+
+def build_exit_prompt(cfg: dict, pos: dict, ctx: dict, m: dict, walls: dict, now: datetime) -> str:
+    """Render templates/exit_prompt.j2 with live telemetry in every placeholder."""
+    return render_exit_prompt(exit_prompt_values(cfg, pos, ctx, m, walls, now))
 
 
 def exit_user_text(pos: dict) -> str:
@@ -856,10 +936,15 @@ class ExitManager:
         m = position_metrics(p0["side"], p0["entry"], price, p0.get("mfe", 0.0), p0.get("atr"),
                              self.books.usd_per_point(p0))
         walls = find_walls(ctx, p0["side"], price, p0["entry"], p0.get("atr") or 0, p0.get("candle"))
+        sc = ctx.get("signal_candle") or {}
         rec.update({k: m[k] for k in ("pnl_atr", "pnl_usd", "mfe_atr", "giveback_pct")},
                    pnl_pts=round(m["pnl_pts"], 8), walls=walls,
                    cvd_label=ctx.get("cvd_label"), cvd_slope=ctx.get("cvd_slope"), session=ctx.get("session"),
-                   vwap=ctx.get("vwap"), ema20=ctx.get("ema20_baseline"), ema50=ctx.get("ema50"))
+                   vwap=ctx.get("vwap"), ema20=ctx.get("ema20_baseline"), ema50=ctx.get("ema50"),
+                   last_o=sc.get("open"), last_h=sc.get("high"), last_l=sc.get("low"), last_c=sc.get("close"),
+                   rvol_last=ctx.get("rvol_last"), poc=ctx.get("poc"), vah=ctx.get("vah"), val=ctx.get("val"),
+                   gex_summary=gex_summary_text(ctx.get("gex"),
+                                                lambda x: _fmt_px(x, int(ctx.get("digits") or 5))))
         prompt = build_exit_prompt(self.cfg, p0, ctx, m, walls, now)
         resp = {"model": None, "raw_text": None, "error": None}
         try:

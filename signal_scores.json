@@ -1,9 +1,9 @@
 {
-  "updated_at": "2026-11-12T20:57:18.160208+00:00",
+  "updated_at": "2026-11-12T20:59:22.344821+00:00",
   "exit_mode": "uniform-1atr-v1",
   "paper_only": true,
-  "pending": 3907,
-  "n_scored": 5613,
+  "pending": 3896,
+  "n_scored": 5630,
   "models": {
     "gemini-3.6-flash": {
       "n": 474,
@@ -200,6 +200,40 @@
           "avg_mfe_atr": 1.565,
           "avg_mae_atr": 0.873,
           "n": 3
+        }
+      }
+    },
+    "deepseek-flash": {
+      "n": 1,
+      "label": "deepseek-flash",
+      "win_pct": 1.0,
+      "avg_R": 0.578,
+      "twin_avg_R": -0.586,
+      "edge_R": 1.164,
+      "by_band": {
+        "<0.55": {
+          "n": 1,
+          "win_pct": 1.0,
+          "avg_R": 0.578,
+          "twin_avg_R": -0.586,
+          "edge_R": 1.164
+        }
+      },
+      "excursions": {
+        "2h": {
+          "avg_mfe_atr": 1.486,
+          "avg_mae_atr": 0.279,
+          "n": 1
+        },
+        "3h": {
+          "avg_mfe_atr": 1.75,
+          "avg_mae_atr": 0.279,
+          "n": 1
+        },
+        "4h": {
+          "avg_mfe_atr": 2.132,
+          "avg_mae_atr": 0.279,
+          "n": 1
         }
       }
     }

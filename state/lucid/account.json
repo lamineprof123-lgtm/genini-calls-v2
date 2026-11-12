@@ -1,13 +1,13 @@
 {
   "version": 1,
   "created_at": "2026-11-12T01:26:22.307439+00:00",
-  "last_processed": "2026-11-12T08:35:00+00:00",
+  "last_processed": "2026-11-12T08:38:00+00:00",
   "account": {
     "no": 1,
     "phase": "eval",
     "started_at": "2026-11-12T01:26:22.307439+00:00",
     "start_balance": 100000.0,
-    "balance": 101086.25,
+    "balance": 101024.05,
     "highest_close": 100000.0,
     "mll_floor": 97000.0,
     "mll_locked": false,
@@ -18,8 +18,8 @@
     "cycle_day_pnl": {},
     "payouts": [],
     "trading_days": 0,
-    "realized_pnl": 1145.6,
-    "trades": 2
+    "realized_pnl": 1030.4,
+    "trades": 3
   },
   "positions": [
     {
@@ -195,209 +195,53 @@
       "time_cut_rule": "none: exit = Gemini CLOSE only (1-strike); no stop, no target, no max hold, no 16:45 flat; DLL/MLL/breaker log-only"
     },
     {
-      "id": 4,
-      "symbol": "EURUSD",
-      "contract": "6E",
-      "qty": 24,
-      "side": 1,
-      "entry": 1.1091,
+      "id": 5,
+      "symbol": "XAUUSD",
+      "contract": "GC",
+      "qty": 2,
+      "side": -1,
+      "entry": 3952.2,
       "stop": null,
-      "notional_risk_usd": 1500.0,
+      "notional_risk_usd": 1280.0,
       "target": null,
-      "entry_time": "2026-11-12T08:33:00+00:00",
+      "entry_time": "2026-11-12T08:35:00+00:00",
       "exit_mode": "gemini_only",
       "risk_usd": null,
       "target_usd": null,
       "target_source": "none (gemini_only)",
-      "sizing": "gemini_only: notional 0.8 ATR = 0.0005 x 125000/pt = $62 per 6E; 24 6E ~ $1,500 notional <= $1500 (reference only; NO stop, NO target, exit = Gemini CLOSE)",
+      "sizing": "gemini_only: notional 0.8 ATR = 6.4 x 100/pt = $640 per GC; 2 GC ~ $1,280 notional <= $1500 (reference only; NO stop, NO target, exit = Gemini CLOSE)",
       "target_usd_gross": null,
-      "commission_rt": 115.2,
-      "atr": 0.000586,
-      "gemini": {
-        "action": "BUY",
-        "entry": 1.10891,
-        "stop_loss": 1.10844,
-        "take_profit": 1.10921,
-        "confidence": 0.72,
-        "rr": 0.638,
-        "shown_on_site": true,
-        "basis": "site signal",
-        "run_at_utc": "2026-11-12T08:32:20.001528+00:00",
-        "session": "LONDON_SESSION",
-        "rationale": "In LONDON_SESSION, price is trading inside the Value Area (VAL 1.10701, VAH 1.10923) but holding firmly above POC 1.10757 and above the rising session VWAP (1.10833). Price has broken and accepted above EMA50 (1.10867) and Prev Low support (1.10824). CVD is NEUTRAL (+564) with a positive short-term slope (+1108.64) supporting the upward push. Volume is solid with rvol_last at 1.887, approaching upper ATR band (1.10928) with room to test Session High (1.10988). GEX is null. Strong momentum reclaim setup.",
-        "model": "gemini-3.8-flash"
-      },
-      "scalp": {
-        "action": "BUY",
-        "side": 1,
-        "entry": 1.10903,
-        "stop_loss": 1.10844,
-        "take_profit": 1.10918,
-        "sdist": 0.0005892999999999038,
-        "tdist": 0.00014999999999987246,
-        "stop_source": "structure",
-        "target_source": "structure:VAH",
-        "rr": 0.255,
-        "structure_stop": 1.1084407,
-        "atr_stop": 1.1085612,
-        "fixed_tp": 1.11028,
-        "structure_tp": 1.1091799999999998,
-        "structure_label": "VAH",
-        "candle": {
-          "high": 1.10905,
-          "low": 1.10847
-        },
-        "levels": [
-          {
-            "price": 1.10988,
-            "label": "Session High"
-          },
-          {
-            "price": 1.11456,
-            "label": "S/R"
-          },
-          {
-            "price": 1.11499,
-            "label": "24h High"
-          },
-          {
-            "price": 1.10824,
-            "label": "Prev Low"
-          },
-          {
-            "price": 1.10662,
-            "label": "Session Low"
-          }
-        ],
-        "vp": {
-          "poc": 1.10757,
-          "vah": 1.10923,
-          "val": 1.10701
-        },
-        "target_scalp": 1.1092,
-        "lucid_plan": {
-          "contract": "6E",
-          "qty": 22,
-          "tdist": 0.0003,
-          "target_usd": 719.4,
-          "risk_usd": 1375.0,
-          "target_source": "structure:VAH",
-          "sizing": "structure:VAH target 0.0003 reaches $719 net with 22 6E (risk $1375)"
-        }
-      },
-      "telemetry": {
-        "symbol": "EURUSD",
-        "session": "LONDON_SESSION",
-        "last_close": 1.10869,
-        "atr": 0.000586,
-        "vwap": 1.10833,
-        "ema20": 1.10811,
-        "ema50": 1.10867,
-        "price_vs_vwap": {
-          "side": "above",
-          "dist_atr": 0.6143
-        },
-        "price_vs_ema50": {
-          "side": "above",
-          "dist_atr": 0.0341
-        },
-        "vwap_aligned_with_side": true,
-        "ema50_aligned_with_side": true,
-        "poc": 1.10757,
-        "vah": 1.10923,
-        "val": 1.10701,
-        "price_vs_value_area": "inside",
-        "dist_to_poc_atr": 1.9113,
-        "cvd": 564.11,
-        "cvd_label": "NEUTRAL",
-        "cvd_slope": 1108.64,
-        "cvd_agrees_with_side": true,
-        "rvol": 1.887,
-        "rvol_spike": false,
-        "rvol_bars_since_spike": 23,
-        "atr_band_z": 0.9898,
-        "atr_upper": 1.10928,
-        "atr_lower": 1.10694,
-        "nearest_sr": {
-          "above": {
-            "price": 1.10988,
-            "label": "Session High",
-            "dist_atr": 2.0307
-          },
-          "below": {
-            "price": 1.10824,
-            "label": "Prev Low",
-            "dist_atr": 0.7679
-          }
-        },
-        "gemini": {
-          "action": "BUY",
-          "confidence": 0.72,
-          "confidence_band": "0.7-0.8",
-          "rationale": "In LONDON_SESSION, price is trading inside the Value Area (VAL 1.10701, VAH 1.10923) but holding firmly above POC 1.10757 and above the rising session VWAP (1.10833). Price has broken and accepted above EMA50 (1.10867) and Prev Low support (1.10824). CVD is NEUTRAL (+564) with a positive short-term slope (+1108.64) supporting the upward push. Volume is solid with rvol_last at 1.887, approaching upper ATR band (1.10928) with room to test Session High (1.10988). GEX is null. Strong momentum reclaim setup.",
-          "model": "gemini-3.8-flash",
-          "model_action": "BUY"
-        },
-        "scalp": {
-          "stop_basis": "structure",
-          "target_basis": "structure:VAH",
-          "tdist": null,
-          "sdist": null,
-          "structure_label": "VAH",
-          "target_source": "none (gemini_only)"
-        },
-        "planned": {
-          "tdist": null,
-          "sdist": null,
-          "qty": 24,
-          "contract": "6E",
-          "target_usd_net": null,
-          "risk_usd": null,
-          "target_source": "none (gemini_only)",
-          "sizing": "gemini_only: notional 0.8 ATR = 0.0005 x 125000/pt = $62 per 6E; 24 6E ~ $1,500 notional <= $1500 (reference only; NO stop, NO target, exit = Gemini CLOSE)"
-        },
-        "run_at_utc": "2026-11-12T08:32:20.001528+00:00",
-        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-12/cycles/123220.json/EURUSD.png"
-      },
-      "mfe": 0.0002500000000000835,
-      "mae": 0.00014999999999987246,
-      "mfe_min": 0.0,
-      "time_cut_deadline": null,
-      "time_cut_candles": 0,
-      "time_cut_rule": "none: exit = Gemini CLOSE only (1-strike); no stop, no target, no max hold, no 16:45 flat; DLL/MLL/breaker log-only"
-    }
-  ],
-  "pending": [
-    {
-      "symbol": "XAUUSD",
-      "side": -1,
-      "created": "2026-11-12T08:34:33.991250+00:00",
-      "fill_after": "2026-11-12T08:35:00+00:00",
-      "reserved_risk": 0.0,
-      "planned": {
-        "contract": "GC",
-        "qty": 2,
-        "risk_usd": null,
-        "tdist": null,
-        "target_source": "none (gemini_only)"
-      },
-      "expires": "2026-11-12T08:45:00+00:00",
+      "commission_rt": 9.2,
       "atr": 7.996,
-      "scalp": {
+      "gemini": {
         "action": "SELL",
-        "side": -1,
         "entry": 3951.1,
         "stop_loss": 3959.37,
         "take_profit": 3944.9,
-        "sdist": 8.269800000000032,
-        "tdist": 6.2,
-        "stop_source": "structure",
-        "target_source": "structure:next:Session Low",
+        "confidence": 0.82,
         "rr": 0.75,
+        "shown_on_site": true,
+        "basis": "site signal",
+        "run_at_utc": "2026-11-12T08:34:20.009741+00:00",
+        "session": "LONDON_SESSION",
+        "rationale": "Evaluating the 7 confluence factors: 1) Volume Profile: Price is below VAL (3969.28) and below POC (3978.71) in an extended downward expansion. 2) CVD: cvd_label is BEARISH (-3.21, slope -0.98), in strong alignment with downward momentum. 3) Session: LONDON_SESSION, active liquidity window. 4) Trend/Baselines: Price is cleanly rejected under VWAP (3977.71) and EMA50 (3980.75), both sloping sharply lower. 5) ATR: Trading near the lower ATR band (3952.00) with expanding ATR. 6) RVOL: Last closed bar printed strong continuation without exhaustion spikes (RVOL 0.873), forming bar shows a weak intrabar pullback to 3951.10 offering a sell entry. 7) S/R: Clean breakdown below prior support at 3968.55 and probing near Session Low (3944.89). GEX is null. Clear trend continuation down.",
+        "model": "gemini-3.8-flash"
+      },
+      "scalp": {
+        "action": "SELL",
+        "side": -1,
+        "entry": 3952.34,
+        "stop_loss": 3959.37,
+        "take_profit": 3951.09,
+        "sdist": 7.0297999999997955,
+        "tdist": 1.25,
+        "stop_source": "structure",
+        "target_source": "fixed",
+        "rr": 0.178,
         "structure_stop": 3959.3698,
-        "atr_stop": 3957.4968,
-        "fixed_tp": 3949.85,
-        "structure_tp": 3945.04992,
+        "atr_stop": 3958.7368,
+        "fixed_tp": 3951.09,
+        "structure_tp": 3944.99,
         "structure_label": "Session Low",
         "candle": {
           "high": 3958.97,
@@ -437,7 +281,6 @@
           "sizing": "fixed target 1.25 cannot reach $381 net at an allowed size; next structure Session Low at 6.2 gives $615 net with 1 GC (risk $830)"
         }
       },
-      "session": "LONDON_SESSION",
       "telemetry": {
         "symbol": "XAUUSD",
         "session": "LONDON_SESSION",
@@ -493,51 +336,47 @@
         },
         "scalp": {
           "stop_basis": "structure",
-          "target_basis": "structure:next:Session Low",
-          "tdist": 6.2,
-          "sdist": 8.269800000000032,
-          "structure_label": "Session Low"
+          "target_basis": "fixed",
+          "tdist": null,
+          "sdist": null,
+          "structure_label": "Session Low",
+          "target_source": "none (gemini_only)"
         },
         "planned": {
-          "tdist": 6.2,
-          "sdist": 8.269800000000032,
-          "qty": null,
-          "contract": null,
+          "tdist": null,
+          "sdist": null,
+          "qty": 2,
+          "contract": "GC",
           "target_usd_net": null,
-          "risk_usd": null
+          "risk_usd": null,
+          "target_source": "none (gemini_only)",
+          "sizing": "gemini_only: notional 0.8 ATR = 6.4 x 100/pt = $640 per GC; 2 GC ~ $1,280 notional <= $1500 (reference only; NO stop, NO target, exit = Gemini CLOSE)"
         },
         "run_at_utc": "2026-11-12T08:34:20.009741+00:00",
         "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-12/cycles/123420.json/XAUUSD.png"
       },
-      "gemini": {
-        "action": "SELL",
-        "entry": 3951.1,
-        "stop_loss": 3959.37,
-        "take_profit": 3944.9,
-        "confidence": 0.82,
-        "rr": 0.75,
-        "shown_on_site": true,
-        "basis": "site signal",
-        "run_at_utc": "2026-11-12T08:34:20.009741+00:00",
-        "session": "LONDON_SESSION",
-        "rationale": "Evaluating the 7 confluence factors: 1) Volume Profile: Price is below VAL (3969.28) and below POC (3978.71) in an extended downward expansion. 2) CVD: cvd_label is BEARISH (-3.21, slope -0.98), in strong alignment with downward momentum. 3) Session: LONDON_SESSION, active liquidity window. 4) Trend/Baselines: Price is cleanly rejected under VWAP (3977.71) and EMA50 (3980.75), both sloping sharply lower. 5) ATR: Trading near the lower ATR band (3952.00) with expanding ATR. 6) RVOL: Last closed bar printed strong continuation without exhaustion spikes (RVOL 0.873), forming bar shows a weak intrabar pullback to 3951.10 offering a sell entry. 7) S/R: Clean breakdown below prior support at 3968.55 and probing near Session Low (3944.89). GEX is null. Clear trend continuation down.",
-        "model": "gemini-3.8-flash"
-      }
+      "mfe": 5.3449999999998,
+      "mae": 0.16000000000030923,
+      "mfe_min": 0.0,
+      "time_cut_deadline": null,
+      "time_cut_candles": 0,
+      "time_cut_rule": "none: exit = Gemini CLOSE only (1-strike); no stop, no target, no max hold, no 16:45 flat; DLL/MLL/breaker log-only"
     }
   ],
-  "next_pos_id": 5,
+  "pending": [],
+  "next_pos_id": 6,
   "day": {
     "id": "2026-11-12",
     "start_balance": 100000.0,
-    "realized": 1145.6,
+    "realized": 1030.4,
     "locked": null,
     "eod_done": null,
     "traded": true
   },
   "last_price": {
-    "XAUUSD": 3952.33,
-    "EURUSD": 1.10932,
-    "US100": 28118.286
+    "XAUUSD": 3947.419,
+    "EURUSD": 1.1091,
+    "US100": 28114.754
   },
   "history": [],
   "ledger": {
@@ -559,13 +398,13 @@
     "payouts_gross": 0.0,
     "payouts_received": 0.0,
     "payout_count": 0,
-    "trades": 2,
+    "trades": 3,
     "wins": 1,
-    "losses": 1,
+    "losses": 2,
     "gross_win": 1410.8,
-    "gross_loss": -265.2,
-    "commissions": 183.75,
-    "net_trade_pnl": 1145.6,
+    "gross_loss": -380.4,
+    "commissions": 245.95,
+    "net_trade_pnl": 1030.4,
     "skipped_signals": 0,
     "accepted_signals": 5
   },
@@ -648,10 +487,30 @@
       },
       "gemini_run_at_utc": "2026-11-12T08:32:20.001528+00:00",
       "gemini_confidence": 0.72
+    },
+    {
+      "id": 5,
+      "symbol": "XAUUSD",
+      "contract": "GC",
+      "qty": 2,
+      "side": -1,
+      "entry": 3952.2,
+      "stop": null,
+      "target": null,
+      "entry_time": "2026-11-12T08:35:00+00:00",
+      "risk_usd": null,
+      "atr": 7.996,
+      "candle": {
+        "high": 3958.97,
+        "low": 3944.89
+      },
+      "gemini_run_at_utc": "2026-11-12T08:34:20.009741+00:00",
+      "gemini_confidence": 0.82
     }
   ],
   "close_done": [
     2,
-    1
+    1,
+    4
   ]
 }

@@ -34,6 +34,7 @@ def _shrink(sim, qty=1, sdist=40.0, tdist=20.0):
 @pytest.fixture
 def sim(tmp_path):
     cfg = copy.deepcopy(load_config())
+    cfg.setdefault("exit_manager", {})["gemini_exit_calls_enabled"] = True
     cfg["lucid"]["slippage_ticks"] = 0
     cfg["lucid"]["exit_mode"] = "server"; cfg["lucid"].pop("reset_archive", None)  # legacy server-target sim
     s = LucidSim(cfg, tmp_path / "state", tmp_path / "logs")
@@ -323,6 +324,7 @@ def test_session_blocked_asian_and_deadzone(tmp_path):
     from datetime import datetime, timezone, timedelta
 
     cfg = copy.deepcopy(load_config())
+    cfg.setdefault("exit_manager", {})["gemini_exit_calls_enabled"] = True
     cfg["lucid"]["slippage_ticks"] = 0
     cfg["lucid"]["exit_mode"] = "server"; cfg["lucid"].pop("reset_archive", None)  # legacy server-target sim
     # 19:30 ET Tue = ASIAN_SESSION_CHOP (00:30 UTC Wed)

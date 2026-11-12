@@ -21,7 +21,7 @@ from .scalp_levels import (compute_scalp_levels, size_for_target, fixed_target_d
 from .indicators import market_session, session_blocks_automation
 from .telemetry import build_entry_snapshot, enrich_close_metrics
 from .hard_stop import hard_stop_level, hard_stop_reason, hard_stop_usd
-from .exit_versions import GEMINI_EXIT_PROMPT_VERSION
+from .exit_versions import GEMINI_EXIT_PROMPT_VERSION, gemini_exit_calls_enabled, gemini_close_tag
 
 log = logging.getLogger("signals.lucid")
 ET = ZoneInfo("America/New_York")
@@ -232,6 +232,22 @@ class LucidSim:
         no server-forced exit of any kind. DLL / MLL / 3.5% breaker are LOG-ONLY (breach events, panel, report)."""
         return str(self.L.get("exit_mode", "server")) == "gemini_only"
 
+    def mech_exits(self) -> bool:
+        """Gemini CLOSE/exit API calls paused; main uses -$N hard stop + 1 ATR target + 90-min cap."""
+        return not gemini_exit_calls_enabled(self.cfg)
+
+    def arm_mech_exits(self, p: dict, now: datetime, *, late: bool = False) -> None:
+        """Attach a 1 ATR (M15 ATR at entry) target. Does not replace the -$N net hard stop."""
+        atr = float(p.get("atr") or 0)
+        if atr <= 0 or p.get("target") is not None:
+            return
+        tick = self.spec(p["contract"])["tick"]
+        mult = float((self.cfg.get("exit_manager") or {}).get("mech_target_atr", 1.0))
+        p["target"] = self._round_tick(p["entry"] + p["side"] * mult * atr, tick)
+        p["mech_target_atr"] = mult
+        if late:
+            p["mech_armed_at"] = now.isoformat()
+
     @property
     def hard_stop_usd(self) -> float | None:
         """USER RULE (2026-11-12 ~15:55 Dubai): hard stop at -$N NET of RT commission on the main account (and the
@@ -252,6 +268,32 @@ class LucidSim:
                 p["hard_stop_armed_late"] = True
                 self._event(at, "hard_stop_armed", symbol=p["symbol"], id=p["id"], level=p["hard_stop_px"],
                             usd=self.hard_stop_usd, note="open at deploy: armed from now (not retroactive)")
+
+
+    def _mech_exit_m1(self, p: dict, b, t: datetime) -> bool:
+        """1 ATR target (M15 ATR at entry) and 90-min cap on the main account. Returns True if closed.
+        Late-armed targets are not applied to M1 bars before the arm time (live/current bar still can)."""
+        if b is not None:
+            o, h, l, c = b
+            tgt = p.get("target")
+            armed = p.get("mech_armed_at")
+            apply = True
+            if armed:
+                apply = t >= datetime.fromisoformat(armed)
+            if tgt is not None and apply:
+                sd = p["side"]
+                tgt_hit = (h >= tgt) if sd > 0 else (l <= tgt)
+                if tgt_hit and p["entry_time"] != _iso(t):
+                    gap = (o >= tgt) if sd > 0 else (o <= tgt)
+                    self._close(p, self._slip(p, sd, o if gap else tgt), t, "target")
+                    return True
+        cap = float((self.cfg.get("exit_manager") or {}).get("mech_time_cap_minutes",
+                                                             self.L.get("max_hold_minutes", 90)))
+        if t >= _dt(p["entry_time"]) + timedelta(minutes=cap):
+            px = self._slip(p, p["side"], (b[3] if b is not None else self.s["last_price"].get(p["symbol"], p["entry"])))
+            self._close(p, px, t, f"max_hold_{int(cap)}m")
+            return True
+        return False
 
     def _hard_stop_m1(self, p: dict, b, t: datetime) -> bool:
         """M1-path hard stop for the main account (fallback to the exit manager's 18 s live-price check, which
@@ -530,7 +572,9 @@ class LucidSim:
                "mfe_atr": telem.get("mfe_atr"), "mae_atr": telem.get("mae_atr"),
                "bars_to_exit_m1": telem.get("bars_to_exit_m1"),
                "price_source": "proxy spot/CFD M1 (not CME futures)",
-               "exit_prompt_version": GEMINI_EXIT_PROMPT_VERSION}
+               "exit_prompt_version": gemini_close_tag(self.cfg),
+               "exit_mode": ("mechanical" if not gemini_exit_calls_enabled(self.cfg) else
+                            p.get("exit_mode") or "gemini")}
         self._jsonl("lucid_trades.jsonl", t, rec)
         log.info("lucid close %s %s x%d %s @%s net=%.2f bal=%.2f", p["symbol"], p["contract"], p["qty"],
                  reason, price, net, a["balance"])
@@ -843,10 +887,16 @@ class LucidSim:
                 why = req.get("reason") or "gemini_close"
                 self._close(p, float(req["price"]), t, why)
                 self.s.setdefault("close_done", []).append(p["id"])
-                self._event(t, "hard_stop" if why.startswith("hard_stop") else "gemini_close", symbol=p["symbol"],
+                ev = "hard_stop" if str(why).startswith("hard_stop") else (
+                    "mech_close" if why in ("target", "stop_1atr") or str(why).startswith("max_hold") else "gemini_close")
+                self._event(t, ev, symbol=p["symbol"],
                             id=p["id"], price=req["price"], request_t=req["t"], book=req.get("book"),
                             rule=req.get("rule"), trigger=req.get("trigger"), reason_text=req.get("reason_text"))
                 continue
+            if self.mech_exits():
+                self.arm_mech_exits(p, t, late=True)
+                if self._mech_exit_m1(p, b, t):
+                    continue
             self._hard_stop_m1(p, b, t)
         for s, b in bar.items():
             if b is not None:
@@ -1077,6 +1127,8 @@ class LucidSim:
             p["hard_stop_px"] = hard_stop_level(self.cfg, p)
             p["hard_stop_armed_at"] = p["entry_time"]
             p["hard_stop_usd"] = self.hard_stop_usd
+        if self.mech_exits():
+            self.arm_mech_exits(p, fill_t, late=False)
         self.s["next_pos_id"] += 1
         comm = round(sp["commission"] * p["qty"], 2)
         self.s["account"]["balance"] = round(self.s["account"]["balance"] - comm, 2)
@@ -1231,18 +1283,42 @@ class LucidSim:
         return {
             "updated_at": datetime.now(UTC).isoformat(), "paper_only": True, "plan": self.L.get("plan"),
             "exit_mode": ("gemini_only" if self.gemini_only else "gemini" if self.gemini_exit else "server"),
-            "card": ((f"Hard stop −${self.hard_stop_usd:,.0f} net · TP: none · exit: Gemini" if self.hard_stop_usd
-                      else "SL: none · TP: none · exit: Gemini") if self.gemini_only else None),
+            "gemini_exit_calls_enabled": gemini_exit_calls_enabled(self.cfg),
+            "exit_calls_note": ("Gemini exit calls paused — mechanical exits" if self.mech_exits() else None),
+            "exit_rules": ({
+                "main": (f"−${self.hard_stop_usd:,.0f} net hard stop · 1 ATR target · 90-min cap"
+                         if self.hard_stop_usd else "1 ATR target · 90-min cap"),
+                "1-strike": (f"−${self.hard_stop_usd:,.0f} net hard stop · 1 ATR target · 90-min cap"
+                             if self.hard_stop_usd else "1 ATR target · 90-min cap"),
+                "nostop": "1 ATR stop · 1 ATR target · 90-min cap",
+                "bracket": "unchanged (1 ATR stop / 1 ATR target / 90 min)",
+                "CB-BRACKET": "unchanged (1 ATR stop / 1 ATR target / 90 min)",
+                "CB-RUNNER": "mechanical stop/lock/trail / 2.5 ATR target / 150-min cap (model exits paused)",
+            } if self.mech_exits() else None),
+            "card": ((f"Hard stop −${self.hard_stop_usd:,.0f} net · 1 ATR target · 90-min cap · Gemini exit calls paused"
+                      if self.hard_stop_usd else
+                      "1 ATR target · 90-min cap · Gemini exit calls paused") if self.mech_exits() else
+                     ((f"Hard stop −${self.hard_stop_usd:,.0f} net · TP: none · exit: Gemini" if self.hard_stop_usd
+                       else "SL: none · TP: none · exit: Gemini") if self.gemini_only else None)),
             "hard_stop_net_usd": self.hard_stop_usd,
             "comparison": self.books_comparison(eq, trades),
             "breaches": [b for b in (self.s.get("breaches") or [])][-20:],
             "breach_note": "DLL / MLL / 3.5% breaker are log-only (no block, no forced close)" if self.gemini_only else None,
-            "sizing_rule": (f"full-size futures only (NQ, GC, 6E, 6B), 1-{self.L['max_minis']:g} contracts sized as "
+            "sizing_rule": (("full-size futures only (NQ, GC, 6E, 6B), 1-"
+                             f"{self.L['max_minis']:g} contracts sized as if risk were "
+                             f"{(self.cfg.get('scalp') or {}).get('atr_stop_mult', 0.8):g} ATR at "
+                             f"${self.L['max_risk_usd']:g} (notional reference only); "
+                             + (f"hard stop −${self.hard_stop_usd:,.0f} NET, 1 ATR target, 90-min cap; "
+                                "Gemini exit calls paused — mechanical exits"
+                                if self.hard_stop_usd else
+                                "1 ATR target, 90-min cap; Gemini exit calls paused — mechanical exits"))
+                            if self.mech_exits() else
+                            (f"full-size futures only (NQ, GC, 6E, 6B), 1-{self.L['max_minis']:g} contracts sized as "
                             f"if risk were {(self.cfg.get('scalp') or {}).get('atr_stop_mult', 0.8):g} ATR at "
                             f"${self.L['max_risk_usd']:g} (notional reference only); "
                             + (f"hard stop −${self.hard_stop_usd:,.0f} NET of commission, no target, exit = Gemini "
                                f"CLOSE or the stop" if self.hard_stop_usd else
-                               "no stop, no target, exit = Gemini CLOSE only")) if self.gemini_only else
+                               "no stop, no target, exit = Gemini CLOSE only"))) if self.gemini_only else
                            (f"full-size futures only (NQ, GC, 6E, 6B), 1-{self.L['max_minis']:g} contracts sized by "
                             f"the hard stop, max risk ${self.L['max_risk_usd']:g}; exit = Gemini CLOSE (no target), "
                             f"{self.L.get('max_hold_minutes', 90):g} min max hold") if self.gemini_exit else
@@ -1274,8 +1350,15 @@ class LucidSim:
         a = self.s["account"]
         eq = self.equity() if eq is None else eq
         trades = self.post_reset_trades() if trades is None else trades
+        er = {
+            "main": (f"−${self.hard_stop_usd:,.0f} net · 1 ATR tgt · 90 min" if self.hard_stop_usd else "1 ATR tgt · 90 min"),
+            "1-strike": (f"−${self.hard_stop_usd:,.0f} net · 1 ATR tgt · 90 min" if self.hard_stop_usd else "1 ATR tgt · 90 min"),
+            "nostop": "1 ATR stop · 1 ATR tgt · 90 min",
+        } if self.mech_exits() else {}
         rows = [{"book": "main", "label": "Main (stop)" if self.hard_stop_usd else "Main",
-                 "hard_stop_net_usd": self.hard_stop_usd, "balance": round(a["balance"], 2),
+                 "hard_stop_net_usd": self.hard_stop_usd,
+                 "stop_txt": er.get("main"),
+                 "exit_rule": er.get("main"), "balance": round(a["balance"], 2),
                  "equity": round(eq, 2), "net_pnl": round(sum(float(t.get("net") or 0) for t in trades), 2),
                  "open_pnl": round(eq - a["balance"], 2), "trades": len(trades),
                  "wins": sum(1 for t in trades if float(t.get("net") or 0) > 0),
@@ -1297,6 +1380,7 @@ class LucidSim:
             stop = self.hard_stop_usd if (self.hard_stop_usd and name not in
                                           ((self.cfg.get("exit_manager") or {}).get("shadow_books") or ["nostop"])) else None
             rows.append({"book": name, "label": labels.get(name, name), "hard_stop_net_usd": stop,
+                         "stop_txt": er.get(name), "exit_rule": er.get(name),
                          "balance": round(float(b.get("balance") or 0), 2),
                          "equity": round(float(b.get("balance") or 0) + op, 2),
                          "net_pnl": round(float(st.get("net_pnl") or 0), 2), "open_pnl": round(op, 2),

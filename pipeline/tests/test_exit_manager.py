@@ -9,7 +9,7 @@ import pytest
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from signals.config import load_config
 from signals import exit_manager as em
-from signals.exit_manager import (BOOK_1, BOOK_2, Books, ExitDecision, ExitManager, apply_strike,
+from signals.exit_manager import (BOOK_1, BOOK_2, BOOK_NOSTOP, Books, ExitDecision, ExitManager, apply_strike,
                                   build_exit_prompt, find_walls, parse_decision, position_metrics,
                                   profit_lock_flags, giveback_limit_pct, round_trip_commission,
                                   enrich_exit_metrics)
@@ -21,6 +21,7 @@ T0 = datetime(2026, 11, 11, 14, 0, tzinfo=UTC)  # Wed 09:00 New York -> in Lucid
 @pytest.fixture
 def cfg():
     c = copy.deepcopy(load_config())
+    c.setdefault("exit_manager", {})["gemini_exit_calls_enabled"] = True
     c["lucid"]["slippage_ticks"] = 0
     c["exit_manager"]["enabled"] = True
     c["lucid"]["exit_mode"] = "gemini"          # legacy books with hard stop / max hold / breaker
@@ -325,6 +326,7 @@ def test_exit_loop_does_not_stack(cfg, tmp_path):
 def test_lucid_fill_feeds_books(tmp_path):
     from signals.lucid import LucidSim
     c = copy.deepcopy(load_config())
+    c.setdefault("exit_manager", {})["gemini_exit_calls_enabled"] = True
     sim = LucidSim(c, tmp_path / "state", tmp_path / "logs")
     sim.s["pending"].append({"symbol": "EURUSD", "side": -1, "created": T0.isoformat(),
                              "fill_after": T0.isoformat(), "expires": (T0 + timedelta(minutes=10)).isoformat(),
@@ -520,3 +522,115 @@ def replay_profit_lock_checks(rows: list[dict], cfg: dict) -> dict:
         out[f"{key[0]}|{key[1]}"] = {"first_close": first_close, "first_by_rule": first_by_rule,
                                       "checks": checks, "n": len(checks)}
     return out
+
+
+# ------------------------------------------------------------------ mechanical exits (Gemini CLOSE calls paused)
+def test_gemini_exit_calls_flag_helper():
+    from signals.exit_versions import gemini_exit_calls_enabled, gemini_close_tag, GEMINI_MECH_EXIT_VERSION
+    assert gemini_exit_calls_enabled({}) is True
+    assert gemini_exit_calls_enabled({"exit_manager": {"gemini_exit_calls_enabled": False}}) is False
+    assert gemini_close_tag({"exit_manager": {"gemini_exit_calls_enabled": False}}) == GEMINI_MECH_EXIT_VERSION
+
+
+def _mech_cfg():
+    c = copy.deepcopy(load_config())
+    c["lucid"]["slippage_ticks"] = 0
+    c["lucid"]["exit_mode"] = "gemini_only"
+    c["exit_manager"]["enabled"] = True
+    c["exit_manager"]["gemini_exit_calls_enabled"] = False
+    c["exit_manager"]["books"] = [BOOK_1, BOOK_NOSTOP]
+    c["exit_manager"]["shadow_books"] = [BOOK_NOSTOP]
+    return c
+
+
+def _mech_entry(**kw):
+    f = feed_entry(**kw)
+    f["target"] = None
+    f["stop"] = None
+    return f
+
+
+def _mech_manager(cfg, tmp_path, price_rows, entry=None):
+    st = tmp_path / "state"
+    (st / "lucid").mkdir(parents=True)
+    (st / "lucid" / "account.json").write_text(json.dumps({"book_feed": [entry or _mech_entry()]}))
+    calls = {"n": 0}
+
+    async def snapshot(sym, c, now):
+        df = m1(price_rows, start=T0)
+        last = float(df["close"].iloc[-1])
+        ctx = {"digits": 5, "live_price": last, "live_price_stale": False,
+               "live_price_ts_utc": now.isoformat(), "atr_upper": 1.118, "atr_lower": 1.110, "levels": [],
+               "vwap": 1.116, "ema20_baseline": 1.115, "ema50": 1.1165}
+        return {"symbol": sym, "context": ctx, "digits": 5}, df
+
+    async def render(payload):
+        return b"\x89PNG fake"
+
+    async def decide(prompt, png, pos, m):
+        calls["n"] += 1
+        return {"model": "fake", "raw_text": json.dumps({"structure": "chopping", "reason": "should not run",
+                                                         "decision": "CLOSE", "confidence": 0.9})}
+
+    mgr = ExitManager(cfg, state_dir=st, logs_dir=tmp_path / "logs", site_dir=tmp_path,
+                      snapshot=snapshot, render=render, decide=decide)
+    return mgr, calls
+
+
+def test_mech_exits_make_zero_gemini_calls_and_hold(tmp_path):
+    # live price stays at entry (short 1.11455, 1 ATR = 0.0004 -> target 1.11415, stop 1.11495)
+    rows = [[1.11455, 1.11460, 1.11450, 1.11455]] * 5
+    mgr, calls = _mech_manager(_mech_cfg(), tmp_path, rows)
+    r = asyncio.run(mgr.tick(T0 + timedelta(minutes=3)))
+    assert calls["n"] == 0
+    rec = r["records"][0]
+    assert rec["decision_source"] == "mechanical" and rec["skipped_reason"] == "gemini_exit_calls_paused"
+    assert rec["gemini_exit_calls_enabled"] is False
+    assert set(mgr.books.open_ids()) == {1}
+
+
+def test_mech_1atr_target_closes_main_follow_book(tmp_path):
+    # short: target = 1.11455 - 0.0004 = 1.11415
+    rows = [[1.11455, 1.11455, 1.11410, 1.11412]] * 4
+    mgr, calls = _mech_manager(_mech_cfg(), tmp_path, rows)
+    r = asyncio.run(mgr.tick(T0 + timedelta(minutes=3)))
+    assert calls["n"] == 0
+    rec = r["records"][0]
+    assert rec["books"][BOOK_1]["action"] == "target"
+    assert rec["books"][BOOK_NOSTOP]["action"] == "target"
+    trades = [json.loads(x) for x in (tmp_path / "logs" / "2026-11-11" / "exit_book_trades.jsonl").read_text().splitlines()]
+    assert all(t["reason"] == "target" and t["exit_prompt_version"] == "mech-exit-v1" for t in trades)
+    assert all(t.get("exit_mode") == "mechanical" for t in trades)
+    reqs = json.loads((tmp_path / "state" / "lucid" / "close_requests.json").read_text())
+    assert reqs and reqs[-1]["reason"] == "target" and reqs[-1]["id"] == 1
+    site = json.loads((tmp_path / "books.json").read_text())
+    assert site["gemini_exit_calls_enabled"] is False
+    assert "Gemini exit calls paused" in (site.get("exit_calls_note") or site["note"])
+
+
+def test_mech_nostop_1atr_stop_does_not_use_dollar_hard_stop(tmp_path):
+    # short 1 ATR stop = 1.11455 + 0.0004 = 1.11495; $500 hard stop is much further
+    rows = [[1.11455, 1.11500, 1.11455, 1.11498]] * 4
+    mgr, calls = _mech_manager(_mech_cfg(), tmp_path, rows)
+    r = asyncio.run(mgr.tick(T0 + timedelta(minutes=3)))
+    assert calls["n"] == 0
+    rec = r["records"][0]
+    assert rec["books"][BOOK_NOSTOP]["action"] == "stop_1atr"
+    # 1-strike keeps the -$500 net hard stop, which this 4-pip move does not hit
+    assert rec["books"][BOOK_1]["action"] in ("none",) or "1-strike" in rec.get("books_after_stop", [])
+    assert 1 in mgr.books.open_ids()  # 1-strike still open
+    assert BOOK_1 in mgr.books.positions_for(1)
+
+
+def test_mech_time_cap_90m_no_gemini_call(tmp_path):
+    rows = [[1.11455, 1.11460, 1.11450, 1.11455]] * 5
+    mgr, calls = _mech_manager(_mech_cfg(), tmp_path, rows)
+    asyncio.run(mgr.tick(T0 + timedelta(minutes=3)))
+    assert calls["n"] == 0 and mgr.books.open_ids()
+    r = asyncio.run(mgr.tick(T0 + timedelta(minutes=91)))
+    assert calls["n"] == 0 and not mgr.books.open_ids()
+    rec = r["records"][0]
+    assert rec["books"][BOOK_1]["action"] == "max_hold_90m"
+    assert rec["books"][BOOK_NOSTOP]["action"] == "max_hold_90m"
+    trades = [json.loads(x) for x in (tmp_path / "logs" / "2026-11-11" / "exit_book_trades.jsonl").read_text().splitlines()]
+    assert all(t["exit_prompt_version"] == "mech-exit-v1" for t in trades if t["reason"].startswith("max_hold"))

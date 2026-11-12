@@ -49,7 +49,9 @@ def gld(**kw):
 
 @pytest.fixture
 def cfg():
-    return copy.deepcopy(load_config())
+    c = copy.deepcopy(load_config())
+    c.setdefault("exit_manager", {})["gemini_exit_calls_enabled"] = True
+    return c
 
 
 @pytest.fixture(autouse=True)

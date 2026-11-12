@@ -19,6 +19,7 @@ T0 = datetime(2026, 11, 12, 14, 0, 20, tzinfo=UTC)   # Thu, inside 08:00-20:30 U
 @pytest.fixture
 def cfg(tmp_path):
     c = copy.deepcopy(load_config())
+    c.setdefault("exit_manager", {})["gemini_exit_calls_enabled"] = True
     c["general"]["state_dir"] = str(tmp_path / "state")
     c["general"]["logs_dir"] = str(tmp_path / "logs")
     c["site"]["dir"] = str(tmp_path)
@@ -446,3 +447,26 @@ def test_scan_does_not_block_event_loop(cfg):
         await task
         return lag
     assert run(main()) < 0.1
+
+
+def test_runner_model_exits_paused_when_flag_off(cfg, tmp_path):
+    cfg["exit_manager"]["gemini_exit_calls_enabled"] = False
+    class Api:
+        def __init__(self):
+            self.calls = []
+        async def __call__(self, cc, **kw):
+            self.calls.append(kw)
+            raise AssertionError("Carbon exit API must not be called when gemini_exit_calls_enabled is false")
+    api = Api()
+    snap = copy.deepcopy(SNAP)
+    snap["XAUUSD"] = payload("XAUUSD", 3910.0, 8.0)
+    feed = Feed(({"XAUUSD": q("XAUUSD", 3910.0, T0)}, {}))
+    e = engine(cfg, api, feed, snap=Snap(snap))
+    b, p = _open(e, "CB-RUNNER")
+    p["mfe"] = 9.0
+    out = run(e.runner_exit_checks(T0 + timedelta(minutes=15)))
+    assert out == [] and not api.calls
+    assert b.s["positions"]  # still open; mechanical stop/target/time cap still apply via tick
+    view = e.site_view(T0)
+    assert view["gemini_exit_calls_enabled"] is False
+    assert "paused" in (view.get("exit_calls_note") or "").lower() or "paused" in view["rules"].lower()

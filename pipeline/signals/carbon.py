@@ -32,6 +32,7 @@ from zoneinfo import ZoneInfo
 import pandas as pd
 
 from .risk import _atomic_write
+from .exit_versions import gemini_exit_calls_enabled, gemini_close_tag
 
 log = logging.getLogger("signals.carbon")
 UTC = timezone.utc
@@ -575,6 +576,9 @@ class CarbonBook:
                "mfe_atr": round(p.get("mfe", 0) / atr, 3) if atr else None,
                "mae_atr": round(p.get("mae", 0) / atr, 3) if atr else None,
                "checks": p.get("checks", 0), "model": self.cc["model"], **(extra or {})}
+        if self.name == "CB-RUNNER" and not gemini_exit_calls_enabled(self.eng.cfg):
+            rec["exit_prompt_version"] = gemini_close_tag(self.eng.cfg)
+            rec["exit_mode"] = "mechanical"
         self.eng.jsonl("carbon_trades.jsonl", t, rec)
         return rec
 
@@ -1057,7 +1061,7 @@ class CarbonEngine:
         try:
             now = now or datetime.now(UTC)
             b = self.books.get("CB-RUNNER")
-            if b is None or not b.rules.get("model_exits"):
+            if b is None or not b.rules.get("model_exits") or not gemini_exit_calls_enabled(self.cfg):
                 return out
             for p in list(b.s["positions"]):
                 if p["mfe"] + 1e-12 < float(b.rules["lock_at_atr"]) * p["atr"]:
@@ -1221,13 +1225,20 @@ class CarbonEngine:
                 "last_call": self.e.get("last_call"), "first_call": self.e.get("first_call"),
                 "calls_total": self.e.get("calls_total", 0), "last_scan": self.e.get("last_scan"),
                 "books": [b.view(now) for b in self.books.values()], "whatif": self.whatif_summary(),
+                "gemini_exit_calls_enabled": gemini_exit_calls_enabled(self.cfg),
+                "exit_calls_note": ("Gemini exit calls paused — mechanical exits"
+                                    if not gemini_exit_calls_enabled(self.cfg) else None),
                 "rules": ("gemini-4-carbon entries (thinking medium, live entry prompt unchanged) on XAUUSD / EURUSD / "
                           "US100 at every M15 close +20 s in 08:00-20:30 UTC + triggered one-symbol checks; conf >= "
                           f"{self.cc['min_confidence']}; chase <= {self.cc['max_chase_atr']} ATR. Size floor($900 / 1 ATR"
                           " risk), caps NQ 1 / GC 1 / 6E 4, skip if 1 contract > $1,200, 6 aggregate, one per symbol; "
                           "re-entry after the next M15 close (after a loss 30 min, no same-side re-entry this session); "
                           "day P&L <= -$1,500 flattens; trailing guard $300; flat 21:45 UTC. Spend cap $15 soft / $19 "
-                          "hard per Dubai day.")}
+                          "hard per Dubai day."
+                          + (" CB-BRACKET unchanged (1 ATR / 1 ATR / 90 min). CB-RUNNER keeps mechanical stop/lock/"
+                             "trail / 2.5 ATR target / 150-min cap; Carbon exit-model checks are paused."
+                             if not gemini_exit_calls_enabled(self.cfg) else
+                             " CB-RUNNER may CLOSE at an M15 close once MFE >= 1 ATR (thinking low)."))}
 
     async def _persist(self, now: datetime) -> None:
         view = self.site_view(now)

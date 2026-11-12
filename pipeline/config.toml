@@ -95,8 +95,8 @@ line_style = "dashed"        # "dashed" | "dotted"
 # On retryable errors (429/5xx/UNAVAILABLE) the SAME model is retried with backoff.
 # A 404 / unknown ID is not retried and is not silently replaced by another model.
 # History: gemini-2.0-flash shut down 2026-06-01; gemini-2.5-flash returns 404 "no longer available to new users".
-model = "gemini-3.8-flash"            # 15-min / batched entry scans
-exit_model = "gemini-3.8-flash"       # 18s exit checks
+model = "gemini-3.8-flash"            # 15-min / batched entry scans (ALWAYS kept on)
+exit_model = "gemini-3.8-flash"       # 18s exit checks (used only when exit_calls are enabled)
 fallback_models = []                  # entry: no cross-model fallback
 exit_fallback_models = []             # exit: no cross-model fallback
 thinking_level = "low"                # Gemini 3.x: "minimal" | "low" | "medium" | "high" (low = faster)
@@ -358,11 +358,18 @@ GBPUSD = { contracts = ["6B"],        m1 = "gbpusd" }
 #   book A "1-strike": first CLOSE exits.
 #   book B "2-strike": while MFE < runner_mfe_atr, two consecutive CLOSEs exit (~36 s); once MFE >= runner_mfe_atr,
 #                      a single CLOSE exits.
-# Both books keep: server hard stop (never widened), $1,500 risk cap (inherited sizing), 16:45 ET flat, 3.5% daily
-# circuit breaker per book, max-hold safety. They DROP the fixed take-profit, the 2-bar time cut and the
-# deterministic 15m VWAP/EMA50 cross exits (Gemini owns the exit). The existing Lucid sim is unchanged (baseline).
+# When gemini_exit_calls_enabled is false, model CLOSE calls are not made. Main + 1-strike keep the -$500 net
+# hard stop and add a 1 ATR target + 90-min cap; nostop uses 1 ATR stop / 1 ATR target / 90-min cap. Bracket and
+# CB-BRACKET are unchanged. CB-RUNNER keeps its mechanical stop/lock/trail/target/150-min cap and drops Carbon
+# exit-model checks. New closes are tagged exit_prompt_version=mech-exit-v1. Claude Haiku exits are unchanged.
 [exit_manager]
 enabled = true
+# USER RULE (2026-11-12 t233u): pause every Gemini CLOSE / exit-model API call (~93% of Gemini usage).
+# Entry calls stay on (flash 2-min scans, Carbon M15 scans + triggers). Reversible: set true to resume model exits.
+gemini_exit_calls_enabled = false
+mech_target_atr = 1.0              # main + 1-strike + nostop take-profit, M15 ATR at entry
+mech_time_cap_minutes = 90         # mechanical time cap (main / 1-strike / nostop)
+mech_nostop_stop_atr = 1.0         # nostop shadow only (main/1-strike keep the -$500 net hard stop)
 check_seconds = 18              # exit check cadence while any book position is open (runs beside the 2-min loop)
 runner_mfe_atr = 0.8            # MFE (in M15 ATR14 at entry) where rule 2 "milk the expansion" starts / 2-strike off
 wall_reject_atr = 0.10          # "within 0.10 ATR of the target wall"

@@ -15,3 +15,26 @@ CLAUDE_EXIT_PROMPT_VERSION_PRE = "v2-pre-grace"
 # exit prompt is templates/exit_prompt.j2 (profit-lock / reset6). Tag only;
 # Gemini exit behaviour is unchanged.
 GEMINI_EXIT_PROMPT_VERSION = "gemini-profit-lock-reset6"
+# When Gemini exit/close API calls are paused, new closes on main / 1-strike / nostop
+# (and CB-RUNNER, which drops its model exit checks) are tagged so entry stats can be split.
+GEMINI_MECH_EXIT_VERSION = "mech-exit-v1"
+
+
+def gemini_exit_calls_enabled(cfg: dict | None) -> bool:
+    """Reversible switch for every Gemini CLOSE / exit-model API call (exit manager + Carbon runner).
+
+    Prefers [exit_manager].gemini_exit_calls_enabled, then [gemini].exit_calls_enabled.
+    Default True preserves the previous behaviour when the key is absent.
+    """
+    cfg = cfg or {}
+    em = cfg.get("exit_manager") or {}
+    if "gemini_exit_calls_enabled" in em:
+        return bool(em["gemini_exit_calls_enabled"])
+    g = cfg.get("gemini") or {}
+    if "exit_calls_enabled" in g:
+        return bool(g["exit_calls_enabled"])
+    return True
+
+
+def gemini_close_tag(cfg: dict | None = None) -> str:
+    return GEMINI_EXIT_PROMPT_VERSION if gemini_exit_calls_enabled(cfg) else GEMINI_MECH_EXIT_VERSION

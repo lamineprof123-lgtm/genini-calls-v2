@@ -194,6 +194,10 @@
   .lu-t .pos { color: var(--buy); } .lu-t .neg { color: var(--sell); }
   .lu-wrap { overflow-x: auto; }
   .lu-note { margin-top: 12px; font-size: 11px; color: var(--faint); line-height: 1.5; }
+  .lu-banner { margin: 8px 0 12px; padding: 8px 12px; font-size: 12px; line-height: 1.45;
+    color: #d6c48a; background: rgba(214,196,138,0.08); border: 1px solid rgba(214,196,138,0.25); border-radius: 8px; }
+  .lu-banner b { color: #f0e0a8; font-weight: 650; }
+  .lu-banner small { display: block; margin-top: 4px; color: var(--faint); }
   .lucid .who { display: inline-block; font-size: 9px; letter-spacing: .14em; padding: 2px 7px; border-radius: 999px;
                 border: 1px solid var(--line); color: var(--fg); margin-right: 8px; }
   .who.g { background: rgba(66,133,244,.16); } .who.o { background: rgba(217,119,87,.20); } .who.s { background: rgba(204,153,102,.16); }
@@ -250,6 +254,7 @@
 
 <section class="lucid" id="lucid" hidden aria-label="Lucid paper account">
   <h2><span><span class="who g">Gemini</span>Lucid paper account</span><small id="luUpd"></small></h2>
+  <div class="lu-banner" id="luExitBanner" hidden></div>
   <div class="lu-grid" id="luGrid"></div>
   <h3>Open positions</h3>
   <div class="lu-wrap" id="luPos"></div>
@@ -491,7 +496,7 @@
           ${t.exit ? (t.card ? `<div class="row target"><span>Target</span><b>none</b></div>` : '') + `<div class="row target"><span>Exit</span><b>${t.exit}</b></div>`
                    : `<div class="row target"><span>Target</span><b>${px(t.take_profit, t.digits)}</b></div>`}
         </div>
-        <div class="rr">${t.card ? t.card : t.exit ? 'Hard stop · exit on Gemini CLOSE' : `R:R 1 : ${t.rr != null ? Number(t.rr).toFixed(2) : '—'}`}</div>
+        <div class="rr">${t.card ? t.card : t.exit ? (lucid && lucid.gemini_exit_calls_enabled === false ? 'Mechanical exits (Gemini CLOSE paused)' : 'Hard stop · exit on Gemini CLOSE') : `R:R 1 : ${t.rr != null ? Number(t.rr).toFixed(2) : '—'}`}</div>
       </div>`).join('');
   }
 
@@ -553,6 +558,20 @@
     const L = lucid; if (!L || !L.account) return;
     const a = L.account;
     const cell = (k, v, c) => `<div><div class="lu-k">${k}</div><div class="lu-v ${c || ''}">${v}</div></div>`;
+    const ban = $('luExitBanner');
+    if (ban) {
+      if (L.gemini_exit_calls_enabled === false) {
+        const ru = L.exit_rules || {};
+        const bits = ['main', '1-strike', 'nostop', 'bracket', 'CB-BRACKET', 'CB-RUNNER']
+          .filter(k => ru[k]).map(k => `${k}: ${ru[k]}`);
+        ban.hidden = false;
+        ban.innerHTML = `<b>${esc(L.exit_calls_note || 'Gemini exit calls paused — mechanical exits')}</b>` +
+          (bits.length ? `<small>${bits.map(esc).join(' · ')}</small>` : '');
+      } else {
+        ban.hidden = true;
+        ban.innerHTML = '';
+      }
+    }
     $('luGrid').innerHTML = [
       cell('Balance', usd(a.balance)), cell('Equity', usd(a.equity)),
       cell('Realized P&amp;L', usd(a.realized_pnl_since_reset, true), cls(a.realized_pnl_since_reset)),
@@ -567,7 +586,7 @@
       <td>${p.qty} ${esc(p.contract)}</td><td>${esc(p.side)}</td><td>${dayhm(p.entry_time)}</td>
       <td data-entry-time="${esc(p.entry_time)}">${esc(heldSince(p.entry_time))}</td>
       <td>${px(p.entry, 2)}</td><td>${p.stop != null ? px(p.stop, 2) : p.hard_stop_px != null ? `${px(p.hard_stop_px, 2)} <small>(−$${Number(L.hard_stop_net_usd || 500).toLocaleString('en-US')})</small>` : 'none'}</td>
-      <td>${p.target != null ? px(p.target, 2) : 'Gemini'}</td><td class="${cls(p.unrealized)}">${usd(p.unrealized, true)}</td></tr>`).join('')}</table>`
+      <td>${p.target != null ? px(p.target, 2) : (L.gemini_exit_calls_enabled === false ? '—' : 'Gemini')}</td><td class="${cls(p.unrealized)}">${usd(p.unrealized, true)}</td></tr>`).join('')}</table>`
       : `<div class="lu-note">None${L.pending ? ` · ${L.pending} pending entry` : ''}</div>`;
     const T = L.recent_trades || [];
     $('luTrades').innerHTML = T.length ? `<table class="lu-t"><tr><th>Closed</th><th>Opened</th><th>Symbol</th><th>Size</th><th>Side</th>
@@ -785,7 +804,7 @@
     }).join('');
     $('cbUpd').textContent = K.updated_at ? `updated ${hm(K.updated_at)} ${city()}` : '';
     const since = (K.books[0] || {}).since;
-    $('cbNote').textContent = `Paper trading only · two fresh $100,000 accounts${since ? ` since ${dayhm(since)} ${city()}` : ''} · ${K.rules || ''}`;
+    $('cbNote').textContent = `${K.exit_calls_note ? K.exit_calls_note + ' · ' : ''}Paper trading only · two fresh $100,000 accounts${since ? ` since ${dayhm(since)} ${city()}` : ''} · ${K.rules || ''}`;
     $('carbon').hidden = false;
   }
   async function pollCarbon() {

@@ -33,7 +33,8 @@ from pydantic import BaseModel, Field
 
 from .config import ROOT
 from .risk import _atomic_write
-from .exit_versions import GEMINI_EXIT_PROMPT_VERSION
+from .exit_versions import (GEMINI_EXIT_PROMPT_VERSION, GEMINI_MECH_EXIT_VERSION,
+                            gemini_exit_calls_enabled, gemini_close_tag)
 from .hard_stop import (book_has_stop, beyond as stop_beyond, hard_stop_level, hard_stop_reason, hard_stop_usd,
                         shadow_books)
 
@@ -86,7 +87,9 @@ def em_cfg(cfg: dict) -> dict:
     d = {"enabled": False, "check_seconds": 18, "runner_mfe_atr": 0.8, "wall_reject_atr": 0.10,
          "giveback_pct": 35.0, "giveback_min_mfe_atr": 1.0, "early_minutes": 12, "max_hold_minutes": 90,
          "max_daily_loss_pct": 3.5, "start_balance": 100000.0, "gemini_timeout_seconds": 12,
-         "max_feed_age_minutes": 20, "books": [BOOK_1]}
+         "max_feed_age_minutes": 20, "books": [BOOK_1],
+         "gemini_exit_calls_enabled": True,
+         "mech_target_atr": 1.0, "mech_time_cap_minutes": 90, "mech_nostop_stop_atr": 1.0}
     return {**d, **(cfg.get("exit_manager") or {})}
 
 
@@ -523,6 +526,26 @@ class Books:
     def has_stop(self, name: str) -> bool:
         return book_has_stop(self.cfg, name)
 
+    def arm_mech_exits(self, name: str, p: dict, now: datetime, *, late: bool = False) -> None:
+        """1 ATR target on every book; 1 ATR stop on shadow (nostop) books. Late-arm so currently open
+        positions pick the rules up from `now` without a retroactive stop/target on earlier M1 bars."""
+        atr = float(p.get("atr") or 0)
+        if atr <= 0:
+            return
+        tick = self.tick(p)
+        tgt_mult = float(self.e.get("mech_target_atr", 1.0))
+        if p.get("target") is None:
+            p["target"] = self._round_tick(p["entry"] + p["side"] * tgt_mult * atr, tick)
+            p["mech_target_atr"] = tgt_mult
+            if late:
+                p["mech_armed_at"] = now.isoformat()
+        if (not self.has_stop(name)) and p.get("stop") is None:
+            sm = float(self.e.get("mech_nostop_stop_atr", 1.0))
+            p["stop"] = self._round_tick(p["entry"] - p["side"] * sm * atr, tick)
+            p["stop_note"] = "mech_1atr"
+            if late:
+                p["mech_stop_armed_at"] = now.isoformat()
+
     def arm_hard_stop(self, name: str, p: dict, now: datetime) -> float | None:
         """Attach the -$N NET hard stop to a book position (no-op for shadow books / stop off). Positions that were
         open before the stop existed are armed NOW (no retroactive stop-out from old M1 bars)."""
@@ -599,6 +622,8 @@ class Books:
                     # The pre-change sim could not have taken it (one per symbol) -> tagged, summarised apart.
                     if any(q["symbol"] == f["symbol"] for q in b["positions"]):
                         p["overlap"] = True
+                if not gemini_exit_calls_enabled(self.cfg):
+                    self.arm_mech_exits(name, p, now, late=False)
                 comm = round(self.spec(p["contract"])["commission"] * p["qty"], 2)
                 b["balance"] = round(b["balance"] - comm, 2)
                 b["stats"]["commissions"] = round(b["stats"]["commissions"] + comm, 2)
@@ -608,9 +633,9 @@ class Books:
         return opened
 
     # -- price path
-    def scan_m1(self, p: dict, bars: pd.DataFrame | None) -> tuple[float, datetime] | None:
-        """Update MFE/MAE from M1 bars since the last scan and detect a hard-stop hit.
-        Returns (fill_price, bar_time) on a stop hit (gap through the stop fills at the bar open), else None."""
+    def scan_m1(self, p: dict, bars: pd.DataFrame | None) -> tuple | None:
+        """Update MFE/MAE from M1 bars since the last scan and detect a stop or (mech) target hit.
+        Returns (fill_price, bar_time, reason) on a hit (gap fills at the bar open), else None."""
         if bars is None or not len(bars):
             return None
         start = pd.Timestamp(datetime.fromisoformat(p["scan_from"])).floor("min")
@@ -619,6 +644,14 @@ class Books:
         armed = None
         if p.get("stop") is None and p.get("hard_stop_armed_at"):
             armed = pd.Timestamp(datetime.fromisoformat(p["hard_stop_armed_at"])).ceil("min")
+        elif p.get("mech_stop_armed_at"):
+            armed = pd.Timestamp(datetime.fromisoformat(p["mech_stop_armed_at"])).ceil("min")
+        mech_arm = None
+        if p.get("mech_armed_at"):
+            mech_arm = pd.Timestamp(datetime.fromisoformat(p["mech_armed_at"])).ceil("min")
+        # Only scan the 1 ATR mechanical target when Gemini exit calls are paused.
+        # Positions may carry a leftover Lucid `target` in Gemini mode; do not stop those out on M1.
+        target = p.get("target") if not gemini_exit_calls_enabled(self.cfg) else None
         last_ts = None
         # A live-quote fill lands inside its minute (entry_time hh:mm:ss): that bar's range is mostly pre-entry,
         # so it never feeds MFE/MAE or the stop (the 18 s live-price checks cover the rest of the minute).
@@ -632,14 +665,18 @@ class Books:
             p["mfe"] = max(float(p.get("mfe") or 0.0), max(0.0, sd * (fav - p["entry"])))
             p["mae"] = max(float(p.get("mae") or 0.0), max(0.0, -sd * (adv - p["entry"])))
             last_ts = ts
-            if level is None:                  # no stop (shadow book / stop off): MFE/MAE tracking only
-                continue
-            if armed is not None and ts < armed:
-                continue                       # bar before the stop was armed: never a retroactive stop-out
-            hit = (l <= level) if sd > 0 else (h >= level)
-            if hit:
-                gap = (o <= level) if sd > 0 else (o >= level)
-                return self.slip_exit(p, o if gap else level), ts.to_pydatetime()
+            if level is not None and (armed is None or ts >= armed):
+                hit = (l <= level) if sd > 0 else (h >= level)
+                if hit:
+                    gap = (o <= level) if sd > 0 else (o >= level)
+                    why = "stop_1atr" if p.get("stop_note") == "mech_1atr" else (
+                        "hard_stop" if p.get("stop") is not None else "hs")
+                    return self.slip_exit(p, o if gap else level), ts.to_pydatetime(), why
+            if target is not None and (mech_arm is None or ts >= mech_arm):
+                tgt_hit = (h >= target) if sd > 0 else (l <= target)
+                if tgt_hit:
+                    gap = (o >= target) if sd > 0 else (o <= target)
+                    return self.slip_exit(p, o if gap else target), ts.to_pydatetime(), "target"
         if last_ts is not None:
             p["scan_from"] = last_ts.isoformat()   # re-scan the (possibly forming) last minute next time
         return None
@@ -679,7 +716,9 @@ class Books:
                "mfe_usd": round(p.get("mfe", 0) * self.usd_per_point(p), 2),
                "checks": p.get("checks", 0), "strikes_at_exit": p.get("strikes", 0),
                "hard_stop_px": p.get("hard_stop_px"), "overlap": bool(p.get("overlap")),
-               "exit_prompt_version": GEMINI_EXIT_PROMPT_VERSION, **(extra or {})}
+               "exit_prompt_version": gemini_close_tag(self.cfg),
+               "exit_mode": ("gemini" if gemini_exit_calls_enabled(self.cfg) else "mechanical"),
+               **(extra or {})}
         rec["event"] = "close"
         self.closed.append(rec)
         self.queue_post_exit(rec)
@@ -988,18 +1027,46 @@ class ExitManager:
     def summary(self) -> dict:
         ids = set(self.books.s["seen_ids"])
 
+        mech = not gemini_exit_calls_enabled(self.cfg)
+        hs = hard_stop_usd(self.cfg)
+        if mech:
+            note = ("Gemini exit calls paused — mechanical exits. Same Lucid entries. "
+                    f"Main + 1-strike: {f'-${hs:g} net hard stop' if hs else 'no $ hard stop'}, "
+                    f"{self.e.get('mech_target_atr', 1.0):g} ATR (M15 at entry) target, "
+                    f"{int(self.e.get('mech_time_cap_minutes', 90))} min time cap. "
+                    f"No-stop shadow: {self.e.get('mech_nostop_stop_atr', 1.0):g} ATR stop / "
+                    f"{self.e.get('mech_target_atr', 1.0):g} ATR target / "
+                    f"{int(self.e.get('mech_time_cap_minutes', 90))} min cap. "
+                    "Bracket and CB-BRACKET unchanged. CB-RUNNER keeps its mechanical stop/lock/trail/"
+                    "2.5 ATR target/150-min cap (model exit checks dropped). "
+                    f"New closes tagged {GEMINI_MECH_EXIT_VERSION}.")
+        else:
+            note = ((f"GEMINI EXITS + HARD STOP -${hs:g} NET: same Lucid entries; books "
+                     f"1-strike / 2-strike exit on Gemini CLOSE or the -${hs:g} net hard stop; "
+                     f"shadow book nostop = same entries, Gemini CLOSE only (never stopped). No target, no max "
+                     f"hold, no 16:45 flat; 3.5% breaker log-only. ")
+                    if gemini_only(self.cfg) and hs else
+                    "GEMINI ONLY: same Lucid entries; books A (1-strike) / B (2-strike) exit on Gemini CLOSE only - no "
+                    "stop, no target, no max hold, no 16:45 flat; 3.5% breaker log-only. " if gemini_only(self.cfg)
+                    else "Same Lucid entries in all three; books exit via Gemini (hard stop, 16:45 ET flat, "
+                    f"3.5% breaker, {self.e['max_hold_minutes']} min max hold). ")
+            note += ("BASELINE = the main Lucid account "
+                     f"(exit_mode={(self.cfg.get('lucid') or {}).get('exit_mode', 'server')}: gemini = follows the "
+                     f"{(self.cfg.get('lucid') or {}).get('gemini_exit_book', BOOK_1)} book's CLOSE) on the same entry ids.")
         return {"updated_at_utc": datetime.now(UTC).isoformat(), "paper_only": True,
-                "note": ((f"GEMINI EXITS + HARD STOP -${hard_stop_usd(self.cfg):g} NET: same Lucid entries; books "
-                          f"1-strike / 2-strike exit on Gemini CLOSE or the -${hard_stop_usd(self.cfg):g} net hard stop; "
-                          f"shadow book nostop = same entries, Gemini CLOSE only (never stopped). No target, no max "
-                          f"hold, no 16:45 flat; 3.5% breaker log-only. ")
-                         if gemini_only(self.cfg) and hard_stop_usd(self.cfg) else
-                         "GEMINI ONLY: same Lucid entries; books A (1-strike) / B (2-strike) exit on Gemini CLOSE only - no "
-                         "stop, no target, no max hold, no 16:45 flat; 3.5% breaker log-only. " if gemini_only(self.cfg)
-                         else "Same Lucid entries in all three; books exit via Gemini (hard stop, 16:45 ET flat, "
-                         f"3.5% breaker, {self.e['max_hold_minutes']} min max hold). ") + "BASELINE = the main Lucid account "
-                        f"(exit_mode={(self.cfg.get('lucid') or {}).get('exit_mode', 'server')}: gemini = follows the "
-                        f"{(self.cfg.get('lucid') or {}).get('gemini_exit_book', BOOK_1)} book's CLOSE) on the same entry ids.",
+                "note": note,
+                "gemini_exit_calls_enabled": not mech,
+                "exit_calls_note": "Gemini exit calls paused — mechanical exits" if mech else None,
+                "exit_rules": ({
+                    "main": (f"−${hs:g} net hard stop · 1 ATR target · 90-min cap" if hs else
+                             "1 ATR target · 90-min cap"),
+                    "1-strike": (f"−${hs:g} net hard stop · 1 ATR target · 90-min cap" if hs else
+                                 "1 ATR target · 90-min cap"),
+                    "nostop": "1 ATR stop · 1 ATR target · 90-min cap",
+                    "bracket": "unchanged (1 ATR stop / 1 ATR target / 90 min)",
+                    "CB-BRACKET": "unchanged (1 ATR stop / 1 ATR target / 90 min)",
+                    "CB-RUNNER": "mechanical stop/lock/trail / 2.5 ATR target / 150-min cap (model exits paused)",
+                } if mech else None),
                 "check_seconds": self.e["check_seconds"], "books": self.books.summary(),
                 "baseline": baseline_summary(self.logs_dir, ids, self.books.s.get("created_at"))}
 
@@ -1105,6 +1172,22 @@ class ExitManager:
                 self.lucid_close_requests = []
             self._write_books_files()
 
+    def _follow_requests(self, pid: int, sym: str, hits: list[dict], rec: dict) -> None:
+        """Mirror 1-strike (gemini_exit_book) mechanical closes onto the main Lucid account."""
+        if not hits:
+            return
+        follow = (self.cfg.get("lucid") or {}).get("gemini_exit_book", BOOK_1)
+        h = next((x for x in hits if x["book"] == follow), None)
+        if h is None:
+            return
+        reason = h.get("reason") or "mech_close"
+        rec.setdefault("mech_follow", {"book": h["book"], "reason": reason, "price": h["price"]})
+        self.lucid_close_requests.append(
+            {"id": pid, "symbol": sym, "t": h["t"].isoformat() if hasattr(h["t"], "isoformat") else str(h["t"]),
+             "price": h["price"], "book": h["book"], "rule": reason, "reason": reason,
+             "reason_text": h.get("reason_text") or reason,
+             "account_token": (self.cfg.get("lucid") or {}).get("reset_token")})
+
     def _stop_request(self, pid: int, sym: str, hits: list[dict], rec: dict) -> None:
         """Mirror a book hard stop onto the main Lucid account (same id / entry / qty -> same level). Prefers the
         book the account follows (gemini_exit_book). The account applies it at its next minute replay."""
@@ -1146,30 +1229,54 @@ class ExitManager:
         if price is not None:
             self.books.s["last_price"][sym] = price
         book_out: dict[str, dict] = {}
-        # 1. hard stop (+MFE) on the M1 path since the last check, per book. Shadow books: MFE only.
+        mech = not gemini_exit_calls_enabled(self.cfg)
+        rec["gemini_exit_calls_enabled"] = not mech
+        rec["exit_mode"] = "mechanical" if mech else "gemini"
+        # 1. hard stop (+MFE) on the M1 path since the last check, per book. Shadow books: MFE only
+        #    (plus, in mechanical mode, a 1 ATR stop on nostop and a 1 ATR target on every book).
         stop_hits: list[dict] = []
+        follow_hits: list[dict] = []  # closes that the main Lucid account should mirror
         hs_reason = hard_stop_reason(self.cfg)
         for name, p in list(held.items()):
             self.books.arm_hard_stop(name, p, now)
+            if mech:
+                self.books.arm_mech_exits(name, p, now, late=bool(
+                    p.get("target") is None or (not self.books.has_stop(name) and p.get("stop") is None)))
             hit = self.books.scan_m1(p, m1)
             if hit:
-                px, t_hit = hit
-                reason = "hard_stop" if p.get("stop") is not None else hs_reason
+                px, t_hit = hit[0], hit[1]
+                kind = hit[2] if len(hit) > 2 else None
+                if kind == "target":
+                    reason = "target"
+                elif kind == "stop_1atr":
+                    reason = "stop_1atr"
+                elif p.get("stop") is not None and p.get("stop_note") == "mech_1atr":
+                    reason = "stop_1atr"
+                elif p.get("stop") is not None:
+                    reason = "hard_stop"
+                else:
+                    reason = hs_reason
                 c = self.books.close(name, p, px, t_hit, reason,
                                      extra={"stop_trigger": "m1_path", "hard_stop_armed_at": p.get("hard_stop_armed_at")})
                 book_out[name] = {"action": reason, "exit": px, "net": c["net"], "trigger": "m1_path"}
-                stop_hits.append({"book": name, "price": px, "t": t_hit, "trigger": "m1_path", "net": c["net"]})
+                row = {"book": name, "price": px, "t": t_hit, "trigger": "m1_path", "net": c["net"], "reason": reason}
+                if reason.startswith("hard_stop") or reason == "hard_stop":
+                    stop_hits.append(row)
+                else:
+                    follow_hits.append(row)
                 held.pop(name)
         minutes = (now - datetime.fromisoformat(ref["entry_time"])).total_seconds() / 60.0
         rec["minutes_in_trade"] = round(minutes, 2)
         # 2. server-side forced exits (no Gemini call needed)
         forced = None
-        if gemini_only(self.cfg):
+        cap_min = float(self.e.get("mech_time_cap_minutes", self.e["max_hold_minutes"]) if mech
+                        else self.e["max_hold_minutes"])
+        if gemini_only(self.cfg) and not mech:
             pass                                # no server-forced exits at all
-        elif held and not lucid_in_session(now, self.cfg):
+        elif held and (not mech) and not lucid_in_session(now, self.cfg):
             forced = "flat_by_16:45_ET"
-        elif held and minutes >= float(self.e["max_hold_minutes"]):
-            forced = f"max_hold_{int(self.e['max_hold_minutes'])}m"
+        elif held and minutes >= cap_min:
+            forced = f"max_hold_{int(cap_min)}m"
         if held and (price is None or ctx.get("live_price_stale")):
             rec.update({"skipped_reason": "live_price_stale", "decision": "HOLD"})
             for name in held:
@@ -1206,18 +1313,56 @@ class ExitManager:
                               "net_if_live_fill": live_net}
             stop_hits.append({"book": name, "price": px, "t": now, "trigger": trig, "net": c["net"]})
             held.pop(name)
+        # Live 1 ATR stop on shadow (nostop) books in mechanical mode
+        if mech and held and price is not None and not ctx.get("live_price_stale"):
+            for name, p in list(held.items()):
+                lvl = p.get("stop") if p.get("stop_note") == "mech_1atr" else None
+                if lvl is None or not stop_beyond(p["side"], float(lvl), float(price)):
+                    continue
+                px = self.books.slip_exit(p, float(lvl))
+                c = self.books.close(name, p, px, now, "stop_1atr", extra={"stop_trigger": "live_price"})
+                book_out[name] = {"action": "stop_1atr", "exit": px, "net": c["net"], "trigger": "live_price"}
+                follow_hits.append({"book": name, "price": px, "t": now, "trigger": "live_price",
+                                    "net": c["net"], "reason": "stop_1atr"})
+                held.pop(name)
         self._stop_request(pid, sym, stop_hits, rec)
+        # Live 1 ATR target (mechanical mode): fill at the target when it was already working, else live price.
+        if mech and held and price is not None and not ctx.get("live_price_stale"):
+            for name, p in list(held.items()):
+                tgt = p.get("target")
+                if tgt is None:
+                    continue
+                if not ((p["side"] > 0 and float(price) >= float(tgt) - 1e-12) or
+                        (p["side"] < 0 and float(price) <= float(tgt) + 1e-12)):
+                    continue
+                # late-armed this tick: still close from now at the live/target fill (not a historical bar)
+                px = self.books.slip_exit(p, float(tgt))
+                c = self.books.close(name, p, px, now, "target", extra={"stop_trigger": "live_price"})
+                book_out[name] = {"action": "target", "exit": px, "net": c["net"], "trigger": "live_price"}
+                follow_hits.append({"book": name, "price": px, "t": now, "trigger": "live_price",
+                                    "net": c["net"], "reason": "target"})
+                held.pop(name)
         if forced:
             for name, p in list(held.items()):
                 px = self.books.slip_exit(p, price)
                 c = self.books.close(name, p, px, now, forced)
                 book_out[name] = {"action": forced, "exit": px, "net": c["net"]}
+                follow_hits.append({"book": name, "price": px, "t": now, "trigger": "time_cap",
+                                    "net": c["net"], "reason": forced})
             held = {}
+        self._follow_requests(pid, sym, follow_hits, rec)
         if not held:
             rec.update({"decision": None, "skipped_reason": rec.get("skipped_reason") or "no_open_book_position",
                         "books": book_out})
             return rec
         rec["books_after_stop"] = sorted(held)   # e.g. ["nostop"] once main/1-strike/2-strike are stopped out
+        if mech:
+            rec.update({"decision": "HOLD", "decision_source": "mechanical",
+                        "skipped_reason": "gemini_exit_calls_paused", "books": book_out})
+            for name in held:
+                book_out[name] = {"action": "none", "rule": "mechanical"}
+            rec["books"] = book_out
+            return rec
         # 3. Gemini decision (one call, shared by every book still holding this position)
         p0 = next(iter(held.values()))
         m = position_metrics(p0["side"], p0["entry"], price, p0.get("mfe", 0.0), p0.get("atr"),

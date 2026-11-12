@@ -20,6 +20,7 @@ T = datetime(2026, 11, 11, 16, 0, 30, tzinfo=UTC)      # Wed 11:00 New York
 @pytest.fixture
 def cfg():
     c = copy.deepcopy(load_config())
+    c.setdefault("exit_manager", {})["gemini_exit_calls_enabled"] = True
     c["lucid"]["slippage_ticks"] = 0
     c["lucid"]["exit_mode"] = "gemini"          # hard-stop + Gemini-exit mode (superseded by gemini_only)
     return c
@@ -187,6 +188,7 @@ def test_open_profit_is_not_dll_room(sim):
 @pytest.fixture
 def gcfg():
     c = copy.deepcopy(load_config())
+    c.setdefault("exit_manager", {})["gemini_exit_calls_enabled"] = True
     c["lucid"]["slippage_ticks"] = 0
     assert c["lucid"]["exit_mode"] == "gemini_only"
     return c

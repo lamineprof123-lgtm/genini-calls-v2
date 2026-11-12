@@ -48,7 +48,7 @@
   ],
   "last_price": {
     "US100": 28020.92,
-    "XAUUSD": 3892.86,
+    "XAUUSD": 3886.88,
     "EURUSD": 1.10877,
     "GBPUSD": 1.3259
   },
@@ -108,8 +108,8 @@
           "strikes": 0,
           "mfe": 0.0,
           "mae": 10.390000000000327,
-          "scan_from": "2026-11-12T14:02:00+00:00",
-          "checks": 31,
+          "scan_from": "2026-11-12T14:04:00+00:00",
+          "checks": 38,
           "opened_at": "2026-11-12T13:55:10.105438+00:00",
           "giveback_hist": [
             0.0,
@@ -196,35 +196,10 @@
     39,
     40,
     41,
-    42
+    42,
+    43
   ],
   "post_exit": [
-    {
-      "book": "1-strike",
-      "id": 41,
-      "symbol": "US100",
-      "contract": "NQ",
-      "qty": 1,
-      "side": "SHORT",
-      "exit": 28021.75,
-      "t_exit": "2026-11-12T13:59:06.487198+00:00",
-      "reason": "gemini_close",
-      "net": 351.5,
-      "due": "2026-11-12T14:04:06.487198+00:00"
-    },
-    {
-      "book": "nostop",
-      "id": 41,
-      "symbol": "US100",
-      "contract": "NQ",
-      "qty": 1,
-      "side": "SHORT",
-      "exit": 28021.75,
-      "t_exit": "2026-11-12T13:59:06.487198+00:00",
-      "reason": "gemini_close",
-      "net": 351.5,
-      "due": "2026-11-12T14:04:06.487198+00:00"
-    },
     {
       "book": "1-strike",
       "id": 42,
@@ -237,19 +212,6 @@
       "reason": "hard_stop_500",
       "net": -514.6,
       "due": "2026-11-12T14:06:08.762334+00:00"
-    },
-    {
-      "book": "baseline",
-      "id": 41,
-      "symbol": "US100",
-      "contract": "NQ",
-      "qty": 1,
-      "side": "SHORT",
-      "exit": 28021.75,
-      "t_exit": "2026-11-12T14:00:00+00:00",
-      "reason": "gemini_close",
-      "net": 351.5,
-      "due": "2026-11-12T14:05:00+00:00"
     },
     {
       "book": "baseline",
@@ -302,6 +264,19 @@
       "reason": "gemini_close",
       "net": -74.6,
       "due": "2026-11-12T14:09:08.354659+00:00"
+    },
+    {
+      "book": "baseline",
+      "id": 43,
+      "symbol": "US100",
+      "contract": "NQ",
+      "qty": 1,
+      "side": "SHORT",
+      "exit": 28021.25,
+      "t_exit": "2026-11-12T14:04:00+00:00",
+      "reason": "gemini_close",
+      "net": -13.5,
+      "due": "2026-11-12T14:09:00+00:00"
     }
   ],
   "retired_books": {

@@ -30,8 +30,6 @@ from .claude_rules import (rules_cfg, clamp_stop, size_for, risk_per_contract, a
 from .exit_versions import CLAUDE_EXIT_PROMPT_VERSION, CLAUDE_EXIT_PROMPT_VERSION_PRE
 from .uniform_exit import (uniform_exits_enabled, claude_exit_calls_enabled, close_tag,
                            arm_uniform, UNIFORM_BANNER, UNIFORM_EXIT_VERSION, TIME_CAP_MINUTES)
-from .uniform_exit import (uniform_exits_enabled, claude_exit_calls_enabled, arm_uniform,
-                           close_tag, UNIFORM_BANNER, UNIFORM_EXIT_VERSION, TIME_CAP_MINUTES)
 
 log = logging.getLogger("signals.claude")
 UTC = timezone.utc
@@ -157,7 +155,10 @@ class ClaudeEngine:
         self.L = cfg.get("lucid") or {}
         self.contracts = self.L.get("contracts") or {}
         self.symmap = self.L.get("symbols") or {}
-        self.symbols = [s for s in cfg["general"]["symbols"] if s in self.symmap]
+        from .other_venue import other_venue_symbols
+        self.ov_symbols = list(other_venue_symbols(cfg))
+        self.symbols = [s for s in cfg["general"]["symbols"]
+                        if s in self.symmap or s in self.ov_symbols]
         self.tz = ZoneInfo(cfg["general"]["session_tz"])
         self.root = Path(state_dir or cfg["general"]["state_dir"]) / "claude"
         self.logs_dir = Path(logs_dir or cfg["general"]["logs_dir"])
@@ -421,7 +422,7 @@ class ClaudeEngine:
     async def on_cycle(self, payloads: list[dict], now: datetime | None = None,
                        pngs: dict[str, bytes] | None = None, snapshot_meta: dict | None = None) -> dict:
         now = now or datetime.now(UTC)
-        lp = [p for p in payloads if p.get("symbol") in self.symmap]
+        lp = [p for p in payloads if p.get("symbol") in self.symmap or p.get("symbol") in self.ov_symbols]
         lp.sort(key=lambda p: self.symbols.index(p["symbol"]) if p["symbol"] in self.symbols else 99)
         if not lp:
             return {"skipped": "no_payloads"}
@@ -506,7 +507,7 @@ class ClaudeEngine:
                 for s in ((r.get("parsed") or {}).get("signals") or []):
                     if isinstance(s, dict) and s.get("action") in ("BUY", "SELL"):
                         want.add(str(s.get("symbol") or "").upper())
-        want &= set(self.symmap)
+        want &= set(self.symmap) | set(self.ov_symbols)
         fq = self.eng.setdefault("fill_quotes", {})
         fq.clear()
         if not want:
@@ -617,6 +618,19 @@ class ClaudeEngine:
             return "already in a position on this symbol"
         if ctx.get("live_price_stale"):
             return "live price stale"
+        from .other_venue import get_hub, is_other_venue_symbol
+        if is_other_venue_symbol(self.cfg, sym):
+            hub = get_hub(self.cfg)
+            if hub is None:
+                return "other-venue hub not started"
+            sig = {**v, "atr": v.get("atr") or ctx.get("atr"),
+                   "live_price": ctx.get("live_price") or v.get("live_price"),
+                   "model": v.get("model") or sim.get("model")}
+            r = hub.intake_signal(sim["sim"], sig, now, quote=sig.get("live_price"))
+            hub.persist(now)
+            if r and r.get("skipped"):
+                return f"other-venue: {r['skipped']}"
+            return None
         side = 1 if v["action"] == "BUY" else -1
         atr = float(ctx["atr"])
         c = self.contract_of(sym)

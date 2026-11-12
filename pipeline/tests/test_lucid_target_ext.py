@@ -153,7 +153,7 @@ def test_full_size_only_never_micros(sim, cfg):
     from signals.scalp_levels import plan_target_and_size
     assert all(not n.startswith("M") for n in cfg["lucid"]["contracts"])
     for sym in cfg["lucid"]["symbols"]:
-        assert set(cfg["lucid"]["symbols"][sym]["contracts"]) <= {"NQ", "GC", "6E", "6B"}
+        assert set(cfg["lucid"]["symbols"][sym]["contracts"]) <= {"NQ", "GC", "SI", "6E", "6B"}
     # many shapes: every plan is full-size, 1..max_minis, NET in [381, 1000], risk <= 1500
     for sym, atr, tds, sds in (("US100", 44.0, (2, 5, 10, 20, 40), (5, 10, 30, 46, 70)),
                                ("XAUUSD", 5.3, (0.5, 1.25, 3, 5), (0.8, 2, 4.8, 7)),

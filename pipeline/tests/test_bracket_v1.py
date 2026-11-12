@@ -49,11 +49,10 @@ def test_prompt_is_a_flagged_reconstruction():
     assert "RECONSTRUCTION" in alias.read_text()
 
 
-def test_system_prompt_lists_three_symbols_only():
+def test_system_prompt_lists_symbols_no_gbp():
     p = B.system_prompt()
-    assert "XAUUSD, EURUSD, US100" in p
+    assert "XAUUSD, EURUSD, US100, XAGUSD, BTCUSD" in p
     assert "GBPUSD" not in p
-    assert "BTCUSD" not in p
 
 
 # --------------------------------------------------------------------------- swings + events
@@ -197,10 +196,11 @@ def test_package_identical_for_opus_b_and_deepseek():
     assert pkg["chart_sha256"]["XAUUSD"] == hashlib.sha256(png).hexdigest()
 
 
-def test_filter_drops_gbpusd_and_btc_and_busy():
-    payloads = [payload("XAUUSD"), payload("EURUSD"), payload("GBPUSD"), payload("US100"), payload("BTCUSD")]
+def test_filter_drops_gbpusd_and_busy():
+    payloads = [payload("XAUUSD"), payload("EURUSD"), payload("GBPUSD"), payload("US100"),
+                payload("XAGUSD"), payload("BTCUSD")]
     got = B.filter_symbols(payloads, {"XAUUSD"})
-    assert [p["symbol"] for p in got] == ["EURUSD", "US100"]
+    assert [p["symbol"] for p in got] == ["EURUSD", "US100", "XAGUSD", "BTCUSD"]
 
 
 # --------------------------------------------------------------------------- M15+20s timing

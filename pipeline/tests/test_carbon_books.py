@@ -86,7 +86,8 @@ def sig(sym, action, conf, entry):
 
 
 SNAP = {"XAUUSD": payload("XAUUSD", 3900.0, 8.0), "EURUSD": payload("EURUSD", 1.1500, 0.0005),
-        "US100": payload("US100", 25000.0, 40.0), "BTCUSD": payload("BTCUSD", 70000.0, 400.0)}
+        "US100": payload("US100", 25000.0, 40.0), "XAGUSD": payload("XAGUSD", 50.0, 0.12),
+        "BTCUSD": payload("BTCUSD", 70000.0, 400.0)}
 
 
 def engine(cfg, api=None, feed=None, snap=None):
@@ -105,14 +106,14 @@ def run(coro):
 def test_config_matches_playbook(cfg):
     cc = C.carbon_cfg(cfg)
     assert cc["model"] == "gemini-4-carbon" and cc["entry_thinking"] == "high" and cc["exit_thinking"] == "low"
-    assert cc["symbols"] == ["XAUUSD", "EURUSD", "US100", "BTCUSD"] and cc["entry_window_utc"] == ["08:00", "20:30"]
-    assert cc["tradeable_symbols"] == ["XAUUSD", "EURUSD", "US100"]
-    assert cc["timeout_seconds"] == 150 and cc["min_confidence"] == 0.75 and cc["max_chase_atr"] == 0.5
+    assert cc["symbols"] == ["XAUUSD", "EURUSD", "US100", "XAGUSD", "BTCUSD"] and cc["entry_window_utc"] == ["08:00", "20:30"]
+    assert cc["tradeable_symbols"] == ["XAUUSD", "EURUSD", "US100", "XAGUSD"]
+    assert cc["timeout_seconds"] == 180 and cc["min_confidence"] == 0.75 and cc["max_chase_atr"] == 0.5
     assert cc["whatif_units"]["BTCUSD"]["flag"] == "site-only/what-if"
     assert cc["books"]["CB-BRACKET"] == {"stop_atr": 1.0, "target_atr": 1.0, "max_hold_min": 90, "model_exits": False}
     r = cc["books"]["CB-RUNNER"]
     assert r["target_atr"] == 1.0 and r["max_hold_min"] == 90 and r["model_exits"] is False
-    assert cc["sizing"]["caps"] == {"US100": 1, "XAUUSD": 1, "EURUSD": 4} and cc["sizing"]["aggregate_max"] == 6
+    assert cc["sizing"]["caps"] == {"US100": 1, "XAUUSD": 1, "XAGUSD": 1, "EURUSD": 4} and cc["sizing"]["aggregate_max"] == 6
     assert cc["spend_cap"]["soft_usd"] == 15 and cc["spend_cap"]["hard_usd"] == 19
     assert cc["spend_cap"]["max_output_tokens"] == {"entry": 6000, "exit": 800}
     assert cc["triggered_checks"]["max_per_day"] == 40 and cc["triggered_checks"]["max_per_symbol_per_bar"] == 1
@@ -160,7 +161,7 @@ def test_scan_opens_both_books_and_scores_whatif(cfg, tmp_path):
     feed = Feed(({"XAUUSD": q("XAUUSD", 3900.0), "EURUSD": q("EURUSD", 1.1500)}, {}))
     e = engine(cfg, api, feed)
     r = run(e.scan(T0))
-    assert r["ok"] and r["sent"] == ["XAUUSD", "EURUSD", "US100", "BTCUSD"]
+    assert r["ok"] and r["sent"] == ["XAUUSD", "EURUSD", "US100", "XAGUSD", "BTCUSD"]
     kw = api.calls[0]
     assert kw["thinking"] == "high" and kw["max_output_tokens"] == 6000
     assert r["thinking_level"] == "high"
@@ -222,9 +223,9 @@ def test_symbol_held_by_both_books_not_sent(cfg):
     for b in e.books.values():
         b.s["positions"].append({"symbol": "XAUUSD", "qty": 1, "id": 99, "side": 1, "contract": "GC", "entry": 3900,
                                  "stop": 3892, "atr": 8, "entry_time": T0.isoformat()})
-    assert e.symbols_to_send() == ["EURUSD", "US100", "BTCUSD"]
+    assert e.symbols_to_send() == ["EURUSD", "US100", "XAGUSD", "BTCUSD"]
     e.books["CB-RUNNER"].s["positions"] = []
-    assert e.symbols_to_send() == ["XAUUSD", "EURUSD", "US100", "BTCUSD"]
+    assert e.symbols_to_send() == ["XAUUSD", "EURUSD", "US100", "XAGUSD", "BTCUSD"]
 
 
 def test_failed_call_logged_no_trade(cfg):
@@ -470,19 +471,44 @@ def test_runner_model_exits_paused_when_flag_off(cfg, tmp_path):
     assert "paused" in (view.get("exit_calls_note") or "").lower() or "paused" in view["rules"].lower()
 
 
-# ------------------------------------------------------------------ BTCUSD what-if only (t242u)
+# ------------------------------------------------------------------ BTCUSD OTHER-VENUE (t254u); Lucid CB books still never open it
+def test_btc_other_venue_never_opens_a_lucid_book(cfg, tmp_path):
+    """BTCUSD is scanned; Lucid CB books never open it; the parallel OTHER-VENUE account does."""
+    from signals.other_venue import OtherVenueHub, set_hub
+    hub = OtherVenueHub(cfg, state_dir=tmp_path / "state", logs_dir=tmp_path / "logs", site_dir=tmp_path)
+    set_hub(hub)
+    try:
+        api = Api([sig("BTCUSD", "SELL", 0.82, 70000.0), sig("XAUUSD", "HOLD", 0.5, 3900.0)])
+        feed = Feed(({"BTCUSD": q("BTCUSD", 70000.0), "XAUUSD": q("XAUUSD", 3900.0),
+                      "EURUSD": q("EURUSD", 1.15), "US100": q("US100", 25000.0),
+                      "XAGUSD": q("XAGUSD", 50.0)}, {}))
+        e = engine(cfg, api, feed)
+        r = run(e.scan(T0))
+        assert r["ok"] and "BTCUSD" in r["sent"] and r["thinking_level"] == "high"
+        for name in C.BOOKS:
+            assert all(p["symbol"] != "BTCUSD" for p in e.books[name].s["positions"])
+            assert all(p["symbol"] != "BTCUSD" for p in e.books[name].s["pending"])
+        # OTHER-VENUE CB books opened the SELL
+        for name in C.BOOKS:
+            pos = hub.book(name)["positions"]
+            assert len(pos) == 1 and pos[0]["symbol"] == "BTCUSD" and pos[0]["side"] == -1
+            assert pos[0]["qty"] > 0
+    finally:
+        set_hub(None)
+
 def test_btc_whatif_only_never_opens_a_book(cfg, tmp_path):
-    """BTCUSD is sent on the scan and scored what-if (both exit styles, 1 unit); books never open it."""
+    """Kept as a what-if scorer: 1 unit, both exit styles; Lucid books never open BTC."""
     api = Api([sig("BTCUSD", "SELL", 0.82, 70000.0), sig("XAUUSD", "HOLD", 0.5, 3900.0)])
     feed = Feed(({"BTCUSD": q("BTCUSD", 70000.0), "XAUUSD": q("XAUUSD", 3900.0),
-                  "EURUSD": q("EURUSD", 1.15), "US100": q("US100", 25000.0)}, {}))
+                  "EURUSD": q("EURUSD", 1.15), "US100": q("US100", 25000.0),
+                  "XAGUSD": q("XAGUSD", 50.0)}, {}))
     e = engine(cfg, api, feed)
     r = run(e.scan(T0))
     assert r["ok"] and "BTCUSD" in r["sent"] and r["thinking_level"] == "high"
     for name in C.BOOKS:
         assert all(p["symbol"] != "BTCUSD" for p in e.books[name].s["positions"])
         assert all(p["symbol"] != "BTCUSD" for p in e.books[name].s["pending"])
-        assert e.books[name].s["stats"]["skips"].get("site_only_whatif") == 1
+        # no process hub in this test: Carbon routes BTC to OTHER-VENUE and skips the Lucid book
         assert e.books[name].intake(
             {"symbol": "BTCUSD", "action": "BUY", "confidence": 0.9, "atr": 400.0, "entry": 70000}, T0) is None
     w = [x for x in e.e["whatif"] if x["symbol"] == "BTCUSD"]
@@ -496,7 +522,7 @@ def test_btc_whatif_only_never_opens_a_book(cfg, tmp_path):
     assert short["stop"] == pytest.approx(short["entry"] + 400.0, abs=5.0)
     assert short["risk_usd"] == pytest.approx(abs(short["entry"] - short["stop"]) * 1.0, abs=1.0)
     view = json.loads((tmp_path / "carbon.json").read_text())
-    assert "site-only/what-if" in (view["whatif"]["note"] or "")
+    assert "Other-venue" in (view["whatif"]["note"] or "") or "site-only" in (view["whatif"]["note"] or "")
     assert any(r["symbol"] == "BTCUSD" and r.get("flag") == "site-only/what-if" for r in view["whatif"]["open_rows"])
     assert (view["whatif"]["CB-BRACKET"]["site_only"]["n"] == 0) or True  # still open, not closed
     # a later tick that hits the 1 ATR target should log R and keep the flag

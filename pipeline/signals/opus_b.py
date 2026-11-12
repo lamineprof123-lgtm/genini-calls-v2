@@ -287,7 +287,16 @@ class OpusBEngine:
                   "model": MODEL, "book": BOOK, "prompt_version": PROMPT_VERSION,
                   "snapshot_id": pkg.get("snapshot_id")}
         async with self.sim_lock:
-            dec = self.sim.on_record(record, now)
+            from .other_venue import get_hub, is_other_venue_symbol
+            ov, lucid = [], []
+            for s in (record.get("signals") or []):
+                (ov if is_other_venue_symbol(self.cfg, s.get("symbol")) else lucid).append(s)
+            if ov:
+                hub = get_hub(self.cfg)
+                if hub is not None:
+                    hub.intake_from_record(BOOK, {**record, "signals": ov}, now)
+                    hub.persist(now)
+            dec = self.sim.on_record({**record, "signals": lucid}, now)
             self.sim.stamp_positions()
             if due_pendings(self.sim, now):
                 try:

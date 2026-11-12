@@ -33,9 +33,9 @@ def _kick_deepseek(cfg: dict, payloads: list[dict] | None, pngs: dict | None = N
         log.exception("deepseek kick failed (Gemini loop unaffected)")
 
 
-# Lucid paper-sim symbols (BTCUSD is site-only). Session throttle is decided from these four;
-# they share the same America/New_York session clock.
-_DEFAULT_LUCID_SYMBOLS = ("XAUUSD", "EURUSD", "GBPUSD", "US100")
+# Lucid paper-sim symbols (plus XAGUSD as SI). BTCUSD is not Lucid — it is scanned for
+# flash entries and traded on the parallel OTHER-VENUE account (t254u).
+_DEFAULT_LUCID_SYMBOLS = ("XAUUSD", "EURUSD", "GBPUSD", "US100", "XAGUSD")
 THROTTLE_SKIP = "blocked_session_throttle"
 ALL_IN_POS_SKIP = "all_symbols_in_position"
 
@@ -45,8 +45,31 @@ def lucid_symbols(cfg: dict) -> list[str]:
     return list(lu) if lu else list(_DEFAULT_LUCID_SYMBOLS)
 
 
+def entry_symbols(cfg: dict) -> list[str]:
+    """Lucid symbols plus OTHER-VENUE symbols (BTCUSD) included in the flash entry scan."""
+    from .other_venue import other_venue_symbols
+    out = list(lucid_symbols(cfg))
+    for s in other_venue_symbols(cfg):
+        if s not in out:
+            out.append(s)
+    return out
+
+
+def entry_busy_symbols(cfg: dict, state_dir: str | Path | None = None) -> set[str]:
+    """Lucid open/pending plus OTHER-VENUE MAIN open/pending (so flash drops in-position BTC)."""
+    busy = set(lucid_busy_symbols(cfg, state_dir))
+    try:
+        from .other_venue import get_hub
+        hub = get_hub(cfg)
+        if hub is not None:
+            busy |= hub.busy_symbols("MAIN")
+    except Exception:
+        pass
+    return busy
+
+
 def lucid_busy_symbols(cfg: dict, state_dir: str | Path | None = None) -> set[str]:
-    """Symbols with an open or pending Lucid position. BTCUSD is site-only and is never excluded."""
+    """Symbols with an open or pending Lucid position. BTCUSD is never a Lucid position."""
     d = Path(state_dir or cfg["general"]["state_dir"])
     p = d / "lucid" / "account.json"
     try:
@@ -69,7 +92,7 @@ def filter_entry_payloads(payloads: list[dict], busy: set[str]) -> list[dict]:
 
 
 def session_blocked_for_scan(payloads: list[dict], cfg: dict) -> bool:
-    """True when every available Lucid (non-BTC) symbol is in a blocked session."""
+    """True when every available Lucid symbol is in a blocked session. BTCUSD does not disable the throttle."""
     want = set(lucid_symbols(cfg))
     rows = [p for p in payloads if p.get("symbol") in want]
     if not rows:
@@ -162,7 +185,7 @@ async def run_once(cfg: dict, dry_run: bool = False, force: bool = True, model: 
     gemini_seen = _load_json(gemini_seen_path, {})
     blocked = session_blocked_for_scan(payloads, cfg)
     interval = scan_interval_minutes(blocked, cfg)
-    busy = lucid_busy_symbols(cfg, state_dir)
+    busy = entry_busy_symbols(cfg, state_dir)
     entry_payloads = filter_entry_payloads(payloads, busy)
     if busy:
         log.info("entry scan excluding in-position symbols: %s (entry=%s)",
@@ -180,7 +203,7 @@ async def run_once(cfg: dict, dry_run: bool = False, force: bool = True, model: 
                 "payloads": payloads}
 
     if not entry_payloads:
-        log.info("all eligible symbols in a Lucid position - skipping Gemini (%s)", ALL_IN_POS_SKIP)
+        log.info("all eligible symbols in a position - skipping Gemini (%s)", ALL_IN_POS_SKIP)
         record = _throttle_skip_record(cfg, payloads, data_errors, last_bars, now, tz, equity=None)
         record["skipped_reason"] = ALL_IN_POS_SKIP
         record["in_position"] = sorted(busy)

@@ -492,7 +492,16 @@ class DeepSeekEngine:
                            for p in (payloads or [])},
                   "model": MODEL, "book": BOOK}
         async with self.sim_lock:
-            dec = self.sim.on_record(record, now)
+            from .other_venue import get_hub, is_other_venue_symbol
+            ov, lucid = [], []
+            for s in (record.get("signals") or []):
+                (ov if is_other_venue_symbol(self.cfg, s.get("symbol")) else lucid).append(s)
+            if ov:
+                hub = get_hub(self.cfg)
+                if hub is not None:
+                    hub.intake_from_record(BOOK, {**record, "signals": ov}, now)
+                    hub.persist(now)
+            dec = self.sim.on_record({**record, "signals": lucid}, now)
             self.sim.stamp_positions()
             # Same-step fill when the live quote is already due.
             if due_pendings(self.sim, now):

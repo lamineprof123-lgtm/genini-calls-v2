@@ -154,8 +154,10 @@ class SignalScorer:
         scfg = (self.cfg.get("symbols") or {}).get(sym) or {}
         ticker = scfg.get("dukascopy") or scfg.get("binance") or sym.lower()
         try:
-            df, _src = await fetch_m1(ticker, start - timedelta(minutes=2), end + timedelta(minutes=2))
-            return df
+            got = await fetch_m1(ticker, start - timedelta(minutes=2), end + timedelta(minutes=2))
+            # fetch_m1 returns a DataFrame (not (df, source)); unpacking the frame raises
+            # "too many values to unpack" because iteration walks the columns.
+            return got[0] if isinstance(got, tuple) else got
         except Exception as e:
             log.warning("signal_score m1 %s failed: %s", sym, e)
             return None

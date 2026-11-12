@@ -580,7 +580,7 @@
   }
 
   // ---- Lucid paper account (lucid.json, written each cycle; paper trading only) ----
-  let lucid = null, bracket = null, carbon = null, deepseek = null, opusb = null;
+  let lucid = null, bracket = null, carbon = null, deepseek = null, opusb = null, otherVenue = null;
   const usd = (v, sign) => v == null ? '—' : (sign && v > 0 ? '+' : (v < 0 ? '−' : '')) + '$' +
     Math.abs(Number(v)).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const cls = v => v > 0 ? 'pos' : (v < 0 ? 'neg' : '');
@@ -654,6 +654,11 @@
                open_pnl: oa.open_pnl, trades: oa.trades ?? oa.trades_since_reset, wins: oa.wins,
                losses: oa.losses, stopped: oa.stopped, open_positions: (opusb.open_positions || []).length });
     }
+    const ovNames = ['MAIN','1-strike','nostop','bracket','CB-BRACKET','CB-RUNNER','C-OPUS','C-SONNET','C-OPUS-B','DS-FLASH'];
+    for (const name of ovNames) {
+      const o = ovRow(name, name === 'MAIN' ? 'Gemini' : name, /OPUS/.test(name) ? 'o' : (name === 'DS-FLASH' ? 'd' : 'g'));
+      if (o) C.push(o);
+    }
     $('luCmp').innerHTML = C.length ? `<table class="lu-t"><tr><th>Book</th><th>Stop</th><th>Balance</th><th>Net P&amp;L</th>
       <th>Open P&amp;L</th><th>Trades</th><th>Stopped</th><th>Open</th></tr>${C.map(c => `<tr><td>${esc(c.label || c.book)}</td>
       <td>${c.stop_txt ? esc(c.stop_txt) : c.hard_stop_net_usd ? '−$' + Number(c.hard_stop_net_usd).toLocaleString('en-US') : 'none'}</td><td>${usd(c.balance)}</td>
@@ -676,39 +681,67 @@
   let claude = null;
   const rr = v => v == null ? '—' : (v > 0 ? '+' : (v < 0 ? '−' : '')) + Math.abs(Number(v)).toFixed(2) + 'R';
   const whoCls = id => /OPUS/.test(id) ? 'o' : 's';
+
+  function ovBook(name) {
+    if (!otherVenue || !otherVenue.books) return null;
+    return otherVenue.books.find(b => b.book === name) || null;
+  }
+  function ovRow(book, who, c) {
+    const b = ovBook(book); if (!b) return null;
+    const a = b.account || {};
+    return { who: (who || book) + ' · Other venue', c: c || 'g',
+             bal: a.balance, net: a.net_pnl ?? a.realized_pnl, w: a.wins, l: a.losses,
+             rps: null, n: a.trades, ov: true,
+             balance: a.balance, net_pnl: a.net_pnl ?? a.realized_pnl, open_pnl: a.open_pnl,
+             trades: a.trades, wins: a.wins, losses: a.losses, stopped: a.stopped,
+             open_positions: (b.open_positions || []).length,
+             label: (who || book) + ' · Other venue',
+             stop_txt: 'Other venue · 1 ATR / 1 ATR · $900/ATR · 0.05%/side' };
+  }
+
   function renderCmp() {
     const rows = [];
     if (lucid && lucid.account) {
       const a = lucid.account;
       rows.push({ who: 'Gemini', c: 'g', bal: a.balance, net: a.realized_pnl_since_reset, w: a.wins, l: a.losses, rps: null, n: a.trades_since_reset });
+      const o = ovRow('MAIN', 'Gemini', 'g'); if (o) rows.push(o);
     }
     for (const S of (claude && claude.sims) || []) {
       const a = S.account || {}, wi = (S.books || {}).whatif || {};
       rows.push({ who: S.label, c: whoCls(S.id), bal: a.balance, net: a.realized_pnl, w: a.wins, l: a.losses,
                   rps: wi.r_avg, n: a.trades, sig: wi.n, wait: !claude.key_present });
+      const o = ovRow(S.id || S.book, S.label || S.id, whoCls(S.id)); if (o) rows.push(o);
     }
     for (const K of (carbon && carbon.books) || []) {
       const ka = K.account || {}, wi = (((carbon.whatif || {})[K.book]) || {})['all'] || {};
       rows.push({ who: K.book, c: 'g', bal: ka.balance, net: ka.net_pnl, w: ka.wins, l: ka.losses, rps: wi.r_avg, n: ka.trades, sig: wi.n, carbon: true });
+      const o = ovRow(K.book, K.book, 'g'); if (o) rows.push(o);
     }
     if (deepseek && deepseek.account) {
       const da = deepseek.account;
       rows.push({ who: deepseek.book || 'DS-FLASH', c: 'd', bal: da.balance,
                   net: da.net_pnl ?? da.realized_pnl_since_reset, w: da.wins, l: da.losses, rps: null,
                   n: da.trades ?? da.trades_since_reset, wait: deepseek.key_present === false, ds: true });
+      const o = ovRow('DS-FLASH', deepseek.book || 'DS-FLASH', 'd'); if (o) rows.push(o);
     }
     if (opusb && opusb.account) {
       const oa = opusb.account;
       rows.push({ who: opusb.book || 'C-OPUS-B', c: 'o', bal: oa.balance,
                   net: oa.net_pnl ?? oa.realized_pnl_since_reset, w: oa.wins, l: oa.losses, rps: null,
                   n: oa.trades ?? oa.trades_since_reset, wait: opusb.key_present === false });
+      const o = ovRow('C-OPUS-B', opusb.book || 'C-OPUS-B', 'o'); if (o) rows.push(o);
+    }
+    for (const extra of ['1-strike', 'nostop', 'bracket']) {
+      if (!rows.some(r => (r.who || '').startsWith(extra) || (r.who || '').includes(extra))) {
+        const o = ovRow(extra, extra, 'g'); if (o) rows.push(o);
+      }
     }
     if (!rows.length) return;
     $('cmpT').innerHTML = `<table class="lu-t cmp-t"><tr><th>Sim</th><th>Balance</th><th>Net</th><th>Trades</th><th>W/L</th><th>R / signal</th></tr>` +
       rows.map(r => `<tr><td><span class="who ${r.c}">${esc(r.who)}</span>${r.wait ? '<small>waiting for key</small>' : ''}</td>
         <td>${usd(r.bal)}</td><td class="${cls(r.net)}">${usd(r.net, true)}</td><td>${r.n ?? 0}</td><td>${r.w ?? 0}/${r.l ?? 0}</td>
         <td class="${cls(r.rps)}">${r.c === 'g' && !r.carbon ? 'n/a' : rr(r.rps) + (r.sig ? ` <small>(${r.sig})</small>` : '')}</td></tr>`).join('') + '</table>';
-    const u = [lucid && lucid.updated_at, claude && claude.updated_at, carbon && carbon.updated_at, deepseek && deepseek.updated_at, opusb && opusb.updated_at].filter(Boolean).sort().pop();
+    const u = [lucid && lucid.updated_at, claude && claude.updated_at, carbon && carbon.updated_at, deepseek && deepseek.updated_at, opusb && opusb.updated_at, otherVenue && otherVenue.updated_at].filter(Boolean).sort().pop();
     $('cmpUpd').textContent = u ? `updated ${hm(u)} ${city()}` : '';
     $('cmp').hidden = false;
   }
@@ -1048,6 +1081,14 @@
       (r.at ? `· fresh $${Number(a.start_balance || 100000).toLocaleString('en-US')} account since ${dayhm(r.at)} ${city()}` : '');
     $('opusb').hidden = false;
   }
+
+  async function pollOtherVenue() {
+    const j = await getJSON('other_venue.json');
+    if (j && !(otherVenue && Date.parse(j.updated_at) < Date.parse(otherVenue.updated_at))) {
+      otherVenue = j; renderLucid(); renderCmp();
+    }
+  }
+
   async function pollOpusB() {
     const j = await getJSON('opus_b.json');
     if (j && !(opusb && Date.parse(j.updated_at) < Date.parse(opusb.updated_at))) {
@@ -1056,6 +1097,8 @@
   }
   pollOpusB();
   setInterval(pollOpusB, 15000);
+  pollOtherVenue();
+  setInterval(pollOtherVenue, 15000);
   async function pollLucid() {
     const j = await getJSON('lucid.json');
     if (j && !(lucid && Date.parse(j.updated_at) < Date.parse(lucid.updated_at))) { lucid = j; renderLucid(); }

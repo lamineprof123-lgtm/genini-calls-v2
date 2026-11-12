@@ -67,7 +67,7 @@ def m1(rows, start):
 
 def test_config_defaults(cfg):
     b = bracket_cfg(cfg)
-    assert b["enabled"] and b["symbols"] == ["XAUUSD", "EURUSD", "US100"]
+    assert b["enabled"] and b["symbols"] == ["XAUUSD", "EURUSD", "US100", "XAGUSD"]
     assert b["min_confidence"] == 0.75 and b["stop_atr"] == 1.0 and b["target_atr"] == 1.0
     assert b["max_hold_minutes"] == 90 and b["flat_utc"] == "21:45" and b["max_minis"] == 6
     assert b["slippage_ticks"] == 1

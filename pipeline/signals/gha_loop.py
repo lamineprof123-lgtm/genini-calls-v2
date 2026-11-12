@@ -22,7 +22,7 @@ from .site import write_status
 
 log = logging.getLogger("signals.gha")
 SITE_JSON = ("status.json", "latest_signal.json", "history.json", "lucid.json", "claude.json", "bracket.json",
-             "carbon.json", "deepseek.json", "signal_scores.json", "opus_b.json", "m15_scan.json")
+             "carbon.json", "deepseek.json", "signal_scores.json", "opus_b.json", "m15_scan.json", "other_venue.json")
 DATA_JSON = ("books.json",)  # committed to the data branch only (not deployed to Pages)
 CYCLE_LOG_KEEP_DAYS = 14
 
@@ -69,6 +69,8 @@ class GhaLoop:
         self.opus_b_exit_task: asyncio.Task | None = None
         self.m15 = None
         self.m15_task: asyncio.Task | None = None
+        self.other_venue = None
+        self.other_venue_task: asyncio.Task | None = None
         for sub in ("state", "logs"):
             (data / sub).mkdir(parents=True, exist_ok=True)
 
@@ -204,6 +206,7 @@ class GhaLoop:
         # data checkout may have been reset during acquire: make sure we start from the newest state
         reason = "max-runtime"
         await self._verify_models_once()
+        self.start_other_venue()
         self.start_exit_manager()
         self.start_claude()
         self.start_bracket()
@@ -212,6 +215,7 @@ class GhaLoop:
         self.start_opus_b()
         self.start_scorer()
         self.start_m15_scan()
+        self.start_other_venue()
         while True:
             # The job still wakes every `self.interval` (2 min). The site countdown uses
             # scan_interval (2 active / 15 during ASIAN / DEADZONE) so it matches the next Gemini call.
@@ -250,6 +254,15 @@ class GhaLoop:
             if not self.dry_run:
                 lres = await lucid_step(self.cfg, (res or {}).get("record"))
                 log.info("lucid: %s", json.dumps(lres, default=str)[:300])
+                try:
+                    from .other_venue import get_hub, MAIN_COPIES
+                    hub = get_hub(self.cfg)
+                    if hub is not None:
+                        hub.intake_from_record("MAIN", (res or {}).get("record"),
+                                               datetime.now(timezone.utc), copy_to=MAIN_COPIES)
+                        hub.persist()
+                except Exception:
+                    log.exception("other-venue MAIN intake failed")
             if self.cycles % 30 == 1:
                 self.trim_logs()
             self.heartbeat(last_cycle_at=started.isoformat())
@@ -520,6 +533,37 @@ class GhaLoop:
                 await asyncio.wait_for(t, 30)
         self.m15 = None
 
+    def start_other_venue(self) -> None:
+        """Parallel $100k OTHER-VENUE CFD books (BTCUSD) on every model book. 18 s uniform exits."""
+        if self.dry_run or (self.cfg.get("other_venue") or {}).get("enabled", True) is False:
+            return
+        try:
+            from .other_venue import OtherVenueHub, set_hub, run_other_venue_loop
+            self.other_venue = OtherVenueHub(
+                self.cfg, state_dir=self.data / "state", logs_dir=self.data / "logs", site_dir=self.data,
+            )
+            set_hub(self.other_venue)
+            self.other_venue.persist()
+            self.other_venue_task = asyncio.create_task(run_other_venue_loop(self.other_venue), name="other-venue")
+            log.info("other-venue on: symbols=%s books=%s",
+                     self.other_venue.cc.get("symbols"), list(self.other_venue.cc.get("books") or []))
+        except Exception:
+            log.exception("other-venue failed to start (other books unaffected)")
+            self.other_venue = None
+
+    async def stop_other_venue(self) -> None:
+        t, self.other_venue_task = self.other_venue_task, None
+        if t:
+            t.cancel()
+            with contextlib.suppress(BaseException):
+                await asyncio.wait_for(t, 30)
+        try:
+            from .other_venue import set_hub
+            set_hub(None)
+        except Exception:
+            pass
+        self.other_venue = None
+
     def start_scorer(self) -> None:
         """Universal signal scorer (t248u): backfill logs, then score ready rows on a 60 s loop. No model calls."""
         if self.dry_run:
@@ -568,6 +612,7 @@ class GhaLoop:
         await self.stop_m15_scan()
         await self.stop_deepseek()
         await self.stop_opus_b()
+        await self.stop_other_venue()
         await self.stop_scorer()
         succ = L.read(self.data, L.SUCC)
         handed = succ.get("run_id") if (reason == "handoff" and succ) else None
@@ -612,6 +657,7 @@ async def run_gha_loop(cfg: dict, data: Path, run_id: str, role: str, **kw) -> s
         await loop.stop_m15_scan()
         await loop.stop_deepseek()
         await loop.stop_opus_b()
+        await loop.stop_other_venue()
         await loop.stop_scorer()
         log.error("lost the loop lock: %s -> exiting without further writes", e)
         return "lost-lock"

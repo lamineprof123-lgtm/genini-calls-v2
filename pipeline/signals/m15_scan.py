@@ -20,8 +20,8 @@ UTC = timezone.utc
 DUBAI = ZoneInfo("Asia/Dubai")
 
 # Union of symbols any M15-close model may need. Individual books slice this.
-ALL_SYMBOLS = ["XAUUSD", "EURUSD", "GBPUSD", "US100", "BTCUSD"]
-CLAUDE_V2_SYMBOLS = ["XAUUSD", "EURUSD", "GBPUSD", "US100"]
+ALL_SYMBOLS = ["XAUUSD", "EURUSD", "GBPUSD", "US100", "XAGUSD", "BTCUSD"]
+CLAUDE_V2_SYMBOLS = ["XAUUSD", "EURUSD", "GBPUSD", "US100", "XAGUSD", "BTCUSD"]
 OFFSET_SECONDS = 20
 
 

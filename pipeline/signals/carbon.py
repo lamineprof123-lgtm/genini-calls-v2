@@ -50,7 +50,7 @@ DEFAULTS = {
     "entry_thinking": "high",
     "exit_thinking": "low",
     "symbols": ["XAUUSD", "EURUSD", "US100", "BTCUSD"],
-    "tradeable_symbols": ["XAUUSD", "EURUSD", "US100"],
+    "tradeable_symbols": ["XAUUSD", "EURUSD", "US100", "XAGUSD"],
     "whatif_units": {"BTCUSD": {"tick": 5.0, "point_value": 1.0, "commission": 0.0,
                                 "unit": "1 BTC", "flag": "site-only/what-if"}},
     "entry_window_utc": ["08:00", "20:30"],
@@ -497,6 +497,24 @@ class CarbonBook:
             why = "window: outside the entry window / session"
         if why is None:
             why = self.lock_reason(sym, side, now)
+        from .other_venue import get_hub, is_other_venue_symbol
+        if why is None and is_other_venue_symbol(self.eng.cfg, sym):
+            if self.eng.ov_held(self.name, sym):
+                why = "held: already in an Other-venue position on this symbol"
+            else:
+                hub = get_hub(self.eng.cfg)
+                if hub is None:
+                    why = "other-venue hub not started"
+                else:
+                    quote = sig.get("live_price") or sig.get("entry")
+                    r = hub.intake_signal(self.name, sig, now, quote=quote)
+                    hub.persist(now)
+                    ev = {"book": self.name, "symbol": sym, "action": sig["action"],
+                          "confidence": conf, "atr": sig.get("atr"), "kind": sig.get("kind")}
+                    self.eng.event(now, "other_venue", result={"skipped": (r or {}).get("skipped"),
+                                                               "qty": (r or {}).get("qty"),
+                                                               "entry": (r or {}).get("entry")}, **ev)
+                    return r if r and not (r or {}).get("skipped") else None
         if why is None and not is_tradeable(self.cc, sym):
             why = f"site-only/what-if: {sym} is not a Lucid contract (what-if only)"
         contract = self.eng.contract_for(sym)
@@ -896,6 +914,11 @@ class CarbonEngine:
             out[s] = r[0]
         return out
 
+    def ov_held(self, book: str, sym: str) -> bool:
+        from .other_venue import get_hub
+        hub = get_hub(self.cfg)
+        return bool(hub and hub.held(book, sym))
+
     async def scan(self, now: datetime | None = None, *, kind: str = "entry", symbols: list[str] | None = None,
                    trigger: dict | None = None, snaps=None, pngs=None, snapshot_meta=None) -> dict:
         """One Carbon entry call (M15 scan: all eligible symbols; trigger: one symbol). Never raises."""
@@ -1098,7 +1121,7 @@ class CarbonEngine:
                              "thinking_level": w.get("thinking_level")}
                             for w in self.e["whatif"]]
         out["recent"] = rows[-30:][::-1]
-        out["note"] = ("BTCUSD is scored site-only/what-if (1 BTC unit, both exit styles); "
+        out["note"] = ("BTCUSD trades on the Other-venue $100k CFD book (~$900 / 1 ATR); also scored 1-unit what-if; "
                        "CB-BRACKET and CB-RUNNER never open it (no Lucid contract).")
         return out
 
@@ -1311,7 +1334,7 @@ class CarbonEngine:
                                           if not gemini_exit_calls_enabled(self.cfg) else None)),
                 "rules": ("gemini-4-carbon entries (thinking high, live entry prompt unchanged) on XAUUSD / EURUSD / "
                           "US100 / BTCUSD at every M15 close +20 s in 08:00-20:30 UTC + triggered one-symbol checks; "
-                          "BTCUSD is site-only/what-if (1 BTC unit, both exit styles) — books never open it. conf >= "
+                          "BTCUSD is Other-venue (not a Lucid contract) — CB Lucid books never open it. conf >= "
                           f"{self.cc['min_confidence']}; chase <= {self.cc['max_chase_atr']} ATR. Size floor($900 / 1 ATR"
                           " risk), caps NQ 1 / GC 1 / 6E 4, skip if 1 contract > $1,200, 6 aggregate, one per symbol; "
                           "re-entry after the next M15 close (after a loss 30 min, no same-side re-entry this session); "

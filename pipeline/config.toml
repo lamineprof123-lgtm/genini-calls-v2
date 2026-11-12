@@ -1,7 +1,7 @@
 # Gemini Signals configuration. SIGNALS ONLY: this project never places orders.
 
 [general]
-symbols = ["XAUUSD", "EURUSD", "GBPUSD", "US100", "BTCUSD"]
+symbols = ["XAUUSD", "EURUSD", "GBPUSD", "US100", "XAGUSD", "BTCUSD"]
 timeframe_minutes = 15
 candles = 120            # closed candles shown/analysed per symbol
 warmup_candles = 60      # extra history fetched so ATR/EMA are warmed up (not drawn)
@@ -102,9 +102,9 @@ exit_fallback_models = []             # exit: no cross-model fallback
 thinking_level = "low"                # exit-manager Gemini calls (currently paused); leave low
 entry_thinking_level = "high"         # flash 2-min entry scans only (t244u); tagged on each signal
 temperature = 0.2                     # sent ONLY to pre-3.x models (3.6+ deprecate sampling params)
-timeout_seconds = 90                  # per entry request; raised for thinking=high, must finish inside the 2-min cadence
+timeout_seconds = 110                 # per entry request; raised for thinking=high + XAGUSD/BTCUSD charts, inside 2-min cadence
 max_attempts_per_model = 2
-retry_budget_seconds = 100            # per model, incl. request time (keeps a slow high-thinking call + one short retry under 2 min)
+retry_budget_seconds = 115            # per model, incl. request time (one high-thinking call + slim retry under 2 min)
 backoff_base_seconds = 1.5
 backoff_max_seconds = 5.0
 
@@ -168,6 +168,15 @@ yfinance = "NQ=F"           # proxy: E-mini Nasdaq-100 futures
 mt5 = "US100"
 contract_size = 1
 digits = 2
+
+[symbols.XAGUSD]
+name = "SILVER"          # asset label shown on the signal page
+chain = ["dukascopy", "yfinance"]
+dukascopy = "xagusd"
+yfinance = "SI=F"          # proxy: COMEX silver futures (not spot)
+mt5 = "XAGUSD"
+contract_size = 5000       # COMEX SI = 5,000 troy oz
+digits = 3
 
 [symbols.BTCUSD]
 name = "BITCOIN"            # asset label shown on the signal page
@@ -241,7 +250,8 @@ US100  = { ticks = 20, tick_size = 0.25 }       # 5.0 index points
 XAUUSD = { pips = 12.5, pip_size = 0.10 }       # 1.25 gold
 EURUSD = { pips = 12.5, pip_size = 0.0001 }     # 12.5 FX pips
 GBPUSD = { pips = 12.5, pip_size = 0.0001 }
-BTCUSD = { ticks = 20, tick_size = 5.0 }        # public site only (not a Lucid product)
+XAGUSD = { pips = 12.5, pip_size = 0.01 }        # 0.125 silver
+BTCUSD = { ticks = 20, tick_size = 5.0 }         # public site + OTHER-VENUE CFD
 
 # ---------------------------------------------------------------------------------------------------------------
 # Lucid Trading LucidPro 100K PAPER simulator (signals/lucid.py). PAPER ONLY: nothing is ever sent to a broker.
@@ -345,12 +355,16 @@ NQ  = { point_value = 20.0,     tick = 0.25,    commission = 1.75 }
 GC  = { point_value = 100.0,    tick = 0.10,    commission = 2.30 }
 6E  = { point_value = 125000.0, tick = 0.00005, commission = 2.40 }
 6B  = { point_value = 62500.0,  tick = 0.0001,  commission = 2.40 }
+# COMEX SI (t253u): 5,000 oz, $5,000 per $1, tick $0.005 = $25; Lucid commission $2.30/side
+# (fees file 2026-11-09: GC/SI/HG/PL group). Counts toward the 6-mini cap. Full-size only (no SIL).
+SI  = { point_value = 5000.0,   tick = 0.005,   commission = 2.30 }
 
-[lucid.symbols]                 # signal symbol -> candidate Lucid contracts (BTCUSD excluded: not a Lucid product)
+[lucid.symbols]                 # signal symbol -> candidate Lucid contracts (BTCUSD is OTHER-VENUE, not Lucid)
 US100  = { contracts = ["NQ"],        m1 = "usatechidxusd" }
 XAUUSD = { contracts = ["GC"],        m1 = "xauusd" }
 EURUSD = { contracts = ["6E"],        m1 = "eurusd" }
 GBPUSD = { contracts = ["6B"],        m1 = "gbpusd" }
+XAGUSD = { contracts = ["SI"],        m1 = "xagusd" }
 
 # ---------------------------------------------------------------------------------------------------------------
 # Gemini EXIT MANAGER (signals/exit_manager.py). PAPER ONLY. Two extra paper books copy every Lucid sim entry
@@ -479,7 +493,7 @@ stale_price_seconds = 60
 max_chase_atr = 0.5
 min_score = 5
 slippage_ticks = 1
-max_qty = { NQ = 1, GC = 1, 6E = 4, 6B = 4 }
+max_qty = { NQ = 1, GC = 1, SI = 1, 6E = 4, 6B = 4 }
 
 # ---------------------------------------------------------------------------------------------------------------
 # 'bracket' GEMINI SHADOW BOOK (signals/bracket.py). PAPER ONLY, its own $100k account. Main account rules unchanged.
@@ -492,7 +506,7 @@ max_qty = { NQ = 1, GC = 1, 6E = 4, 6B = 4 }
 # drops symbols MAIN holds, so there is no signal for them that cycle (counted as missed_scans in bracket.json).
 [bracket]
 enabled = true
-symbols = ["XAUUSD", "EURUSD", "US100"]
+symbols = ["XAUUSD", "EURUSD", "US100", "XAGUSD"]  # BTCUSD is OTHER-VENUE (MAIN copy)
 min_confidence = 0.75
 stop_atr = 1.0
 target_atr = 1.0
@@ -519,7 +533,7 @@ reset_token = "bracket-v1"
 # logs (logs/<day>/carbon_*.jsonl) and site file (carbon.json). Main / 1-strike / nostop / bracket / Claude untouched.
 # Entries: gemini-4-carbon, thinking_level high (t244u; was medium), the live entry prompt + SignalBatch schema
 # unchanged, 150 s timeout (raised from 90 s for high thinking + a 4th chart), one attempt, no fallback.
-# Symbols: XAUUSD / EURUSD / US100 are tradeable in CB-BRACKET / CB-RUNNER. BTCUSD (t242u) is included in every
+# Symbols: XAUUSD / EURUSD / US100 are tradeable in CB-BRACKET / CB-RUNNER. XAGUSD (t253u, Lucid SI) and BTCUSD (t254u, OTHER-VENUE) are included in every
 # M15+20 s scan and in triggered checks, but is scored what-if only (1 BTC unit, both exit styles) — the books
 # never open a BTC position (not a Lucid contract). Flagged "site-only/what-if" on the panel.
 # Risk rules below are BINDING in these two books only. Spend caps unchanged ($15 soft / $19 hard).
@@ -528,13 +542,13 @@ enabled = true
 model = "gemini-4-carbon"
 entry_thinking = "high"              # M15 scans + triggered checks (t244u)
 exit_thinking = "low"                # CB-RUNNER model exits (currently paused)
-symbols = ["XAUUSD", "EURUSD", "US100", "BTCUSD"]
-tradeable_symbols = ["XAUUSD", "EURUSD", "US100"]   # books may open; BTCUSD is scan/what-if only
+symbols = ["XAUUSD", "EURUSD", "US100", "XAGUSD", "BTCUSD"]
+tradeable_symbols = ["XAUUSD", "EURUSD", "US100", "XAGUSD"]   # Lucid books may open these; BTCUSD is OTHER-VENUE
 entry_window_utc = ["08:00", "20:30"]
 flat_utc = "21:45"
 scan = "m15_close_plus_20s"
 scan_offset_seconds = 20
-timeout_seconds = 150                # raised for thinking=high + BTCUSD 4th chart; one attempt, no fallback
+timeout_seconds = 180                # raised for thinking=high + XAGUSD/BTCUSD charts; one attempt, no fallback
 min_confidence = 0.75
 max_chase_atr = 0.5
 start_balance = 100000.0
@@ -555,7 +569,7 @@ risk_usd = 900
 atr_mult = 1.0
 min_contracts = 1
 skip_if_one_contract_risk_gt = 1200
-caps = { US100 = 1, XAUUSD = 1, EURUSD = 4 }
+caps = { US100 = 1, XAUUSD = 1, XAGUSD = 1, EURUSD = 4 }
 aggregate_max = 6
 
 # BTCUSD has no Lucid contract. What-if only: 1 unit = 1 BTC, $1 per $1, tick 5 (same as the public site scalp tick).
@@ -626,7 +640,7 @@ reset_reason = "DS-FLASH fresh $100k paper book"
 soft_spend_usd = 5.0
 check_seconds = 18
 prompt_version = "bracket-v1"
-symbols = ["XAUUSD", "EURUSD", "US100"]
+symbols = ["XAUUSD", "EURUSD", "US100", "XAGUSD", "BTCUSD"]
 scan = "m15_close_plus_20s"
 fill_max_adverse_atr = 0.3
 
@@ -640,7 +654,7 @@ fill_max_adverse_atr = 0.3
 [m15_scan]
 enabled = true
 offset_seconds = 20
-symbols = ["XAUUSD", "EURUSD", "GBPUSD", "US100", "BTCUSD"]
+symbols = ["XAUUSD", "EURUSD", "GBPUSD", "US100", "XAGUSD", "BTCUSD"]
 
 # ---------------------------------------------------------------------------------------------------------------
 # C-OPUS-B (signals/opus_b.py). PAPER ONLY. Same model as C-OPUS (claude-opus-5-5) but a fresh $100k
@@ -660,7 +674,7 @@ start_balance = 100000.0
 reset_token = "c-opus-b-v1"
 reset_reason = "C-OPUS-B fresh $100k paper book (bracket-v1, high effort)"
 fill_max_adverse_atr = 0.3
-symbols = ["XAUUSD", "EURUSD", "US100"]
+symbols = ["XAUUSD", "EURUSD", "US100", "XAGUSD", "BTCUSD"]
 prompt_version = "bracket-v1"
 check_seconds = 18
 
@@ -668,3 +682,25 @@ check_seconds = 18
 enabled = true
 model = "claude-opus-5-5"
 effort = "high"
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# OTHER-VENUE (signals/other_venue.py). PAPER ONLY. Parallel $100k CFD/spot sub-account on every model's book
+# for symbols that are not Lucid products. BTCUSD trades here (no longer site-only/what-if). Silver stays on
+# Lucid as SI (fees file 2026-11-09 lists SI in the GC/SI/HG/PL group at $2.30/side). Sizing: ~$900 risk per
+# 1 ATR stop, fees 0.05% of notional per side, 1-tick-equivalent slippage. Same uniform 1 ATR / 1 ATR / 90-min
+# bracket. Panel shows an "Other venue" line per model.
+[other_venue]
+enabled = true
+start_balance = 100000.0
+risk_usd = 900.0
+fee_rate = 0.0005
+slippage_ticks = 1
+symbols = ["BTCUSD"]
+books = ["MAIN", "1-strike", "nostop", "bracket", "CB-BRACKET", "CB-RUNNER", "C-OPUS", "C-SONNET", "C-OPUS-B", "DS-FLASH"]
+
+[other_venue.specs.BTCUSD]
+tick = 5.0
+point_value = 1.0
+digits = 2
+qty_step = 0.001

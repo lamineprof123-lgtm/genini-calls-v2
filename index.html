@@ -194,6 +194,10 @@
   .lu-t .pos { color: var(--buy); } .lu-t .neg { color: var(--sell); }
   .lu-wrap { overflow-x: auto; }
   .lu-note { margin-top: 12px; font-size: 11px; color: var(--faint); line-height: 1.5; }
+  .lucid .who { display: inline-block; font-size: 9px; letter-spacing: .14em; padding: 2px 7px; border-radius: 999px;
+                border: 1px solid var(--line); color: var(--fg); margin-right: 8px; }
+  .who.g { background: rgba(66,133,244,.16); } .who.o { background: rgba(217,119,87,.20); } .who.s { background: rgba(204,153,102,.16); }
+  .cmp-t td:first-child { font-family: var(--sans); }
 </style>
 </head>
 <body>
@@ -245,7 +249,7 @@
 </main>
 
 <section class="lucid" id="lucid" hidden aria-label="Lucid paper account">
-  <h2><span>Lucid paper account</span><small id="luUpd"></small></h2>
+  <h2><span><span class="who g">Gemini</span>Lucid paper account</span><small id="luUpd"></small></h2>
   <div class="lu-grid" id="luGrid"></div>
   <h3>Open positions</h3>
   <div class="lu-wrap" id="luPos"></div>
@@ -253,6 +257,14 @@
   <div class="lu-wrap" id="luTrades"></div>
   <div class="lu-note" id="luNote"></div>
 </section>
+
+<section class="lucid" id="cmp" hidden aria-label="Gemini vs Claude comparison">
+  <h2><span>Gemini vs Claude Opus vs Claude Sonnet</span><small id="cmpUpd"></small></h2>
+  <div class="lu-wrap" id="cmpT"></div>
+  <div class="lu-note">Paper sims only. R per signal = average R of every BUY/SELL signal played 1 contract under the
+    server rules (what-if book); Gemini trades without a fixed stop, so it has no R.</div>
+</section>
+<div id="clSims"></div>
 
 <script>
 (() => {
@@ -402,7 +414,7 @@
     return fmtHeld((Date.now() - a) / 1000);
   };
   const tickOpenHeld = () => {
-    document.querySelectorAll('#luPos [data-entry-time]').forEach(el => {
+    document.querySelectorAll('#luPos [data-entry-time], #clSims [data-entry-time]').forEach(el => {
       el.textContent = heldSince(el.getAttribute('data-entry-time'));
     });
   };
@@ -550,7 +562,84 @@
       (r.at ? ` · fresh $${Number(a.start_balance).toLocaleString('en-US')} account since ${dayhm(r.at)} ${city()}` +
        (r.reason ? ` (${r.reason})` : '') : '');
     $('lucid').hidden = false;
+    renderCmp();
   }
+
+  // ---- Claude paper sims (claude.json; paper trading only, separate $100k accounts) ----
+  let claude = null;
+  const rr = v => v == null ? '—' : (v > 0 ? '+' : (v < 0 ? '−' : '')) + Math.abs(Number(v)).toFixed(2) + 'R';
+  const whoCls = id => /OPUS/.test(id) ? 'o' : 's';
+  function renderCmp() {
+    const rows = [];
+    if (lucid && lucid.account) {
+      const a = lucid.account;
+      rows.push({ who: 'Gemini', c: 'g', bal: a.balance, net: a.realized_pnl_since_reset, w: a.wins, l: a.losses, rps: null, n: a.trades_since_reset });
+    }
+    for (const S of (claude && claude.sims) || []) {
+      const a = S.account || {}, wi = (S.books || {}).whatif || {};
+      rows.push({ who: S.label, c: whoCls(S.id), bal: a.balance, net: a.realized_pnl, w: a.wins, l: a.losses,
+                  rps: wi.r_avg, n: a.trades, sig: wi.n, wait: !claude.key_present });
+    }
+    if (!rows.length) return;
+    $('cmpT').innerHTML = `<table class="lu-t cmp-t"><tr><th>Sim</th><th>Balance</th><th>Net</th><th>Trades</th><th>W/L</th><th>R / signal</th></tr>` +
+      rows.map(r => `<tr><td><span class="who ${r.c}">${esc(r.who)}</span>${r.wait ? '<small>waiting for key</small>' : ''}</td>
+        <td>${usd(r.bal)}</td><td class="${cls(r.net)}">${usd(r.net, true)}</td><td>${r.n ?? 0}</td><td>${r.w ?? 0}/${r.l ?? 0}</td>
+        <td class="${cls(r.rps)}">${r.c === 'g' ? 'n/a' : rr(r.rps) + (r.sig ? ` <small>(${r.sig})</small>` : '')}</td></tr>`).join('') + '</table>';
+    const u = [lucid && lucid.updated_at, claude && claude.updated_at].filter(Boolean).sort().pop();
+    $('cmpUpd').textContent = u ? `updated ${hm(u)} ${city()}` : '';
+    $('cmp').hidden = false;
+  }
+  function renderClaude() {
+    const C = claude; if (!C || !C.sims) return;
+    const cell = (k, v, c) => `<div><div class="lu-k">${k}</div><div class="lu-v ${c || ''}">${v}</div></div>`;
+    $('clSims').innerHTML = C.sims.map(S => {
+      const a = S.account || {}, P = S.open_positions || [], T = S.recent_trades || [], le = S.last_entry_call || {};
+      const ops = S.ops || {}, oe = ops.entry || {}, ox = ops.exit || {};
+      const status = !C.key_present ? 'waiting for key' : (a.blown ? `account breached ${dayhm(a.blown)}` :
+        (a.day_flattened ? 'flat for the day (daily loss limit)' : 'running'));
+      const grid = [
+        cell('Balance', usd(a.balance)), cell('Equity', usd(a.equity)),
+        cell('Realized P&amp;L', usd(a.realized_pnl, true), cls(a.realized_pnl)),
+        cell('Open P&amp;L', usd(a.open_pnl, true), cls(a.open_pnl)),
+        cell('Trades', `${a.trades || 0}${a.trades ? ` <small>(${a.wins}W/${a.losses}L)</small>` : ''}`),
+        cell('R total', rr(a.r_total), cls(a.r_total)),
+        cell('MLL floor', usd(a.mll_floor)), cell('Room to MLL', usd(a.mll_room), a.mll_room < 1000 ? 'neg' : ''),
+      ].join('');
+      const pos = P.length ? `<table class="lu-t"><tr><th>Symbol</th><th>Size</th><th>Side</th><th>Opened</th><th>Held</th><th>Entry</th>
+        <th>Stop</th><th>Floor</th><th>Phase</th><th>Open P&amp;L</th></tr>${P.map(p => `<tr><td>${esc(p.symbol)}</td>
+        <td>${p.qty} ${esc(p.contract)}</td><td>${esc(p.side)}</td><td>${dayhm(p.entry_time)}</td>
+        <td data-entry-time="${esc(p.entry_time)}">${esc(heldSince(p.entry_time))}</td>
+        <td>${px(p.entry, p.entry < 10 ? 5 : 2)}</td><td>${px(p.stop, p.stop < 10 ? 5 : 2)}</td>
+        <td>${p.floor != null ? px(p.floor, p.floor < 10 ? 5 : 2) : '—'}</td><td>${esc(p.phase)}${p.server_only ? ' <small>server</small>' : ''}</td>
+        <td class="${cls(p.unrealized)}">${usd(p.unrealized, true)}</td></tr>`).join('')}</table>`
+        : '<div class="lu-note">None</div>';
+      const trs = T.length ? `<table class="lu-t"><tr><th>Closed</th><th>Opened</th><th>Symbol</th><th>Size</th><th>Side</th>
+        <th>Held</th><th>Exit</th><th>R</th><th>Net</th></tr>${T.map(t => `<tr><td>${dayhm(t.t_exit)}</td><td>${dayhm(t.entry_time)}</td>
+        <td>${esc(t.symbol)}</td><td>${t.qty} ${esc(t.contract)}</td><td>${esc(t.side)}</td><td>${esc(t.held || heldOf(t))}</td>
+        <td>${esc(t.reason)}</td><td class="${cls(t.R)}">${rr(t.R)}</td><td class="${cls(t.net)}">${usd(t.net, true)}</td></tr>`).join('')}</table>`
+        : '<div class="lu-note">No closed trades yet.</div>';
+      const sigs = (le.signals || []).map(g => `${esc(g.symbol)} ${esc(g.action)}${g.action !== 'HOLD' ? ` ${esc(g.setup_type)} s${g.score}` : ''}` +
+        (g.decision && g.decision !== 'HOLD' && g.decision !== g.action ? ` (${esc(g.decision)})` : '')).join(' · ');
+      const lastCall = le.t ? `Last entry call ${dayhm(le.t)} ${city()}${le.ok === false ? ` failed: ${esc(le.error)}` :
+        ` · ${(le.latency_ms / 1000).toFixed(1)} s · $${Number(le.cost_usd || 0).toFixed(4)}`}${sigs ? ` · ${sigs}` : ''}` : 'No entry call yet.';
+      const opsTxt = `Entry ${esc(S.entry_model)}: ${oe.calls || 0} calls, p50 ${oe.latency_p50_ms != null ? (oe.latency_p50_ms / 1000).toFixed(1) + ' s' : '—'}, ` +
+        `$${Number(oe.cost_usd || 0).toFixed(2)} · Exit ${esc(S.exit_model)}: ${ox.calls || 0} calls, p50 ${ox.latency_p50_ms != null ? (ox.latency_p50_ms / 1000).toFixed(1) + ' s' : '—'}, ` +
+        `$${Number(ox.cost_usd || 0).toFixed(2)}`;
+      return `<section class="lucid" aria-label="${esc(S.label)} paper sim">
+        <h2><span><span class="who ${whoCls(S.id)}">${esc(S.label)}</span>paper sim · ${esc(status)}</span><small>${C.updated_at ? `updated ${hm(C.updated_at)} ${city()}` : ''}</small></h2>
+        <div class="lu-grid">${grid}</div><h3>Open positions</h3><div class="lu-wrap">${pos}</div>
+        <h3>Recent trades</h3><div class="lu-wrap">${trs}</div>
+        <div class="lu-note">${lastCall}<br>${opsTxt}<br>Paper trading only · fresh $${Number(a.start_balance || 100000).toLocaleString('en-US')} account` +
+        `${C.reset && C.reset.at ? ` since ${dayhm(C.reset.at)} ${city()}` : ''} · ${esc(C.rules || '')}</div></section>`;
+    }).join('');
+    renderCmp();
+  }
+  async function pollClaude() {
+    const j = await getJSON('claude.json');
+    if (j && !(claude && Date.parse(j.updated_at) < Date.parse(claude.updated_at))) { claude = j; renderClaude(); }
+  }
+  pollClaude();
+  setInterval(pollClaude, 15000);
   async function pollLucid() {
     const j = await getJSON('lucid.json');
     if (j && !(lucid && Date.parse(j.updated_at) < Date.parse(lucid.updated_at))) { lucid = j; renderLucid(); }

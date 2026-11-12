@@ -162,7 +162,8 @@ async def run_once(cfg: dict, dry_run: bool = False, force: bool = True, model: 
         if busy:
             write_in_position_overlay(cfg, busy)
         return {"skipped": True, "skipped_reason": THROTTLE_SKIP, "last_bars": last_bars,
-                "scan_interval_minutes": interval, "session_blocked": True, "record": record}
+                "scan_interval_minutes": interval, "session_blocked": True, "record": record,
+                "payloads": payloads}
 
     if not entry_payloads:
         log.info("all eligible symbols in a Lucid position - skipping Gemini (%s)", ALL_IN_POS_SKIP)
@@ -176,7 +177,8 @@ async def run_once(cfg: dict, dry_run: bool = False, force: bool = True, model: 
         write_in_position_overlay(cfg, busy)
         _atomic_write(seen_path, last_bars)
         return {"skipped": True, "skipped_reason": ALL_IN_POS_SKIP, "last_bars": last_bars,
-                "scan_interval_minutes": interval, "session_blocked": blocked, "record": record}
+                "scan_interval_minutes": interval, "session_blocked": blocked, "record": record,
+                "payloads": payloads}
 
     # 3. render only the charts that will go to Gemini (v2: warm Playwright pool + JPEG)
     t_render0 = time.monotonic()
@@ -292,7 +294,7 @@ async def run_once(cfg: dict, dry_run: bool = False, force: bool = True, model: 
         log.info("  %-7s %-4s conf=%s rr=%s %s", v["symbol"], v["action"], v["confidence"], v["rr_local"],
                  "; ".join(v["reasons"]))
     return {"skipped": False, "run_dir": record["run_dir"], "record": record,
-            "scan_interval_minutes": interval, "session_blocked": blocked}
+            "scan_interval_minutes": interval, "session_blocked": blocked, "payloads": payloads}
 
 
 def _throttle_skip_record(cfg: dict, payloads: list[dict], data_errors: dict,

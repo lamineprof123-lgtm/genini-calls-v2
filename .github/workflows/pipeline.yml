@@ -140,6 +140,7 @@ jobs:
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           FIRMTAPE_API_KEY: ${{ secrets.FIRMTAPE_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           GEMINI_ENTRY_MODEL: ${{ vars.GEMINI_ENTRY_MODEL || 'gemini-3.8-flash' }}
           GEMINI_EXIT_MODEL: ${{ vars.GEMINI_EXIT_MODEL || 'gemini-3.8-flash' }}
           GITHUB_TOKEN: ${{ github.token }}

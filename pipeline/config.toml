@@ -378,3 +378,57 @@ walls_per_side = 2
 chart_margin_pct = 15           # draw GEX lines only within the visible candle range +/- this % of its height
 # US100 live price (NQ + rolling basis) is set by [live_price.firmtape] / signals/firmtape_live.py; GEX reuses its
 # basis and its FirmTape response (one shared request per cycle).
+
+# ---------------------------------------------------------------------------------------------------------------
+# CLAUDE PARALLEL PAPER SIMS (signals/claude_sim.py, claude_rules.py, claude_client.py). PAPER ONLY.
+# Per templates/claude/claude_wiring_handoff.md: two $100k Lucid-style accounts identical except the entry model.
+#   C-OPUS entries claude-opus-5-5, C-SONNET entries claude-sonnet-5-5; both exit with claude-haiku-5-5.
+# Same charts + numbers as Gemini; one batched entry call per model per M15 close; exit call every 18 s per open
+# position per sim. Server rules are BINDING here (hard stop, $900 sizing, BE / profit-lock floors, 45-min time stop,
+# daily -$1,500, trailing $300 buffer, re-entry lock, one entry per cycle). The Gemini sim is unchanged (control).
+# Key: env ANTHROPIC_API_KEY only (repo secret). Missing key -> sims idle, panel shows "waiting for key".
+# Env overrides: CLAUDE_ENTRY_MODELS (comma list), CLAUDE_EXIT_MODEL.
+[claude]
+enabled = true
+entry_models = ["claude-opus-5-5", "claude-sonnet-5-5"]   # one sim per entry model
+exit_model   = "claude-haiku-5-5"
+entry_effort = "medium"
+exit_effort  = "low"
+timeout_seconds_entry = 60
+timeout_seconds_exit  = 5
+max_attempts = 2
+entry_max_tokens = 8000
+exit_max_tokens = 200
+check_seconds = 18
+start_balance = 100000.0
+reset_token = "claude-v2-1"       # change to start both Claude accounts fresh (old state archived)
+skip_blocked_sessions = true      # no entry call when all 4 symbols are in ASIAN_SESSION_CHOP / DEADZONE (prompt HOLDs)
+m5_chart = false                  # false = documented fallback: M15 exit chart, prompt line "M5 candles" -> "M15 candles"
+recent_trades = 15
+
+[claude.sims]
+claude-opus-5-5   = ["C-OPUS", "Claude Opus"]
+claude-sonnet-5-5 = ["C-SONNET", "Claude Sonnet"]
+
+[claude.rules]                    # handoff section 3 (binding)
+stop_min_atr = 0.6
+stop_max_atr = 1.5
+risk_usd = 900.0
+account_max_contracts = 6
+fx_group_max = 4                  # 6E + 6B on the same side share 4 contracts
+be_trigger_atr = 0.5
+lock1_trigger_atr = 1.0
+lock1_pct = 0.50
+lock2_trigger_atr = 1.5
+lock2_pct = 0.60
+time_stop_minutes = 45
+time_stop_mfe_atr = 0.25
+daily_loss_usd = 1500.0
+trail_buffer_usd = 300.0
+loss_lock_minutes = 30
+exit_fail_limit = 3
+stale_price_seconds = 60
+max_chase_atr = 0.5
+min_score = 5
+slippage_ticks = 1
+max_qty = { NQ = 1, GC = 1, 6E = 4, 6B = 4 }

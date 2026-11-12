@@ -21,7 +21,7 @@ from .pipeline import next_boundary, run_once
 from .site import write_status
 
 log = logging.getLogger("signals.gha")
-SITE_JSON = ("status.json", "latest_signal.json", "history.json", "lucid.json")
+SITE_JSON = ("status.json", "latest_signal.json", "history.json", "lucid.json", "claude.json")
 DATA_JSON = ("books.json",)  # committed to the data branch only (not deployed to Pages)
 CYCLE_LOG_KEEP_DAYS = 14
 
@@ -52,6 +52,8 @@ class GhaLoop:
         # Serialises data-dir writes from the exit-manager task with git add/commit/push (never held long).
         self.io_lock = asyncio.Lock()
         self.exit_task: asyncio.Task | None = None
+        self.claude = None                   # Claude parallel paper sims (signals/claude_sim.py)
+        self.claude_exit_task: asyncio.Task | None = None
         for sub in ("state", "logs"):
             (data / sub).mkdir(parents=True, exist_ok=True)
 
@@ -188,6 +190,7 @@ class GhaLoop:
         reason = "max-runtime"
         await self._verify_models_once()
         self.start_exit_manager()
+        self.start_claude()
         while True:
             # The job still wakes every `self.interval` (2 min). The site countdown uses
             # scan_interval (2 active / 15 during ASIAN / DEADZONE) so it matches the next Gemini call.
@@ -220,6 +223,7 @@ class GhaLoop:
                              "last_cycle_finished_at": datetime.now(timezone.utc).isoformat()}
             nxt2 = next_boundary(datetime.now(timezone.utc), self.scan_interval, self.offset)
             self.status("running", nxt2)
+            self.schedule_claude(res)
             deploy_task = asyncio.create_task(self.deploy())
             if not self.dry_run:
                 lres = await lucid_step(self.cfg, (res or {}).get("record"))
@@ -302,8 +306,41 @@ class GhaLoop:
         with contextlib.suppress(BaseException):
             await asyncio.wait_for(t, 30)
 
+    def start_claude(self) -> None:
+        """Claude parallel paper sims: own entry task per M15 close + own 18 s exit loop. Fully isolated: any
+        error is logged and swallowed, a missing ANTHROPIC_API_KEY only shows 'waiting for key' on the panel."""
+        if self.dry_run or not (self.cfg.get("claude") or {}).get("enabled", False):
+            return
+        try:
+            from .claude_sim import ClaudeEngine, run_claude_exit_loop
+            self.claude = ClaudeEngine(self.cfg, io_lock=self.io_lock)
+            self.claude_exit_task = asyncio.create_task(run_claude_exit_loop(self.claude), name="claude-exit")
+            log.info("claude sims on: %s, exits %s, key %s", list(self.claude.sims),
+                     self.claude.cc["exit_model"], "present" if self.claude._key() else "MISSING (waiting)")
+        except Exception:
+            log.exception("claude sims failed to start (Gemini loop unaffected)")
+            self.claude = None
+
+    def schedule_claude(self, res: dict | None) -> None:
+        if self.claude is None:
+            return
+        try:
+            self.claude.schedule_entry((res or {}).get("payloads"))
+        except Exception:
+            log.exception("claude schedule failed (Gemini loop unaffected)")
+
+    async def stop_claude(self) -> None:
+        for t in (self.claude_exit_task, getattr(self.claude, "entry_task", None)):
+            if t is None:
+                continue
+            t.cancel()
+            with contextlib.suppress(BaseException):
+                await asyncio.wait_for(t, 30)
+        self.claude_exit_task = None
+
     async def shutdown(self, reason: str) -> None:
         await self.stop_exit_manager()
+        await self.stop_claude()
         succ = L.read(self.data, L.SUCC)
         handed = succ.get("run_id") if (reason == "handoff" and succ) else None
         if reason == "stop-file":
@@ -341,6 +378,7 @@ async def run_gha_loop(cfg: dict, data: Path, run_id: str, role: str, **kw) -> s
         return await loop.run()
     except LostLock as e:
         await loop.stop_exit_manager()
+        await loop.stop_claude()
         log.error("lost the loop lock: %s -> exiting without further writes", e)
         return "lost-lock"
     finally:

@@ -1,7 +1,7 @@
 {
   "version": 1,
   "created_at": "2026-11-12T10:14:47.081605+00:00",
-  "last_processed": "2026-11-12T11:42:00+00:00",
+  "last_processed": "2026-11-12T11:44:00+00:00",
   "account": {
     "no": 1,
     "phase": "eval",
@@ -182,14 +182,171 @@
         "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-12/cycles/153420.json/GBPUSD.png"
       },
       "mfe": 0.0,
-      "mae": 0.000520000000000076,
+      "mae": 0.0006099999999999994,
       "mfe_min": 0.0,
       "time_cut_deadline": null,
       "time_cut_candles": 0,
       "time_cut_rule": "none: exit = Gemini CLOSE only (1-strike); no stop, no target, no max hold, no 16:45 flat; DLL/MLL/breaker log-only"
     }
   ],
-  "pending": [],
+  "pending": [
+    {
+      "symbol": "XAUUSD",
+      "side": -1,
+      "created": "2026-11-12T11:44:33.395740+00:00",
+      "fill_after": "2026-11-12T11:45:00+00:00",
+      "reserved_risk": 0.0,
+      "planned": {
+        "contract": "GC",
+        "qty": 2,
+        "risk_usd": null,
+        "tdist": null,
+        "target_source": "none (gemini_only)"
+      },
+      "expires": "2026-11-12T11:55:00+00:00",
+      "atr": 7.397,
+      "scalp": {
+        "action": "SELL",
+        "side": -1,
+        "entry": 3944.84,
+        "stop_loss": 3949.38,
+        "take_profit": 3941.04,
+        "sdist": 4.539850000000115,
+        "tdist": 3.8,
+        "stop_source": "structure",
+        "target_source": "extended:aim_net",
+        "rr": 0.837,
+        "structure_stop": 3949.3798500000003,
+        "atr_stop": 3950.7576000000004,
+        "fixed_tp": 3943.59,
+        "structure_tp": 3924.44794,
+        "structure_label": "Session Low",
+        "candle": {
+          "high": 3949.01,
+          "low": 3946.57
+        },
+        "levels": [
+          {
+            "price": 3968.55,
+            "label": "S/R"
+          },
+          {
+            "price": 3977.99,
+            "label": "Prev Low"
+          },
+          {
+            "price": 4000.33,
+            "label": "Session High"
+          },
+          {
+            "price": 3924.3,
+            "label": "Session Low"
+          }
+        ],
+        "vp": {
+          "poc": 3978.28,
+          "vah": 4000.33,
+          "val": 3963.84
+        },
+        "target_scalp": 3943.59,
+        "lucid_plan": {
+          "contract": "GC",
+          "qty": 2,
+          "tdist": 3.8,
+          "target_usd": 750.8,
+          "risk_usd": 920.0,
+          "target_source": "extended:aim_net",
+          "sizing": "fixed target 1.25 cannot reach $381 net within $1500 risk; extended:aim_net: 2 GC (fewest that fit) target 3.8 -> $751 net, risk $920"
+        }
+      },
+      "session": "LONDON_SESSION",
+      "telemetry": {
+        "symbol": "XAUUSD",
+        "session": "LONDON_SESSION",
+        "last_close": 3948.28,
+        "atr": 7.397,
+        "vwap": 3970.67,
+        "ema20": 3952.01,
+        "ema50": 3966.7,
+        "price_vs_vwap": {
+          "side": "below",
+          "dist_atr": -3.0269
+        },
+        "price_vs_ema50": {
+          "side": "below",
+          "dist_atr": -2.4902
+        },
+        "vwap_aligned_with_side": true,
+        "ema50_aligned_with_side": true,
+        "poc": 3978.28,
+        "vah": 4000.33,
+        "val": 3963.84,
+        "price_vs_value_area": "below_val",
+        "dist_to_poc_atr": -4.0557,
+        "cvd": -3.27,
+        "cvd_label": "BEARISH",
+        "cvd_slope": 0.28,
+        "cvd_agrees_with_side": true,
+        "rvol": 0.593,
+        "rvol_spike": false,
+        "rvol_bars_since_spike": 41,
+        "atr_band_z": -0.5043,
+        "atr_upper": 3966.81,
+        "atr_lower": 3937.22,
+        "nearest_sr": {
+          "above": {
+            "price": 3968.55,
+            "label": "S/R",
+            "dist_atr": 2.7403
+          },
+          "below": {
+            "price": 3924.3,
+            "label": "Session Low",
+            "dist_atr": 3.2419
+          }
+        },
+        "gemini": {
+          "action": "SELL",
+          "confidence": 0.72,
+          "confidence_band": "0.7-0.8",
+          "rationale": "Price is trading below VAL (3963.84) and below POC (3978.28), confirming value area displacement to the downside. Cumulative Delta is BEARISH (-3.27) with a slight positive slope. We are in LONDON_SESSION. Price remains strongly bearish below both VWAP (3970.67) and EMA50 (3966.70). The signal candle consolidated near the EMA20 baseline and the forming bar is breaking down towards the lower ATR band (3937.22). RVOL remains normal at 0.593 without high-volume exhaustion, keeping continuation valid toward Session Low (3924.30). GEX is null.",
+          "model": "gemini-3.8-flash",
+          "model_action": "SELL"
+        },
+        "scalp": {
+          "stop_basis": "structure",
+          "target_basis": "extended:aim_net",
+          "tdist": 3.8,
+          "sdist": 4.539850000000115,
+          "structure_label": "Session Low"
+        },
+        "planned": {
+          "tdist": 3.8,
+          "sdist": 4.539850000000115,
+          "qty": null,
+          "contract": null,
+          "target_usd_net": null,
+          "risk_usd": null
+        },
+        "run_at_utc": "2026-11-12T11:44:20.219157+00:00",
+        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-12/cycles/154420.json/XAUUSD.png"
+      },
+      "gemini": {
+        "action": "SELL",
+        "entry": 3944.84,
+        "stop_loss": 3949.38,
+        "take_profit": 3941.04,
+        "confidence": 0.72,
+        "rr": 0.837,
+        "shown_on_site": true,
+        "basis": "site signal",
+        "run_at_utc": "2026-11-12T11:44:20.219157+00:00",
+        "session": "LONDON_SESSION",
+        "rationale": "Price is trading below VAL (3963.84) and below POC (3978.28), confirming value area displacement to the downside. Cumulative Delta is BEARISH (-3.27) with a slight positive slope. We are in LONDON_SESSION. Price remains strongly bearish below both VWAP (3970.67) and EMA50 (3966.70). The signal candle consolidated near the EMA20 baseline and the forming bar is breaking down towards the lower ATR band (3937.22). RVOL remains normal at 0.593 without high-volume exhaustion, keeping continuation valid toward Session Low (3924.30). GEX is null.",
+        "model": "gemini-3.8-flash"
+      }
+    }
+  ],
   "next_pos_id": 9,
   "day": {
     "id": "2026-11-12",
@@ -203,7 +360,7 @@
     "US100": 28136.164,
     "XAUUSD": 3946.365,
     "EURUSD": 1.10904,
-    "GBPUSD": 1.32695
+    "GBPUSD": 1.32699
   },
   "history": [],
   "ledger": {
@@ -233,7 +390,7 @@
     "commissions": 70.4,
     "net_trade_pnl": -3730.8,
     "skipped_signals": 1,
-    "accepted_signals": 9
+    "accepted_signals": 10
   },
   "reset_token": "2026-11-12-profit-lock",
   "reset_at": "2026-11-12T10:14:47.081605+00:00",

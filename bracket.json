@@ -1,14 +1,14 @@
 {
-  "updated_at": "2026-11-12T14:50:35.508527+00:00",
+  "updated_at": "2026-11-12T14:54:37.836761+00:00",
   "paper_only": true,
   "book": "bracket",
   "label": "Bracket shadow (conf>=0.75, 1 ATR / 1 ATR)",
   "account": {
     "start_balance": 100000.0,
-    "balance": 97032.2,
-    "equity": 97032.2,
+    "balance": 97029.9,
+    "equity": 97153.9,
     "net_pnl": -2967.8,
-    "open_pnl": 0.0,
+    "open_pnl": 124.0,
     "trades": 15,
     "wins": 6,
     "losses": 9,
@@ -17,16 +17,16 @@
     "avg_loss": -1024.16,
     "max_drawdown": -4167.4,
     "peak_balance": 101199.6,
-    "commissions": 95.3,
+    "commissions": 97.6,
     "exit_reasons": {
       "stop_1atr": 9,
       "target_1atr": 6
     },
     "stopped": 9,
-    "open_positions": 0,
+    "open_positions": 1,
     "pending": 0,
-    "signals_seen": 60,
-    "signals_taken": 15,
+    "signals_seen": 61,
+    "signals_taken": 16,
     "skips": {
       "symbol": 28,
       "held_in_bracket": 9,
@@ -35,10 +35,28 @@
     "missed_scans_main_held": {
       "XAUUSD": 9,
       "EURUSD": 8,
-      "US100": 3
+      "US100": 5
     }
   },
-  "open_positions": [],
+  "open_positions": [
+    {
+      "id": 16,
+      "symbol": "XAUUSD",
+      "contract": "GC",
+      "qty": 1,
+      "entry": 3881.6,
+      "entry_time": "2026-11-12T14:52:36.612061+00:00",
+      "stop": 3893.6,
+      "target": 3869.6,
+      "deadline": "2026-11-12T16:22:36.612061+00:00",
+      "confidence": 0.82,
+      "risk_usd": 1204.6,
+      "target_usd": 1195.4,
+      "side": "SHORT",
+      "last_price": 3880.36,
+      "unrealized": 124.0
+    }
+  ],
   "recent_trades": [
     {
       "event": "close",

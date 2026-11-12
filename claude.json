@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-12T16:16:36.732693+00:00",
+  "updated_at": "2026-11-12T16:18:34.914745+00:00",
   "paper_only": true,
   "key_present": true,
   "status": "running",
@@ -24,21 +24,41 @@
       "account": {
         "start_balance": 100000.0,
         "balance": 99449.4,
-        "equity": 99449.4,
+        "equity": 99454.4,
         "realized_pnl": -550.6,
-        "open_pnl": 0.0,
+        "open_pnl": 5.0,
         "trades": 6,
         "wins": 2,
         "losses": 4,
         "r_total": -1.454,
         "r_per_trade": -0.242,
         "mll_floor": 97000.0,
-        "mll_room": 2449.4,
+        "mll_room": 2454.4,
         "day_realized": -550.6,
         "day_flattened": false,
         "blown": null
       },
-      "open_positions": [],
+      "open_positions": [
+        {
+          "symbol": "EURUSD",
+          "contract": "6E",
+          "qty": 4,
+          "side": "SHORT",
+          "entry_time": "2026-11-12T16:16:42.089492+00:00",
+          "entry": 1.1063,
+          "stop": 1.107,
+          "floor": null,
+          "floor_label": null,
+          "last": 1.10629,
+          "unrealized": 5.0,
+          "risk_usd": 369.2,
+          "phase": "A",
+          "setup_type": "trend",
+          "score": 5,
+          "server_only": false,
+          "target": 1.1054
+        }
+      ],
       "recent_trades": [
         {
           "t_exit": "2026-11-12T15:26:00+00:00",
@@ -181,25 +201,25 @@
         }
       },
       "signals": {
-        "rows": 64,
-        "buy_sell": 10,
-        "gated": 10,
-        "opened": 6
+        "rows": 68,
+        "buy_sell": 11,
+        "gated": 11,
+        "opened": 7
       },
       "ops": {
         "entry": {
-          "calls": 16,
+          "calls": 17,
           "failed": 0,
-          "latency_p50_ms": 24747.5,
-          "latency_p95_ms": 36292.0,
-          "cost_usd": 1.5495,
+          "latency_p50_ms": 23853.0,
+          "latency_p95_ms": 36211.6,
+          "cost_usd": 1.6398,
           "by_utc_day": {
             "2026-11-12": {
-              "calls": 16,
-              "cost_usd": 1.5495,
-              "input_tokens": 189424,
-              "output_tokens": 39589,
-              "thinking_tokens": 20640
+              "calls": 17,
+              "cost_usd": 1.6399,
+              "input_tokens": 201242,
+              "output_tokens": 41743,
+              "thinking_tokens": 21645
             }
           }
         },
@@ -230,11 +250,11 @@
       },
       "exit_prompt_version": "v3",
       "last_entry_call": {
-        "bar": "2026-11-12T15:45:00+00:00",
-        "t": "2026-11-12T16:00:20.006413+00:00",
+        "bar": "2026-11-12T16:00:00+00:00",
+        "t": "2026-11-12T16:15:20.003568+00:00",
         "ok": true,
-        "latency_ms": 18648,
-        "cost_usd": 0.086352,
+        "latency_ms": 19308,
+        "cost_usd": 0.090352,
         "error": null,
         "signals": [
           {
@@ -247,11 +267,11 @@
           },
           {
             "symbol": "EURUSD",
-            "action": "HOLD",
-            "setup_type": "none",
-            "score": 0,
-            "confidence": 0.0,
-            "decision": "HOLD"
+            "action": "SELL",
+            "setup_type": "trend",
+            "score": 5,
+            "confidence": 0.52,
+            "decision": "OPENED"
           },
           {
             "symbol": "GBPUSD",
@@ -347,24 +367,24 @@
         }
       },
       "signals": {
-        "rows": 64,
+        "rows": 68,
         "buy_sell": 1,
         "gated": 1,
         "opened": 1
       },
       "ops": {
         "entry": {
-          "calls": 16,
+          "calls": 17,
           "failed": 0,
-          "latency_p50_ms": 8734.0,
-          "latency_p95_ms": 14432.2,
-          "cost_usd": 0.5789,
+          "latency_p50_ms": 8695.0,
+          "latency_p95_ms": 13895.2,
+          "cost_usd": 0.6137,
           "by_utc_day": {
             "2026-11-12": {
-              "calls": 16,
-              "cost_usd": 0.5791,
-              "input_tokens": 189424,
-              "output_tokens": 20009,
+              "calls": 17,
+              "cost_usd": 0.6139,
+              "input_tokens": 201242,
+              "output_tokens": 21123,
               "thinking_tokens": 1558
             }
           }
@@ -396,11 +416,11 @@
       },
       "exit_prompt_version": "v3",
       "last_entry_call": {
-        "bar": "2026-11-12T15:45:00+00:00",
-        "t": "2026-11-12T16:00:20.006413+00:00",
+        "bar": "2026-11-12T16:00:00+00:00",
+        "t": "2026-11-12T16:15:20.003568+00:00",
         "ok": true,
-        "latency_ms": 10668,
-        "cost_usd": 0.035686,
+        "latency_ms": 8225,
+        "cost_usd": 0.034776,
         "error": null,
         "signals": [
           {

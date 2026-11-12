@@ -1,0 +1,79 @@
+{
+  "reset_token": "2026-11-12-ds-flash",
+  "created_at": "2026-11-12T16:52:53.616485+00:00",
+  "spend": {
+    "2026-11-12": {
+      "usd": 0.003216,
+      "calls": 1,
+      "failed": 0,
+      "tokens": {
+        "prompt": 9598,
+        "cache_hit": 0,
+        "cache_miss": 9598,
+        "completion": 2961,
+        "reasoning": 1157
+      }
+    }
+  },
+  "last_call": {
+    "t": "2026-11-12T16:54:20.301299+00:00",
+    "ok": true,
+    "cost_usd": 0.0032163,
+    "spend_today_usd": 0.0032,
+    "band": "off_peak",
+    "tokens": {
+      "prompt": 9598,
+      "cache_hit": 0,
+      "cache_miss": 9598,
+      "completion": 2961,
+      "reasoning": 1157,
+      "total": 12559
+    },
+    "latency_s": 17.179,
+    "error": null,
+    "model": "deepseek-flash",
+    "symbols": [
+      "XAUUSD",
+      "EURUSD",
+      "GBPUSD",
+      "US100"
+    ],
+    "http_status": 200
+  },
+  "last_signals": [
+    {
+      "symbol": "XAUUSD",
+      "action": "HOLD",
+      "confidence": 0.42,
+      "entry": 3881.64,
+      "rationale": "XAUUSD is below_val (VAL 3911.5) and below POC 3978.1, so VP context is bearish breakout but the move is already stretched to the red ATR lower band (3869.7) with ATR expanding. CVD -8.1 BEARISH (label disagrees with any long) but cvd_slope"
+    },
+    {
+      "symbol": "EURUSD",
+      "action": "HOLD",
+      "confidence": 0.4,
+      "entry": 1.10576,
+      "rationale": "EURUSD is below_val (VAL 1.1075) and below POC 1.10943 = bearish VP positioning, with price pinned right at the red ATR lower band 1.10562 and near session low 1.10533. CVD -3,061 NEUTRAL but cvd_slope +3,964 (short-term buyers stepping in "
+    },
+    {
+      "symbol": "GBPUSD",
+      "action": "HOLD",
+      "confidence": 0.4,
+      "entry": 1.32374,
+      "rationale": "GBPUSD is below_val (VAL 1.32533) and below POC 1.32731 = bearish VP posture, with price consolidating above the red ATR lower band 1.32287 and session low 1.32210. CVD -8,768 BEARISH but cvd_slope +5,568 is a strong short-term divergence ("
+    },
+    {
+      "symbol": "US100",
+      "action": "HOLD",
+      "confidence": 0.45,
+      "entry": 28433.66,
+      "rationale": "US100 is above_vah (VAH 28231.55) and above POC 28122.95 = bullish VP breakout positioning, price also above VWAP and EMA50 (both rising) = strong uptrend. However price 28433.66 is sitting right at Call Wall #1 28430.89 (strength 0.95, oi_"
+    }
+  ],
+  "last_bars": {
+    "XAUUSD": "2026-11-12T16:30:00+00:00",
+    "EURUSD": "2026-11-12T16:30:00+00:00",
+    "GBPUSD": "2026-11-12T16:30:00+00:00",
+    "US100": "2026-11-12T16:30:00+00:00"
+  }
+}

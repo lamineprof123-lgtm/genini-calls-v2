@@ -1,0 +1,142 @@
+{
+  "updated_at": "2026-11-12T16:54:48.121260+00:00",
+  "paper_only": true,
+  "plan": "LucidPro 100K (DLL on)",
+  "exit_mode": "mech",
+  "gemini_exit_calls_enabled": false,
+  "exit_calls_note": "No DeepSeek exit calls \u2014 mechanical exits",
+  "exit_rules": null,
+  "card": "Hard stop \u2212$500 net \u00b7 1 ATR target \u00b7 90-min cap \u00b7 no model exits",
+  "hard_stop_net_usd": 500.0,
+  "comparison": null,
+  "breaches": [],
+  "breach_note": "DLL / MLL / 3.5% breaker are log-only (no block, no forced close)",
+  "sizing_rule": "full-size futures only (NQ, GC, 6E, 6B), 1-6 contracts sized as if risk were 0.8 ATR at $1500 (notional reference only); hard stop \u2212$500 NET, 1 ATR target, 90-min cap; Gemini exit calls paused \u2014 mechanical exits",
+  "reset": {
+    "at": "2026-11-12T16:52:53.616174+00:00",
+    "reason": "DS-FLASH fresh $100k paper book",
+    "token": "2026-11-12-ds-flash"
+  },
+  "account": {
+    "no": 1,
+    "phase": "eval",
+    "start_balance": 100000.0,
+    "balance": 100000.0,
+    "equity": 100000.0,
+    "realized_pnl_since_reset": 0.0,
+    "open_pnl": 0.0,
+    "commission_on_open": 0.0,
+    "trades_since_reset": 0,
+    "wins": 0,
+    "losses": 0,
+    "mll_floor": 97000.0,
+    "mll_room": 3000.0,
+    "dll": 1800.0,
+    "day_realized": 0.0,
+    "day_locked": null,
+    "to_target": 6000.0,
+    "net_pnl": 0.0,
+    "trades": 0,
+    "open_positions": 0,
+    "stopped": 0
+  },
+  "open_positions": [],
+  "pending": 0,
+  "recent_trades": [],
+  "last_processed": "2026-11-12T16:52:00+00:00",
+  "book": "DS-FLASH",
+  "label": "DS-FLASH (deepseek-flash entries, mechanical exits)",
+  "model": "deepseek-flash",
+  "effort": "low",
+  "key_present": true,
+  "rules": "deepseek-flash entries (effort low), same 2-min cycle / charts / numbers as Gemini flash; no model exits; \u2212$500 net hard stop \u00b7 1 ATR target \u00b7 90-min cap; same fill and full-size sizing as main; spend soft-stop $5/day Dubai",
+  "stop_txt": "\u2212$500 net \u00b7 1 ATR tgt \u00b7 90 min",
+  "spend": {
+    "day_dubai": "2026-11-12",
+    "usd": 0.0032,
+    "soft_usd": 5.0,
+    "state": "ok",
+    "calls": 1,
+    "failed": 0,
+    "tokens": {
+      "prompt": 9598,
+      "cache_hit": 0,
+      "cache_miss": 9598,
+      "completion": 2961,
+      "reasoning": 1157
+    },
+    "pricing": {
+      "off_peak": {
+        "cache_hit": 0.003,
+        "cache_miss": 0.15,
+        "output": 0.6
+      },
+      "peak": {
+        "cache_hit": 0.006,
+        "cache_miss": 0.3,
+        "output": 1.2
+      },
+      "peak_windows_utc": [
+        "01:00-04:00",
+        "06:00-10:00"
+      ],
+      "peak_days": "Mon-Fri",
+      "source": "https://api-docs.deepseek.com/quick_start/pricing/"
+    }
+  },
+  "last_call": {
+    "t": "2026-11-12T16:54:20.301299+00:00",
+    "ok": true,
+    "cost_usd": 0.0032163,
+    "spend_today_usd": 0.0032,
+    "band": "off_peak",
+    "tokens": {
+      "prompt": 9598,
+      "cache_hit": 0,
+      "cache_miss": 9598,
+      "completion": 2961,
+      "reasoning": 1157,
+      "total": 12559
+    },
+    "latency_s": 17.179,
+    "error": null,
+    "model": "deepseek-flash",
+    "symbols": [
+      "XAUUSD",
+      "EURUSD",
+      "GBPUSD",
+      "US100"
+    ],
+    "http_status": 200
+  },
+  "last_signals": [
+    {
+      "symbol": "XAUUSD",
+      "action": "HOLD",
+      "confidence": 0.42,
+      "entry": 3881.64,
+      "rationale": "XAUUSD is below_val (VAL 3911.5) and below POC 3978.1, so VP context is bearish breakout but the move is already stretched to the red ATR lower band (3869.7) with ATR expanding. CVD -8.1 BEARISH (label disagrees with any long) but cvd_slope"
+    },
+    {
+      "symbol": "EURUSD",
+      "action": "HOLD",
+      "confidence": 0.4,
+      "entry": 1.10576,
+      "rationale": "EURUSD is below_val (VAL 1.1075) and below POC 1.10943 = bearish VP positioning, with price pinned right at the red ATR lower band 1.10562 and near session low 1.10533. CVD -3,061 NEUTRAL but cvd_slope +3,964 (short-term buyers stepping in "
+    },
+    {
+      "symbol": "GBPUSD",
+      "action": "HOLD",
+      "confidence": 0.4,
+      "entry": 1.32374,
+      "rationale": "GBPUSD is below_val (VAL 1.32533) and below POC 1.32731 = bearish VP posture, with price consolidating above the red ATR lower band 1.32287 and session low 1.32210. CVD -8,768 BEARISH but cvd_slope +5,568 is a strong short-term divergence ("
+    },
+    {
+      "symbol": "US100",
+      "action": "HOLD",
+      "confidence": 0.45,
+      "entry": 28433.66,
+      "rationale": "US100 is above_vah (VAH 28231.55) and above POC 28122.95 = bullish VP breakout positioning, price also above VWAP and EMA50 (both rising) = strong uptrend. However price 28433.66 is sitting right at Call Wall #1 28430.89 (strength 0.95, oi_"
+    }
+  ]
+}

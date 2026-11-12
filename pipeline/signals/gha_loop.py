@@ -186,6 +186,7 @@ class GhaLoop:
                  self.offset, self.ends_at.isoformat(), self.hard_cap.isoformat())
         # data checkout may have been reset during acquire: make sure we start from the newest state
         reason = "max-runtime"
+        await self._verify_models_once()
         self.start_exit_manager()
         while True:
             # The job still wakes every `self.interval` (2 min). The site countdown uses
@@ -241,12 +242,34 @@ class GhaLoop:
         await self.shutdown(reason)
         return reason
 
+    async def _verify_models_once(self) -> None:
+        """Probe configured entry/exit IDs with the repo key. Log the result; never swap a rejected ID."""
+        from .config import entry_model, exit_model
+        from .model_verify import verify_models, format_report
+        log.info("configured models: entry=%s exit=%s (override entry=%s)",
+                 entry_model(self.cfg, self.model), exit_model(self.cfg), self.model)
+        try:
+            res = await asyncio.to_thread(verify_models, self.cfg, [entry_model(self.cfg, self.model), exit_model(self.cfg)])
+        except Exception:
+            log.exception("model verification failed")
+            return
+        report = format_report(res)
+        for line in report.splitlines():
+            log.info("model-verify: %s", line)
+        try:
+            day = datetime.now(timezone.utc).astimezone().strftime("%Y-%m-%d")
+            d = self.data / "logs" / day
+            d.mkdir(parents=True, exist_ok=True)
+            (d / "model_verify.json").write_text(json.dumps(res, indent=2, default=str))
+        except Exception:
+            log.exception("model_verify.json write failed")
+
     def start_exit_manager(self) -> None:
         """Gemini exit checks every [exit_manager].check_seconds (18 s) while a book position is open.
         Separate asyncio task: never blocks the clock-aligned 2-min entry cycle; idle ticks are a file read."""
         if not em_cfg(self.cfg).get("enabled") or not (self.cfg.get("lucid") or {}).get("enabled"):
             return
-        mgr = ExitManager(self.cfg, dry_run=self.dry_run, model=self.model, io_lock=self.io_lock)
+        mgr = ExitManager(self.cfg, dry_run=self.dry_run, model=None, io_lock=self.io_lock)
         self.exit_task = asyncio.create_task(run_exit_loop(mgr), name="exit-manager")
         log.info("exit manager on: check every %ss while a book position is open", mgr.period)
 

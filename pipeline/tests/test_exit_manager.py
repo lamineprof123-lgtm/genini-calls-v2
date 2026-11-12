@@ -352,3 +352,7 @@ def test_exit_books_reset_persists_when_flat(cfg, tmp_path):
     assert list((st.glob("exit_books_pre_reset4_*.json")))
     arch = json.loads(next(st.glob("exit_books_pre_reset4_*.json")).read_text())
     assert arch["seen_ids"] == [1, 2] and arch["books"][BOOK_1]["balance"] == 98382.7
+    summary = json.loads((tmp_path / "books.json").read_text())
+    assert summary["books"][BOOK_1]["balance"] == 100000.0 and summary["books"][BOOK_1]["trades"] == 0
+    assert summary["books"][BOOK_2]["balance"] == 100000.0 and summary["books"][BOOK_2]["trades"] == 0
+    assert summary["baseline"]["trades"] == 0

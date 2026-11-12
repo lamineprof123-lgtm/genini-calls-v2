@@ -42,10 +42,27 @@ def load_config(path: str | os.PathLike | None = None) -> dict:
         cfg["site"]["dir"] = str(d)
         cfg.setdefault("publish", {})["enabled"] = False   # the GHA loop commits + deploys itself
         cfg["general"]["log_mode"] = os.environ.get("SIGNALS_LOG_MODE", "compact")
-    if os.environ.get("GEMINI_MODEL"):
+    # Entry and exit models are independent. GEMINI_ENTRY_MODEL wins over legacy GEMINI_MODEL
+    # (entry only). A rejected ID is not rewritten here — callers must not silently fall back.
+    if os.environ.get("GEMINI_ENTRY_MODEL"):
+        cfg["gemini"]["model"] = os.environ["GEMINI_ENTRY_MODEL"].strip()
+    elif os.environ.get("GEMINI_MODEL"):
         cfg["gemini"]["model"] = os.environ["GEMINI_MODEL"].strip()
+    if os.environ.get("GEMINI_EXIT_MODEL"):
+        cfg["gemini"]["exit_model"] = os.environ["GEMINI_EXIT_MODEL"].strip()
     if os.environ.get("SIGNALS_INTERVAL_MINUTES"):
         cfg["scheduler"]["interval_minutes"] = int(os.environ["SIGNALS_INTERVAL_MINUTES"])
     vis = int(cfg["chart"]["visible_candles"])
     cfg["chart"]["visible_candles"] = max(80, min(120, vis))
     return cfg
+
+
+def entry_model(cfg: dict, override: str | None = None) -> str:
+    """Batched entry-scan model (config [gemini].model / GEMINI_ENTRY_MODEL / --model)."""
+    return (override or (cfg.get("gemini") or {}).get("model") or "").strip()
+
+
+def exit_model(cfg: dict, override: str | None = None) -> str:
+    """18s exit-manager model (config [gemini].exit_model / GEMINI_EXIT_MODEL). Does not use the entry model unless exit_model is unset."""
+    g = cfg.get("gemini") or {}
+    return (override or g.get("exit_model") or g.get("model") or "").strip()

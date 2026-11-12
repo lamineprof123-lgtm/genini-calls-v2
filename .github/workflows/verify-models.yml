@@ -1,0 +1,39 @@
+name: Verify Gemini models
+
+# Uses the repo GEMINI_API_KEY secret to list models and probe IDs. Never prints the key.
+on:
+  workflow_dispatch:
+    inputs:
+      models:
+        description: 'Comma-separated model IDs to probe'
+        default: 'gemini-3.8-pro,gemini-3.8-flash'
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: pipeline
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: pipeline/requirements.txt
+      - name: Install
+        run: pip install -r requirements.txt
+      - name: Probe models
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          PYTHONUNBUFFERED: '1'
+        run: |
+          set +e
+          python run.py models --probe "${{ inputs.models }}" | tee /tmp/model_verify.txt
+          status=${PIPESTATUS[0]}
+          echo '## Gemini model verification' >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          cat /tmp/model_verify.txt >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          exit $status

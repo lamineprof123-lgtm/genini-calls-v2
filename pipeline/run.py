@@ -20,7 +20,9 @@ def main():
     ap.add_argument("cmd", choices=["once", "loop", "models", "seed-site", "pause", "lucid-status", "lucid-step", "lucid-report", "gha-loop", "exit-sample"])
     ap.add_argument("path", nargs="?", help="seed-site: a logs/.../validated.json")
     ap.add_argument("--dry-run", action="store_true", help="render + validate with a mocked Gemini response")
-    ap.add_argument("--model", help="override [gemini].model")
+    ap.add_argument("--model", help="override [gemini].model (entry scans only)")
+    ap.add_argument("--exit-model", help="override [gemini].exit_model (18s exit checks only)")
+    ap.add_argument("--probe", help="models command: comma-separated IDs to probe (default: configured entry,exit)")
     ap.add_argument("--interval", type=int, help="loop interval minutes (15 = align to M15 closes)")
     ap.add_argument("--max-cycles", type=int)
     ap.add_argument("--config")
@@ -42,16 +44,19 @@ def main():
         if a.interval:
             os.environ["SIGNALS_INTERVAL_MINUTES"] = str(a.interval)
     cfg = load_config(a.config)
+    if getattr(a, "exit_model", None):
+        cfg.setdefault("gemini", {})["exit_model"] = a.exit_model
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s",
                         handlers=[logging.StreamHandler(sys.stdout)])
     for noisy in ("httpx", "httpx2", "google_genai", "yfinance"):
         logging.getLogger(noisy).setLevel(logging.WARNING)
     if a.cmd == "models":
-        from google import genai
-        c = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
-        for m in c.models.list():
-            if "flash" in m.name:
-                print(m.name)
+        from signals.model_verify import verify_models, format_report
+        probe = [x.strip() for x in (a.probe or "").split(",") if x.strip()] or None
+        res = verify_models(cfg, probe)
+        print(format_report(res))
+        if not res.get("ok"):
+            sys.exit(1)
         return
     if a.cmd == "seed-site":  # rebuild site/latest_signal.json from a past run
         import json

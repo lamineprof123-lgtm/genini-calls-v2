@@ -609,7 +609,10 @@ async def call_exit_gemini(cfg: dict, system_text: str, image: bytes, user_text:
         return {"model": None, "raw_text": None, "error": "GEMINI_API_KEY not set", "attempts": []}
     budget = float(e["gemini_timeout_seconds"])
     t0 = time.monotonic()
-    models = [model or g["model"]] + [m for m in g.get("fallback_models", []) if m != (model or g["model"])]
+    from .config import exit_model as _exit_model
+    primary = _exit_model(cfg, model)
+    # Strict: do not fall back to the entry model or [gemini].fallback_models on 404.
+    models = [primary] + [m for m in (g.get("exit_fallback_models") or []) if m != primary]
     client = genai.Client(api_key=key, http_options=types.HttpOptions(timeout=int(budget * 1000)))
     contents = [types.Content(role="user", parts=[types.Part.from_text(text=user_text),
                                                   types.Part.from_bytes(data=image, mime_type=_image_mime(image))])]
@@ -704,9 +707,9 @@ class ExitManager:
         if tok:
             self.books.s["reset_token"] = tok
         # Persist immediately: with no open trades, tick() is idle and would not write, leaving the old
-        # balances on disk (reset4 live miss).
-        if reset_books:
-            _atomic_write(self.path, self.books.s)
+        # balances (and a stale site books.json / baseline) on disk.
+        if reset_books or self._books_summary_stale():
+            self._write_books_files()
         # injectable for tests / dry runs
         self._snapshot = snapshot or market_snapshot
         self._render = render or self._render_default
@@ -752,7 +755,7 @@ class ExitManager:
                 log.info("exit books: fresh start for Lucid account token %s", acct_tok)
             self.books.s["account_token"] = acct_tok
             adopt = {p["id"] for p in acct.get("positions") or []}
-            _atomic_write(self.path, self.books.s)
+            self._write_books_files()
         return self.books.sync_feed(acct.get("book_feed") or [], now, adopt_ids=adopt)
 
     def _jsonl(self, name: str, t: datetime, obj: dict) -> None:
@@ -761,8 +764,36 @@ class ExitManager:
         with open(d / name, "a") as f:
             f.write(json.dumps(obj, default=str, separators=(",", ":")) + "\n")
 
+    def _write_books_files(self) -> None:
+        """Write state/exit_books.json and the site books.json (1-strike / 2-strike / baseline)."""
+        _atomic_write(self.path, self.books.s)
+        try:
+            _atomic_write(self.site_dir / "books.json", self.summary())
+        except Exception:
+            log.exception("books.json write failed")
+
+    def _books_summary_stale(self) -> bool:
+        """True when site books.json is missing or does not match the in-memory books / empty baseline."""
+        p = self.site_dir / "books.json"
+        if not p.exists():
+            return True
+        try:
+            cur = json.loads(p.read_text())
+        except Exception:
+            return True
+        want = self.books.summary()
+        for name, b in want.items():
+            c = (cur.get("books") or {}).get(name) or {}
+            if c.get("balance") != b.get("balance") or c.get("trades") != b.get("trades"):
+                return True
+        if not self.books.s.get("seen_ids"):
+            if (cur.get("baseline") or {}).get("trades"):
+                return True
+        return False
+
     def summary(self) -> dict:
         ids = set(self.books.s["seen_ids"])
+
         return {"updated_at_utc": datetime.now(UTC).isoformat(), "paper_only": True,
                 "note": ("GEMINI ONLY: same Lucid entries; books A (1-strike) / B (2-strike) exit on Gemini CLOSE only - no "
                          "stop, no target, no max hold, no 16:45 flat; 3.5% breaker log-only. " if gemini_only(self.cfg)
@@ -873,11 +904,7 @@ class ExitManager:
                 for r in self.lucid_close_requests:
                     log.info("exit -> lucid close request #%s %s @ %s (%s)", r["id"], r["symbol"], r["price"], r["rule"])
                 self.lucid_close_requests = []
-            _atomic_write(self.path, self.books.s)
-            try:
-                _atomic_write(self.site_dir / "books.json", self.summary())
-            except Exception:
-                log.exception("books.json write failed")
+            self._write_books_files()
 
     async def _check(self, pid: int, now: datetime) -> dict:
         t_mono = time.monotonic()

@@ -75,6 +75,8 @@
          margin: 12px 0 30px; }
   #trades.multi .act { font-size: clamp(68px, 19vw, 96px); margin: 10px 0 24px; }
   .act.BUY { color: var(--buy); } .act.SELL { color: var(--sell); }
+  .act.INPOS { color: var(--amber); font-size: clamp(28px, 7vw, 42px); letter-spacing: .04em; font-weight: 600; }
+  #trades.multi .act.INPOS { font-size: clamp(22px, 5vw, 32px); }
   .levels { width: 100%; }
   .row { display: flex; justify-content: space-between; align-items: baseline; padding: 15px 2px;
          border-top: 1px solid var(--line); }
@@ -352,9 +354,18 @@
       showUntil = current ? Date.now() + SIGNAL_VISIBLE_MS : 0;
     }
     const n = l.trades ? l.trades.length : 0;
-    $('trades').innerHTML = n ? tradesHTML(l) : '<div class="notrade">No trade</div>';
-    $('trades').className = 'n' + n + (n > 1 ? ' multi' : '');
-    $('sigQuiet').textContent = n && l.no_trade && l.no_trade.length ? 'No trade · ' + l.no_trade.join(', ') : '';
+    const inp = l.in_position || [];
+    const nCards = n + inp.length;
+    if (nCards) {
+      $('trades').innerHTML = (n ? tradesHTML(l) : '') + inPosHTML(inp);
+    } else {
+      $('trades').innerHTML = '<div class="notrade">No trade</div>';
+    }
+    $('trades').className = 'n' + nCards + (nCards > 1 ? ' multi' : '');
+    const quiet = [];
+    if (l.no_trade && l.no_trade.length) quiet.push('No trade · ' + l.no_trade.join(', '));
+    if (inp.length) quiet.push('In position · ' + inp.join(', '));
+    $('sigQuiet').textContent = quiet.join('   ');
     if (n && !first && current) {
       popArmed = true;
       if (key !== lastChimeKey) { lastChimeKey = key; playChime(); }
@@ -405,6 +416,13 @@
     }
   }
 
+  function inPosHTML(syms) {
+    return (syms || []).map(s => `
+      <div class="trade inpos">
+        <div class="sym">${s}</div>
+        <div class="act INPOS">IN POSITION</div>
+      </div>`).join('');
+  }
   function tradesHTML(l) {
     return l.trades.map(t => `
       <div class="trade">

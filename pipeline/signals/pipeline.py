@@ -10,7 +10,7 @@ from .gemini_client import call_gemini, mock_response
 from .indicators import build_payload
 from .renderer import render_all
 from .risk import DailyDrawdownBreaker, make_equity_source, _atomic_write
-from .site import write_latest_signal, write_status
+from .site import write_latest_signal, write_status, write_in_position_overlay
 from .publisher import Publisher
 from .validator import parse_raw, validate_batch
 from .scalp_levels import apply_server_levels
@@ -24,11 +24,35 @@ log = logging.getLogger("signals")
 # they share the same America/New_York session clock.
 _DEFAULT_LUCID_SYMBOLS = ("XAUUSD", "EURUSD", "GBPUSD", "US100")
 THROTTLE_SKIP = "blocked_session_throttle"
+ALL_IN_POS_SKIP = "all_symbols_in_position"
 
 
 def lucid_symbols(cfg: dict) -> list[str]:
     lu = (cfg.get("lucid") or {}).get("symbols") or {}
     return list(lu) if lu else list(_DEFAULT_LUCID_SYMBOLS)
+
+
+def lucid_busy_symbols(cfg: dict, state_dir: str | Path | None = None) -> set[str]:
+    """Symbols with an open or pending Lucid position. BTCUSD is site-only and is never excluded."""
+    d = Path(state_dir or cfg["general"]["state_dir"])
+    p = d / "lucid" / "account.json"
+    try:
+        acct = json.loads(p.read_text()) if p.exists() else {}
+    except Exception:
+        acct = {}
+    busy: set[str] = set()
+    for row in (acct.get("positions") or []) + (acct.get("pending") or []):
+        sym = str(row.get("symbol") or "").upper().replace("/", "").strip()
+        if sym:
+            busy.add(sym)
+    busy.discard("BTCUSD")
+    allowed = set(lucid_symbols(cfg))
+    return {s for s in busy if s in allowed}
+
+
+def filter_entry_payloads(payloads: list[dict], busy: set[str]) -> list[dict]:
+    """Drop in-position Lucid symbols from the batched entry prompt (no image, context, or schema slot)."""
+    return [p for p in payloads if p.get("symbol") not in busy]
 
 
 def session_blocked_for_scan(payloads: list[dict], cfg: dict) -> bool:
@@ -125,16 +149,38 @@ async def run_once(cfg: dict, dry_run: bool = False, force: bool = True, model: 
     gemini_seen = _load_json(gemini_seen_path, {})
     blocked = session_blocked_for_scan(payloads, cfg)
     interval = scan_interval_minutes(blocked, cfg)
+    busy = lucid_busy_symbols(cfg, state_dir)
+    entry_payloads = filter_entry_payloads(payloads, busy)
+    if busy:
+        log.info("entry scan excluding in-position symbols: %s (entry=%s)",
+                 sorted(busy), [p["symbol"] for p in entry_payloads])
     if not no_throttle and should_throttle_gemini(payloads, gemini_seen, cfg):
         log.info("blocked session throttle - skipping Gemini (keep last site signals); next scan on M%s close",
                  cfg["general"]["timeframe_minutes"])
         record = _throttle_skip_record(cfg, payloads, data_errors, last_bars, now, tz, equity=None)
+        record["in_position"] = sorted(busy)
+        if busy:
+            write_in_position_overlay(cfg, busy)
         return {"skipped": True, "skipped_reason": THROTTLE_SKIP, "last_bars": last_bars,
                 "scan_interval_minutes": interval, "session_blocked": True, "record": record}
 
-    # 3. render all charts in parallel (v2: warm Playwright pool + JPEG)
+    if not entry_payloads:
+        log.info("all eligible symbols in a Lucid position - skipping Gemini (%s)", ALL_IN_POS_SKIP)
+        record = _throttle_skip_record(cfg, payloads, data_errors, last_bars, now, tz, equity=None)
+        record["skipped_reason"] = ALL_IN_POS_SKIP
+        record["in_position"] = sorted(busy)
+        record["entry_symbols"] = []
+        # rewrite the compact cycle file with the real skip reason
+        if record.get("run_dir") and Path(record["run_dir"]).exists() and str(record["run_dir"]).endswith(".json"):
+            Path(record["run_dir"]).write_text(json.dumps(record, separators=(",", ":"), default=str))
+        write_in_position_overlay(cfg, busy)
+        _atomic_write(seen_path, last_bars)
+        return {"skipped": True, "skipped_reason": ALL_IN_POS_SKIP, "last_bars": last_bars,
+                "scan_interval_minutes": interval, "session_blocked": blocked, "record": record}
+
+    # 3. render only the charts that will go to Gemini (v2: warm Playwright pool + JPEG)
     t_render0 = time.monotonic()
-    pngs = await render_all(payloads)
+    pngs = await render_all(entry_payloads)
     render_ms = round((time.monotonic() - t_render0) * 1000, 1)
     log.info("timing render_total=%.1fms ready_for_gemini=%.1fms bytes=%s",
              render_ms, fetch_ms + render_ms, {s: len(b) for s, b in pngs.items()})
@@ -151,10 +197,10 @@ async def run_once(cfg: dict, dry_run: bool = False, force: bool = True, model: 
         resp = {"model": None, "raw_text": json.dumps({"signals": [], "market_summary": "circuit breaker halted"}),
                 "usage": None, "skipped_reason": bstat.reason}
     elif dry_run:
-        resp = mock_response(payloads, cfg)
+        resp = mock_response(entry_payloads, cfg)
     else:
         try:
-            resp = await call_gemini(cfg, payloads, pngs, model)
+            resp = await call_gemini(cfg, entry_payloads, pngs, model)
         except Exception as e:
             ai_error = f"{type(e).__name__}: {e}"
             log.error("Gemini call failed: %s", ai_error)
@@ -163,7 +209,7 @@ async def run_once(cfg: dict, dry_run: bool = False, force: bool = True, model: 
 
     # 6. parse + server-side scalp SL/TP (source of truth) + validate + breaker override
     obj, parse_err = parse_raw(resp["raw_text"]) if resp["raw_text"] else (None, ai_error or "empty response")
-    contexts = {p["symbol"]: p["context"] for p in payloads}
+    contexts = {p["symbol"]: p["context"] for p in entry_payloads}
     # Overwrite Gemini stop/target with deterministic scalp levels (direction + confidence kept).
     if obj and (cfg.get("scalp") or {}).get("enabled", False):
         for s in obj.get("signals") or []:
@@ -224,6 +270,8 @@ async def run_once(cfg: dict, dry_run: bool = False, force: bool = True, model: 
         "data": {p["symbol"]: {"source": p["source"], "ticker": p["ticker"], **p["context"]} for p in payloads},
         "data_errors": data_errors, "parse_error": parse_err, "ai_error": ai_error,
         "market_summary": (obj or {}).get("market_summary"), "signals": validated,
+        "in_position": sorted(busy),
+        "entry_symbols": [p["symbol"] for p in entry_payloads],
     }
     if compact:
         record["run_dir"] = str(run_dir / f"{local.strftime('%H%M%S')}.json")

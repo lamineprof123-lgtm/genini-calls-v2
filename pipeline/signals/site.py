@@ -22,8 +22,11 @@ def write_status(cfg: dict, state: str, interval: int | None = None, **extra) ->
 
 def latest_signal_from_record(record: dict, cfg: dict) -> dict:
     trades, no_trade = [], []
+    busy = {str(s).upper().replace("/", "").strip() for s in (record.get("in_position") or [])}
     for s in record["signals"]:
         sym = s["symbol"]
+        if sym in busy:
+            continue  # never show the previous scan's BUY/SELL/HOLD for a live Lucid position
         if s["action"] in ("BUY", "SELL"):
             row = {"symbol": sym, "name": str(cfg.get("symbols", {}).get(sym, {}).get("name", "")).upper(),
                    "action": s["action"], "entry": s["entry"], "stop_loss": s["stop_loss"],
@@ -51,7 +54,7 @@ def latest_signal_from_record(record: dict, cfg: dict) -> dict:
             no_trade.append(sym)
     return {"signal_at": record["run_at_utc"], "tz": cfg["general"]["session_tz"],
             "model": record.get("model_version") or record.get("model"), "dry_run": record.get("dry_run", False),
-            "trades": trades, "no_trade": no_trade,
+            "trades": trades, "no_trade": no_trade, "in_position": sorted(busy),
             "analysis_failed": bool(record.get("ai_error")),
             **({"error": _short_error(record["ai_error"])} if record.get("ai_error") else {}),
             "breaker_halted": bool((record.get("circuit_breaker") or {}).get("halted")),
@@ -87,3 +90,26 @@ def write_latest_signal(record: dict, cfg: dict) -> dict:
     hist = (hist + [out])[-HISTORY_MAX:]
     _atomic_write(hp, hist)
     return out
+
+
+def write_in_position_overlay(cfg: dict, busy: set[str] | list[str]) -> dict | None:
+    """Patch latest_signal.json so symbols with an open/pending Lucid position are not left on a stale BUY/SELL.
+    Does not append history.json (this is a status overlay, not a new scan)."""
+    import json
+    busy = {str(s).upper().replace("/", "").strip() for s in busy}
+    site = Path(cfg["site"]["dir"])
+    p = site / "latest_signal.json"
+    try:
+        cur = json.loads(p.read_text()) if p.exists() else {}
+        if not isinstance(cur, dict):
+            cur = {}
+    except Exception:
+        cur = {}
+    cur.setdefault("tz", cfg["general"]["session_tz"])
+    cur["trades"] = [t for t in (cur.get("trades") or []) if t.get("symbol") not in busy]
+    cur["no_trade"] = [s for s in (cur.get("no_trade") or []) if s not in busy]
+    cur["in_position"] = sorted(busy)
+    cur["written_at"] = _now()
+    site.mkdir(parents=True, exist_ok=True)
+    _atomic_write(p, cur)
+    return cur

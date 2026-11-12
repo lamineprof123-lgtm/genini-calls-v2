@@ -144,8 +144,11 @@ async def call_gemini(cfg: dict, payloads: list[dict], pngs: dict[str, bytes], m
     key = os.environ.get("GEMINI_API_KEY")
     if not key:
         raise RuntimeError("GEMINI_API_KEY not set (put it in .env or the environment) - or use --dry-run")
+    from .config import entry_model
     g = cfg["gemini"]
-    models = [model or g["model"]] + [m for m in g.get("fallback_models", []) if m != (model or g["model"])]
+    primary = entry_model(cfg, model)
+    # Strict: only configured fallbacks, never a silent substitute for a rejected ID.
+    models = [primary] + [m for m in (g.get("fallback_models") or []) if m != primary]
     client = genai.Client(api_key=key, http_options=types.HttpOptions(timeout=int(g["timeout_seconds"] * 1000)))
     contents = build_contents(payloads, pngs)
     attempts: list[dict] = []

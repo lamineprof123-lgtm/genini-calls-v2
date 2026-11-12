@@ -43,7 +43,11 @@ class Feed:
 
 
 def book(cfg, feed=None):
-    return BracketBook(cfg, quotes=feed or Feed(({}, {})))
+    bk = BracketBook(cfg, quotes=feed or Feed(({}, {})))
+    # recent_trades() drops closes earlier than created_at[:19]. created_at is wall-clock now,
+    # so once the clock passes T0 (2026-11-12 14:00 UTC) those test closes vanish from the list.
+    bk.s["created_at"] = (T0 - timedelta(hours=1)).isoformat()
+    return bk
 
 
 def sig(sym="XAUUSD", action="SELL", conf=0.8, atr=5.0, entry=3945.0):

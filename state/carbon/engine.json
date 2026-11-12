@@ -3,13 +3,13 @@
   "created_at": "2026-11-12T15:30:53.246609+00:00",
   "spend": {
     "2026-11-12": {
-      "usd": 0.391338,
-      "calls": 9,
+      "usd": 0.427206,
+      "calls": 10,
       "failed": 0,
       "by_kind": {
         "entry": {
-          "calls": 4,
-          "usd": 0.229612
+          "calls": 5,
+          "usd": 0.26548
         },
         "trigger": {
           "calls": 5,
@@ -17,13 +17,13 @@
         }
       },
       "tokens": {
-        "input": 70354,
-        "output": 7691,
+        "input": 80563,
+        "output": 9236,
         "thoughts": 17372
       }
     }
   },
-  "last_scan_bar": "2026-11-12T16:15:00+00:00",
+  "last_scan_bar": "2026-11-12T16:30:00+00:00",
   "triggers": {
     "day": "2026-11-12",
     "n": 5,
@@ -34,9 +34,9 @@
   },
   "cache": {
     "XAUUSD": {
-      "bar": "2026-11-12T16:15:00+00:00",
-      "atr": 11.936,
-      "price": 3872.45,
+      "bar": "2026-11-12T16:30:00+00:00",
+      "atr": 11.716,
+      "price": 3871.1,
       "levels": [
         [
           "Prev Low",
@@ -60,38 +60,38 @@
         ],
         [
           "VAL",
-          3917.46,
+          3911.54,
           -1
         ],
         [
           "Call Wall #1",
-          3915.86,
+          3919.13,
           -1
         ],
         [
           "Call Wall #2",
-          4144.92,
+          4148.39,
           -1
         ],
         [
           "Put Wall #1",
-          3817.69,
+          3820.88,
           1
         ],
         [
           "Put Wall #2",
-          3763.15,
+          3766.3,
           1
         ]
       ],
-      "vol_avg": 1.086295,
+      "vol_avg": 1.11992,
       "blocked": false,
       "session": "NEW_YORK_SESSION"
     },
     "EURUSD": {
-      "bar": "2026-11-12T16:15:00+00:00",
-      "atr": 0.000886,
-      "price": 1.10568,
+      "bar": "2026-11-12T16:30:00+00:00",
+      "atr": 0.00088,
+      "price": 1.10577,
       "levels": [
         [
           "Prev Low",
@@ -115,18 +115,18 @@
         ],
         [
           "VAL",
-          1.1076,
+          1.1075,
           -1
         ]
       ],
-      "vol_avg": 4118.939,
+      "vol_avg": 4265.798000000001,
       "blocked": false,
       "session": "NEW_YORK_SESSION"
     },
     "US100": {
-      "bar": "2026-11-12T16:15:00+00:00",
-      "atr": 112.122,
-      "price": 28419.37,
+      "bar": "2026-11-12T16:30:00+00:00",
+      "atr": 112.397,
+      "price": 28368.8,
       "levels": [
         [
           "Session High",
@@ -155,71 +155,185 @@
         ],
         [
           "Call Wall #1",
-          28431.02,
+          28432.12,
           -1
         ],
         [
           "Call Wall #2",
-          28271.02,
+          28272.12,
           1
         ],
         [
           "Put Wall #1",
-          28001.02,
+          28002.12,
           1
         ],
         [
           "Put Wall #2",
-          28111.02,
+          28152.12,
           1
         ]
       ],
-      "vol_avg": 1.4817500000000001,
+      "vol_avg": 1.527695,
       "blocked": false,
       "session": "NEW_YORK_SESSION"
     }
   },
-  "whatif": [],
-  "next_vid": 3,
+  "whatif": [
+    {
+      "vid": 3,
+      "exit": "CB-BRACKET",
+      "symbol": "XAUUSD",
+      "side": -1,
+      "contract": "GC",
+      "atr": 11.716,
+      "confidence": 0.74,
+      "signal_entry": 3871.1,
+      "signal_at": "2026-11-12T16:45:46.214777+00:00",
+      "kind": "entry",
+      "queued_at": "2026-11-12T16:45:46.214777+00:00",
+      "entry": 3871.0,
+      "entry_time": "2026-11-12T16:45:53.100091+00:00",
+      "scan_from": "2026-11-12T16:45:53.100091+00:00",
+      "best": 3871.0,
+      "mfe": 0.0,
+      "mae": 2.9899999999997817,
+      "locked": false,
+      "checks": 0,
+      "stop": 3882.8,
+      "target": 3859.2,
+      "deadline": "2026-11-12T18:15:53.100091+00:00",
+      "init_stop": 3882.8,
+      "qty": 1,
+      "risk_usd": 1184.6,
+      "chase_atr": 0.009,
+      "risk_1c_usd": 1171.6,
+      "last_check_at": "2026-11-12T16:46:39.295201+00:00"
+    },
+    {
+      "vid": 4,
+      "exit": "CB-RUNNER",
+      "symbol": "XAUUSD",
+      "side": -1,
+      "contract": "GC",
+      "atr": 11.716,
+      "confidence": 0.74,
+      "signal_entry": 3871.1,
+      "signal_at": "2026-11-12T16:45:46.214777+00:00",
+      "kind": "entry",
+      "queued_at": "2026-11-12T16:45:46.214777+00:00",
+      "entry": 3871.0,
+      "entry_time": "2026-11-12T16:45:53.100091+00:00",
+      "scan_from": "2026-11-12T16:45:53.100091+00:00",
+      "best": 3871.0,
+      "mfe": 0.0,
+      "mae": 2.9899999999997817,
+      "locked": false,
+      "checks": 0,
+      "stop": 3882.8,
+      "target": 3841.7,
+      "deadline": "2026-11-12T19:15:53.100091+00:00",
+      "init_stop": 3882.8,
+      "qty": 1,
+      "risk_usd": 1184.6,
+      "chase_atr": 0.009,
+      "risk_1c_usd": 1171.6,
+      "last_check_at": "2026-11-12T16:46:39.295201+00:00"
+    },
+    {
+      "vid": 5,
+      "exit": "CB-BRACKET",
+      "symbol": "US100",
+      "side": -1,
+      "contract": "NQ",
+      "atr": 112.397,
+      "confidence": 0.72,
+      "signal_entry": 28368.8,
+      "signal_at": "2026-11-12T16:45:46.214777+00:00",
+      "kind": "entry",
+      "queued_at": "2026-11-12T16:45:46.214777+00:00",
+      "entry": 28358.5,
+      "entry_time": "2026-11-12T16:45:53.100091+00:00",
+      "scan_from": "2026-11-12T16:45:00+00:00",
+      "best": 28352.375,
+      "mfe": 6.125,
+      "mae": 26.81999999999971,
+      "locked": false,
+      "checks": 0,
+      "stop": 28471.0,
+      "target": 28246.0,
+      "deadline": "2026-11-12T18:15:53.100091+00:00",
+      "init_stop": 28471.0,
+      "qty": 1,
+      "risk_usd": 2253.5,
+      "chase_atr": 0.092,
+      "risk_1c_usd": 2247.94,
+      "last_check_at": "2026-11-12T16:46:39.295201+00:00"
+    },
+    {
+      "vid": 6,
+      "exit": "CB-RUNNER",
+      "symbol": "US100",
+      "side": -1,
+      "contract": "NQ",
+      "atr": 112.397,
+      "confidence": 0.72,
+      "signal_entry": 28368.8,
+      "signal_at": "2026-11-12T16:45:46.214777+00:00",
+      "kind": "entry",
+      "queued_at": "2026-11-12T16:45:46.214777+00:00",
+      "entry": 28358.5,
+      "entry_time": "2026-11-12T16:45:53.100091+00:00",
+      "scan_from": "2026-11-12T16:45:00+00:00",
+      "best": 28352.375,
+      "mfe": 6.125,
+      "mae": 26.81999999999971,
+      "locked": false,
+      "checks": 0,
+      "stop": 28471.0,
+      "target": 28077.5,
+      "deadline": "2026-11-12T19:15:53.100091+00:00",
+      "init_stop": 28471.0,
+      "qty": 1,
+      "risk_usd": 2253.5,
+      "chase_atr": 0.092,
+      "risk_1c_usd": 2247.94,
+      "last_check_at": "2026-11-12T16:46:39.295201+00:00"
+    }
+  ],
+  "next_vid": 7,
   "last_call": {
-    "t": "2026-11-12T16:33:09.117890+00:00",
-    "t_dubai": "2026-11-12T20:33:09.117890+04:00",
-    "kind": "trigger",
+    "t": "2026-11-12T16:45:46.214777+00:00",
+    "t_dubai": "2026-11-12T20:45:46.214777+04:00",
+    "kind": "entry",
     "model": "gemini-4-carbon",
     "model_version": "gemini-4-carbon",
     "thinking": "medium",
     "ok": true,
     "error": null,
-    "latency_s": 35.976,
+    "latency_s": 24.92,
     "finish_reason": "FinishReason.STOP",
     "tokens": {
-      "input": 5948,
-      "output": 663,
-      "thoughts": 2181,
-      "total": 8792
+      "input": 10209,
+      "output": 1545,
+      "thoughts": 0,
+      "total": 11754
     },
-    "thoughts_token_count": 2181,
+    "thoughts_token_count": 0,
     "price_per_mtok": [
       2.0,
       10.0
     ],
-    "cost_usd": 0.040336,
-    "spend_today_usd": 0.3913,
+    "cost_usd": 0.035868,
+    "spend_today_usd": 0.4272,
     "symbols": [
+      "XAUUSD",
+      "EURUSD",
       "US100"
     ],
-    "render_ms": 100,
+    "render_ms": 1285,
     "parse_error": null,
-    "trigger": {
-      "trigger": "level_cross",
-      "level": "Call Wall #1",
-      "level_price": 28435.97,
-      "price": 28419.37,
-      "direction": "down",
-      "symbol": "US100",
-      "bar": "2026-11-12T16:30:00+00:00",
-      "n_today": 5
-    }
+    "trigger": null
   },
   "first_call": {
     "t": "2026-11-12T15:46:09.306718+00:00",
@@ -254,10 +368,10 @@
     "parse_error": null,
     "trigger": null
   },
-  "calls_total": 9,
+  "calls_total": 10,
   "last_scan": {
     "kind": "entry",
-    "t": "2026-11-12T16:30:20.014447+00:00",
+    "t": "2026-11-12T16:45:20.009777+00:00",
     "trigger": null,
     "sent": [
       "XAUUSD",
@@ -266,30 +380,30 @@
     ],
     "blocked_session": [],
     "ok": true,
-    "latency_s": 36.411,
-    "cost_usd": 0.049716,
+    "latency_s": 24.92,
+    "cost_usd": 0.035868,
     "tokens": {
-      "input": 10208,
-      "output": 1572,
-      "thoughts": 1358,
-      "total": 13138
+      "input": 10209,
+      "output": 1545,
+      "thoughts": 0,
+      "total": 11754
     },
     "error": null,
     "signals": [
       {
         "symbol": "XAUUSD",
-        "action": "HOLD",
-        "confidence": 0.65
+        "action": "SELL",
+        "confidence": 0.74
       },
       {
         "symbol": "EURUSD",
         "action": "HOLD",
-        "confidence": 0.68
+        "confidence": 0.4
       },
       {
         "symbol": "US100",
-        "action": "HOLD",
-        "confidence": 0.64
+        "action": "SELL",
+        "confidence": 0.72
       }
     ]
   }

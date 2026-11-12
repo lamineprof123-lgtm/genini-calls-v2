@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-12T22:45:38.147550+00:00",
+  "updated_at": "2026-11-12T23:00:41.027919+00:00",
   "paper_only": true,
   "plan": "LucidPro 100K (DLL on)",
   "exit_mode": "uniform-1atr-v1",
@@ -95,7 +95,7 @@
     "mll_floor": 97000.0,
     "mll_room": 1330.8,
     "dll": 1800.0,
-    "day_realized": -1669.2,
+    "day_realized": 0.0,
     "day_locked": null,
     "to_target": 7669.2,
     "net_pnl": -1669.2,
@@ -135,11 +135,11 @@
   "rules": "C-OPUS-B: claude-opus-5-5 entries, adaptive thinking, effort high, shared bracket-v1 package with DS-FLASH (same charts, facts, 3 symbols, M15 close +20s). Question: will price travel 1 ATR my way before 1 ATR against? Code-computed facts + hold gates (no trend >2 ATR from VWAP; \u22651 ATR room; US100 volume-free S2). 0.3 ATR fill check. Uniform 1 ATR / 1 ATR / 90-min exits, no model exits. Fresh $100k Lucid account.",
   "stop_txt": "1 ATR stop \u00b7 1 ATR target \u00b7 90 min",
   "last_call": {
-    "t": "2026-11-12T22:45:38.144775+00:00",
+    "t": "2026-11-12T23:00:41.025097+00:00",
     "ok": true,
-    "latency_ms": 16142,
-    "cost_usd": 0.102544,
-    "thinking_tokens": 372,
+    "latency_ms": 16172,
+    "cost_usd": 0.104912,
+    "thinking_tokens": 466,
     "usage": {
       "cache_creation": {
         "ephemeral_1h_input_tokens": 0,
@@ -148,10 +148,10 @@
       "cache_creation_input_tokens": 0,
       "cache_read_input_tokens": 0,
       "inference_geo": "global",
-      "input_tokens": 16556,
-      "output_tokens": 1816,
+      "input_tokens": 16593,
+      "output_tokens": 1927,
       "output_tokens_details": {
-        "thinking_tokens": 372
+        "thinking_tokens": 466
       },
       "service_tier": "standard",
       "speed": "standard"
@@ -159,14 +159,14 @@
     "error": null,
     "effort": "high",
     "prompt_version": "bracket-v1",
-    "snapshot_id": "m15-20261112214500-cb389f1ee221",
-    "snapshot_hash": "cb389f1ee221c86729fcf58f268362ebe445c5cfc3060bde32d274be2c65ca37",
-    "package_id": "m15-20261112T224500-50af2209fed4",
-    "package_hash": "50af2209fed44778319a886b3d4c5d470b87228f173a2d9809ba72675299e8c5",
-    "bar_close_ts": "2026-11-12T22:45:00+00:00",
-    "snapshot_ts": "2026-11-12T22:45:21.672165+00:00",
-    "call_start": "2026-11-12T22:45:22.002300+00:00",
-    "answer_ts": "2026-11-12T22:45:38.144775+00:00",
+    "snapshot_id": "m15-20261112214500-f3c9b4e6a091",
+    "snapshot_hash": "f3c9b4e6a091b2073322361d430c38389134102104d5259f428504f84050c04e",
+    "package_id": "m15-20261112T230000-51d65fe3799e",
+    "package_hash": "51d65fe3799e1b8909dc2f3e17d5f102668e0bec65cc7b1d10e00ae7849ea2a3",
+    "bar_close_ts": "2026-11-12T23:00:00+00:00",
+    "snapshot_ts": "2026-11-12T23:00:23.594599+00:00",
+    "call_start": "2026-11-12T23:00:24.853227+00:00",
+    "answer_ts": "2026-11-12T23:00:41.025097+00:00",
     "model": "claude-opus-5-5"
   },
   "last_signals": [
@@ -178,7 +178,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "Session LOW_LIQUIDITY_DEADZONE blocks automation. Every level is untouched on the last closed bar, so neither T2 nor F1 is met. Room is 0.58 ATR up and 0.30 ATR down, so the S1 gate fails both ways.",
+      "rationale": "Session blocks automation (LOW_LIQUIDITY_DEADZONE). Every level is untouched on the last closed bar, so T2 and F1 are missing. Room is under 1 ATR both ways: up 0.39 to EMA20, down 0.49 to POC. Price is 7.3 ATR from VWAP, which is chasing f",
       "gate_reasons": [],
       "issues": []
     },
@@ -186,11 +186,11 @@
       "symbol": "EURUSD",
       "action": "HOLD",
       "confidence": 0.0,
-      "score": 2,
+      "score": 1,
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "Session deadzone blocks automation. The POC rejection is not a labelled extreme for a fade. A sell trend fails the VWAP-distance gate (4.55 > 2.0). Room up is only 0.18 ATR. RVOL is negligible.",
+      "rationale": "Session blocks automation. T1 fails for a long: price is below VWAP and EMA50. The POC cross is not at an extreme, so F1 fails. Room down is only 0.05 ATR to EMA20. VWAP is 4.3 ATR away. RVOL is negligible.",
       "gate_reasons": [],
       "issues": []
     },
@@ -202,7 +202,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "T1 yes: above VWAP and EMA50. T2 yes: closed_through VAH and EMA20. Supporting points: S1 (1.59 ATR room up), S2 (US100 awarded), S3 (cvd_slope up), S5 (h1 up). S4 no. Score 6, but the session deadzone blocks automation, so HOLD.",
+      "rationale": "T1 yes: above VWAP and EMA50. T2 yes: closed_through VAH. Supporting: S1 (1.95 ATR room up), S2 (US100 awarded), S3 (cvd_slope up), S5 (h1 up). S4 fails: deadzone. Session blocks automation and the signal bar (21:00) is 2 hours old, so HOLD",
       "gate_reasons": [],
       "issues": []
     },
@@ -214,7 +214,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "Session deadzone blocks automation. A touch of EMA20 is neither a rejection nor a closed_through, so T2 and F1 are both missing. A sell trend would also fail the VWAP-distance gate (6.45 > 2.0). Room up is 0.24 ATR.",
+      "rationale": "Session blocks automation. EMA20 was only touched, not rejected or closed through, so T2 is weak. A short is chasing at 6.6 ATR from VWAP. There is no extreme for a fade (F1 missing). Room up is 0.35 ATR.",
       "gate_reasons": [],
       "issues": []
     },
@@ -226,7 +226,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "Session deadzone blocks automation. All levels are untouched on the last closed bar, so there is no T2 or F1 event. Room is 0.80 ATR up and 0.90 ATR down, both under 1.0, so S1 fails. VWAP distance of 5.49 ATR also blocks a trend trade.",
+      "rationale": "Session blocks automation. All levels are untouched on the last closed bar, so T2 and F1 are missing. Room down is 0.65 ATR to Session Low and room up is 0.97 ATR to EMA20, both under 1 ATR. Price is 5.8 ATR from VWAP.",
       "gate_reasons": [],
       "issues": []
     }

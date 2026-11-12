@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-12T12:10:33.635504+00:00",
+  "updated_at": "2026-11-12T12:12:32.724863+00:00",
   "paper_only": true,
   "plan": "LucidPro 100K (DLL on)",
   "exit_mode": "gemini_only",
@@ -33,23 +33,39 @@
     "no": 1,
     "phase": "eval",
     "start_balance": 100000.0,
-    "balance": 97674.6,
-    "equity": 97674.6,
+    "balance": 97670.0,
+    "equity": 97657.0,
     "realized_pnl_since_reset": -2325.4,
-    "open_pnl": 0.0,
-    "commission_on_open": 0.0,
+    "open_pnl": -13.0,
+    "commission_on_open": 4.6,
     "trades_since_reset": 11,
     "wins": 7,
     "losses": 4,
     "mll_floor": 97000.0,
-    "mll_room": 674.6,
+    "mll_room": 657.0,
     "dll": 1800.0,
     "day_realized": -2325.4,
     "day_locked": null,
-    "to_target": 8325.4
+    "to_target": 8330.0
   },
-  "open_positions": [],
-  "pending": 1,
+  "open_positions": [
+    {
+      "symbol": "XAUUSD",
+      "contract": "GC",
+      "qty": 2,
+      "side": "SHORT",
+      "entry_time": "2026-11-12T12:11:00+00:00",
+      "entry": 3944.8,
+      "stop": null,
+      "target": null,
+      "last": 3944.865,
+      "unrealized": -13.0,
+      "risk_usd": null,
+      "target_usd_net": null,
+      "target_source": "none (gemini_only)"
+    }
+  ],
+  "pending": 0,
   "recent_trades": [
     {
       "t_exit": "2026-11-12T12:08:00+00:00",
@@ -202,5 +218,5 @@
       "held": "6m 00s"
     }
   ],
-  "last_processed": "2026-11-12T12:10:00+00:00"
+  "last_processed": "2026-11-12T12:12:00+00:00"
 }

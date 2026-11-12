@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-12T12:04:32.017039+00:00",
+  "updated_at": "2026-11-12T12:06:31.907570+00:00",
   "paper_only": true,
   "plan": "LucidPro 100K (DLL on)",
   "exit_mode": "gemini_only",
@@ -33,20 +33,20 @@
     "no": 1,
     "phase": "eval",
     "start_balance": 100000.0,
-    "balance": 96362.7,
-    "equity": 96339.58,
-    "realized_pnl_since_reset": -3629.2,
-    "open_pnl": -23.12,
-    "commission_on_open": 8.1,
-    "trades_since_reset": 9,
-    "wins": 5,
+    "balance": 97379.2,
+    "equity": 97598.2,
+    "realized_pnl_since_reset": -2616.2,
+    "open_pnl": 219.0,
+    "commission_on_open": 4.6,
+    "trades_since_reset": 10,
+    "wins": 6,
     "losses": 4,
     "mll_floor": 97000.0,
-    "mll_room": -660.42,
+    "mll_room": 598.2,
     "dll": 1800.0,
-    "day_realized": -3629.2,
+    "day_realized": -2616.2,
     "day_locked": null,
-    "to_target": 9637.3
+    "to_target": 8620.8
   },
   "open_positions": [
     {
@@ -58,23 +58,8 @@
       "entry": 3948.1,
       "stop": null,
       "target": null,
-      "last": 3948.185,
-      "unrealized": -17.0,
-      "risk_usd": null,
-      "target_usd_net": null,
-      "target_source": "none (gemini_only)"
-    },
-    {
-      "symbol": "US100",
-      "contract": "NQ",
-      "qty": 2,
-      "side": "SHORT",
-      "entry_time": "2026-11-12T12:03:00+00:00",
-      "entry": 28127.0,
-      "stop": null,
-      "target": null,
-      "last": 28127.153,
-      "unrealized": -6.12,
+      "last": 3947.005,
+      "unrealized": 219.0,
       "risk_usd": null,
       "target_usd_net": null,
       "target_source": "none (gemini_only)"
@@ -82,6 +67,21 @@
   ],
   "pending": 0,
   "recent_trades": [
+    {
+      "t_exit": "2026-11-12T12:05:00+00:00",
+      "symbol": "US100",
+      "contract": "NQ",
+      "qty": 2,
+      "side": "SHORT",
+      "entry_time": "2026-11-12T12:03:00+00:00",
+      "entry": 28127.0,
+      "exit": 28101.5,
+      "reason": "gemini_close",
+      "net": 1013.0,
+      "balance_after": 97379.2,
+      "hold_seconds": 120,
+      "held": "2m 00s"
+    },
     {
       "t_exit": "2026-11-12T11:55:00+00:00",
       "symbol": "XAUUSD",
@@ -218,5 +218,5 @@
       "held": "2m 00s"
     }
   ],
-  "last_processed": "2026-11-12T12:04:00+00:00"
+  "last_processed": "2026-11-12T12:06:00+00:00"
 }

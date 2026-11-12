@@ -1,29 +1,29 @@
 {
-  "updated_at": "2026-11-12T13:28:43.377677+00:00",
+  "updated_at": "2026-11-12T13:30:29.925407+00:00",
   "paper_only": true,
   "book": "bracket",
   "label": "Bracket shadow (conf>=0.75, 1 ATR / 1 ATR)",
   "account": {
     "start_balance": 100000.0,
-    "balance": 99346.75,
-    "equity": 100450.75,
-    "net_pnl": -639.6,
-    "open_pnl": 1104.0,
-    "trades": 3,
-    "wins": 1,
+    "balance": 100174.45,
+    "equity": 100425.05,
+    "net_pnl": 185.8,
+    "open_pnl": 250.6,
+    "trades": 4,
+    "wins": 2,
     "losses": 2,
-    "win_rate": 0.333,
+    "win_rate": 0.5,
     "avg_win": 825.4,
     "avg_loss": -732.5,
     "max_drawdown": -1467.3,
-    "peak_balance": 100000.0,
-    "commissions": 45.75,
+    "peak_balance": 100174.45,
+    "commissions": 48.05,
     "exit_reasons": {
       "stop_1atr": 2,
-      "target_1atr": 1
+      "target_1atr": 2
     },
     "stopped": 2,
-    "open_positions": 3,
+    "open_positions": 2,
     "pending": 0,
     "signals_seen": 12,
     "signals_taken": 6,
@@ -32,7 +32,7 @@
       "held_in_bracket": 1
     },
     "missed_scans_main_held": {
-      "XAUUSD": 2,
+      "XAUUSD": 3,
       "EURUSD": 2
     }
   },
@@ -51,25 +51,8 @@
       "risk_usd": 1203.5,
       "target_usd": 1196.5,
       "side": "SHORT",
-      "last_price": 27976.65,
-      "unrealized": 257.0
-    },
-    {
-      "id": 5,
-      "symbol": "XAUUSD",
-      "contract": "GC",
-      "qty": 1,
-      "entry": 3913.7,
-      "entry_time": "2026-11-12T13:24:38.262302+00:00",
-      "stop": 3922.1,
-      "target": 3905.3,
-      "deadline": "2026-11-12T14:54:38.262302+00:00",
-      "confidence": 0.84,
-      "risk_usd": 844.6,
-      "target_usd": 835.4,
-      "side": "SHORT",
-      "last_price": 3905.38,
-      "unrealized": 832.0
+      "last_price": 27975.22,
+      "unrealized": 285.6
     },
     {
       "id": 6,
@@ -85,11 +68,44 @@
       "risk_usd": 344.2,
       "target_usd": 305.8,
       "side": "SHORT",
-      "last_price": 1.10837,
-      "unrealized": 15.0
+      "last_price": 1.10847,
+      "unrealized": -35.0
     }
   ],
   "recent_trades": [
+    {
+      "event": "close",
+      "book": "bracket",
+      "t_exit": "2026-11-12T13:28:00+00:00",
+      "t_exit_dubai": "2026-11-12T17:28:00+04:00",
+      "id": 5,
+      "symbol": "XAUUSD",
+      "contract": "GC",
+      "qty": 1,
+      "side": "SHORT",
+      "entry_time": "2026-11-12T13:24:38.262302+00:00",
+      "entry": 3913.7,
+      "stop": 3922.1,
+      "target": 3905.3,
+      "exit": 3905.4,
+      "reason": "target_1atr",
+      "stopped": false,
+      "gross": 830.0,
+      "commission": 4.6,
+      "net": 825.4,
+      "hold_seconds": 201,
+      "balance_after": 100174.45,
+      "risk_usd": 844.6,
+      "target_usd": 835.4,
+      "confidence": 0.84,
+      "atr": 8.327,
+      "signal_at": "2026-11-12T13:24:20.344552+00:00",
+      "R": 0.977,
+      "mfe_atr": 1.045,
+      "mae_atr": 0.327,
+      "checks": 19,
+      "trigger": "m1_path"
+    },
     {
       "event": "close",
       "book": "bracket",

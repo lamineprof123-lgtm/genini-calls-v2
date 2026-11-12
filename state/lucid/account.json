@@ -1,7 +1,7 @@
 {
   "version": 1,
   "created_at": "2026-11-12T10:14:47.081605+00:00",
-  "last_processed": "2026-11-12T10:48:00+00:00",
+  "last_processed": "2026-11-12T10:50:00+00:00",
   "account": {
     "no": 1,
     "phase": "eval",
@@ -363,7 +363,162 @@
       "time_cut_rule": "none: exit = Gemini CLOSE only (1-strike); no stop, no target, no max hold, no 16:45 flat; DLL/MLL/breaker log-only"
     }
   ],
-  "pending": [],
+  "pending": [
+    {
+      "symbol": "EURUSD",
+      "side": 1,
+      "created": "2026-11-12T10:50:33.819617+00:00",
+      "fill_after": "2026-11-12T10:51:00+00:00",
+      "reserved_risk": 0.0,
+      "planned": {
+        "contract": "6E",
+        "qty": 2,
+        "risk_usd": null,
+        "tdist": null,
+        "target_source": "none (gemini_only)"
+      },
+      "expires": "2026-11-12T11:01:00+00:00",
+      "atr": 0.00052,
+      "scalp": {
+        "action": "BUY",
+        "side": 1,
+        "entry": 1.1101,
+        "stop_loss": 1.10955,
+        "take_profit": 1.11015,
+        "sdist": 0.0005460000000001575,
+        "tdist": 4.500000000007276e-05,
+        "stop_source": "structure",
+        "target_source": "structure:Session High",
+        "rr": 0.082,
+        "structure_stop": 1.109554,
+        "atr_stop": 1.1096840000000001,
+        "fixed_tp": 1.11135,
+        "structure_tp": 1.1101450000000002,
+        "structure_label": "Session High",
+        "candle": {
+          "high": 1.11017,
+          "low": 1.10958
+        },
+        "levels": [
+          {
+            "price": 1.11425,
+            "label": "24h High"
+          },
+          {
+            "price": 1.11585,
+            "label": "S/R"
+          },
+          {
+            "price": 1.117,
+            "label": "Prev High"
+          },
+          {
+            "price": 1.11017,
+            "label": "Session High"
+          },
+          {
+            "price": 1.10824,
+            "label": "Prev Low"
+          },
+          {
+            "price": 1.1071,
+            "label": "S/R"
+          }
+        ],
+        "vp": {
+          "poc": 1.10942,
+          "vah": 1.10989,
+          "val": 1.10776
+        }
+      },
+      "session": "LONDON_SESSION",
+      "telemetry": {
+        "symbol": "EURUSD",
+        "session": "LONDON_SESSION",
+        "last_close": 1.11017,
+        "atr": 0.00052,
+        "vwap": 1.10856,
+        "ema20": 1.10895,
+        "ema50": 1.10891,
+        "price_vs_vwap": {
+          "side": "above",
+          "dist_atr": 3.0962
+        },
+        "price_vs_ema50": {
+          "side": "above",
+          "dist_atr": 2.4231
+        },
+        "vwap_aligned_with_side": true,
+        "ema50_aligned_with_side": true,
+        "poc": 1.10942,
+        "vah": 1.10989,
+        "val": 1.10776,
+        "price_vs_value_area": "above_vah",
+        "dist_to_poc_atr": 1.4423,
+        "cvd": 6380.16,
+        "cvd_label": "BULLISH",
+        "cvd_slope": 2793.35,
+        "cvd_agrees_with_side": true,
+        "rvol": 0.673,
+        "rvol_spike": false,
+        "rvol_bars_since_spike": 32,
+        "atr_band_z": 2.3462,
+        "atr_upper": 1.10999,
+        "atr_lower": 1.10791,
+        "nearest_sr": {
+          "above": {
+            "price": 1.11425,
+            "label": "24h High",
+            "dist_atr": 7.8462
+          },
+          "below": {
+            "price": 1.10824,
+            "label": "Prev Low",
+            "dist_atr": 3.7115
+          }
+        },
+        "gemini": {
+          "action": "BUY",
+          "confidence": 0.72,
+          "confidence_band": "0.7-0.8",
+          "rationale": "VP shows price breaking above VAH (1.10989) and above POC (1.10942). CVD is BULLISH (+6,380) with a strong positive slope (+2,793), confirming persistent buy pressure. Session is LONDON_SESSION with no automation block. Price is comfortably above rising VWAP (1.10856) and EMA50 (1.10891). ATR band position tests the upper ATR band (1.10999) without climax exhaustion. RVOL is moderate at 0.67 without a yellow spike, suggesting a steady grind rather than an explosive blow-off. Price is accepting above the Session High level (1.11017). GEX is null outside NY cash hours.",
+          "model": "gemini-3.8-flash",
+          "model_action": "BUY"
+        },
+        "scalp": {
+          "stop_basis": "structure",
+          "target_basis": "structure:Session High",
+          "tdist": 4.500000000007276e-05,
+          "sdist": 0.0005460000000001575,
+          "structure_label": "Session High"
+        },
+        "planned": {
+          "tdist": 4.500000000007276e-05,
+          "sdist": 0.0005460000000001575,
+          "qty": null,
+          "contract": null,
+          "target_usd_net": null,
+          "risk_usd": null
+        },
+        "run_at_utc": "2026-11-12T10:50:20.289297+00:00",
+        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-12/cycles/145020.json/EURUSD.png"
+      },
+      "gemini": {
+        "action": "BUY",
+        "entry": 1.1101,
+        "stop_loss": 1.10955,
+        "take_profit": 1.11015,
+        "confidence": 0.72,
+        "rr": 0.091,
+        "shown_on_site": true,
+        "basis": "site signal",
+        "run_at_utc": "2026-11-12T10:50:20.289297+00:00",
+        "session": "LONDON_SESSION",
+        "rationale": "VP shows price breaking above VAH (1.10989) and above POC (1.10942). CVD is BULLISH (+6,380) with a strong positive slope (+2,793), confirming persistent buy pressure. Session is LONDON_SESSION with no automation block. Price is comfortably above rising VWAP (1.10856) and EMA50 (1.10891). ATR band position tests the upper ATR band (1.10999) without climax exhaustion. RVOL is moderate at 0.67 without a yellow spike, suggesting a steady grind rather than an explosive blow-off. Price is accepting above the Session High level (1.11017). GEX is null outside NY cash hours.",
+        "model": "gemini-3.8-flash"
+      }
+    }
+  ],
   "next_pos_id": 5,
   "day": {
     "id": "2026-11-12",
@@ -374,8 +529,8 @@
     "traded": true
   },
   "last_price": {
-    "US100": 28176.553,
-    "XAUUSD": 3952.288,
+    "US100": 28176.165,
+    "XAUUSD": 3952.185,
     "EURUSD": 1.11018
   },
   "history": [],
@@ -406,7 +561,7 @@
     "commissions": 24.7,
     "net_trade_pnl": 215.9,
     "skipped_signals": 0,
-    "accepted_signals": 4
+    "accepted_signals": 5
   },
   "reset_token": "2026-11-12-profit-lock",
   "reset_at": "2026-11-12T10:14:47.081605+00:00",

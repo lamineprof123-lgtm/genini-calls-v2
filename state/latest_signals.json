@@ -1,7 +1,7 @@
 {
-  "run_dir": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-12/cycles/190020.json",
-  "run_at_utc": "2026-11-12T15:00:20.200755+00:00",
-  "run_at_local": "2026-11-12T19:00:20.200755+04:00",
+  "run_dir": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-12/cycles/190220.json",
+  "run_at_utc": "2026-11-12T15:02:20.228462+00:00",
+  "run_at_local": "2026-11-12T19:02:20.228462+04:00",
   "dry_run": false,
   "model": "gemini-3.8-flash",
   "model_version": "gemini-3.8-flash",
@@ -10,10 +10,10 @@
       "model": "gemini-3.8-flash",
       "attempt": 1,
       "ok": true,
-      "latency_s": 13.581
+      "latency_s": 11.6
     }
   ],
-  "gemini_latency_s": 13.581,
+  "gemini_latency_s": 11.6,
   "signals_only": true,
   "equity": 100000.0,
   "circuit_breaker": {
@@ -44,8 +44,8 @@
         "close": 3870.91
       },
       "last_close": 3870.91,
-      "last_price": 3871.68,
-      "last_price_ts_utc": "2026-11-12T15:00:21.071000+00:00",
+      "last_price": 3866.49,
+      "last_price_ts_utc": "2026-11-12T15:02:20.216000+00:00",
       "vwap": 3952.84,
       "vwap_anchor": "utc_day",
       "atr": 12.798,
@@ -100,52 +100,19 @@
           "touches": 2
         }
       ],
-      "live_price": 3871.68,
-      "live_price_ts_utc": "2026-11-12T15:00:21.071000+00:00",
+      "live_price": 3866.49,
+      "live_price_ts_utc": "2026-11-12T15:02:20.216000+00:00",
       "live_price_stale": false,
       "live_price_source": "dukascopy:tick",
-      "live_price_fetched_at_utc": "2026-11-12T15:00:21.932517+00:00",
+      "live_price_fetched_at_utc": "2026-11-12T15:02:22.666321+00:00",
       "forming_m15_open": 3869.61,
-      "forming_m15_high": 3872.5,
-      "forming_m15_low": 3867.06,
+      "forming_m15_high": 3873.09,
+      "forming_m15_low": 3865.91,
       "forming_m15_open_utc": "2026-11-12T15:00:00+00:00",
-      "minutes_into_bar": 0.34,
-      "live_price_age_s": 0.86,
-      "gex": {
-        "regime": "NEGATIVE_AMPLIFYING",
-        "regime_from": "net_gamma_sign",
-        "gamma_flip": 3922.39,
-        "price_vs_flip": "below",
-        "call_walls": [
-          {
-            "price": 4143.98,
-            "rank": 1,
-            "strength": 0.93,
-            "oi_aligned": true
-          },
-          {
-            "price": 3980.41,
-            "rank": 2,
-            "strength": 0.61,
-            "oi_aligned": false
-          }
-        ],
-        "put_walls": [
-          {
-            "price": 3871.35,
-            "rank": 1,
-            "strength": 1,
-            "oi_aligned": true
-          },
-          {
-            "price": 3816.83,
-            "rank": 2,
-            "strength": 0.97,
-            "oi_aligned": true
-          }
-        ]
-      },
-      "gex_status": "ok"
+      "minutes_into_bar": 2.34,
+      "live_price_age_s": 2.45,
+      "gex": null,
+      "gex_status": "stale_age_s_354"
     },
     "EURUSD": {
       "source": "dukascopy",
@@ -165,8 +132,8 @@
         "close": 1.10746
       },
       "last_close": 1.10746,
-      "last_price": 1.10749,
-      "last_price_ts_utc": "2026-11-12T15:00:19.950000+00:00",
+      "last_price": 1.10695,
+      "last_price_ts_utc": "2026-11-12T15:02:20.292000+00:00",
       "vwap": 1.10864,
       "vwap_anchor": "utc_day",
       "atr": 0.000771,
@@ -227,17 +194,17 @@
           "touches": 3
         }
       ],
-      "live_price": 1.10749,
-      "live_price_ts_utc": "2026-11-12T15:00:19.950000+00:00",
+      "live_price": 1.10695,
+      "live_price_ts_utc": "2026-11-12T15:02:20.292000+00:00",
       "live_price_stale": false,
       "live_price_source": "dukascopy:tick",
-      "live_price_fetched_at_utc": "2026-11-12T15:00:21.932517+00:00",
+      "live_price_fetched_at_utc": "2026-11-12T15:02:22.666321+00:00",
       "forming_m15_open": 1.1074,
       "forming_m15_high": 1.10754,
-      "forming_m15_low": 1.10739,
+      "forming_m15_low": 1.10695,
       "forming_m15_open_utc": "2026-11-12T15:00:00+00:00",
-      "minutes_into_bar": 0.34,
-      "live_price_age_s": 1.98,
+      "minutes_into_bar": 2.34,
+      "live_price_age_s": 2.37,
       "gex": null
     },
     "GBPUSD": {
@@ -258,8 +225,8 @@
         "close": 1.3247
       },
       "last_close": 1.3247,
-      "last_price": 1.32478,
-      "last_price_ts_utc": "2026-11-12T15:00:21.010000+00:00",
+      "last_price": 1.32448,
+      "last_price_ts_utc": "2026-11-12T15:02:20.379000+00:00",
       "vwap": 1.32652,
       "vwap_anchor": "utc_day",
       "atr": 0.000896,
@@ -314,17 +281,17 @@
           "touches": 2
         }
       ],
-      "live_price": 1.32478,
-      "live_price_ts_utc": "2026-11-12T15:00:21.010000+00:00",
+      "live_price": 1.32448,
+      "live_price_ts_utc": "2026-11-12T15:02:20.379000+00:00",
       "live_price_stale": false,
       "live_price_source": "dukascopy:tick",
-      "live_price_fetched_at_utc": "2026-11-12T15:00:21.932517+00:00",
+      "live_price_fetched_at_utc": "2026-11-12T15:02:22.666321+00:00",
       "forming_m15_open": 1.32469,
       "forming_m15_high": 1.32482,
-      "forming_m15_low": 1.3246,
+      "forming_m15_low": 1.32445,
       "forming_m15_open_utc": "2026-11-12T15:00:00+00:00",
-      "minutes_into_bar": 0.34,
-      "live_price_age_s": 0.92,
+      "minutes_into_bar": 2.34,
+      "live_price_age_s": 2.29,
       "gex": null
     },
     "US100": {
@@ -345,8 +312,8 @@
         "close": 28249.0
       },
       "last_close": 28249.0,
-      "last_price": 28239.19,
-      "last_price_ts_utc": "2026-11-12T15:00:20+00:00",
+      "last_price": 28176.0,
+      "last_price_ts_utc": "2026-11-12T15:02:19+00:00",
       "vwap": 28121.48,
       "vwap_anchor": "cme_globex",
       "atr": 90.793,
@@ -407,37 +374,37 @@
           "touches": 2
         }
       ],
-      "live_price": 28239.19,
-      "live_price_ts_utc": "2026-11-12T15:00:20+00:00",
+      "live_price": 28176.0,
+      "live_price_ts_utc": "2026-11-12T15:02:19+00:00",
       "live_price_stale": false,
       "live_price_source": "firmtape:NQ",
-      "live_price_fetched_at_utc": "2026-11-12T15:00:21.932517+00:00",
+      "live_price_fetched_at_utc": "2026-11-12T15:02:22.666321+00:00",
       "forming_m15_open": 28263.48,
       "forming_m15_high": 28266.81,
-      "forming_m15_low": 28239.19,
+      "forming_m15_low": 28169.62,
       "forming_m15_open_utc": "2026-11-12T15:00:00+00:00",
-      "minutes_into_bar": 0.34,
+      "minutes_into_bar": 2.34,
       "firmtape_status": "ok",
-      "live_basis": -118.51,
+      "live_basis": -114.33,
       "live_basis_n": 7,
-      "live_price_dukascopy": 28242.56,
-      "live_price_dukascopy_ts_utc": "2026-11-12T15:00:21.116000+00:00",
+      "live_price_dukascopy": 28180.35,
+      "live_price_dukascopy_ts_utc": "2026-11-12T15:02:20.353000+00:00",
       "live_price_dukascopy_source": "dukascopy:tick",
-      "live_price_age_s": 1.93,
+      "live_price_age_s": 3.67,
       "gex": {
         "regime": "POSITIVE_DAMPENING",
         "regime_from": "net_gamma_sign",
-        "gamma_flip": 28157.59,
+        "gamma_flip": 28161.77,
         "price_vs_flip": "above",
         "call_walls": [
           {
-            "price": 28424.24,
+            "price": 28428.42,
             "rank": 1,
             "strength": 1,
             "oi_aligned": true
           },
           {
-            "price": 28434.24,
+            "price": 28438.42,
             "rank": 2,
             "strength": 0.63,
             "oi_aligned": true
@@ -445,13 +412,13 @@
         ],
         "put_walls": [
           {
-            "price": 28404.24,
+            "price": 28408.42,
             "rank": 1,
             "strength": 0.64,
             "oi_aligned": false
           },
           {
-            "price": 27994.24,
+            "price": 27998.42,
             "rank": 2,
             "strength": 0.52,
             "oi_aligned": true
@@ -479,8 +446,8 @@
         "close": 71527.4
       },
       "last_close": 71527.4,
-      "last_price": 71547.0,
-      "last_price_ts_utc": "2026-11-12T15:00:21.035000+00:00",
+      "last_price": 71308.8,
+      "last_price_ts_utc": "2026-11-12T15:02:20.435000+00:00",
       "vwap": 73173.73,
       "vwap_anchor": "utc_day",
       "atr": 348.997,
@@ -535,35 +502,35 @@
           "touches": 2
         }
       ],
-      "live_price": 71547.0,
-      "live_price_ts_utc": "2026-11-12T15:00:21.035000+00:00",
+      "live_price": 71308.8,
+      "live_price_ts_utc": "2026-11-12T15:02:20.435000+00:00",
       "live_price_stale": false,
       "live_price_source": "dukascopy:tick",
-      "live_price_fetched_at_utc": "2026-11-12T15:00:21.932517+00:00",
+      "live_price_fetched_at_utc": "2026-11-12T15:02:22.666321+00:00",
       "forming_m15_open": 71527.0,
       "forming_m15_high": 71595.7,
-      "forming_m15_low": 71497.8,
+      "forming_m15_low": 71302.7,
       "forming_m15_open_utc": "2026-11-12T15:00:00+00:00",
-      "minutes_into_bar": 0.34,
-      "live_price_age_s": 0.9,
+      "minutes_into_bar": 2.34,
+      "live_price_age_s": 2.23,
       "gex": null
     }
   },
   "data_errors": {},
   "parse_error": null,
   "ai_error": null,
-  "market_summary": "During the London/NY Overlap, risk-off pressure dominates Gold and Bitcoin, both heavily extended below session Value Areas and VWAP, hovering near key support and Put Walls where chasing is penalized. EURUSD exhibits quiet drift toward local lows without volume conviction. In contrast, US100 printed a sharp volume-confirmed reclaim back above VWAP, EMA50, and its Value Area High into a positive gamma regime, offering a clear momentum long setup.",
+  "market_summary": "Broad USD strength driving strong downward momentum across all major pairs during the London/NY overlap. Gold and Bitcoin are overextended into multi-sigma lower ATR extremes near session lows showing potential absorption wicks, while GBPUSD confirms a fresh breakdown below its session low with strong bearish CVD confluence.",
   "signals": [
     {
       "symbol": "XAUUSD",
       "model_action": "HOLD",
       "action": "HOLD",
-      "entry": 3871.68,
+      "entry": 3866.49,
       "stop_loss": null,
       "take_profit": null,
       "model_risk_reward": null,
       "rr_local": null,
-      "confidence": 0.55,
+      "confidence": 0.45,
       "model_risk_pct": null,
       "risk_pct": null,
       "risk_amount": 0.0,
@@ -571,10 +538,10 @@
       "position_lots": 0.0,
       "last_close": 3870.91,
       "atr": 12.798,
-      "rationale": "Price is trading well below VAL (3938.58) and POC (3977.51). CVD is BEARISH (-9.83, slope -1.31), agreeing with the strong session downtrend. During LONDON_NY_OVERLAP, price broke beneath the EMA50 (3943.27) and VWAP (3952.84), extending past the -2 ATR lower band (3892.21). However, GEX shows NEGATIVE_AMPLIFYING regime below Gamma Flip (3922.39), but price directly hit Put Wall #1 (3871.35) and Session Low (3866.09) without yellow RVOL confirmation on the immediate retest (RVOL 1.539). Selling directly into Put Wall #1 is prohibited, and buying counter-trend is low probability; thus HOLD is warranted.",
-      "trend_vs_vwap": "bearish below VWAP and EMA50",
+      "rationale": "Price is trading well below VAL (3938.58) and POC (3977.51) following a massive downtrend cascade. Bearish CVD (-9.83) with negative slope (-1.31) aligns with strong downward order-flow. Session is LONDON_NY_OVERLAP with expanding ATR. Price is far below VWAP (3952.84) and EMA50 (3943.27), riding beneath the lower ATR band (3892.21). Heavy volume spikes accompanied the breakdown. However, price is severely stretched into multi-sigma oversold territory directly at the Session Low (3866.09) with no clean pullback, making selling the exact lows unfavorable.",
+      "trend_vs_vwap": "bearish below declining VWAP and EMA50",
       "volatility": "expanding",
-      "level_event": "rejection at Put Wall #1",
+      "level_event": "breakdown through Session Low 3866.09",
       "downgraded": false,
       "reasons": [],
       "session": "LONDON_NY_OVERLAP",
@@ -582,27 +549,27 @@
       "cvd_label": "BEARISH",
       "cvd_slope": -1.31,
       "last_closed_bar_utc": "2026-11-12T14:45:00+00:00",
-      "last_price_ts_utc": "2026-11-12T15:00:21.071000+00:00",
+      "last_price_ts_utc": "2026-11-12T15:02:20.216000+00:00",
       "poc": 3977.51,
       "vah": 4000.33,
       "val": 3938.58,
-      "live_price": 3871.68,
-      "live_price_ts_utc": "2026-11-12T15:00:21.071000+00:00",
+      "live_price": 3866.49,
+      "live_price_ts_utc": "2026-11-12T15:02:20.216000+00:00",
       "live_price_stale": false,
       "live_price_source": "dukascopy:tick",
-      "live_price_fetched_at_utc": "2026-11-12T15:00:21.932517+00:00",
+      "live_price_fetched_at_utc": "2026-11-12T15:02:22.666321+00:00",
       "forming_m15_open": 3869.61,
-      "forming_m15_high": 3872.5,
-      "forming_m15_low": 3867.06,
+      "forming_m15_high": 3873.09,
+      "forming_m15_low": 3865.91,
       "forming_m15_open_utc": "2026-11-12T15:00:00+00:00",
-      "minutes_into_bar": 0.34,
-      "live_price_age_s": 0.86
+      "minutes_into_bar": 2.34,
+      "live_price_age_s": 2.45
     },
     {
       "symbol": "EURUSD",
       "model_action": "HOLD",
       "action": "HOLD",
-      "entry": 1.10749,
+      "entry": 1.10695,
       "stop_loss": null,
       "take_profit": null,
       "model_risk_reward": null,
@@ -615,10 +582,10 @@
       "position_lots": 0.0,
       "last_close": 1.10746,
       "atr": 0.000771,
-      "rationale": "Price is below VAL (1.10801) and POC (1.10928). CVD is NEUTRAL (-2,147 with negative slope -8209). Session is LONDON_NY_OVERLAP. Price is below downward-sloping VWAP (1.10864) and EMA50 (1.10882), stretching down near the lower ATR band (1.10716). RVOL is only 1.23 (no yellow spike), indicating lack of aggressive institutional selling at this breakdown. The market is pressing directly into S/R (1.10710) and Session Low (1.10662) without volume expansion, risking a mean-reversion trap. HOLD.",
+      "rationale": "Price is below VAL (1.10801) and POC (1.10928). CVD is NEUTRAL (-2147.49) but slope is sharply negative (-8209.13). Session is LONDON_NY_OVERLAP. Price is below downward sloping VWAP (1.10864) and EMA50 (1.10882), stretching beneath the lower ATR band (1.10716). RVOL shows elevated activity on recent flushes, but the current bar is pressing into strong support at Session Low 1.10662 and S/R 1.10710. Lacking confirmed breakdown acceptance below 1.10662.",
       "trend_vs_vwap": "bearish below VWAP and EMA50",
       "volatility": "expanding",
-      "level_event": "sweep of S/R support 1.10710",
+      "level_event": "test of Session Low 1.10662",
       "downgraded": false,
       "reasons": [],
       "session": "LONDON_NY_OVERLAP",
@@ -626,125 +593,131 @@
       "cvd_label": "NEUTRAL",
       "cvd_slope": -8209.13,
       "last_closed_bar_utc": "2026-11-12T14:45:00+00:00",
-      "last_price_ts_utc": "2026-11-12T15:00:19.950000+00:00",
+      "last_price_ts_utc": "2026-11-12T15:02:20.292000+00:00",
       "poc": 1.10928,
       "vah": 1.10976,
       "val": 1.10801,
-      "live_price": 1.10749,
-      "live_price_ts_utc": "2026-11-12T15:00:19.950000+00:00",
+      "live_price": 1.10695,
+      "live_price_ts_utc": "2026-11-12T15:02:20.292000+00:00",
       "live_price_stale": false,
       "live_price_source": "dukascopy:tick",
-      "live_price_fetched_at_utc": "2026-11-12T15:00:21.932517+00:00",
+      "live_price_fetched_at_utc": "2026-11-12T15:02:22.666321+00:00",
       "forming_m15_open": 1.1074,
       "forming_m15_high": 1.10754,
-      "forming_m15_low": 1.10739,
+      "forming_m15_low": 1.10695,
       "forming_m15_open_utc": "2026-11-12T15:00:00+00:00",
-      "minutes_into_bar": 0.34,
-      "live_price_age_s": 1.98
+      "minutes_into_bar": 2.34,
+      "live_price_age_s": 2.37
     },
     {
-      "symbol": "US100",
-      "model_action": "BUY",
-      "action": "BUY",
-      "entry": 28239.19,
-      "stop_loss": 28153.55,
-      "take_profit": 28244.19,
-      "model_risk_reward": 0.058,
-      "rr_local": 0.058,
+      "symbol": "GBPUSD",
+      "model_action": "SELL",
+      "action": "SELL",
+      "entry": 1.32448,
+      "stop_loss": 1.32593,
+      "take_profit": 1.32318,
+      "model_risk_reward": 0.894,
+      "rr_local": 0.897,
       "confidence": 0.76,
       "model_risk_pct": 0.5,
       "risk_pct": 0.5,
       "risk_amount": 500.0,
-      "position_units": 5.838393,
-      "position_lots": 5.83,
-      "last_close": 28249.0,
-      "atr": 90.793,
-      "rationale": "Price has broken out above VAH (28203.68) and POC (28115.45). CVD is NEUTRAL (-2.03) but cvd_slope is positive (+1.53). In LONDON_NY_OVERLAP, price made an aggressive V-shape reclaim above VWAP (28121.48) and EMA50 (28127.31) backed by an RVOL spike of 2.194 (yellow bar). GEX regime is POSITIVE_DAMPENING above Gamma Flip (28157.59). While Call Wall #1 sits overhead at 28424.24, there is ample room (~185 points) for momentum continuation upward towards the wall and Prev High (28596.50). Taking a BUY scalp on acceptance above local S/R 28209.17.",
-      "trend_vs_vwap": "bullish above VWAP and EMA50",
+      "position_units": 344827.586207,
+      "position_lots": 3.44,
+      "last_close": 1.3247,
+      "atr": 0.000896,
+      "rationale": "Price is trading below VAL (1.32579) and POC (1.32726). CVD is strongly BEARISH (-10380.75) with steep negative slope (-4799.75), confirming aggressive selling pressure. Session is LONDON_NY_OVERLAP. Price holds consistently below VWAP (1.32652) and EMA50 (1.32666), penetrating the lower ATR band (1.32453) and breaking through Session Low (1.32450) and S/R (1.32500) with solid volume confirmation.",
+      "trend_vs_vwap": "bearish below VWAP and EMA50",
       "volatility": "expanding",
-      "level_event": "acceptance above VAH and Gamma Flip",
+      "level_event": "breakdown through Session Low 1.32450",
       "downgraded": false,
       "reasons": [],
       "scalp": {
-        "action": "BUY",
-        "side": 1,
-        "entry": 28239.19,
-        "stop_loss": 28153.55,
-        "take_profit": 28244.19,
-        "sdist": 85.63964999999735,
-        "tdist": 5.0,
+        "action": "SELL",
+        "side": -1,
+        "entry": 1.32448,
+        "stop_loss": 1.32593,
+        "take_profit": 1.32318,
+        "sdist": 0.0014547999999998673,
+        "tdist": 0.0013,
         "stop_source": "structure",
         "target_source": "fixed",
-        "rr": 0.058,
-        "structure_stop": 28153.55035,
-        "atr_stop": 28166.5556,
-        "fixed_tp": 28244.19,
-        "structure_tp": 28293.924140000003,
-        "structure_label": "Session High",
+        "rr": 0.894,
+        "structure_stop": 1.3259348,
+        "atr_stop": 1.3251968,
+        "fixed_tp": 1.3232300000000001,
+        "structure_tp": null,
+        "structure_label": null,
         "candle": {
-          "high": 28295.74,
-          "low": 28158.09
+          "high": 1.32589,
+          "low": 1.3245
         },
         "levels": [
           {
-            "price": 28295.74,
-            "label": "Session High"
-          },
-          {
-            "price": 28596.5,
-            "label": "Prev High"
-          },
-          {
-            "price": 28209.17,
+            "price": 1.325,
             "label": "S/R"
           },
           {
-            "price": 28083.64,
+            "price": 1.32618,
+            "label": "Prev Low"
+          },
+          {
+            "price": 1.32661,
             "label": "S/R"
           },
           {
-            "price": 28030.0,
-            "label": "S/R"
+            "price": 1.3245,
+            "label": "Session Low"
           }
         ],
         "vp": {
-          "poc": 28115.45,
-          "vah": 28203.68,
-          "val": 28080.92
+          "poc": 1.32726,
+          "vah": 1.32759,
+          "val": 1.32579
+        },
+        "target_scalp": 1.32323,
+        "lucid_plan": {
+          "contract": "6B",
+          "qty": 6,
+          "tdist": 0.0013,
+          "target_usd": 458.7,
+          "risk_usd": 562.5,
+          "target_source": "fixed",
+          "sizing": "fixed target 0.0013 reaches $459 net with 6 6B (risk $562)"
         }
       },
       "levels_source": "server_scalp",
       "session": "LONDON_NY_OVERLAP",
-      "cvd": -2.03,
-      "cvd_label": "NEUTRAL",
-      "cvd_slope": 1.53,
+      "cvd": -10380.75,
+      "cvd_label": "BEARISH",
+      "cvd_slope": -4799.75,
       "last_closed_bar_utc": "2026-11-12T14:45:00+00:00",
-      "last_price_ts_utc": "2026-11-12T15:00:20+00:00",
-      "poc": 28115.45,
-      "vah": 28203.68,
-      "val": 28080.92,
-      "live_price": 28239.19,
-      "live_price_ts_utc": "2026-11-12T15:00:20+00:00",
+      "last_price_ts_utc": "2026-11-12T15:02:20.379000+00:00",
+      "poc": 1.32726,
+      "vah": 1.32759,
+      "val": 1.32579,
+      "live_price": 1.32448,
+      "live_price_ts_utc": "2026-11-12T15:02:20.379000+00:00",
       "live_price_stale": false,
-      "live_price_source": "firmtape:NQ",
-      "live_price_fetched_at_utc": "2026-11-12T15:00:21.932517+00:00",
-      "forming_m15_open": 28263.48,
-      "forming_m15_high": 28266.81,
-      "forming_m15_low": 28239.19,
+      "live_price_source": "dukascopy:tick",
+      "live_price_fetched_at_utc": "2026-11-12T15:02:22.666321+00:00",
+      "forming_m15_open": 1.32469,
+      "forming_m15_high": 1.32482,
+      "forming_m15_low": 1.32445,
       "forming_m15_open_utc": "2026-11-12T15:00:00+00:00",
-      "minutes_into_bar": 0.34,
-      "live_price_age_s": 1.93
+      "minutes_into_bar": 2.34,
+      "live_price_age_s": 2.29
     },
     {
       "symbol": "BTCUSD",
       "model_action": "HOLD",
       "action": "HOLD",
-      "entry": 71547.0,
+      "entry": 71308.8,
       "stop_loss": null,
       "take_profit": null,
       "model_risk_reward": null,
       "rr_local": null,
-      "confidence": 0.55,
+      "confidence": 0.48,
       "model_risk_pct": null,
       "risk_pct": null,
       "risk_amount": 0.0,
@@ -752,10 +725,10 @@
       "position_lots": 0.0,
       "last_close": 71527.4,
       "atr": 348.997,
-      "rationale": "Price is severely extended below VAL (72836.73) and POC (73512.29). CVD is BEARISH (-0.09, slope -0.02), agreeing with the heavy downtrend. In LONDON_NY_OVERLAP, price remains pinned far below VWAP (73173.73) and EMA50 (73044.51). The signal candle breached Session Low (71191.90) and is deep outside the lower ATR envelope (71830.04) with RVOL 1.696 (sub-2.0, no yellow spike on this bar after the initial flush). Given the severe ATR overextension and lack of fresh climax volume to support an immediate continuation entry, HOLD for a mean-reversion retest.",
-      "trend_vs_vwap": "bearish below VWAP and EMA50",
+      "rationale": "Price is below VAL (72836.73) and POC (73512.29). CVD is BEARISH (-0.09) with negative slope (-0.02). Active in LONDON_NY_OVERLAP. Price is sharply below VWAP (73173.73) and EMA50 (73044.51), stretched far beyond the lower ATR band (71830.04). Last signal candle printed a long lower wick absorption off 71191.9 with high RVOL (1.70), signaling potential exhaustion / liquidity sweep of the session low rather than clean momentum continuation.",
+      "trend_vs_vwap": "bearish below declining VWAP and EMA50",
       "volatility": "expanding",
-      "level_event": "acceptance below -2 ATR band",
+      "level_event": "rejection from lower ATR band, hovering above Session Low 71191.9",
       "downgraded": false,
       "reasons": [],
       "session": "LONDON_NY_OVERLAP",
@@ -763,46 +736,46 @@
       "cvd_label": "BEARISH",
       "cvd_slope": -0.02,
       "last_closed_bar_utc": "2026-11-12T14:45:00+00:00",
-      "last_price_ts_utc": "2026-11-12T15:00:21.035000+00:00",
+      "last_price_ts_utc": "2026-11-12T15:02:20.435000+00:00",
       "poc": 73512.29,
       "vah": 74129.1,
       "val": 72836.73,
-      "live_price": 71547.0,
-      "live_price_ts_utc": "2026-11-12T15:00:21.035000+00:00",
+      "live_price": 71308.8,
+      "live_price_ts_utc": "2026-11-12T15:02:20.435000+00:00",
       "live_price_stale": false,
       "live_price_source": "dukascopy:tick",
-      "live_price_fetched_at_utc": "2026-11-12T15:00:21.932517+00:00",
+      "live_price_fetched_at_utc": "2026-11-12T15:02:22.666321+00:00",
       "forming_m15_open": 71527.0,
       "forming_m15_high": 71595.7,
-      "forming_m15_low": 71497.8,
+      "forming_m15_low": 71302.7,
       "forming_m15_open_utc": "2026-11-12T15:00:00+00:00",
-      "minutes_into_bar": 0.34,
-      "live_price_age_s": 0.9
+      "minutes_into_bar": 2.34,
+      "live_price_age_s": 2.23
     }
   ],
   "in_position": [
-    "GBPUSD"
+    "US100"
   ],
   "entry_symbols": [
     "XAUUSD",
     "EURUSD",
-    "US100",
+    "GBPUSD",
     "BTCUSD"
   ],
-  "gemini_raw_text": "{\n  \"signals\": [\n    {\n      \"symbol\": \"XAUUSD\",\n      \"trend_vs_vwap\": \"bearish below VWAP and EMA50\",\n      \"volatility\": \"expanding\",\n      \"level_event\": \"rejection at Put Wall #1\",\n      \"rationale\": \"Price is trading well below VAL (3938.58) and POC (3977.51). CVD is BEARISH (-9.83, slope -1.31), agreeing with the strong session downtrend. During LONDON_NY_OVERLAP, price broke beneath the EMA50 (3943.27) and VWAP (3952.84), extending past the -2 ATR lower band (3892.21). However, GEX shows NEGATIVE_AMPLIFYING regime below Gamma Flip (3922.39), but price directly hit Put Wall #1 (3871.35) and Session Low (3866.09) without yellow RVOL confirmation on the immediate retest (RVOL 1.539). Selling directly into Put Wall #1 is prohibited, and buying counter-trend is low probability; thus HOLD is warranted.\",\n      \"action\": \"HOLD\",\n      \"confidence\": 0.55,\n      \"risk_pct\": null,\n      \"entry\": null,\n      \"stop_loss\": null,\n      \"take_profit\": null,\n      \"risk_reward\": null\n    },\n    {\n      \"symbol\": \"EURUSD\",\n      \"trend_vs_vwap\": \"bearish below VWAP and EMA50\",\n      \"volatility\": \"expanding\",\n      \"level_event\": \"sweep of S/R support 1.10710\",\n      \"rationale\": \"Price is below VAL (1.10801) and POC (1.10928). CVD is NEUTRAL (-2,147 with negative slope -8209). Session is LONDON_NY_OVERLAP. Price is below downward-sloping VWAP (1.10864) and EMA50 (1.10882), stretching down near the lower ATR band (1.10716). RVOL is only 1.23 (no yellow spike), indicating lack of aggressive institutional selling at this breakdown. The market is pressing directly into S/R (1.10710) and Session Low (1.10662) without volume expansion, risking a mean-reversion trap. HOLD.\",\n      \"action\": \"HOLD\",\n      \"confidence\": 0.5,\n      \"risk_pct\": null,\n      \"entry\": null,\n      \"stop_loss\": null,\n      \"take_profit\": null,\n      \"risk_reward\": null\n    },\n    {\n      \"symbol\": \"US100\",\n      \"trend_vs_vwap\": \"bullish above VWAP and EMA50\",\n      \"volatility\": \"expanding\",\n      \"level_event\": \"acceptance above VAH and Gamma Flip\",\n      \"rationale\": \"Price has broken out above VAH (28203.68) and POC (28115.45). CVD is NEUTRAL (-2.03) but cvd_slope is positive (+1.53). In LONDON_NY_OVERLAP, price made an aggressive V-shape reclaim above VWAP (28121.48) and EMA50 (28127.31) backed by an RVOL spike of 2.194 (yellow bar). GEX regime is POSITIVE_DAMPENING above Gamma Flip (28157.59). While Call Wall #1 sits overhead at 28424.24, there is ample room (~185 points) for momentum continuation upward towards the wall and Prev High (28596.50). Taking a BUY scalp on acceptance above local S/R 28209.17.\",\n      \"action\": \"BUY\",\n      \"confidence\": 0.76,\n      \"risk_pct\": 0.5,\n      \"entry\": 28239.19,\n      \"stop_loss\": 0.0,\n      \"take_profit\": 0.0,\n      \"risk_reward\": 0.0\n    },\n    {\n      \"symbol\": \"BTCUSD\",\n      \"trend_vs_vwap\": \"bearish below VWAP and EMA50\",\n      \"volatility\": \"expanding\",\n      \"level_event\": \"acceptance below -2 ATR band\",\n      \"rationale\": \"Price is severely extended below VAL (72836.73) and POC (73512.29). CVD is BEARISH (-0.09, slope -0.02), agreeing with the heavy downtrend. In LONDON_NY_OVERLAP, price remains pinned far below VWAP (73173.73) and EMA50 (73044.51). The signal candle breached Session Low (71191.90) and is deep outside the lower ATR envelope (71830.04) with RVOL 1.696 (sub-2.0, no yellow spike on this bar after the initial flush). Given the severe ATR overextension and lack of fresh climax volume to support an immediate continuation entry, HOLD for a mean-reversion retest.\",\n      \"action\": \"HOLD\",\n      \"confidence\": 0.55,\n      \"risk_pct\": null,\n      \"entry\": null,\n      \"stop_loss\": null,\n      \"take_profit\": null,\n      \"risk_reward\": null\n    }\n  ],\n  \"market_summary\": \"During the London/NY Overlap, risk-off pressure dominates Gold and Bitcoin, both heavily extended below session Value Areas and VWAP, hovering near key support and Put Walls where chasing is penalized. EURUSD exhibits quiet drift toward local lows without volume conviction. In contrast, US100 printed a sharp volume-confirmed reclaim back above VWAP, EMA50, and its Value Area High into a positive gamma regime, offering a clear momentum long setup.\"\n}",
+  "gemini_raw_text": "{\n  \"signals\": [\n    {\n      \"symbol\": \"XAUUSD\",\n      \"trend_vs_vwap\": \"bearish below declining VWAP and EMA50\",\n      \"volatility\": \"expanding\",\n      \"level_event\": \"breakdown through Session Low 3866.09\",\n      \"rationale\": \"Price is trading well below VAL (3938.58) and POC (3977.51) following a massive downtrend cascade. Bearish CVD (-9.83) with negative slope (-1.31) aligns with strong downward order-flow. Session is LONDON_NY_OVERLAP with expanding ATR. Price is far below VWAP (3952.84) and EMA50 (3943.27), riding beneath the lower ATR band (3892.21). Heavy volume spikes accompanied the breakdown. However, price is severely stretched into multi-sigma oversold territory directly at the Session Low (3866.09) with no clean pullback, making selling the exact lows unfavorable.\",\n      \"action\": \"HOLD\",\n      \"confidence\": 0.45,\n      \"risk_pct\": null,\n      \"entry\": null,\n      \"stop_loss\": null,\n      \"take_profit\": null,\n      \"risk_reward\": null\n    },\n    {\n      \"symbol\": \"EURUSD\",\n      \"trend_vs_vwap\": \"bearish below VWAP and EMA50\",\n      \"volatility\": \"expanding\",\n      \"level_event\": \"test of Session Low 1.10662\",\n      \"rationale\": \"Price is below VAL (1.10801) and POC (1.10928). CVD is NEUTRAL (-2147.49) but slope is sharply negative (-8209.13). Session is LONDON_NY_OVERLAP. Price is below downward sloping VWAP (1.10864) and EMA50 (1.10882), stretching beneath the lower ATR band (1.10716). RVOL shows elevated activity on recent flushes, but the current bar is pressing into strong support at Session Low 1.10662 and S/R 1.10710. Lacking confirmed breakdown acceptance below 1.10662.\",\n      \"action\": \"HOLD\",\n      \"confidence\": 0.5,\n      \"risk_pct\": null,\n      \"entry\": null,\n      \"stop_loss\": null,\n      \"take_profit\": null,\n      \"risk_reward\": null\n    },\n    {\n      \"symbol\": \"GBPUSD\",\n      \"trend_vs_vwap\": \"bearish below VWAP and EMA50\",\n      \"volatility\": \"expanding\",\n      \"level_event\": \"breakdown through Session Low 1.32450\",\n      \"rationale\": \"Price is trading below VAL (1.32579) and POC (1.32726). CVD is strongly BEARISH (-10380.75) with steep negative slope (-4799.75), confirming aggressive selling pressure. Session is LONDON_NY_OVERLAP. Price holds consistently below VWAP (1.32652) and EMA50 (1.32666), penetrating the lower ATR band (1.32453) and breaking through Session Low (1.32450) and S/R (1.32500) with solid volume confirmation.\",\n      \"action\": \"SELL\",\n      \"confidence\": 0.76,\n      \"risk_pct\": 0.5,\n      \"entry\": 1.32448,\n      \"stop_loss\": 0,\n      \"take_profit\": 0,\n      \"risk_reward\": 0\n    },\n    {\n      \"symbol\": \"BTCUSD\",\n      \"trend_vs_vwap\": \"bearish below declining VWAP and EMA50\",\n      \"volatility\": \"expanding\",\n      \"level_event\": \"rejection from lower ATR band, hovering above Session Low 71191.9\",\n      \"rationale\": \"Price is below VAL (72836.73) and POC (73512.29). CVD is BEARISH (-0.09) with negative slope (-0.02). Active in LONDON_NY_OVERLAP. Price is sharply below VWAP (73173.73) and EMA50 (73044.51), stretched far beyond the lower ATR band (71830.04). Last signal candle printed a long lower wick absorption off 71191.9 with high RVOL (1.70), signaling potential exhaustion / liquidity sweep of the session low rather than clean momentum continuation.\",\n      \"action\": \"HOLD\",\n      \"confidence\": 0.48,\n      \"risk_pct\": null,\n      \"entry\": null,\n      \"stop_loss\": null,\n      \"take_profit\": null,\n      \"risk_reward\": null\n    }\n  ],\n  \"market_summary\": \"Broad USD strength driving strong downward momentum across all major pairs during the London/NY overlap. Gold and Bitcoin are overextended into multi-sigma lower ATR extremes near session lows showing potential absorption wicks, while GBPUSD confirms a fresh breakdown below its session low with strong bearish CVD confluence.\"\n}",
   "gemini_usage": {
-    "candidates_token_count": 1411,
-    "prompt_token_count": 11754,
+    "candidates_token_count": 1245,
+    "prompt_token_count": 11338,
     "prompt_tokens_details": [
-      {
-        "modality": "TEXT",
-        "token_count": 7354
-      },
       {
         "modality": "IMAGE",
         "token_count": 4400
+      },
+      {
+        "modality": "TEXT",
+        "token_count": 6938
       }
     ],
-    "total_token_count": 13165
+    "total_token_count": 12583
   }
 }

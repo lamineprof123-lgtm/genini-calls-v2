@@ -1,24 +1,5 @@
 [
   {
-    "signal_at": "2026-11-12T13:22:20.446900+00:00",
-    "tz": "Asia/Dubai",
-    "model": "gemini-3.8-flash",
-    "dry_run": false,
-    "trades": [],
-    "no_trade": [
-      "EURUSD",
-      "BTCUSD"
-    ],
-    "in_position": [
-      "GBPUSD",
-      "US100",
-      "XAUUSD"
-    ],
-    "analysis_failed": false,
-    "breaker_halted": false,
-    "written_at": "2026-11-12T13:22:32.146439+00:00"
-  },
-  {
     "signal_at": "2026-11-12T13:24:20.344552+00:00",
     "tz": "Asia/Dubai",
     "model": "gemini-3.8-flash",
@@ -1715,5 +1696,39 @@
     "analysis_failed": false,
     "breaker_halted": false,
     "written_at": "2026-11-12T15:00:35.827975+00:00"
+  },
+  {
+    "signal_at": "2026-11-12T15:02:20.228462+00:00",
+    "tz": "Asia/Dubai",
+    "model": "gemini-3.8-flash",
+    "dry_run": false,
+    "trades": [
+      {
+        "symbol": "GBPUSD",
+        "name": "POUND",
+        "action": "SELL",
+        "entry": 1.32448,
+        "stop_loss": null,
+        "take_profit": null,
+        "rr": null,
+        "confidence": 0.76,
+        "digits": 5,
+        "exit": "Gemini",
+        "card": "Hard stop \u2212$500 net \u00b7 TP: none \u00b7 exit: Gemini",
+        "session": "LONDON_NY_OVERLAP",
+        "cvd_label": "BEARISH"
+      }
+    ],
+    "no_trade": [
+      "XAUUSD",
+      "EURUSD",
+      "BTCUSD"
+    ],
+    "in_position": [
+      "US100"
+    ],
+    "analysis_failed": false,
+    "breaker_halted": false,
+    "written_at": "2026-11-12T15:02:34.487326+00:00"
   }
 ]

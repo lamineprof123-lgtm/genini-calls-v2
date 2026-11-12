@@ -1,7 +1,7 @@
 {
   "reset_token": "claude-v2-1",
   "created_at": "2026-11-12T12:14:51.993423+00:00",
-  "last_entry_bar": "2026-11-12T14:30:00+00:00",
+  "last_entry_bar": "2026-11-12T14:45:00+00:00",
   "shadow": [
     {
       "vid": 32,
@@ -16,7 +16,7 @@
       "init_stop": 1.3263,
       "atr": 0.000858,
       "entry_time": "2026-11-12T14:47:06.400113+00:00",
-      "scan_from": "2026-11-12T14:59:00+00:00",
+      "scan_from": "2026-11-12T15:00:00+00:00",
       "tick": 0.0001,
       "comm_pts": 7.68e-05,
       "mfe_pts": 0.0008999999999999009,
@@ -112,60 +112,24 @@
       "id": 5,
       "symbol": "GBPUSD",
       "side": -1,
-      "price": 1.32454,
-      "atr": 0.000858,
-      "t": "2026-11-12T14:59:15.884064+00:00",
-      "confidence": 0.55,
-      "decision": "HOLD",
-      "phase": "C"
-    },
-    {
-      "sim": "C-OPUS",
-      "id": 5,
-      "symbol": "GBPUSD",
-      "side": -1,
-      "price": 1.32451,
-      "atr": 0.000858,
-      "t": "2026-11-12T14:59:33.879365+00:00",
-      "confidence": 0.4,
-      "decision": "CLOSE",
-      "phase": "C"
-    },
-    {
-      "sim": "C-OPUS",
-      "id": 5,
-      "symbol": "GBPUSD",
-      "side": -1,
       "price": 1.32467,
       "atr": 0.000858,
       "t": "2026-11-12T14:59:51.888714+00:00",
       "confidence": 0.62,
       "decision": "HOLD",
       "phase": "C"
-    },
-    {
-      "sim": "C-OPUS",
-      "id": 5,
-      "symbol": "GBPUSD",
-      "side": -1,
-      "price": 1.32474,
-      "atr": 0.000858,
-      "t": "2026-11-12T15:00:09.882784+00:00",
-      "confidence": 0.42,
-      "decision": "CLOSE",
-      "phase": "C"
     }
   ],
   "next_vid": 33,
   "last_entry": {
-    "bar": "2026-11-12T14:30:00+00:00",
-    "t": "2026-11-12T14:46:39.342648+00:00",
-    "render_ms": 488,
+    "bar": "2026-11-12T14:45:00+00:00",
+    "t": "2026-11-12T15:00:35.830891+00:00",
+    "render_ms": 303,
     "sims": {
       "C-OPUS": {
         "ok": true,
-        "latency_ms": 25714,
-        "cost_usd": 0.102204,
+        "latency_ms": 21387,
+        "cost_usd": 0.092544,
         "error": null,
         "signals": [
           {
@@ -186,11 +150,11 @@
           },
           {
             "symbol": "GBPUSD",
-            "action": "SELL",
-            "setup_type": "trend",
-            "score": 5,
-            "confidence": 0.5,
-            "decision": "OPENED"
+            "action": "HOLD",
+            "setup_type": "none",
+            "score": 0,
+            "confidence": 0.0,
+            "decision": "HOLD"
           },
           {
             "symbol": "US100",
@@ -204,8 +168,8 @@
       },
       "C-SONNET": {
         "ok": true,
-        "latency_ms": 9422,
-        "cost_usd": 0.037352,
+        "latency_ms": 11747,
+        "cost_usd": 0.036502,
         "error": null,
         "signals": [
           {
@@ -246,8 +210,8 @@
   },
   "live": {
     "GBPUSD": {
-      "price": 1.3247,
-      "t": "2026-11-12T15:00:27.879453+00:00"
+      "price": 1.32459,
+      "t": "2026-11-12T15:02:33.877394+00:00"
     },
     "XAUUSD": {
       "price": 3922.66,
@@ -262,16 +226,5 @@
       "t": "2026-11-12T14:33:09.888450+00:00"
     }
   },
-  "fill_quotes": {
-    "GBPUSD": {
-      "symbol": "GBPUSD",
-      "price": 1.32553,
-      "ts": "2026-11-12T14:47:05.055000+00:00",
-      "source": "dukascopy:tick",
-      "stale": false,
-      "fetched_at": "2026-11-12T14:47:06.400113+00:00",
-      "age_s": 1.35,
-      "at": "2026-11-12T14:47:06.400113+00:00"
-    }
-  }
+  "fill_quotes": {}
 }

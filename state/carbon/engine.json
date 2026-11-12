@@ -271,9 +271,9 @@
       "queued_at": "2026-11-12T18:49:39.042607+00:00",
       "entry": 28308.25,
       "entry_time": "2026-11-12T18:50:38.970862+00:00",
-      "scan_from": "2026-11-12T19:03:00+00:00",
-      "best": 28274.008,
-      "mfe": 34.24199999999837,
+      "scan_from": "2026-11-12T19:05:00+00:00",
+      "best": 28273.519,
+      "mfe": 34.73099999999977,
       "mae": 39.75800000000163,
       "locked": false,
       "checks": 0,
@@ -285,7 +285,7 @@
       "risk_usd": 1888.5,
       "chase_atr": 0.449,
       "risk_1c_usd": 1882.3,
-      "last_check_at": "2026-11-12T19:05:32.236900+00:00"
+      "last_check_at": "2026-11-12T19:07:20.235993+00:00"
     },
     {
       "vid": 2,
@@ -308,9 +308,9 @@
       "queued_at": "2026-11-12T18:49:39.042607+00:00",
       "entry": 28308.25,
       "entry_time": "2026-11-12T18:50:38.970862+00:00",
-      "scan_from": "2026-11-12T19:03:00+00:00",
-      "best": 28274.008,
-      "mfe": 34.24199999999837,
+      "scan_from": "2026-11-12T19:05:00+00:00",
+      "best": 28273.519,
+      "mfe": 34.73099999999977,
       "mae": 39.75800000000163,
       "locked": false,
       "checks": 0,
@@ -322,7 +322,7 @@
       "risk_usd": 1888.5,
       "chase_atr": 0.449,
       "risk_1c_usd": 1882.3,
-      "last_check_at": "2026-11-12T19:05:32.236900+00:00"
+      "last_check_at": "2026-11-12T19:07:20.235993+00:00"
     }
   ],
   "next_vid": 3,
@@ -403,62 +403,39 @@
   },
   "calls_total": 8,
   "last_scan": {
-    "kind": "entry",
-    "t": "2026-11-12T19:00:20.006923+00:00",
-    "trigger": null,
-    "snapshot_id": "m15-20261112184500-b48a8a9eb3f0",
-    "snapshot_hash": "b48a8a9eb3f022dc40bf1e8f5fae2781d19328e94f10d8159193e1a66c17816d",
-    "bar_close_ts": "2026-11-12T19:00:00+00:00",
-    "snapshot_ts": "2026-11-12T19:00:23.897132+00:00",
+    "kind": "trigger",
+    "t": "2026-11-12T19:04:07.354020+00:00",
+    "trigger": {
+      "trigger": "level_cross",
+      "level": "Put Wall #1",
+      "level_price": 28298.89,
+      "price": 28287.33,
+      "direction": "down",
+      "symbol": "US100",
+      "bar": "2026-11-12T19:00:00+00:00",
+      "n_today": 4
+    },
     "sent": [
-      "XAUUSD",
-      "EURUSD",
-      "US100",
-      "XAGUSD",
-      "BTCUSD"
+      "US100"
     ],
     "blocked_session": [],
     "ok": true,
-    "latency_s": 174.712,
-    "cost_usd": 0.182266,
+    "latency_s": 85.504,
+    "cost_usd": 0.080656,
     "tokens": {
-      "input": 14263,
-      "output": 2474,
-      "thoughts": 12900,
-      "total": 29637
+      "input": 5948,
+      "output": 945,
+      "thoughts": 5931,
+      "total": 12824
     },
     "error": null,
     "finish_reason": "FinishReason.STOP",
-    "answer_ts": "2026-11-12T19:03:14.718923+00:00",
+    "answer_ts": "2026-11-12T19:05:32.996020+00:00",
     "signals": [
-      {
-        "symbol": "XAUUSD",
-        "action": "HOLD",
-        "confidence": 0.76,
-        "thinking_level": "high"
-      },
-      {
-        "symbol": "EURUSD",
-        "action": "HOLD",
-        "confidence": 0.8,
-        "thinking_level": "high"
-      },
       {
         "symbol": "US100",
         "action": "HOLD",
-        "confidence": 0.72,
-        "thinking_level": "high"
-      },
-      {
-        "symbol": "XAGUSD",
-        "action": "HOLD",
-        "confidence": 0.78,
-        "thinking_level": "high"
-      },
-      {
-        "symbol": "BTCUSD",
-        "action": "HOLD",
-        "confidence": 0.77,
+        "confidence": 0.45,
         "thinking_level": "high"
       }
     ],

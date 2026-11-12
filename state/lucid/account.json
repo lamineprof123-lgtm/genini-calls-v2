@@ -1,7 +1,7 @@
 {
   "version": 1,
   "created_at": "2026-11-12T01:26:22.307439+00:00",
-  "last_processed": "2026-11-12T08:38:00+00:00",
+  "last_processed": "2026-11-12T08:39:00+00:00",
   "account": {
     "no": 1,
     "phase": "eval",
@@ -355,7 +355,7 @@
         "run_at_utc": "2026-11-12T08:34:20.009741+00:00",
         "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-12/cycles/123420.json/XAUUSD.png"
       },
-      "mfe": 5.3449999999998,
+      "mfe": 6.989000000000033,
       "mae": 0.16000000000030923,
       "mfe_min": 0.0,
       "time_cut_deadline": null,
@@ -363,7 +363,168 @@
       "time_cut_rule": "none: exit = Gemini CLOSE only (1-strike); no stop, no target, no max hold, no 16:45 flat; DLL/MLL/breaker log-only"
     }
   ],
-  "pending": [],
+  "pending": [
+    {
+      "symbol": "EURUSD",
+      "side": 1,
+      "created": "2026-11-12T08:40:35.777210+00:00",
+      "fill_after": "2026-11-12T08:41:00+00:00",
+      "reserved_risk": 0.0,
+      "planned": {
+        "contract": "6E",
+        "qty": 24,
+        "risk_usd": null,
+        "tdist": null,
+        "target_source": "none (gemini_only)"
+      },
+      "expires": "2026-11-12T08:51:00+00:00",
+      "atr": 0.000586,
+      "scalp": {
+        "action": "BUY",
+        "side": 1,
+        "entry": 1.10906,
+        "stop_loss": 1.10844,
+        "take_profit": 1.10961,
+        "sdist": 0.0006192999999998783,
+        "tdist": 0.00055,
+        "stop_source": "structure",
+        "target_source": "extended:aim_net",
+        "rr": 0.888,
+        "structure_stop": 1.1084407,
+        "atr_stop": 1.1085912,
+        "fixed_tp": 1.11031,
+        "structure_tp": 1.109205,
+        "structure_label": "VAH",
+        "candle": {
+          "high": 1.10905,
+          "low": 1.10847
+        },
+        "levels": [
+          {
+            "price": 1.10988,
+            "label": "Session High"
+          },
+          {
+            "price": 1.11456,
+            "label": "S/R"
+          },
+          {
+            "price": 1.11499,
+            "label": "24h High"
+          },
+          {
+            "price": 1.10824,
+            "label": "Prev Low"
+          },
+          {
+            "price": 1.10662,
+            "label": "Session Low"
+          }
+        ],
+        "vp": {
+          "poc": 1.10757,
+          "vah": 1.10923,
+          "val": 1.10701
+        },
+        "target_scalp": 1.1092,
+        "lucid_plan": {
+          "contract": "6E",
+          "qty": 12,
+          "tdist": 0.00055,
+          "target_usd": 767.4,
+          "risk_usd": 975.0,
+          "target_source": "extended:aim_net",
+          "sizing": "structure:VAH target 0.000145 cannot reach $381 net within $1500 risk; extended:aim_net: 12 6E (fewest that fit) target 0.00055 -> $767 net, risk $975"
+        }
+      },
+      "session": "LONDON_SESSION",
+      "telemetry": {
+        "symbol": "EURUSD",
+        "session": "LONDON_SESSION",
+        "last_close": 1.10869,
+        "atr": 0.000586,
+        "vwap": 1.10833,
+        "ema20": 1.10811,
+        "ema50": 1.10867,
+        "price_vs_vwap": {
+          "side": "above",
+          "dist_atr": 0.6143
+        },
+        "price_vs_ema50": {
+          "side": "above",
+          "dist_atr": 0.0341
+        },
+        "vwap_aligned_with_side": true,
+        "ema50_aligned_with_side": true,
+        "poc": 1.10757,
+        "vah": 1.10923,
+        "val": 1.10701,
+        "price_vs_value_area": "inside",
+        "dist_to_poc_atr": 1.9113,
+        "cvd": 564.11,
+        "cvd_label": "NEUTRAL",
+        "cvd_slope": 1108.64,
+        "cvd_agrees_with_side": true,
+        "rvol": 1.887,
+        "rvol_spike": false,
+        "rvol_bars_since_spike": 23,
+        "atr_band_z": 0.9898,
+        "atr_upper": 1.10928,
+        "atr_lower": 1.10694,
+        "nearest_sr": {
+          "above": {
+            "price": 1.10988,
+            "label": "Session High",
+            "dist_atr": 2.0307
+          },
+          "below": {
+            "price": 1.10824,
+            "label": "Prev Low",
+            "dist_atr": 0.7679
+          }
+        },
+        "gemini": {
+          "action": "BUY",
+          "confidence": 0.72,
+          "confidence_band": "0.7-0.8",
+          "rationale": "Evaluating the 7-point confluence checklist: 1) Volume Profile: Price is inside Value Area (VAL 1.10701, VAH 1.10923) and trading above POC 1.10757, challenging VAH. 2) CVD: CVD is +564.11 labeled NEUTRAL with an accelerating positive slope (+1108.64) supporting the upside impulse. 3) Session: LONDON_SESSION, active market hours. 4) Trend/Baselines: Price has reclaimed and is holding above session VWAP (1.10833) and EMA50 (1.10867). 5) ATR: Testing near the upper ATR band (1.10928) with expanding volatility. 6) Volume/RVOL: RVOL is 1.887, reflecting solid momentum without an extreme exhaustion spike. 7) Levels: The forming bar sweeps past Prev Low support and advances toward Session High (1.10988); GEX is null. Clean upward momentum favours a scalp long towards the session high.",
+          "model": "gemini-3.8-flash",
+          "model_action": "BUY"
+        },
+        "scalp": {
+          "stop_basis": "structure",
+          "target_basis": "extended:aim_net",
+          "tdist": 0.00055,
+          "sdist": 0.0006192999999998783,
+          "structure_label": "VAH"
+        },
+        "planned": {
+          "tdist": 0.00055,
+          "sdist": 0.0006192999999998783,
+          "qty": null,
+          "contract": null,
+          "target_usd_net": null,
+          "risk_usd": null
+        },
+        "run_at_utc": "2026-11-12T08:40:20.010119+00:00",
+        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-12/cycles/124020.json/EURUSD.png"
+      },
+      "gemini": {
+        "action": "BUY",
+        "entry": 1.10906,
+        "stop_loss": 1.10844,
+        "take_profit": 1.10961,
+        "confidence": 0.72,
+        "rr": 0.887,
+        "shown_on_site": true,
+        "basis": "site signal",
+        "run_at_utc": "2026-11-12T08:40:20.010119+00:00",
+        "session": "LONDON_SESSION",
+        "rationale": "Evaluating the 7-point confluence checklist: 1) Volume Profile: Price is inside Value Area (VAL 1.10701, VAH 1.10923) and trading above POC 1.10757, challenging VAH. 2) CVD: CVD is +564.11 labeled NEUTRAL with an accelerating positive slope (+1108.64) supporting the upside impulse. 3) Session: LONDON_SESSION, active market hours. 4) Trend/Baselines: Price has reclaimed and is holding above session VWAP (1.10833) and EMA50 (1.10867). 5) ATR: Testing near the upper ATR band (1.10928) with expanding volatility. 6) Volume/RVOL: RVOL is 1.887, reflecting solid momentum without an extreme exhaustion spike. 7) Levels: The forming bar sweeps past Prev Low support and advances toward Session High (1.10988); GEX is null. Clean upward momentum favours a scalp long towards the session high.",
+        "model": "gemini-3.8-flash"
+      }
+    }
+  ],
   "next_pos_id": 6,
   "day": {
     "id": "2026-11-12",
@@ -374,9 +535,9 @@
     "traded": true
   },
   "last_price": {
-    "XAUUSD": 3947.419,
+    "XAUUSD": 3945.575,
     "EURUSD": 1.1091,
-    "US100": 28114.754
+    "US100": 28118.987
   },
   "history": [],
   "ledger": {
@@ -406,7 +567,7 @@
     "commissions": 245.95,
     "net_trade_pnl": 1030.4,
     "skipped_signals": 0,
-    "accepted_signals": 5
+    "accepted_signals": 6
   },
   "reset_token": "2026-11-12-exit-prompt-v2",
   "reset_at": "2026-11-12T01:26:22.307439+00:00",

@@ -1,7 +1,7 @@
 {
   "reset_token": "claude-v2-1",
   "created_at": "2026-11-12T12:14:51.993423+00:00",
-  "last_entry_bar": "2026-11-12T16:00:00+00:00",
+  "last_entry_bar": "2026-11-12T16:15:00+00:00",
   "shadow": [],
   "probes": [
     {
@@ -21,30 +21,6 @@
       "id": 7,
       "symbol": "EURUSD",
       "side": -1,
-      "price": 1.10594,
-      "atr": 0.00086,
-      "t": "2026-11-12T16:28:17.853005+00:00",
-      "confidence": 0.6,
-      "decision": "HOLD",
-      "phase": "C"
-    },
-    {
-      "sim": "C-OPUS",
-      "id": 7,
-      "symbol": "EURUSD",
-      "side": -1,
-      "price": 1.10588,
-      "atr": 0.00086,
-      "t": "2026-11-12T16:28:35.850608+00:00",
-      "confidence": 0.45,
-      "decision": "CLOSE",
-      "phase": "C"
-    },
-    {
-      "sim": "C-OPUS",
-      "id": 7,
-      "symbol": "EURUSD",
-      "side": -1,
       "price": 1.10582,
       "atr": 0.00086,
       "t": "2026-11-12T16:28:53.841381+00:00",
@@ -55,14 +31,14 @@
   ],
   "next_vid": 41,
   "last_entry": {
-    "bar": "2026-11-12T16:00:00+00:00",
-    "t": "2026-11-12T16:15:20.003568+00:00",
-    "render_ms": 528,
+    "bar": "2026-11-12T16:15:00+00:00",
+    "t": "2026-11-12T16:30:20.014380+00:00",
+    "render_ms": 284,
     "sims": {
       "C-OPUS": {
         "ok": true,
-        "latency_ms": 19308,
-        "cost_usd": 0.090352,
+        "latency_ms": 23086,
+        "cost_usd": 0.09518,
         "error": null,
         "signals": [
           {
@@ -75,17 +51,17 @@
           },
           {
             "symbol": "EURUSD",
-            "action": "SELL",
-            "setup_type": "trend",
-            "score": 5,
-            "confidence": 0.52,
-            "decision": "OPENED"
+            "action": "HOLD",
+            "setup_type": "none",
+            "score": 0,
+            "confidence": 0.0,
+            "decision": "HOLD"
           },
           {
             "symbol": "GBPUSD",
             "action": "HOLD",
             "setup_type": "none",
-            "score": 4,
+            "score": 0,
             "confidence": 0.0,
             "decision": "HOLD"
           },
@@ -101,8 +77,8 @@
       },
       "C-SONNET": {
         "ok": true,
-        "latency_ms": 8225,
-        "cost_usd": 0.034776,
+        "latency_ms": 8503,
+        "cost_usd": 0.03505,
         "error": null,
         "signals": [
           {
@@ -151,24 +127,13 @@
       "t": "2026-11-12T13:20:02.434772+00:00"
     },
     "EURUSD": {
-      "price": 1.10585,
-      "t": "2026-11-12T16:30:23.836860+00:00"
+      "price": 1.10566,
+      "t": "2026-11-12T16:32:29.846682+00:00"
     },
     "US100": {
       "price": 28030.665,
       "t": "2026-11-12T14:33:09.888450+00:00"
     }
   },
-  "fill_quotes": {
-    "EURUSD": {
-      "symbol": "EURUSD",
-      "price": 1.10636,
-      "ts": "2026-11-12T16:16:41.093000+00:00",
-      "source": "dukascopy:tick",
-      "stale": false,
-      "fetched_at": "2026-11-12T16:16:42.089492+00:00",
-      "age_s": 1.0,
-      "at": "2026-11-12T16:16:42.089492+00:00"
-    }
-  }
+  "fill_quotes": {}
 }

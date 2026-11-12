@@ -3,13 +3,13 @@
   "created_at": "2026-11-12T15:30:53.246609+00:00",
   "spend": {
     "2026-11-12": {
-      "usd": 0.301286,
-      "calls": 7,
+      "usd": 0.351002,
+      "calls": 8,
       "failed": 0,
       "by_kind": {
         "entry": {
-          "calls": 3,
-          "usd": 0.179896
+          "calls": 4,
+          "usd": 0.229612
         },
         "trigger": {
           "calls": 4,
@@ -17,13 +17,13 @@
         }
       },
       "tokens": {
-        "input": 54198,
-        "output": 5456,
-        "thoughts": 13833
+        "input": 64406,
+        "output": 7028,
+        "thoughts": 15191
       }
     }
   },
-  "last_scan_bar": "2026-11-12T16:00:00+00:00",
+  "last_scan_bar": "2026-11-12T16:15:00+00:00",
   "triggers": {
     "day": "2026-11-12",
     "n": 4,
@@ -34,9 +34,9 @@
   },
   "cache": {
     "XAUUSD": {
-      "bar": "2026-11-12T16:00:00+00:00",
-      "atr": 12.359,
-      "price": 3874.91,
+      "bar": "2026-11-12T16:15:00+00:00",
+      "atr": 11.936,
+      "price": 3872.45,
       "levels": [
         [
           "Prev Low",
@@ -60,38 +60,38 @@
         ],
         [
           "VAL",
-          3923.38,
+          3917.46,
           -1
         ],
         [
           "Call Wall #1",
-          3918.35,
+          3915.86,
           -1
         ],
         [
           "Call Wall #2",
-          4147.56,
+          4144.92,
           -1
         ],
         [
           "Put Wall #1",
-          3820.12,
+          3817.69,
           1
         ],
         [
           "Put Wall #2",
-          3874.69,
+          3763.15,
           1
         ]
       ],
-      "vol_avg": 1.0507,
+      "vol_avg": 1.086295,
       "blocked": false,
       "session": "NEW_YORK_SESSION"
     },
     "EURUSD": {
-      "bar": "2026-11-12T16:00:00+00:00",
-      "atr": 0.00086,
-      "price": 1.1063,
+      "bar": "2026-11-12T16:15:00+00:00",
+      "atr": 0.000886,
+      "price": 1.10568,
       "levels": [
         [
           "Prev Low",
@@ -119,19 +119,19 @@
           -1
         ]
       ],
-      "vol_avg": 3940.8655,
+      "vol_avg": 4118.939,
       "blocked": false,
       "session": "NEW_YORK_SESSION"
     },
     "US100": {
-      "bar": "2026-11-12T16:00:00+00:00",
-      "atr": 112.265,
-      "price": 28540.02,
+      "bar": "2026-11-12T16:15:00+00:00",
+      "atr": 112.122,
+      "price": 28482.54,
       "levels": [
         [
           "Session High",
-          28528.49,
-          1
+          28550.97,
+          -1
         ],
         [
           "Prev High",
@@ -140,41 +140,41 @@
         ],
         [
           "POC",
-          28115.53,
+          28122.95,
           1
         ],
         [
           "VAH",
-          28207.98,
+          28218.78,
           1
         ],
         [
           "VAL",
-          28060.06,
+          28065.45,
           1
         ],
         [
           "Call Wall #1",
-          28435.83,
+          28435.97,
           1
         ],
         [
           "Call Wall #2",
-          28275.83,
+          28275.97,
           1
         ],
         [
           "Put Wall #1",
-          28005.83,
+          28005.97,
           1
         ],
         [
           "Put Wall #2",
-          28115.83,
+          28115.97,
           1
         ]
       ],
-      "vol_avg": 1.437025,
+      "vol_avg": 1.4817500000000001,
       "blocked": false,
       "session": "NEW_YORK_SESSION"
     }
@@ -182,44 +182,37 @@
   "whatif": [],
   "next_vid": 3,
   "last_call": {
-    "t": "2026-11-12T16:21:11.605101+00:00",
-    "t_dubai": "2026-11-12T20:21:11.605101+04:00",
-    "kind": "trigger",
+    "t": "2026-11-12T16:30:56.992447+00:00",
+    "t_dubai": "2026-11-12T20:30:56.992447+04:00",
+    "kind": "entry",
     "model": "gemini-4-carbon",
     "model_version": "gemini-4-carbon",
     "thinking": "medium",
     "ok": true,
     "error": null,
-    "latency_s": 26.943,
+    "latency_s": 36.411,
     "finish_reason": "FinishReason.STOP",
     "tokens": {
-      "input": 5948,
-      "output": 675,
-      "thoughts": 1257,
-      "total": 7880
+      "input": 10208,
+      "output": 1572,
+      "thoughts": 1358,
+      "total": 13138
     },
-    "thoughts_token_count": 1257,
+    "thoughts_token_count": 1358,
     "price_per_mtok": [
       2.0,
       10.0
     ],
-    "cost_usd": 0.031216,
-    "spend_today_usd": 0.3013,
+    "cost_usd": 0.049716,
+    "spend_today_usd": 0.351,
     "symbols": [
+      "XAUUSD",
+      "EURUSD",
       "US100"
     ],
-    "render_ms": 105,
+    "render_ms": 567,
     "parse_error": null,
-    "trigger": {
-      "trigger": "level_cross",
-      "level": "Session High",
-      "level_price": 28528.49,
-      "price": 28540.02,
-      "direction": "up",
-      "symbol": "US100",
-      "bar": "2026-11-12T16:15:00+00:00",
-      "n_today": 4
-    }
+    "trigger": null
   },
   "first_call": {
     "t": "2026-11-12T15:46:09.306718+00:00",
@@ -254,37 +247,37 @@
     "parse_error": null,
     "trigger": null
   },
-  "calls_total": 7,
+  "calls_total": 8,
   "last_scan": {
     "kind": "trigger",
-    "t": "2026-11-12T16:17:47.492396+00:00",
+    "t": "2026-11-12T16:20:44.557101+00:00",
     "trigger": {
       "trigger": "level_cross",
-      "level": "Put Wall #2",
-      "level_price": 3876.28,
-      "price": 3874.99,
-      "direction": "down",
-      "symbol": "XAUUSD",
+      "level": "Session High",
+      "level_price": 28528.49,
+      "price": 28540.02,
+      "direction": "up",
+      "symbol": "US100",
       "bar": "2026-11-12T16:15:00+00:00",
-      "n_today": 3
+      "n_today": 4
     },
     "sent": [
-      "XAUUSD"
+      "US100"
     ],
     "blocked_session": [],
     "ok": true,
-    "latency_s": 20.278,
-    "cost_usd": 0.026076,
+    "latency_s": 26.943,
+    "cost_usd": 0.031216,
     "tokens": {
-      "input": 5903,
-      "output": 708,
-      "thoughts": 719,
-      "total": 7330
+      "input": 5948,
+      "output": 675,
+      "thoughts": 1257,
+      "total": 7880
     },
     "error": null,
     "signals": [
       {
-        "symbol": "XAUUSD",
+        "symbol": "US100",
         "action": "HOLD",
         "confidence": 0.72
       }

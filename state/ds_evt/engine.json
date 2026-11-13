@@ -7,15 +7,16 @@
       "fired": [],
       "touches": {},
       "t2_done": [],
-      "prev_rvol": 0.0,
+      "prev_rvol": 0.12,
       "cvd_stable": -1,
       "cvd_n": 0,
-      "prev_live": 3875.24
+      "prev_live": 3874.12
     },
     "EURUSD": {
       "bar": "2026-11-13T20:15:00+00:00",
       "fired": [
-        "T1"
+        "T1",
+        "T2"
       ],
       "touches": {
         "Session Low@1.10217": {
@@ -24,37 +25,47 @@
           "orig": 1
         }
       },
-      "t2_done": [],
-      "prev_rvol": 0.05,
+      "t2_done": [
+        "Session Low@1.10217"
+      ],
+      "prev_rvol": 0.094,
       "cvd_stable": -1,
       "cvd_n": 0,
-      "prev_live": 1.10218
+      "prev_live": 1.10228
     },
     "US100": {
       "bar": "2026-11-13T20:15:00+00:00",
-      "fired": [],
-      "touches": {},
+      "fired": [
+        "T1"
+      ],
+      "touches": {
+        "Prev Low@27912.13": {
+          "label": "Prev Low",
+          "price": 27912.13,
+          "orig": 1
+        }
+      },
       "t2_done": [],
       "prev_rvol": null,
       "cvd_stable": 1,
       "cvd_n": 0,
-      "prev_live": 27937.3
+      "prev_live": 27919.33
     }
   },
   "whatif": [],
   "stats": {
     "DS-IMG-E": {
       "T2": {
-        "fired": 9,
+        "fired": 10,
         "calls": 3,
-        "suppressed_per_hour_cap": 1,
+        "suppressed_per_hour_cap": 2,
         "suppressed_debounced": 5
       },
       "T1": {
-        "fired": 11,
+        "fired": 12,
         "calls": 6,
         "suppressed_per_hour_cap": 2,
-        "suppressed_debounced": 3
+        "suppressed_debounced": 4
       },
       "T7": {
         "fired": 9,
@@ -77,16 +88,16 @@
     },
     "DS-TXT-E": {
       "T2": {
-        "fired": 9,
+        "fired": 10,
         "calls": 3,
-        "suppressed_per_hour_cap": 1,
+        "suppressed_per_hour_cap": 2,
         "suppressed_debounced": 5
       },
       "T1": {
-        "fired": 11,
+        "fired": 12,
         "calls": 6,
         "suppressed_per_hour_cap": 2,
-        "suppressed_debounced": 3
+        "suppressed_debounced": 4
       },
       "T7": {
         "fired": 9,
@@ -112,8 +123,8 @@
   "feed_days": {
     "2026-11-13": {
       "first": "2026-11-13T17:15:10.001749+00:00",
-      "last": "2026-11-13T20:16:10.001405+00:00",
-      "n": 181
+      "last": "2026-11-13T20:18:10.001670+00:00",
+      "n": 183
     }
   }
 }

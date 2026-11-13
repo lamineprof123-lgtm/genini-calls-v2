@@ -120,10 +120,10 @@
       "book": "C-OPUS",
       "venue": "OTHER-VENUE",
       "account": {
-        "balance": 100291.2379,
-        "equity": 100291.24,
+        "balance": 100194.6895,
+        "equity": 100085.0,
         "start_balance": 100000.0,
-        "open_pnl": 0.0,
+        "open_pnl": -109.69,
         "net_pnl": 291.2379,
         "realized_pnl": 291.2379,
         "wins": 1,
@@ -131,9 +131,35 @@
         "trades": 1,
         "stopped": 0
       },
-      "positions": [],
+      "positions": [
+        {
+          "id": 2,
+          "venue": "OTHER-VENUE",
+          "book": "C-OPUS",
+          "symbol": "BTCUSD",
+          "side": -1,
+          "qty": 2.791,
+          "entry": 69185.5,
+          "raw_quote": 69190.5,
+          "atr": 322.462,
+          "entry_time": "2026-11-13T10:30:53.644684+00:00",
+          "entry_fee": 96.5484,
+          "confidence": 0.52,
+          "model": "claude-opus-5-5",
+          "thinking_level": null,
+          "exit_mode": "uniform-1atr-v1",
+          "prompt_version": null,
+          "stop": 69510.0,
+          "target": 68860.0,
+          "stop_note": "uniform_1atr",
+          "mech_target_atr": 1.0,
+          "uniform_exit": "uniform-1atr-v1",
+          "deadline": "2026-11-13T12:00:53.644684+00:00",
+          "mark": 69224.8
+        }
+      ],
       "pending": [],
-      "next_id": 2
+      "next_id": 3
     },
     "C-SONNET": {
       "book": "C-SONNET",
@@ -159,9 +185,9 @@
       "venue": "OTHER-VENUE",
       "account": {
         "balance": 99905.0006,
-        "equity": 100084.39,
+        "equity": 100020.21,
         "start_balance": 100000.0,
-        "open_pnl": 179.39,
+        "open_pnl": 115.21,
         "net_pnl": 0.0,
         "realized_pnl": 0.0,
         "wins": 0,
@@ -193,7 +219,7 @@
           "mech_target_atr": 1.0,
           "uniform_exit": "uniform-1atr-v1",
           "deadline": "2026-11-13T11:45:20.002320+00:00",
-          "mark": 69201.4
+          "mark": 69224.8
         }
       ],
       "pending": [],
@@ -223,9 +249,9 @@
       "venue": "OTHER-VENUE",
       "account": {
         "balance": 99905.0041,
-        "equity": 100077.26,
+        "equity": 100013.08,
         "start_balance": 100000.0,
-        "open_pnl": 172.26,
+        "open_pnl": 108.07,
         "net_pnl": 0.0,
         "realized_pnl": 0.0,
         "wins": 0,
@@ -257,7 +283,7 @@
           "mech_target_atr": 1.0,
           "uniform_exit": "uniform-1atr-v1",
           "deadline": "2026-11-13T11:45:20.002320+00:00",
-          "mark": 69201.4
+          "mark": 69224.8
         }
       ],
       "pending": [],
@@ -266,5 +292,5 @@
   },
   "reset_token": "2026-11-12-uniform-reset",
   "reset_at": "2026-11-12T18:11:32.196926+00:00",
-  "updated_at": "2026-11-13T10:27:24.321484+00:00"
+  "updated_at": "2026-11-13T10:31:16.137308+00:00"
 }

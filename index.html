@@ -194,7 +194,9 @@
     const num = (v, d = 2) => v == null ? '—' : Number(v).toFixed(d);
     const pct0 = v => v == null ? '—' : (100 * v).toFixed(0) + '%';
     const evtTxt = e => {
-      const dry = !e.live ? `<b>Dry run</b> since ${esc(dhm(e.dry_run_started_at))} ${TZL} (no API calls, no fills) · ` : '';
+      const g = e.golive || {};
+      const dry = !e.live ? `<b>Dry run</b> since ${esc(dhm(e.dry_run_started_at))} ${TZL} (no API calls, no fills)` +
+        (g.decided ? ` · stays in dry run: ${esc((g.reasons || []).join('; '))}` : (e.live_after_utc ? ` · goes live ${esc(dhm(e.live_after_utc))} ${TZL} if the dry-run day passes` : '')) + ' · ' : '';
       const lat = e.latency_p50_s !== undefined ? ` · latency p50 / p95 ${num(e.latency_p50_s, 0)} / ${num(e.latency_p95_s, 0)} s · late ${pct0(e.late_share)}` : '';
       const pf = e.profit_factor !== undefined ? ` · PF ${num(e.profit_factor)}` : '';
       const hr = e.calls_this_hour !== undefined ? ` · ${e.calls_this_hour} this hour` : '';

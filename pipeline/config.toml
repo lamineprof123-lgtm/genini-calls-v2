@@ -878,6 +878,10 @@ risk_usd = 900.0
 daily_loss_usd = 1800.0
 start_balance = 100000.0
 reset_token = "p5-2026-11-13"
+# 13 Nov 2026 (user-approved, trigger version t2): POC dropped from the level list, ATR-ratio trigger 1.30 -> 1.50
+# (it fired on 6/8 closes at 1.30). Level band (0.25 ATR) and RVOL (2.0) unchanged. Account NOT reset; the change
+# is logged once in logs/<day>/gp5event_events.jsonl ("trigger_change").
+trigger = { level_atr = 0.25, rvol_min = 2.0, atr_ratio_min = 1.50, exclude_levels = ["POC"], version = "t2-2026-11-13" }
 
 # ---------------------------------------------------------------------------------------------------------------
 # OTHER-VENUE (signals/other_venue.py). PAPER ONLY. Parallel $100k CFD/spot sub-account on every model's book
@@ -904,11 +908,16 @@ qty_step = 0.001
 # ---------------------------------------------------------------------------------------------------------------
 # ds-evt-v1 (signals/ds_evt.py, spec /workspace/specs/ds_evt_v1.md): DeepSeek event-triggered paper books
 # DS-IMG-E (chart image + text) and DS-TXT-E (CSV + text), new $100k each. NEW books; no existing book changes.
-# live = false -> one-full-day DRY RUN: triggers / guards / would-be calls logged, NO API call, NO fill.
+# Dry run (NO API call, NO fill) until live_after_utc; then LIVE automatically, but only if the review of the
+# full dry-run day (dry_run_day_utc 08:00-20:30 UTC) shows no storm, no cap breach, no stale/blocked call and
+# enough feed coverage; otherwise it stays in dry run and logs why (logs/<day>/ds_evt_golive.jsonl).
+# 13 Nov (user-approved): US100 trades MNQ (cap 10); USD-side correlation is per book.
 # DEEPSEEK_API_KEY comes from env / repo secret only.
 [ds_evt]
 enabled = true
 live = false
+live_after_utc = "2026-11-17T08:00:00+00:00"     # Tue 17 Nov 12:00 Dubai
+dry_run_day_utc = "2026-11-16"                   # Mon 16 Nov 08:00-20:30 UTC (12:00 Mon - 00:30 Tue Dubai)
 model = "deepseek-flash"
 model_assert = "V4.1-Flash"
 window_utc = ["08:00", "20:30"]
@@ -918,11 +927,16 @@ min_score = 5
 
 # ev-v1 (signals/ev_evt.py, spec /workspace/specs/claude_ev_v1.md): event-driven Claude entries EV-FABLE
 # (claude-fable-5-2, xhigh) and EV-OPUS (claude-opus-5-5, high) + code-only controls EV-CONT / EV-REV / EV-TWIN.
-# NEW books; timed books unchanged. live = false -> one-day TRIGGER-ONLY dry run (no API call, no fill).
+# NEW books; timed books unchanged. Trigger-only dry run (no API call, no fill) until live_after_utc, then LIVE
+# automatically if the dry-run-day review passes (no storm, no cap breach, coverage); the first live call per
+# model is the spec's smoke test on a real event (a failed smoke keeps that book off). logs/<day>/event_golive.jsonl
+# 13 Nov (user-approved): EV-OPUS effort medium (= C-OPUS), EV-FABLE xhigh; US100 trades MNQ (cap 10).
 # Model IDs + efforts verified 13 Nov 2026 (verify-claude-models.yml). ANTHROPIC_API_KEY from env / secret only.
 [ev_evt]
 enabled = true
 live = false
+live_after_utc = "2026-11-17T08:00:00+00:00"     # Tue 17 Nov 12:00 Dubai
+dry_run_day_utc = "2026-11-16"
 window_utc = ["08:00", "20:30"]
 calls_per_day = 50
 

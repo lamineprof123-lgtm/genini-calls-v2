@@ -116,12 +116,14 @@ DEFAULTS = {
     "symbol_cooldown_min": 10, "trigger_cooldown_min": 30, "calls_per_day": 50, "late_seconds": 90,
     "room_min_atr": 1.0, "chart_bars": 72, "max_bar_lag_min": 3, "control_fill_delay_s": 15,
     "pair_window_min": 20, "path_hours": 4, "timed_sim": "C-OPUS", "reset_token": TAG,
+    **EF.GOLIVE_DEFAULTS, "storm_per_symbol_day": 75,     # 75 = half of the 150 M5 bars in the window
 }
 AI_BOOKS = {
     "EV-FABLE": {"model": "claude-fable-5-2", "effort": "xhigh", "max_tokens": 32000, "timeout_s": 90,
                  "usd_per_day": 20.0, "est_cost_usd": 0.29, "prices": (8.0, 40.0, 10.0, 0.80)},
-    "EV-OPUS": {"model": "claude-opus-5-5", "effort": "high", "max_tokens": 16000, "timeout_s": 60,
-                "usd_per_day": 8.0, "est_cost_usd": 0.08, "prices": (4.0, 20.0, 5.0, 0.20)},
+    # 13 Nov (user-approved): EV-OPUS at effort medium, same as the timed C-OPUS (Q3 then isolates timing only)
+    "EV-OPUS": {"model": "claude-opus-5-5", "effort": "medium", "max_tokens": 16000, "timeout_s": 60,
+                "usd_per_day": 8.0, "est_cost_usd": 0.06, "prices": (4.0, 20.0, 5.0, 0.20)},
 }
 BOOK_DEFAULTS = {**EF.EVENT_BOOK_DEFAULTS, "reset_token": TAG, "enabled": True, "min_confidence": 0.0,
                  "max_trigger_adverse_atr": 0.3, "lock_minutes": 15}
@@ -294,7 +296,7 @@ class EvFableBook(EvBook):
 
 class EvOpusBook(EvBook):
     BOOK_NAME = "EV-OPUS"
-    BOOK_LABEL = "Event · Claude Opus 5.5 (high)"
+    BOOK_LABEL = "Event · Claude Opus 5.5 (medium)"
     STATE_SUBDIR = "ev_opus"
     TRADES_LOG = "ev_opus_trades.jsonl"
     EVENTS_LOG = "ev_opus_events.jsonl"
@@ -330,10 +332,48 @@ class EvEngine:
         self._call = call_fn
         self._render = render_fn
         self._clock = clock or (lambda: datetime.now(UTC))
+        self.gate = EF.GoLiveGate(self, "event_golive.jsonl")
+        self._live = self.gate.initial()
 
     @property
     def live(self) -> bool:
-        return bool(self.cc.get("live"))
+        """[ev_evt].live = true, or the time gate (live_after_utc) passed AND the dry-run review passed."""
+        return bool(self._live)
+
+    # ---------------- go-live review of the trigger-only dry-run day
+    def dry_run_review(self, start: datetime, end: datetime) -> tuple[list[str], dict]:
+        reasons, stats = [], {}
+        trig = EF.read_jsonl_window(self.logs_dir, "event_triggers.jsonl", start, end)
+        per, by = {}, {}
+        for t in trig:
+            per[t["symbol"]] = per.get(t["symbol"], 0) + 1
+            for ty in t.get("types") or []:
+                by.setdefault(t["symbol"], {}).setdefault(ty, 0)
+                by[t["symbol"]][ty] += 1
+        stats["events_per_symbol"], stats["triggers_by_type"] = per, by
+        for s_, n in per.items():
+            if n > int(self.cc["storm_per_symbol_day"]):
+                reasons.append(f"storm: {s_} had {n} events in the dry-run day (> {self.cc['storm_per_symbol_day']})")
+        ids = [t["trigger_id"] for t in trig]
+        if len(ids) != len(set(ids)):
+            reasons.append("merge: more than one event row for the same symbol and M5 bar")
+        calls = EF.read_jsonl_window(self.logs_dir, "event_calls.jsonl", start, end)
+        stats["calls"] = {}
+        for name in self.books:
+            rows = [c for c in calls if c.get("book") == name]
+            if any(not c.get("dry_run") for c in rows):
+                reasons.append(f"cap_breach: {name} made a real call during the dry run")
+            est = round(sum(float(c.get("cost_estimate_usd") or 0) for c in rows), 4)
+            stats["calls"][name] = {"n": len(rows), "est_usd": est}
+            if len(rows) > int(self.cc["calls_per_day"]):
+                reasons.append(f"cap_breach: {name} {len(rows)} would-be calls (> {self.cc['calls_per_day']}/day)")
+            if est > float(self.cc["books"][name]["usd_per_day"]) + 1e-9:
+                reasons.append(f"cap_breach: {name} est ${est} (> ${self.cc['books'][name]['usd_per_day']}/day)")
+            for s_ in self.cc["symbols"]:
+                g = EF.min_gap_s([_dt(c["ts_utc"]) for c in rows if str(c.get("trigger_id", "")).startswith(s_ + "|")])
+                if g is not None and g < float(self.cc["symbol_cooldown_min"]) * 60 - 1:
+                    reasons.append(f"cooldown: {name} {s_} would-be calls {g:.0f} s apart (< 10 min)")
+        return reasons, stats
 
     def _jsonl(self, name: str, t: datetime, obj: dict) -> None:
         d = self.logs_dir / t.astimezone(DUBAI).strftime("%Y-%m-%d")
@@ -356,6 +396,9 @@ class EvEngine:
     def skip_reason(self, name: str, ev: dict, now: datetime) -> str | None:
         book, bc = self.books[name], self.cc["books"][name]
         sym = ev["symbol"]
+        dis = (self.e.get("smoke") or {}).get(name) or {}
+        if self.live and dis.get("done") and not dis.get("ok"):
+            return "smoke_failed"
         if book.held(sym):
             return "position_held"
         g = book.guards()
@@ -382,6 +425,8 @@ class EvEngine:
 
     # ---------------- per M1 step (acts on new closed M5 bars only)
     async def on_feed(self, now: datetime, snaps: dict, store: EF.M1Store) -> dict:
+        EF.note_feed_step(self.e, now, self.cc["window_utc"])
+        self._live = self.gate.update(now)
         if self.e.get("dry_run_started_at") is None and not self.live:
             self.e["dry_run_started_at"] = _iso(now)
         out = {"events": []}
@@ -524,6 +569,24 @@ class EvEngine:
             "attempts": attempts, "input_tokens": usage.get("input_tokens"), "output_tokens": usage.get("output_tokens"),
             "thinking_tokens": resp.get("thinking_tokens"), "cache_read_tokens": usage.get("cache_read_input_tokens"),
             "cost_usd": cost, "stop_reason": resp.get("stop_reason"), "error": resp.get("error")})
+        smoke = self.e.setdefault("smoke", {}).get(name)
+        if not (smoke or {}).get("done"):
+            # spec 10.2: the first live call per model is the smoke test on a real event
+            ok = bool(resp.get("ok")) and isinstance(resp.get("parsed"), dict) and \
+                set(SCHEMA["required"]) <= set(resp.get("parsed") or {}) and \
+                str(resp.get("model") or "").startswith(bc["model"])
+            sm = {"done": True, "ok": ok, "t": _iso(t_ans), "trigger_id": ev["id"], "model": bc["model"],
+                  "model_returned": resp.get("model"), "effort": bc["effort"], "error": resp.get("error"),
+                  "stop_reason": resp.get("stop_reason"), "thinking_tokens": resp.get("thinking_tokens"),
+                  "thinking_reported": resp.get("thinking_tokens") is not None,
+                  "since_bar_close_s": round(lat, 2), "latency_ok": lat <= float(self.cc["late_seconds"]),
+                  "cost_usd": cost}
+            self.e["smoke"][name] = sm
+            self._jsonl("event_golive.jsonl", now, {"ts_utc": _iso(now), "event": "smoke_" + ("ok" if ok else "failed"),
+                                                     "book": name, **sm})
+            log.warning("ev-v1 smoke %s: %s", name, "OK" if ok else f"FAILED ({resp.get('error')}) -> book stays off")
+            if not ok:
+                return {"ok": False, "smoke_failed": True, "error": resp.get("error")}
         if not resp.get("ok"):
             return {"ok": False, "error": resp.get("error")}
         out = resp.get("parsed") or {}
@@ -741,7 +804,8 @@ class EvEngine:
         pairs = [p for p in self.e.get("pairs") or [] if p.get("paired") and p.get("R_diff") is not None]
         return {"updated_at": _iso(now), "tag": TAG, "paper_only": True, "live": self.live,
                 "mode": "live" if self.live else "dry_run (trigger-only, no API calls, no fills)",
-                "dry_run_started_at": self.e.get("dry_run_started_at"), "cards": cards, "triggers": table,
+                "dry_run_started_at": self.e.get("dry_run_started_at"), "live_after_utc": self.cc.get("live_after_utc"),
+                "golive": self.e.get("golive"), "smoke": self.e.get("smoke"), "cards": cards, "triggers": table,
                 "controls": {cb: (self.e.get("stats", {}).get(cb) or {}).get("ALL", {}) for cb in CONTROLS},
                 "q3": {"pairs": len(pairs),
                        "mean_R_diff": round(sum(p["R_diff"] for p in pairs) / len(pairs), 3) if pairs else None,

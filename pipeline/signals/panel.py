@@ -32,7 +32,7 @@ BOOKS = [
     ("EVAL-R4", "gemini-3.8-flash", "Gemini flash · EVAL-R4 (EVAL-80 + R4 trend filter: H1 trend ≥2.7 ATR, <3 ATR from EMA20, no chase, <3.5 ATR from VWAP)"),
     ("G-P5", "gemini-3.8-flash", "Gemini flash · G-P5 (NEW: P5 prompt, low thinking, min 0.72, P5 gates, 0.8 / 1.0 ATR, 30-min dead cut)"),
     ("G-P5-EVAL", "gemini-3.8-flash", "Gemini flash · G-P5-EVAL (NEW: G-P5's call, min 0.75, P5 gates, 0.8 / 1.0 ATR, ~$450, Lucid eval)"),
-    ("G-P5-EVENT", "gemini-3.8-flash", "Gemini flash · G-P5-EVENT (NEW: G-P5, Gemini called only when something happened: level touch ≤0.25 ATR, RVOL ≥2, ATR ratio ≥1.3)"),
+    ("G-P5-EVENT", "gemini-3.8-flash", "Gemini flash · G-P5-EVENT (NEW: G-P5, Gemini called only when something happened: level touch ≤0.25 ATR (no POC), RVOL ≥2, ATR ratio ≥1.5)"),
     ("CB-BRACKET", "gemini-4-carbon", "Carbon · CB-BRACKET"),
     ("CB-RUNNER", "gemini-4-carbon", "Carbon · CB-RUNNER"),
     ("C-OPUS", "claude-opus-5-5", "Claude Opus · C-OPUS"),
@@ -42,7 +42,7 @@ BOOKS = [
     ("DS-IMG-E", "deepseek-flash", "DeepSeek · chart · event (NEW ds-evt-v1: called only when a T1–T8 trigger fires)"),
     ("DS-TXT-E", "deepseek-flash", "DeepSeek · text · event (NEW ds-evt-v1: CSV table instead of the chart)"),
     ("EV-FABLE", "claude-fable-5-2", "Event · Claude Fable 5.2 xhigh (NEW ev-v1: called on M5 events)"),
-    ("EV-OPUS", "claude-opus-5-5", "Event · Claude Opus 5.5 high (NEW ev-v1: called on M5 events)"),
+    ("EV-OPUS", "claude-opus-5-5", "Event · Claude Opus 5.5 medium (NEW ev-v1: called on M5 events)"),
 ]
 MODEL_OF = {b: m for b, m, _ in BOOKS}
 LABEL_OF = {b: l for b, _, l in BOOKS}
@@ -561,7 +561,9 @@ class PanelLedger:
                         card = next((c for c in ev.get("cards") or [] if c.get("book") == book), None)
                         if card:
                             perf[-1]["evt"] = {**card, "mode": ev.get("mode"), "live": ev.get("live"),
-                                               "dry_run_started_at": ev.get("dry_run_started_at")}
+                                               "dry_run_started_at": ev.get("dry_run_started_at"),
+                                               "live_after_utc": ev.get("live_after_utc"),
+                                               "golive": ev.get("golive")}
                     if book == "G-P5-EVENT":
                         tv = (_read(self.site / "gp5event.json") or {}).get("trigger")
                         if tv:

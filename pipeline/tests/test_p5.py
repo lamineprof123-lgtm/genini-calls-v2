@@ -165,6 +165,27 @@ def test_event_trigger(cfg):
     assert p5.event_trigger(ar, {**p5.compute_fields(ar), "atr_ratio_vs_50bar": 1.35})["by"] == ["atr_ratio"]
 
 
+def test_gp5event_trigger_t2_no_poc_atr_ratio_150(cfg, tmp_path):
+    """13 Nov (user-approved): G-P5-EVENT drops POC and needs ATR ratio >= 1.50; defaults (other books) unchanged."""
+    tc = gp5event_cfg(cfg)["trigger"]
+    assert tc["atr_ratio_min"] == 1.5 and tc["exclude_levels"] == ["POC"] and tc["level_atr"] == 0.25
+    poc = payload("EURUSD", 1.1, 0.0012, digits=5, poc=1.1)
+    assert not p5.event_trigger(poc, p5.compute_fields(poc), tc)["fired"]
+    vah = payload("EURUSD", 1.1, 0.0012, digits=5, vah=1.1)
+    assert p5.event_trigger(vah, p5.compute_fields(vah), tc)["by"] == ["level"]
+    ar = payload("EURUSD", 1.1, 0.0012, digits=5)
+    f = p5.compute_fields(ar)
+    assert not p5.event_trigger(ar, {**f, "atr_ratio_vs_50bar": 1.45}, tc)["fired"]
+    assert p5.event_trigger(ar, {**f, "atr_ratio_vs_50bar": 1.55}, tc)["by"] == ["atr_ratio"]
+    assert "trigger" not in gp5_cfg(cfg)                                  # G-P5 itself unchanged
+    ev = GP5EventBook(cfg)
+    GP5EventBook(cfg)                                                     # logged once, not on every start
+    rows = [json.loads(x) for f_ in (tmp_path / "logs").glob("*/gp5event_events.jsonl") for x in f_.read_text().splitlines()]
+    ch = [r for r in rows if r.get("event") == "trigger_change"]
+    assert len(ch) == 1 and ch[0]["new"]["atr_ratio_min"] == 1.5 and ch[0]["previous"]["atr_ratio_min"] == 1.3
+    assert ev.s["balance"] == ev.s["start_balance"] and "ATR ratio vs 50 bars >= 1.50" in ev.site_view()["rules"]
+
+
 def make_books(cfg, call, ecall):
     kw = dict(quotes=Feed(PRICES))
     gp = GP5Book(cfg, call=call, bars_fetch=no_bars, **kw)

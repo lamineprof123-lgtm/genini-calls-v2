@@ -272,7 +272,7 @@ def test_live_both_books_parallel_gate_fill_lock(cfg, m1, tmp_path):
     ev = mk_event()
     out = asyncio.run(e.handle_event(ev, p, up, T0, store_of(m1)))
     assert sorted(out["called"]) == ["EV-FABLE", "EV-OPUS"]
-    assert {(m, ef, to) for m, ef, to, _ in seen} == {("claude-fable-5-2", "xhigh", 90.0), ("claude-opus-5-5", "high", 60.0)}
+    assert {(m, ef, to) for m, ef, to, _ in seen} == {("claude-fable-5-2", "xhigh", 90.0), ("claude-opus-5-5", "medium", 60.0)}
     content = seen[0][3]
     assert content[0]["text"].startswith("Event on XAUUSD at ") and content[-1]["text"] == "Return the JSON now."
     assert any(x.get("type") == "image" for x in content) and '"event_direction": "down"' in content[1]["text"]
@@ -325,3 +325,40 @@ def test_q3_pairing_vs_c_opus(cfg, m1, tmp_path):
     pr = e.e["pairs"][-1]
     assert pr["paired"] and pr["R_timed"] is not None and pr["R_diff"] == round(1.0 - pr["R_timed"], 3)
     assert e.missed_by_triggers(T0 + timedelta(hours=2), hours=3) == 2          # no events logged at all
+
+
+def test_first_live_call_is_smoke_and_failure_keeps_book_off(cfg, m1, tmp_path):
+    p, up = payload_for(cfg, m1)
+    e, seen = live(cfg, tmp_path, {"claude-fable-5-2": ans("continue", "SELL"), "claude-opus-5-5": ans("continue", "SELL")},
+                   tag="smoke")
+    orig = e._call
+
+    async def call(bc, content, timeout):
+        r = await orig(bc, content, timeout)
+        if bc["model"] == "claude-opus-5-5":
+            return {"ok": False, "model": bc["model"], "error": "BadRequestError: effort not supported"}
+        return r
+    e._call = call
+    asyncio.run(e.handle_event(mk_event(), p, up, T0, store_of(m1)))
+    sm = e.e["smoke"]
+    assert sm["EV-FABLE"]["ok"] and sm["EV-FABLE"]["thinking_reported"] and sm["EV-FABLE"]["effort"] == "xhigh"
+    assert sm["EV-OPUS"]["done"] and not sm["EV-OPUS"]["ok"]
+    assert e.books["EV-FABLE"].s["positions"] and not e.books["EV-OPUS"].s["positions"]
+    assert e.skip_reason("EV-OPUS", mk_event(sym="EURUSD"), T0 + timedelta(hours=1)) == "smoke_failed"
+    rows = read(tmp_path, "event_golive.jsonl")
+    assert {r["event"] for r in rows} == {"smoke_ok", "smoke_failed"}
+
+
+def test_ev_golive_review_storm(cfg, tmp_path):
+    c = copy.deepcopy(cfg)
+    c["ev_evt"].update({"live": False, "live_after_utc": "2026-11-17T08:00:00+00:00", "dry_run_day_utc": "2026-11-16"})
+    e = V.EvEngine(c, call_fn=Boom(), clock=lambda: T0)
+    day = datetime(2026, 11, 16, 8, 0, 10, tzinfo=UTC)
+    for i in range(750):
+        EF.note_feed_step(e.e, day + timedelta(minutes=i), e.cc["window_utc"])
+    for i in range(80):
+        t = day + timedelta(minutes=5 * i)
+        e._jsonl("event_triggers.jsonl", t, {"ts_utc": t.isoformat(), "trigger_id": f"US100|{t.isoformat()}",
+                                             "symbol": "US100", "types": ["LVL-SWEEP"]})
+    assert not e.live and e.gate.update(day + timedelta(days=1)) is False
+    assert e.e["golive"]["reasons"] == ["storm: US100 had 80 events in the dry-run day (> 75)"]

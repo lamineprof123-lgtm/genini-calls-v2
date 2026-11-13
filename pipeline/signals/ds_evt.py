@@ -51,6 +51,7 @@ DEFAULTS = {
     "min_call_gap_s": 180, "trigger_gap_bars": 1, "level_gap_bars": 1, "hold_cooldown_bars": 2,
     "t1_band_atr": 0.1, "t3_rvol": 2.0, "t7_hold_closes": 2, "min_score": 5, "csv_bars": 100,
     "reset_token": TAG,
+    **EF.GOLIVE_DEFAULTS,
 }
 BOOK_DEFAULTS = {**EF.EVENT_BOOK_DEFAULTS, "reset_token": TAG, "enabled": True, "min_confidence": 0.0}
 
@@ -191,8 +192,7 @@ class DsTriggerDetector:
 class DsEvtBook(EF.EventBook):
     MODE = "img"
     STATE_SUBDIR = "ds_img_e"
-    CORR_FILES = ["deepseek/account.json", "carbon/CB-BRACKET.json", "carbon/CB-RUNNER.json",
-                  "ds_img_e/account.json", "ds_txt_e/account.json"]
+    CORR_FILES: list[str] = []      # 13 Nov (user-approved): one open per USD side PER BOOK, not across books
 
     def load_cfg(self, cfg: dict) -> dict:
         sec = (cfg.get("ds_evt") or {}).get(self.STATE_SUBDIR) or {}
@@ -255,10 +255,13 @@ class DsEvtEngine:
         self._call = call_fn
         self._render = render_fn
         self._clock = clock or (lambda: datetime.now(UTC))
+        self.gate = EF.GoLiveGate(self, "ds_evt_golive.jsonl")
+        self._live = self.gate.initial()
 
     @property
     def live(self) -> bool:
-        return bool(self.cc.get("live"))
+        """[ds_evt].live = true, or the time gate (live_after_utc) passed AND the dry-run review passed."""
+        return bool(self._live)
 
     # ---------------- logging
     def _jsonl(self, name: str, t: datetime, obj: dict) -> None:
@@ -322,8 +325,51 @@ class DsEvtEngine:
             return "per_day_cap"
         return None
 
+    # ---------------- go-live review of the dry-run day (spec 10.6: no storms, no cap breach, no stale/blocked
+    # calls, batch collapse and debounce work)
+    def dry_run_review(self, start: datetime, end: datetime) -> tuple[list[str], dict]:
+        reasons, stats = [], {}
+        trig = EF.read_jsonl_window(self.logs_dir, "ds_evt_triggers.jsonl", start, end)
+        per = {}
+        for t in trig:
+            per.setdefault(t["symbol"], {}).setdefault(t["type"], 0)
+            per[t["symbol"]][t["type"]] += 1
+        stats["triggers_per_symbol"] = {s: sum(v.values()) for s, v in per.items()}
+        stats["triggers_by_type"] = per
+        for s_, n in stats["triggers_per_symbol"].items():
+            if n > int(self.cc["storm_per_symbol_day"]):
+                reasons.append(f"storm: {s_} fired {n} triggers in the dry-run day (> {self.cc['storm_per_symbol_day']})")
+        calls = EF.read_jsonl_window(self.logs_dir, "ds_evt_calls.jsonl", start, end)
+        stats["calls"] = {}
+        for b in self.books:
+            rows = [c for c in calls if c.get("book") == b.BOOK_NAME]
+            if any(not c.get("dry_run") for c in rows):
+                reasons.append(f"cap_breach: {b.BOOK_NAME} made a real call during the dry run")
+            ts = [_dt(c["ts_utc"]) for c in rows]
+            mh = EF.max_in_window(ts, timedelta(hours=1)) if ts else 0
+            est = round(sum(float(c.get("cost_estimate_usd") or 0) for c in rows), 4)
+            stats["calls"][b.BOOK_NAME] = {"n": len(rows), "max_per_hour": mh, "est_usd": est}
+            if mh > int(self.cc["calls_per_hour"]):
+                reasons.append(f"cap_breach: {b.BOOK_NAME} {mh} calls in one hour (> {self.cc['calls_per_hour']})")
+            if est > float(self.cc["usd_per_day"]) + 1e-9:
+                reasons.append(f"cap_breach: {b.BOOK_NAME} est ${est} in a day (> ${self.cc['usd_per_day']})")
+            mins = [t.replace(second=0, microsecond=0) for t in ts]
+            if len(mins) != len(set(mins)):
+                reasons.append(f"batch: {b.BOOK_NAME} made two calls in the same minute")
+            for c in rows:
+                for s_, st in (c.get("symbol_state") or {}).items():
+                    if st.get("live_price_stale") or st.get("session_blocks_automation") or st.get("session") in BLOCKED_SESSIONS:
+                        reasons.append(f"guard: {b.BOOK_NAME} would-be call on {s_} at {c['ts_utc']} with stale/blocked data")
+            for s_ in self.cc["symbols"]:
+                g = EF.min_gap_s([_dt(c["ts_utc"]) for c in rows if s_ in (c.get("symbols") or [])])
+                if g is not None and g < float(self.cc["min_call_gap_s"]) - 1:
+                    reasons.append(f"debounce: {b.BOOK_NAME} {s_} calls {g:.0f} s apart (< {self.cc['min_call_gap_s']} s)")
+        return reasons, stats
+
     # ---------------- per M1 step
     async def on_feed(self, now: datetime, snaps: dict, store: EF.M1Store) -> dict:
+        EF.note_feed_step(self.e, now, self.cc["window_utc"])
+        self._live = self.gate.update(now)
         if self.e.get("dry_run_started_at") is None and not self.live:
             self.e["dry_run_started_at"] = _iso(now)
         out = {"fired": {}, "calls": {}}
@@ -442,6 +488,9 @@ class DsEvtEngine:
             self._jsonl("ds_evt_calls.jsonl", now, {**base, "dry_run": True, "model_returned": None,
                                                     "cost_usd": None, "cost_estimate_usd": est,
                                                     "calls_last_hour": self.calls_last_hour(book, now),
+                                                    "symbol_state": {s: {k: (snaps[s].get("context") or {}).get(k) for k in (
+                                                        "session", "session_blocks_automation", "live_price_stale")}
+                                                        for s in syms},
                                                     "triggers": {s: ctx["trigger"] for s, _, ctx, _ in items}})
             return {"called": False, "dry_run": True, "symbols": syms}
         # ---- live
@@ -624,7 +673,8 @@ class DsEvtEngine:
             table.append(row)
         return {"updated_at": _iso(now), "tag": TAG, "paper_only": True, "live": self.live,
                 "mode": "live" if self.live else "dry_run (triggers logged, no API calls, no fills)",
-                "dry_run_started_at": self.e.get("dry_run_started_at"), "cards": cards, "per_trigger": table}
+                "dry_run_started_at": self.e.get("dry_run_started_at"), "live_after_utc": self.cc.get("live_after_utc"),
+                "golive": self.e.get("golive"), "cards": cards, "per_trigger": table}
 
     def _trade_rows(self, b) -> list[dict]:
         rows = []

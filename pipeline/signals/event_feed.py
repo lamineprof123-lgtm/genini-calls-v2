@@ -302,11 +302,14 @@ def open_usd_sides(state_root: Path, files: list[str]) -> list[dict]:
 EVENT_BOOK_DEFAULTS = {
     "symbols": list(EVENT_SYMBOLS), "stop_atr": 1.0, "target_atr": 1.0, "max_hold_minutes": 90,
     "flat_utc": "21:45", "reopen_utc": "23:00", "no_new_entries_last_minutes": 15, "risk_usd": 900.0,
-    "max_risk_usd": 1200.0, "max_minis": 6, "contract_caps": {"NQ": 1, "GC": 1, "6E": 4}, "slippage_ticks": 1,
+    "max_risk_usd": 1200.0, "max_minis": 6, "contract_caps": {"NQ": 1, "GC": 1, "6E": 4, "MNQ": 10}, "slippage_ticks": 1,
     "start_balance": 100000.0, "check_seconds": 18, "pending_expiry_seconds": 120, "max_chase_atr": 0.3,
     "max_trigger_adverse_atr": 0.5, "gap_seconds": 180, "fill_quote_max_age_s": 60, "recent_trades": 20,
     "daily_stop_usd": 1500.0, "mll_usd": 3000.0, "locked_mll_balance": 100100.0, "mll_buffer_usd": 300.0,
     "after_loss_lock_min": 30,
+    # 13 Nov (user-approved): US100 trades micro NQ in the event books; same $900 formula and $1,200
+    # one-contract skip applied to MNQ; MNQ cap 10; 10 MNQ = 1 mini toward the 6-contract aggregate.
+    "symbol_contract": {"US100": "MNQ"}, "micro_per_mini": 10,
 }
 
 
@@ -358,12 +361,40 @@ class EventBook(BracketBook):
                 self.s["mll_floor"] = min(max(float(self.s["mll_floor"]), fl), float(self.b["locked_mll_balance"]))
             self.s["day"] = {"id": d, "realized": 0.0, "flattened": False}
 
+    # ---- contracts: full-size from [lucid], plus MNQ for US100 (event books only)
+    def spec(self, c: str) -> dict:
+        if c in (self.L.get("contracts") or {}):
+            return self.L["contracts"][c]
+        from .eval80 import CONTRACTS as MICROS
+        return MICROS[c]
+
+    def contract_for(self, sym: str) -> str | None:
+        c = (self.b.get("symbol_contract") or {}).get(sym)
+        return c or super().contract_for(sym)
+
+    def mini_units(self, c: str) -> float:
+        return 1.0 / float(self.b.get("micro_per_mini", 10)) if self.spec(c).get("micro") else 1.0
+
+    def minis_used(self) -> float:
+        return round(sum(int(p["qty"]) * self.mini_units(p["contract"]) for p in self.s["positions"] + self.s["pending"]
+                         if p.get("contract")), 6)
+
     def size(self, contract: str, atr: float):
-        q, why = super().size(contract, atr)
-        if q is None:
-            return q, why
+        """floor($900 / (1 ATR x point value)), min 1; skip if 1 contract risks > $1,200; per-contract cap;
+        6 full-size contracts aggregate (10 micros = 1)."""
+        import math
+        per = float(self.b["stop_atr"]) * atr * float(self.spec(contract)["point_value"])
+        if per <= 0:
+            return None, "bad ATR"
+        if per > float(self.b["max_risk_usd"]):
+            return None, f"1 {contract} at a {self.b['stop_atr']:g} ATR stop risks ${per:,.0f} > ${self.b['max_risk_usd']:g}"
+        units = self.mini_units(contract)
+        room = int(math.floor((float(self.b["max_minis"]) - self.minis_used()) / units + 1e-9))
+        if room < 1:
+            return None, f"max {self.b['max_minis']} full-size contracts already open in the book"
+        q = max(1, int(math.floor(float(self.b["risk_usd"]) / per + 1e-9)))
         cap = int((self.b.get("contract_caps") or {}).get(contract, q))
-        return min(q, cap), None
+        return min(q, cap, room), None
 
     def open_stop_risk(self) -> float:
         return round(sum(float(p.get("risk_usd") or 0) for p in self.s["positions"]), 2)
@@ -527,3 +558,109 @@ class EventFeed:
                 raise
             except Exception:
                 log.exception("event feed step failed")
+
+
+# ---------------------------------------------------------------------------------------------- go-live gate
+GOLIVE_DEFAULTS = {"live_after_utc": None, "dry_run_day_utc": None, "min_feed_coverage": 0.8,
+                   "storm_per_symbol_day": 100}
+
+
+def read_jsonl_window(logs_dir: Path, name: str, start: datetime, end: datetime, key: str = "ts_utc") -> list[dict]:
+    """Rows of logs/<Dubai day>/<name> with `key` in [start, end) (the UTC window may span two Dubai days)."""
+    days = sorted({(start + timedelta(hours=h)).astimezone(DUBAI).strftime("%Y-%m-%d")
+                   for h in range(0, int((end - start).total_seconds() // 3600) + 2)})
+    out = []
+    for d in days:
+        f = Path(logs_dir) / d / name
+        if not f.exists():
+            continue
+        for line in f.read_text().splitlines():
+            try:
+                r = json.loads(line)
+                t = _dt(r.get(key))
+            except Exception:
+                continue
+            if t is not None and start <= t < end:
+                out.append(r)
+    return out
+
+
+def note_feed_step(e: dict, now: datetime, window) -> None:
+    """Per UTC day: how many feed steps the engine saw inside its window (dry-run coverage check)."""
+    if not in_window(now, tuple(window)):
+        return
+    d = now.astimezone(UTC).strftime("%Y-%m-%d")
+    fd = e.setdefault("feed_days", {})
+    r = fd.setdefault(d, {"first": _iso(now), "last": _iso(now), "n": 0})
+    r["last"], r["n"] = _iso(now), int(r["n"]) + 1
+    for k in sorted(fd)[:-7]:
+        fd.pop(k, None)
+
+
+def max_in_window(times: list[datetime], width: timedelta) -> int:
+    ts, best, j = sorted(times), 0, 0
+    for i, t in enumerate(ts):
+        while ts[j] <= t - width:
+            j += 1
+        best = max(best, i - j + 1)
+    return best
+
+
+def min_gap_s(times: list[datetime]) -> float | None:
+    ts = sorted(times)
+    gaps = [(b - a).total_seconds() for a, b in zip(ts, ts[1:])]
+    return min(gaps) if gaps else None
+
+
+class GoLiveGate:
+    """Time-based go-live: live once now >= live_after_utc AND the review of the dry-run day passes (no storm, no
+    cap breach, enough feed coverage). Decided ONCE, persisted in the engine state, logged; a failed review keeps
+    the engine in dry run (until the config changes)."""
+
+    def __init__(self, engine, log_name: str):
+        self.eng, self.log_name = engine, log_name
+
+    def window(self) -> tuple[datetime, datetime]:
+        cc = self.eng.cc
+        d = cc.get("dry_run_day_utc")
+        w0, w1 = cc["window_utc"]
+        start = datetime.fromisoformat(f"{d}T{w0}:00+00:00")
+        return start, datetime.fromisoformat(f"{d}T{w1}:00+00:00")
+
+    def initial(self) -> bool:
+        if self.eng.cc.get("live"):
+            return True
+        g = self.eng.e.get("golive") or {}
+        return bool(g.get("decided") and g.get("live") and g.get("live_after_utc") == self.eng.cc.get("live_after_utc"))
+
+    def update(self, now: datetime) -> bool:
+        cc, e = self.eng.cc, self.eng.e
+        if cc.get("live"):
+            return True
+        la = cc.get("live_after_utc")
+        g = e.get("golive") or {}
+        if g.get("decided") and g.get("live_after_utc") == la:
+            return bool(g.get("live"))
+        if not la or now < _dt(la):
+            return False
+        reasons, stats = [], {}
+        try:
+            start, end = self.window()
+            cov = (e.get("feed_days") or {}).get(start.date().isoformat(), {}).get("n", 0)
+            need = (end - start).total_seconds() / 60.0 * float(cc.get("min_feed_coverage", 0.8))
+            stats["feed_steps"] = cov
+            stats["feed_steps_needed"] = round(need)
+            if cov < need:
+                reasons.append(f"dry_run_incomplete: {cov} feed steps in the dry-run window < {need:.0f}")
+            r2, s2 = self.eng.dry_run_review(start, end)
+            reasons += r2
+            stats.update(s2)
+        except Exception as ex:
+            reasons.append(f"review_error: {type(ex).__name__}: {ex}")
+        live = not reasons
+        e["golive"] = {"decided": True, "decided_at": _iso(now), "live_after_utc": la,
+                       "dry_run_day_utc": cc.get("dry_run_day_utc"), "live": live, "reasons": reasons, "stats": stats}
+        self.eng._jsonl(self.log_name, now, {"ts_utc": _iso(now), "event": "go_live" if live else "stay_dry_run",
+                                             **e["golive"]})
+        log.warning("%s go-live decision: %s %s", self.eng.NAME, "LIVE" if live else "STAY DRY RUN", reasons)
+        return live

@@ -318,11 +318,11 @@ def test_live_gate_fill_trigger_object_and_prompt(cfg, m1, tmp_path):
     csv = calls[1][1]["content"][1]["text"].splitlines()
     assert csv[0] == "t_utc,o,h,l,c,vol,vwap,ema20,ema50,rvol" and csv[-1].startswith("FORMING ") and len(csv) == 102
     img_b, txt_b = e.books
-    assert len(img_b.s["positions"]) == 1 and img_b.s["positions"][0]["symbol"] == "EURUSD"
-    # correlation spans all DeepSeek + Carbon books: DS-IMG-E's EURUSD long (short USD) blocks DS-TXT-E's
-    assert not txt_b.s["positions"]
+    # USD-side correlation is per book (13 Nov): both books take the EURUSD long
+    for b in e.books:
+        assert len(b.s["positions"]) == 1 and b.s["positions"][0]["symbol"] == "EURUSD"
     sg = [s for s in read(tmp_path, "ds_evt_signals.jsonl") if s.get("gate_decision")]
-    assert [s["gate_decision"] for s in sg] == ["passed", "rejected"] and sg[1]["skip_reason"].startswith("correlation")
+    assert [s["gate_decision"] for s in sg] == ["passed", "passed"]
     assert sg[0]["trigger"]["type"] == "T4" and sg[0]["trigger"]["level_label"] is None
     wi = read(tmp_path, "ds_evt_whatif.jsonl") + e.e["whatif"]
     assert len(wi) == 4 and sorted(w["kind"] for w in wi) == ["coin_flip_twin"] * 2 + ["signal"] * 2
@@ -380,9 +380,13 @@ def test_correlation_locks_daily_stop(cfg, m1, tmp_path):
     (root / "carbon").mkdir(parents=True, exist_ok=True)
     (root / "carbon" / "CB-BRACKET.json").write_text(json.dumps({"positions": [{"symbol": "EURUSD", "side": -1}]}))
     b = e.books[0]
+    assert b.risk_block("XAUUSD", -1, 500.0, T0) is None          # other books' positions no longer count
+    b.s["positions"].append({"id": 9, "symbol": "EURUSD", "side": -1, "contract": "6E", "qty": 1, "risk_usd": 100.0})
     why = b.risk_block("XAUUSD", -1, 500.0, T0)
-    assert why and why.startswith("correlation")                 # EURUSD short (Carbon) + XAUUSD short = long USD
+    assert why and why.startswith("correlation")                 # own EURUSD short + XAUUSD short = long USD
     assert b.risk_block("XAUUSD", 1, 500.0, T0) is None
+    assert e.books[1].risk_block("XAUUSD", -1, 500.0, T0) is None    # the other DS book is independent
+    b.s["positions"] = []
     # re-entry lock: until the next M15 close; after a stop-out 30 min + no same side this session
     p = {"id": 1, "symbol": "US100", "contract": "NQ", "qty": 1, "side": 1, "entry": 100.0, "entry_time": T0.isoformat(),
          "stop": 99.0, "target": 101.0, "atr": 1.0, "risk_usd": 20.0}
@@ -408,14 +412,90 @@ def test_whatif_resolves_on_recorded_m1(cfg, m1, tmp_path):
     assert all(r["R"] is not None and r["exit_reason"] in ("stop", "target", "time") for r in rows)
 
 
-def test_live_us100_one_nq_over_1200_is_skipped_gold_fills(cfg, m1, tmp_path):
+def test_live_us100_trades_mnq_and_gold_fills(cfg, m1, tmp_path):
     e, snaps, calls = live_engine(cfg, m1, tmp_path, ok_resp([sig("XAUUSD", "SELL", 5), sig("US100", "SELL", 5)]))
     e.detector.detect = fixed({"US100": [{"type": "T1", "level_label": "Session High", "level_key": "Session High@1"}],
                                "XAUUSD": [{"type": "T6"}]})
     asyncio.run(e.on_feed(T0, snaps, store_of(m1)))
     assert len(calls) == 2 and "Chart 2/2" in json.dumps(calls[0][1]["content"])       # one batch, two symbols
-    img_b = e.books[0]
-    assert [(p["symbol"], p["side"], p["contract"]) for p in img_b.s["positions"]] == [("XAUUSD", -1, "GC")]
-    sg = [s for s in read(tmp_path, "ds_evt_signals.jsonl") if s.get("symbol") == "US100" and s.get("gate_decision")]
-    assert sg and all("risks $" in s["skip_reason"] for s in sg)          # 1 NQ at 1 ATR > $1,200 -> skip
-    assert img_b.g_sym("US100")["by_level"]["Session High@1"] == EF.bar_index(T0)
+    atr = snaps["US100"]["context"]["atr"]
+    want = min(10, int(900 // (atr * 2.0)))                          # $900 / (1 ATR x $2), MNQ cap 10
+    for b in e.books:
+        got = {p["symbol"]: (p["side"], p["contract"], p["qty"]) for p in b.s["positions"]}
+        assert got["XAUUSD"][:2] == (-1, "GC") and got["US100"] == (-1, "MNQ", want)
+        mnq = next(p for p in b.s["positions"] if p["contract"] == "MNQ")
+        assert mnq["risk_usd"] == pytest.approx(abs(mnq["entry"] - mnq["stop"]) * 2.0 * want + 2 * 0.5 * want, abs=0.01)
+    assert e.books[0].g_sym("US100")["by_level"]["Session High@1"] == EF.bar_index(T0)
+
+
+def test_mnq_sizing_skip_and_aggregate(cfg, tmp_path):
+    b = D.DsImgBook(cfg)
+    assert b.contract_for("US100") == "MNQ" and b.contract_for("XAUUSD") == "GC"
+    assert b.size("MNQ", 68.0) == (6, None)                          # floor(900 / 136) = 6
+    assert b.size("MNQ", 30.0) == (10, None)                         # floor(900 / 60) = 15 -> cap 10
+    q, why = b.size("MNQ", 650.0)                                    # 1 MNQ risks $1,300 > $1,200 -> skip
+    assert q is None and "risks $1,300" in why
+    b.s["positions"] = [{"symbol": "XAUUSD", "contract": "GC", "qty": 1}, {"symbol": "EURUSD", "contract": "6E", "qty": 4},
+                        {"symbol": "X", "contract": "MNQ", "qty": 7}]
+    assert b.minis_used() == pytest.approx(5.7)
+    assert b.size("MNQ", 30.0) == (3, None)                          # 0.3 mini of room = 3 MNQ
+    assert b.size("GC", 5.0)[0] is None                              # no full-size room left
+
+
+# ------------------------------------------------------------------ time-based go-live gate
+def golive_cfg(cfg, tmp_path, tag):
+    c = copy.deepcopy(cfg)
+    c["general"]["state_dir"] = str(tmp_path / f"st_{tag}")
+    c["general"]["logs_dir"] = str(tmp_path / f"lg_{tag}")
+    c["ds_evt"].update({"live": False, "live_after_utc": "2026-11-17T08:00:00+00:00", "dry_run_day_utc": "2026-11-16"})
+    return c
+
+
+def fill_dry_day(e, triggers_per_symbol=20, calls=None):
+    day = datetime(2026, 11, 16, 8, 0, 10, tzinfo=UTC)
+    for i in range(750):
+        EF.note_feed_step(e.e, day + timedelta(minutes=i), e.cc["window_utc"])
+    for s_ in ("XAUUSD", "EURUSD"):
+        for i in range(triggers_per_symbol):
+            t = day + timedelta(minutes=30 * i % 740)
+            e._jsonl("ds_evt_triggers.jsonl", t, {"ts_utc": t.isoformat(), "symbol": s_, "type": "T4"})
+    for b in e.books:
+        for i in range(calls or 10):
+            t = day + timedelta(minutes=20 * i)
+            e._jsonl("ds_evt_calls.jsonl", t, {"ts_utc": t.isoformat(), "book": b.BOOK_NAME, "dry_run": True,
+                                               "symbols": ["EURUSD"], "cost_estimate_usd": 0.004,
+                                               "symbol_state": {"EURUSD": {"session": "LONDON_SESSION"}}})
+
+
+def test_golive_gate_time_and_review(cfg, m1, tmp_path):
+    c = golive_cfg(cfg, tmp_path, "ok")
+    e = D.DsEvtEngine(c, call_fn=Boom(), clock=lambda: T0)
+    fill_dry_day(e)
+    assert e.gate.update(datetime(2026, 11, 17, 7, 59, tzinfo=UTC)) is False and "golive" not in e.e
+    assert e.gate.update(datetime(2026, 11, 17, 8, 0, 10, tzinfo=UTC)) is True
+    g = e.e["golive"]
+    assert g["live"] and g["reasons"] == [] and g["stats"]["triggers_per_symbol"] == {"XAUUSD": 20, "EURUSD": 20}
+    rows = [json.loads(x) for f in (tmp_path / "lg_ok").glob("*/ds_evt_golive.jsonl") for x in f.read_text().splitlines()]
+    assert rows[-1]["event"] == "go_live"
+    asyncio.run(e.persist(T0))
+    e2 = D.DsEvtEngine(c, call_fn=Boom(), clock=lambda: T0)            # decision persists across restarts
+    assert e2.live
+
+
+def test_golive_gate_storm_cap_breach_or_gap_stays_dry(cfg, m1, tmp_path):
+    after = datetime(2026, 11, 17, 8, 0, 10, tzinfo=UTC)
+    e = D.DsEvtEngine(golive_cfg(cfg, tmp_path, "storm"), call_fn=Boom(), clock=lambda: T0)
+    fill_dry_day(e, triggers_per_symbol=150)
+    assert e.gate.update(after) is False and any(r.startswith("storm: XAUUSD") for r in e.e["golive"]["reasons"])
+    assert e.gate.update(after + timedelta(hours=2)) is False          # decided once; stays in dry run
+    e = D.DsEvtEngine(golive_cfg(cfg, tmp_path, "cap"), call_fn=Boom(), clock=lambda: T0)
+    fill_dry_day(e)
+    t = datetime(2026, 11, 16, 9, 1, 10, tzinfo=UTC)
+    for k in range(4):                                                 # 4 more calls inside one hour -> 5+/hour
+        tt = t + timedelta(minutes=4 * k)
+        e._jsonl("ds_evt_calls.jsonl", tt, {"ts_utc": tt.isoformat(), "book": "DS-IMG-E", "dry_run": True,
+                                            "symbols": ["XAUUSD"], "cost_estimate_usd": 0.004})
+    assert e.gate.update(after) is False
+    assert any(r.startswith("cap_breach: DS-IMG-E") for r in e.e["golive"]["reasons"])
+    e = D.DsEvtEngine(golive_cfg(cfg, tmp_path, "gap"), call_fn=Boom(), clock=lambda: T0)
+    assert e.gate.update(after) is False and e.e["golive"]["reasons"][0].startswith("dry_run_incomplete")

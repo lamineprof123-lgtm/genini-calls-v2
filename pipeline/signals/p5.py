@@ -226,7 +226,7 @@ def validate_entry_gates(action: str, ctx: dict, fields: dict, g: dict | None = 
     return res
 
 
-def key_levels(ctx: dict) -> list[tuple[float, str]]:
+def key_levels(ctx: dict, exclude=()) -> list[tuple[float, str]]:
     """Session High/Low, VAH / VAL / POC and FirmTape GEX walls (the G-P5-EVENT level list)."""
     out = []
     for lv in ctx.get("levels") or []:
@@ -235,6 +235,8 @@ def key_levels(ctx: dict) -> list[tuple[float, str]]:
         if p is not None and lab.lower().startswith("session"):
             out.append((p, lab))
     for k in ("vah", "val", "poc"):
+        if k.upper() in {str(x).upper() for x in exclude}:
+            continue
         p = _f(ctx.get(k))
         if p is not None:
             out.append((p, k.upper()))
@@ -258,7 +260,7 @@ def event_trigger(payload: dict, fields: dict, t: dict | None = None) -> dict:
     near = None
     if atr and h is not None and l is not None:
         best = None
-        for p, lab in key_levels(ctx):
+        for p, lab in key_levels(ctx, t.get("exclude_levels") or ()):
             d = 0.0 if l <= p <= h else min(abs(p - h), abs(p - l))
             if best is None or d < best[0]:
                 best = (d, p, lab)

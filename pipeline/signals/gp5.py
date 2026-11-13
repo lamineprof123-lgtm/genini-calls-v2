@@ -111,6 +111,25 @@ class GP5EventBook(GP5Book):
             self.hist = shared_from.hist          # one M15 history (H1 field) for both books
         self.s.setdefault("triggers", self._fresh_trig())
         self._fired: list[str] = []
+        self._log_trigger_change()
+
+    def _log_trigger_change(self) -> None:
+        """Log a trigger-parameter change once (13 Nov t2: POC dropped, ATR ratio 1.30 -> 1.50). No account reset."""
+        from .p5 import TRIGGER_DEFAULTS
+        t = {**TRIGGER_DEFAULTS, **(self.b.get("trigger") or {})}
+        ver = t.get("version") or "t1"
+        if self.s.get("trigger_version") == ver:
+            return
+        prev = self.s.get("trigger_params") or {**TRIGGER_DEFAULTS, "exclude_levels": [], "version": "t1"}
+        now = datetime.now(UTC)
+        self._event(now, "trigger_change", previous=prev, new=t,
+                    note="user-approved 13 Nov: POC dropped from levels, ATR ratio 1.30 -> 1.50; no account reset")
+        self.s["trigger_version"], self.s["trigger_params"] = ver, t
+        self._write_state()
+
+    def trigger_params(self) -> dict:
+        from .p5 import TRIGGER_DEFAULTS
+        return {**TRIGGER_DEFAULTS, **(self.b.get("trigger") or {})}
 
     def load_cfg(self, cfg: dict) -> dict:
         return gp5event_cfg(cfg)
@@ -195,10 +214,13 @@ class GP5EventBook(GP5Book):
     def site_view(self) -> dict:
         v = super().site_view()
         v["trigger"] = self.trigger_view()
-        v["rules"] = _rules(self.b, "Event-driven: Gemini called at the M15 close only for symbols whose closed bar "
-                                    "came within 0.25 ATR of Session High/Low, VAH/VAL/POC or a GEX wall, or printed "
-                                    "RVOL >= 2.0, or ATR ratio vs 50 bars >= 1.30 (request shared with G-P5 when "
-                                    "identical). ")
+        t = self.trigger_params()
+        lv = "VAH/VAL" + ("" if "POC" in [str(x).upper() for x in t.get("exclude_levels") or []] else "/POC")
+        v["trigger_params"] = t
+        v["rules"] = _rules(self.b, f"Event-driven: Gemini called at the M15 close only for symbols whose closed bar "
+                                    f"came within {t['level_atr']:g} ATR of Session High/Low, {lv} or a GEX wall, or "
+                                    f"printed RVOL >= {t['rvol_min']:g}, or ATR ratio vs 50 bars >= {t['atr_ratio_min']:.2f} "
+                                    f"(request shared with G-P5 when identical). ")
         return v
 
 

@@ -24,11 +24,11 @@
     },
     "2026-11-13": {
       "usd": 3.521826,
-      "calls": 40,
-      "failed": 3,
+      "calls": 41,
+      "failed": 4,
       "by_kind": {
         "trigger": {
-          "calls": 27,
+          "calls": 28,
           "usd": 1.49255
         },
         "entry": {
@@ -46,12 +46,12 @@
   "last_scan_bar": "2026-11-13T10:30:00+00:00",
   "triggers": {
     "day": "2026-11-13",
-    "n": 28,
+    "n": 29,
     "per_bar": {
       "US100": "2026-11-13T10:45:00+00:00",
       "XAUUSD": "2026-11-13T10:30:00+00:00",
       "BTCUSD": "2026-11-13T09:00:00+00:00",
-      "EURUSD": "2026-11-13T10:45:00+00:00",
+      "EURUSD": "2026-11-13T11:00:00+00:00",
       "XAGUSD": "2026-11-13T10:15:00+00:00"
     }
   },
@@ -97,37 +97,32 @@
       "session": "LONDON_SESSION"
     },
     "EURUSD": {
-      "bar": "2026-11-13T10:30:00+00:00",
-      "atr": 0.000514,
-      "price": 1.10468,
+      "bar": "2026-11-13T10:45:00+00:00",
+      "atr": 0.000526,
+      "price": 1.10493,
       "levels": [
         [
           "Session Low",
-          1.10475,
-          -1
-        ],
-        [
-          "Prev Low",
-          1.10457,
+          1.10462,
           1
         ],
         [
           "POC",
-          1.10598,
+          1.10597,
           -1
         ],
         [
           "VAH",
-          1.10641,
+          1.10647,
           -1
         ],
         [
           "VAL",
-          1.10555,
+          1.10557,
           -1
         ]
       ],
-      "vol_avg": 2760.0295,
+      "vol_avg": 2763.6099999999997,
       "blocked": false,
       "session": "LONDON_SESSION"
     },
@@ -269,7 +264,7 @@
       "queued_at": "2026-11-13T10:18:26.236320+00:00",
       "entry": 49.98,
       "entry_time": "2026-11-13T10:19:06.120667+00:00",
-      "scan_from": "2026-11-13T10:56:00+00:00",
+      "scan_from": "2026-11-13T10:59:00+00:00",
       "best": 49.838,
       "mfe": 0.1419999999999959,
       "mae": 0.03100000000000591,
@@ -283,7 +278,7 @@
       "risk_usd": 829.6,
       "chase_atr": 0.115,
       "risk_1c_usd": 823.5,
-      "last_check_at": "2026-11-13T10:58:25.190031+00:00"
+      "last_check_at": "2026-11-13T11:00:20.005333+00:00"
     },
     {
       "vid": 10,
@@ -306,7 +301,7 @@
       "queued_at": "2026-11-13T10:18:26.236320+00:00",
       "entry": 49.98,
       "entry_time": "2026-11-13T10:19:06.120667+00:00",
-      "scan_from": "2026-11-13T10:56:00+00:00",
+      "scan_from": "2026-11-13T10:59:00+00:00",
       "best": 49.838,
       "mfe": 0.1419999999999959,
       "mae": 0.03100000000000591,
@@ -320,20 +315,20 @@
       "risk_usd": 829.6,
       "chase_atr": 0.115,
       "risk_1c_usd": 823.5,
-      "last_check_at": "2026-11-13T10:58:25.190031+00:00"
+      "last_check_at": "2026-11-13T11:00:20.005333+00:00"
     }
   ],
   "next_vid": 11,
   "last_call": {
-    "t": "2026-11-13T10:50:01.850248+00:00",
-    "t_dubai": "2026-11-13T14:50:01.850248+04:00",
+    "t": "2026-11-13T11:00:10.160708+00:00",
+    "t_dubai": "2026-11-13T15:00:10.160708+04:00",
     "kind": "trigger",
     "model": "gemini-4-carbon",
     "model_version": null,
     "thinking": "high",
     "ok": false,
     "error": "ClientError: 402 RESOURCE_EXHAUSTED. {'error': {'code': 402, 'message': 'Your prepayment credits are depleted. Please go to AI Studio at https://ai.studio/projects to manage your project and billing. Learn more at https://ai.google.dev/gemini-api/docs/billing#prepay. ', 'status': 'RESOURCE_EXHAUSTED'}}",
-    "latency_s": 0.149,
+    "latency_s": 0.2,
     "finish_reason": null,
     "tokens": {
       "input": 0,
@@ -351,17 +346,17 @@
     "symbols": [
       "EURUSD"
     ],
-    "render_ms": 106,
+    "render_ms": 110,
     "parse_error": "ClientError: 402 RESOURCE_EXHAUSTED. {'error': {'code': 402, 'message': 'Your prepayment credits are depleted. Please go to AI Studio at https://ai.studio/projects to manage your project and billing. Learn more at https://ai.google.dev/gemini-api/docs/billing#prepay. ', 'status': 'RESOURCE_EXHAUSTED'}}",
     "trigger": {
       "trigger": "level_cross",
       "level": "Session Low",
       "level_price": 1.10475,
-      "price": 1.10468,
-      "direction": "down",
+      "price": 1.10495,
+      "direction": "up",
       "symbol": "EURUSD",
-      "bar": "2026-11-13T10:45:00+00:00",
-      "n_today": 28
+      "bar": "2026-11-13T11:00:00+00:00",
+      "n_today": 29
     }
   },
   "first_call": {
@@ -399,26 +394,26 @@
     "parse_error": null,
     "trigger": null
   },
-  "calls_total": 55,
+  "calls_total": 56,
   "last_scan": {
     "kind": "trigger",
-    "t": "2026-11-13T10:50:01.595248+00:00",
+    "t": "2026-11-13T11:00:09.850708+00:00",
     "trigger": {
       "trigger": "level_cross",
       "level": "Session Low",
       "level_price": 1.10475,
-      "price": 1.10468,
-      "direction": "down",
+      "price": 1.10495,
+      "direction": "up",
       "symbol": "EURUSD",
-      "bar": "2026-11-13T10:45:00+00:00",
-      "n_today": 28
+      "bar": "2026-11-13T11:00:00+00:00",
+      "n_today": 29
     },
     "sent": [
       "EURUSD"
     ],
     "blocked_session": [],
     "ok": false,
-    "latency_s": 0.149,
+    "latency_s": 0.2,
     "cost_usd": 0.0,
     "tokens": {
       "input": 0,
@@ -428,7 +423,7 @@
     },
     "error": "ClientError: 402 RESOURCE_EXHAUSTED. {'error': {'code': 402, 'message': 'Your prepayment credits are depleted. Please go to AI Studio at https://ai.studio/projects to manage your project and billing. Learn more at https://ai.google.dev/gemini-api/docs/billing#prepay. ', 'status': 'RESOURCE_EXHAUSTED'}}",
     "finish_reason": null,
-    "answer_ts": "2026-11-13T10:50:01.850248+00:00",
+    "answer_ts": "2026-11-13T11:00:10.160708+00:00",
     "signals": [
       {
         "symbol": "EURUSD",

@@ -24,15 +24,15 @@
     },
     "2026-11-13": {
       "usd": 3.521826,
-      "calls": 48,
-      "failed": 11,
+      "calls": 49,
+      "failed": 12,
       "by_kind": {
         "trigger": {
           "calls": 29,
           "usd": 1.49255
         },
         "entry": {
-          "calls": 19,
+          "calls": 20,
           "usd": 2.029276
         }
       },
@@ -43,7 +43,7 @@
       }
     }
   },
-  "last_scan_bar": "2026-11-13T12:00:00+00:00",
+  "last_scan_bar": "2026-11-13T12:15:00+00:00",
   "triggers": {
     "day": "2026-11-13",
     "n": 30,
@@ -57,9 +57,9 @@
   },
   "cache": {
     "XAUUSD": {
-      "bar": "2026-11-13T12:00:00+00:00",
-      "atr": 6.399,
-      "price": 3894.47,
+      "bar": "2026-11-13T12:15:00+00:00",
+      "atr": 6.12,
+      "price": 3893.2,
       "levels": [
         [
           "Session High",
@@ -78,12 +78,12 @@
         ],
         [
           "POC",
-          3896.98,
+          3895.22,
           -1
         ],
         [
           "VAH",
-          3909.77,
+          3908.89,
           -1
         ],
         [
@@ -92,14 +92,14 @@
           1
         ]
       ],
-      "vol_avg": 0.486795,
+      "vol_avg": 0.478245,
       "blocked": false,
       "session": "LONDON_SESSION"
     },
     "EURUSD": {
-      "bar": "2026-11-13T12:00:00+00:00",
+      "bar": "2026-11-13T12:15:00+00:00",
       "atr": 0.000492,
-      "price": 1.10494,
+      "price": 1.10509,
       "levels": [
         [
           "Session Low",
@@ -122,14 +122,14 @@
           -1
         ]
       ],
-      "vol_avg": 2343.165,
+      "vol_avg": 2322.643,
       "blocked": false,
       "session": "LONDON_SESSION"
     },
     "US100": {
-      "bar": "2026-11-13T12:00:00+00:00",
-      "atr": 45.716,
-      "price": 28357.21,
+      "bar": "2026-11-13T12:15:00+00:00",
+      "atr": 45.157,
+      "price": 28324.84,
       "levels": [
         [
           "Session High",
@@ -153,7 +153,7 @@
         ],
         [
           "VAH",
-          28376.36,
+          28369.12,
           -1
         ],
         [
@@ -162,14 +162,14 @@
           1
         ]
       ],
-      "vol_avg": 1.004655,
+      "vol_avg": 1.0033150000000002,
       "blocked": false,
       "session": "LONDON_SESSION"
     },
     "XAGUSD": {
-      "bar": "2026-11-13T12:00:00+00:00",
-      "atr": 0.1446,
-      "price": 50.034,
+      "bar": "2026-11-13T12:15:00+00:00",
+      "atr": 0.1392,
+      "price": 49.998,
       "levels": [
         [
           "Session High",
@@ -189,7 +189,7 @@
         [
           "POC",
           50.0,
-          1
+          -1
         ],
         [
           "VAH",
@@ -202,14 +202,14 @@
           1
         ]
       ],
-      "vol_avg": 21.492150000000002,
+      "vol_avg": 21.4617,
       "blocked": false,
       "session": "LONDON_SESSION"
     },
     "BTCUSD": {
-      "bar": "2026-11-13T12:00:00+00:00",
-      "atr": 270.634,
-      "price": 69375.9,
+      "bar": "2026-11-13T12:15:00+00:00",
+      "atr": 272.739,
+      "price": 69219.9,
       "levels": [
         [
           "Prev Low",
@@ -233,7 +233,7 @@
         ],
         [
           "VAH",
-          69646.94,
+          69569.27,
           -1
         ],
         [
@@ -242,7 +242,7 @@
           1
         ]
       ],
-      "vol_avg": 0.0070750000000000006,
+      "vol_avg": 0.006925000000000001,
       "blocked": false,
       "session": "LONDON_SESSION"
     }
@@ -250,15 +250,15 @@
   "whatif": [],
   "next_vid": 11,
   "last_call": {
-    "t": "2026-11-13T12:15:21.257102+00:00",
-    "t_dubai": "2026-11-13T16:15:21.257102+04:00",
+    "t": "2026-11-13T12:30:20.260889+00:00",
+    "t_dubai": "2026-11-13T16:30:20.260889+04:00",
     "kind": "entry",
     "model": "gemini-4-carbon",
     "model_version": null,
     "thinking": "high",
     "ok": false,
     "error": "ClientError: 402 RESOURCE_EXHAUSTED. {'error': {'code': 402, 'message': 'Your prepayment credits are depleted. Please go to AI Studio at https://ai.studio/projects to manage your project and billing. Learn more at https://ai.google.dev/gemini-api/docs/billing#prepay. ', 'status': 'RESOURCE_EXHAUSTED'}}",
-    "latency_s": 1.256,
+    "latency_s": 0.256,
     "finish_reason": null,
     "tokens": {
       "input": 0,
@@ -319,26 +319,25 @@
     "parse_error": null,
     "trigger": null
   },
-  "calls_total": 63,
+  "calls_total": 64,
   "last_scan": {
-    "kind": "trigger",
-    "t": "2026-11-13T11:49:13.461665+00:00",
-    "trigger": {
-      "trigger": "level_cross",
-      "level": "POC",
-      "level_price": 50.0,
-      "price": 50.039,
-      "direction": "up",
-      "symbol": "XAGUSD",
-      "bar": "2026-11-13T11:45:00+00:00",
-      "n_today": 30
-    },
+    "kind": "entry",
+    "t": "2026-11-13T12:15:20.001102+00:00",
+    "trigger": null,
+    "snapshot_id": "m15-20261113120000-f0c1578deb55",
+    "snapshot_hash": "f0c1578deb55c589504b29c1e3209c60ab13ba2585a35102a02f19ba3e13c9d4",
+    "bar_close_ts": "2026-11-13T12:15:00+00:00",
+    "snapshot_ts": "2026-11-13T12:15:22.361353+00:00",
     "sent": [
-      "XAGUSD"
+      "XAUUSD",
+      "EURUSD",
+      "US100",
+      "XAGUSD",
+      "BTCUSD"
     ],
     "blocked_session": [],
     "ok": false,
-    "latency_s": 0.161,
+    "latency_s": 1.256,
     "cost_usd": 0.0,
     "tokens": {
       "input": 0,
@@ -348,10 +347,34 @@
     },
     "error": "ClientError: 402 RESOURCE_EXHAUSTED. {'error': {'code': 402, 'message': 'Your prepayment credits are depleted. Please go to AI Studio at https://ai.studio/projects to manage your project and billing. Learn more at https://ai.google.dev/gemini-api/docs/billing#prepay. ', 'status': 'RESOURCE_EXHAUSTED'}}",
     "finish_reason": null,
-    "answer_ts": "2026-11-13T11:49:13.754665+00:00",
+    "answer_ts": "2026-11-13T12:15:21.257102+00:00",
     "signals": [
       {
+        "symbol": "XAUUSD",
+        "action": "HOLD",
+        "confidence": null,
+        "thinking_level": "high"
+      },
+      {
+        "symbol": "EURUSD",
+        "action": "HOLD",
+        "confidence": null,
+        "thinking_level": "high"
+      },
+      {
+        "symbol": "US100",
+        "action": "HOLD",
+        "confidence": null,
+        "thinking_level": "high"
+      },
+      {
         "symbol": "XAGUSD",
+        "action": "HOLD",
+        "confidence": null,
+        "thinking_level": "high"
+      },
+      {
+        "symbol": "BTCUSD",
         "action": "HOLD",
         "confidence": null,
         "thinking_level": "high"

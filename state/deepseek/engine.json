@@ -15,33 +15,33 @@
       }
     },
     "2026-11-13": {
-      "usd": 0.24826,
-      "calls": 78,
+      "usd": 0.250712,
+      "calls": 79,
       "failed": 0,
       "tokens": {
-        "prompt": 882899,
-        "cache_hit": 141056,
-        "cache_miss": 741843,
-        "completion": 120884,
-        "reasoning": 41167
+        "prompt": 894243,
+        "cache_hit": 142848,
+        "cache_miss": 751395,
+        "completion": 122573,
+        "reasoning": 41876
       }
     }
   },
   "last_call": {
-    "t": "2026-11-13T15:15:20.011091+00:00",
+    "t": "2026-11-13T15:30:20.005881+00:00",
     "ok": true,
-    "cost_usd": 0.00242278,
-    "spend_today_usd": 0.2483,
+    "cost_usd": 0.00245158,
+    "spend_today_usd": 0.2507,
     "band": "off_peak",
     "tokens": {
-      "prompt": 11724,
+      "prompt": 11344,
       "cache_hit": 1792,
-      "cache_miss": 9932,
-      "completion": 1546,
-      "reasoning": 573,
-      "total": 13270
+      "cache_miss": 9552,
+      "completion": 1689,
+      "reasoning": 709,
+      "total": 13033
     },
-    "latency_s": 8.509,
+    "latency_s": 9.436,
     "error": null,
     "model": "deepseek-flash",
     "symbols": [
@@ -53,11 +53,11 @@
     ],
     "http_status": 200,
     "prompt_version": "bracket-v1",
-    "snapshot_id": "m15-20261113150000-3943ca561801",
-    "bar_close_ts": "2026-11-13T15:15:00+00:00",
-    "snapshot_ts": "2026-11-13T15:15:33.258096+00:00",
-    "call_start": "2026-11-13T15:15:33.855732+00:00",
-    "answer_ts": "2026-11-13T15:15:42.364593+00:00"
+    "snapshot_id": "m15-20261113151500-11535af91bec",
+    "bar_close_ts": "2026-11-13T15:30:00+00:00",
+    "snapshot_ts": "2026-11-13T15:30:56.152582+00:00",
+    "call_start": "2026-11-13T15:30:58.749328+00:00",
+    "answer_ts": "2026-11-13T15:31:08.185936+00:00"
   },
   "last_signals": [
     {
@@ -68,7 +68,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "No setup. T1 fails: price below VWAP 3897.57 and EMA50 3894.44. Room down 0.043 ATR to S/R 3887.45 and up 0.337 ATR to EMA20 both under 1.0 ATR, so the hard S1 room gate blocks any bracket; h1 down but that is not a fresh event."
+      "rationale": "T1 yes: below VWAP 3897.02 and EMA50 3893.76. T2 yes: closed_through VAL and S/R. Hard gates fail: room_down only 0.459 ATR to Session Low 3872.70, and vwap_distance -2.19 ATR is chasing. S1 no, S2 no (RVOL 1.78), S3 yes, S4 yes."
     },
     {
       "symbol": "EURUSD",
@@ -78,7 +78,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "No setup. Trend T1 fails (below VWAP 1.10570 and EMA50 1.10561). Fade F2 fails: VWAP magnet is only ~0.4 ATR away and room up 0.044 / down 0.015 ATR, far under the 1.0 ATR gate. Rejections are real but untradeable inside this coil."
+      "rationale": "T1 yes: below VWAP 1.10567 and EMA50 1.10553. T2 yes: closed_through VAL/Prev Low/ATR Lower. Gates fail: room_down 0.178 ATR to ATR Lower, and vwap_distance -2.40 ATR is chase territory. S1 no, S2 no (RVOL 1.20), S3 mixed, S4 yes."
     },
     {
       "symbol": "US100",
@@ -88,7 +88,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "No setup. Trend blocked: vwap_distance_atr -5.93 is chasing. Fade banned by NEGATIVE_AMPLIFYING gamma and the down bar closed through, not rejected. Room down 0.271 / up 0.775 ATR both under 1.0 ATR, so the S1 gate also fails."
+      "rationale": "Price is 5.2 ATR below VWAP \u2014 pure chase, no trend entry. Fade banned: gex NEGATIVE_AMPLIFYING. Room up only 0.346 ATR to Put Wall #2. S1 no (upside), S2 awarded, S3 no (CVD bearish), S4 yes. Stand aside."
     },
     {
       "symbol": "XAGUSD",
@@ -98,7 +98,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "No setup. Trend blocked at -2.93 ATR from VWAP. Fade F1 fails: session low was touched/accepted, not rejected, and closes went through three levels on expanding ATR. Room up 0.110 / down 0.170 ATR also fails S1. CVD bearish supports the dri"
+      "rationale": "T1 yes: below VWAP 50.067 and EMA50 49.951. T2 yes: closed_through ATR Lower. Gates fail: room_down 0.137 ATR to Session Low, and vwap_distance -3.80 ATR is deep chase. S1 no, S2 no (RVOL 1.34), S3 yes, S4 yes."
     },
     {
       "symbol": "BTCUSD",
@@ -108,7 +108,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "No setup. T1 holds (below VWAP 69323 and EMA50 69375, h1 down) but T2 fails: no level event at all on the last closed bar. Room down 0.770 ATR to ATR lower also fails S1. A trend that is merely intact is not a new entry."
+      "rationale": "T1 yes: below VWAP 69307 and EMA50 69344. T2 no: no level event on the last closed bar, all levels untouched; a merely intact downtrend is not a new trade. Room up 1.371 ATR. S1 yes, S2 no (RVOL 1.50), S3 yes, S4 yes."
     }
   ],
   "last_bars": {

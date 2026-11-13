@@ -1,7 +1,7 @@
 {
   "reset_token": "2026-11-12-uniform-reset",
   "created_at": "2026-11-12T18:11:32.204243+00:00",
-  "last_entry_bar": "2026-11-13T16:15:00+00:00",
+  "last_entry_bar": "2026-11-13T16:30:00+00:00",
   "shadow": [
     {
       "vid": 37,
@@ -16,7 +16,7 @@
       "init_stop": 1.32255,
       "atr": 0.000882,
       "entry_time": "2026-11-13T16:16:03.816771+00:00",
-      "scan_from": "2026-11-13T16:44:00+00:00",
+      "scan_from": "2026-11-13T16:45:00+00:00",
       "tick": 0.0001,
       "comm_pts": 7.68e-05,
       "mfe_pts": 0.00026999999999999247,
@@ -50,7 +50,7 @@
       "init_stop": 1.32095,
       "atr": 0.000882,
       "entry_time": "2026-11-13T16:16:03.816771+00:00",
-      "scan_from": "2026-11-13T16:44:00+00:00",
+      "scan_from": "2026-11-13T16:45:00+00:00",
       "tick": 0.0001,
       "comm_pts": 7.68e-05,
       "mfe_pts": 0.0006200000000000649,
@@ -84,7 +84,7 @@
       "init_stop": 48.94,
       "atr": 0.2302,
       "entry_time": "2026-11-13T16:31:08.650432+00:00",
-      "scan_from": "2026-11-13T16:44:00+00:00",
+      "scan_from": "2026-11-13T16:45:00+00:00",
       "tick": 0.005,
       "comm_pts": 0.0009199999999999999,
       "mfe_pts": 0.06900000000000261,
@@ -118,7 +118,7 @@
       "init_stop": 48.94,
       "atr": 0.2302,
       "entry_time": "2026-11-13T16:31:08.650432+00:00",
-      "scan_from": "2026-11-13T16:44:00+00:00",
+      "scan_from": "2026-11-13T16:45:00+00:00",
       "tick": 0.005,
       "comm_pts": 0.0009199999999999999,
       "mfe_pts": 0.06900000000000261,
@@ -143,18 +143,18 @@
   "probes": [],
   "next_vid": 41,
   "last_entry": {
-    "bar": "2026-11-13T16:15:00+00:00",
-    "t": "2026-11-13T16:30:20.002780+00:00",
+    "bar": "2026-11-13T16:30:00+00:00",
+    "t": "2026-11-13T16:45:20.006120+00:00",
     "render_ms": 0,
     "sims": {
       "C-OPUS": {
         "ok": true,
-        "latency_ms": 27394,
-        "cost_usd": 0.122576,
+        "latency_ms": 28859,
+        "cost_usd": 0.124736,
         "error": null,
         "model": "claude-opus-5-5",
-        "answer_ts": "2026-11-13T16:31:08.650432+00:00",
-        "thinking_tokens": 1375,
+        "answer_ts": "2026-11-13T16:46:18.089649+00:00",
+        "thinking_tokens": 1424,
         "stop_reason": "end_turn",
         "signals": [
           {
@@ -177,7 +177,7 @@
             "symbol": "GBPUSD",
             "action": "HOLD",
             "setup_type": "none",
-            "score": 0,
+            "score": 2,
             "confidence": 0.0,
             "decision": "HOLD"
           },
@@ -185,17 +185,17 @@
             "symbol": "US100",
             "action": "HOLD",
             "setup_type": "none",
-            "score": 0,
+            "score": 4,
             "confidence": 0.0,
             "decision": "HOLD"
           },
           {
             "symbol": "XAGUSD",
-            "action": "BUY",
-            "setup_type": "fade",
-            "score": 5,
-            "confidence": 0.52,
-            "decision": "skip: 1 SI would risk $1,255 > $900"
+            "action": "HOLD",
+            "setup_type": "none",
+            "score": 2,
+            "confidence": 0.0,
+            "decision": "HOLD"
           },
           {
             "symbol": "BTCUSD",
@@ -209,11 +209,11 @@
       },
       "C-SONNET": {
         "ok": true,
-        "latency_ms": 10668,
-        "cost_usd": 0.047908,
+        "latency_ms": 9740,
+        "cost_usd": 0.047138,
         "error": null,
         "model": "claude-sonnet-5-5",
-        "answer_ts": "2026-11-13T16:31:08.650432+00:00",
+        "answer_ts": "2026-11-13T16:46:18.089649+00:00",
         "thinking_tokens": 0,
         "stop_reason": "end_turn",
         "signals": [
@@ -268,35 +268,24 @@
         ]
       }
     },
-    "snapshot_id": "m15-20261113161500-3ba6318cfaab",
-    "snapshot_hash": "3ba6318cfaab320f13eb18404601fb54139ebd61078f28e5ff9470fae4279182",
-    "bar_close_ts": "2026-11-13T16:30:00+00:00",
-    "snapshot_ts": "2026-11-13T16:30:36.422235+00:00"
+    "snapshot_id": "m15-20261113163000-a2fa028126cf",
+    "snapshot_hash": "a2fa028126cf84e774a58a23acc44e8c0b96cb86f118e25d125de29328da348d",
+    "bar_close_ts": "2026-11-13T16:45:00+00:00",
+    "snapshot_ts": "2026-11-13T16:45:41.839295+00:00"
   },
-  "fill_quotes": {
-    "XAGUSD": {
-      "symbol": "XAGUSD",
-      "price": 49.183,
-      "ts": "2026-11-13T16:31:07.692000+00:00",
-      "source": "dukascopy:tick",
-      "stale": false,
-      "fetched_at": "2026-11-13T16:31:08.648928+00:00",
-      "age_s": 0.96,
-      "at": "2026-11-13T16:31:08.648928+00:00"
-    }
-  },
+  "fill_quotes": {},
   "live": {
     "XAUUSD": {
       "price": 3884.515,
       "t": "2026-11-13T15:09:07.920572+00:00"
     },
     "XAGUSD": {
-      "price": 49.09,
-      "t": "2026-11-13T16:45:31.552033+00:00"
+      "price": 49.085,
+      "t": "2026-11-13T16:46:25.553295+00:00"
     },
     "GBPUSD": {
       "price": 1.32155,
-      "t": "2026-11-13T16:45:31.552033+00:00"
+      "t": "2026-11-13T16:46:25.553295+00:00"
     },
     "US100": {
       "price": 28173.387,

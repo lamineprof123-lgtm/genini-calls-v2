@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-13T02:30:45.677843+00:00",
+  "updated_at": "2026-11-13T02:45:40.659688+00:00",
   "paper_only": true,
   "plan": "LucidPro 100K (DLL on)",
   "exit_mode": "uniform-1atr-v1",
@@ -135,11 +135,11 @@
   "rules": "C-OPUS-B: claude-opus-5-5 entries, adaptive thinking, effort high, shared bracket-v1 package with DS-FLASH (same charts, facts, 3 symbols, M15 close +20s). Question: will price travel 1 ATR my way before 1 ATR against? Code-computed facts + hold gates (no trend >2 ATR from VWAP; \u22651 ATR room; US100 volume-free S2). 0.3 ATR fill check. Uniform 1 ATR / 1 ATR / 90-min exits, no model exits. Fresh $100k Lucid account.",
   "stop_txt": "1 ATR stop \u00b7 1 ATR target \u00b7 90 min",
   "last_call": {
-    "t": "2026-11-13T02:30:45.674619+00:00",
+    "t": "2026-11-13T02:45:40.656704+00:00",
     "ok": true,
-    "latency_ms": 20123,
-    "cost_usd": 0.112396,
-    "thinking_tokens": 662,
+    "latency_ms": 17035,
+    "cost_usd": 0.105236,
+    "thinking_tokens": 382,
     "usage": {
       "cache_creation": {
         "ephemeral_1h_input_tokens": 0,
@@ -148,10 +148,10 @@
       "cache_creation_input_tokens": 0,
       "cache_read_input_tokens": 0,
       "inference_geo": "global",
-      "input_tokens": 16884,
-      "output_tokens": 2243,
+      "input_tokens": 16844,
+      "output_tokens": 1893,
       "output_tokens_details": {
-        "thinking_tokens": 662
+        "thinking_tokens": 382
       },
       "service_tier": "standard",
       "speed": "standard"
@@ -159,14 +159,14 @@
     "error": null,
     "effort": "high",
     "prompt_version": "bracket-v1",
-    "snapshot_id": "m15-20261113021500-636dd9b23859",
-    "snapshot_hash": "636dd9b2385916124b56c77272197bd6a0154c3920ed8ec4726fd4f630886685",
-    "package_id": "m15-20261113T023000-941c54be4d90",
-    "package_hash": "941c54be4d902565dc3773d57ce966526eaffc689b1ed045bb1ad3a9ca21dc4e",
-    "bar_close_ts": "2026-11-13T02:30:00+00:00",
-    "snapshot_ts": "2026-11-13T02:30:24.137264+00:00",
-    "call_start": "2026-11-13T02:30:25.551282+00:00",
-    "answer_ts": "2026-11-13T02:30:45.674619+00:00",
+    "snapshot_id": "m15-20261113023000-2d12c19c3b14",
+    "snapshot_hash": "2d12c19c3b1423a49fcfa9415712bcf7839f9eb53d4cf45afc7a3bb79fde1187",
+    "package_id": "m15-20261113T024500-9b41fcf9dcab",
+    "package_hash": "9b41fcf9dcab856599f911c07fd3fc0976403ba3469d4fa8dd7bf8a0e9f20fa7",
+    "bar_close_ts": "2026-11-13T02:45:00+00:00",
+    "snapshot_ts": "2026-11-13T02:45:21.812918+00:00",
+    "call_start": "2026-11-13T02:45:23.621203+00:00",
+    "answer_ts": "2026-11-13T02:45:40.656704+00:00",
     "model": "claude-opus-5-5"
   },
   "last_signals": [
@@ -174,11 +174,11 @@
       "symbol": "XAUUSD",
       "action": "HOLD",
       "confidence": 0.0,
-      "score": 5,
+      "score": 2,
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "Session blocks automation (Asian chop): HOLD. Fade-sell candidate: F1 yes, ATR Upper rejected. F2 yes, VWAP magnet 1.006 ATR. S1 yes (room_down 1.006), S3 yes (CVD bearish), S5 yes (h1 down). S2 no (RVOL 0.84), S4 no. Score 5, but session g",
+      "rationale": "HOLD: session_blocks_automation true (Asian chop). Room fails both ways: 0.146 ATR up to ATR Upper, 0.104 ATR down to POC. Fade F2 fails because the VWAP magnet is only 1.14 ATR away with POC in the path. S1 no, S2 no (RVOL 1.02), S4 no.",
       "gate_reasons": [],
       "issues": []
     },
@@ -190,7 +190,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "Session blocks automation: HOLD. Sell trend: T1 no, price is still above VWAP. T2 partial: EMA50 close-through only. Room_down 0.258 ATR to S/R 1.10574 is below the 1.0 gate. S3 no: CVD is bullish with a falling slope. S4 no.",
+      "rationale": "HOLD: session_blocks_automation true. T1 fails because price is below EMA50. Room fails both ways: 0.027 ATR up, 0.160 ATR down. S1 no, S2 no (RVOL 1.13), S4 no.",
       "gate_reasons": [],
       "issues": []
     },
@@ -198,11 +198,11 @@
       "symbol": "US100",
       "action": "HOLD",
       "confidence": 0.0,
-      "score": 5,
+      "score": 1,
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "Session blocks automation: HOLD. Buy trend: T1 yes, above VWAP and EMA50. T2 yes, VWAP and EMA20 rejected. S1 no: room_up 0.429 ATR to POC fails the hard gate. S2 awarded, S3 yes (CVD bullish), S5 yes (h1 up). S4 no.",
+      "rationale": "HOLD: session_blocks_automation true. T1 fails for a sell because price is still above EMA50. Room down is 0.041 ATR to EMA20, below the 1.0 gate. h1_trend is up. S2 is awarded automatically; S1 and S4 are no.",
       "gate_reasons": [],
       "issues": []
     },
@@ -210,11 +210,11 @@
       "symbol": "XAGUSD",
       "action": "HOLD",
       "confidence": 0.0,
-      "score": 0,
+      "score": 3,
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "Session blocks automation: HOLD. No level event on the last closed bar, as every level is untouched. T2/F1 missing. Room_up 0.409 ATR to VAH and room_down 0.699 ATR to VWAP are both below 1.0. CVD bearish against the bounce.",
+      "rationale": "HOLD: session_blocks_automation true. Fade F1 is present (ATR Upper rejected), but F2 fails: the VWAP magnet is only 0.502 ATR away. Room down 0.502 ATR is below the gate. S2 no (RVOL 1.68). S3 yes (CVD bearish). S4 no.",
       "gate_reasons": [],
       "issues": []
     },
@@ -222,11 +222,11 @@
       "symbol": "BTCUSD",
       "action": "HOLD",
       "confidence": 0.0,
-      "score": 2,
+      "score": 4,
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "Session blocks automation: HOLD. Sell trend: T1 yes. T2 weak, an ATR-band close only. S1 no: room_down 0.453 ATR to Session Low fails the gate. Fade buy invalid: ATR Lower was closed through, not rejected. S3 yes (CVD bearish), S5 yes (h1 d",
+      "rationale": "HOLD: session_blocks_automation true. T1 and T2 are met for a sell, but |vwap_distance_atr| 2.058 exceeds 2.0, which is chasing. Room down is 0.257 ATR to Session Low, below the gate. S3 yes, S5 yes (h1 down). S1, S2, S4 no.",
       "gate_reasons": [],
       "issues": []
     }

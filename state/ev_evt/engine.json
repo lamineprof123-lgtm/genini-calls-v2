@@ -45,19 +45,6 @@
       ]
     },
     {
-      "book": "EV-REV",
-      "trigger_id": "US100|2026-11-13T16:20:00+00:00",
-      "symbol": "US100",
-      "side": 1,
-      "entry": 27657.153,
-      "t0": "2026-11-13T16:20:15+00:00",
-      "atr": 105.868,
-      "primary": "VWAP-STRETCH",
-      "types": [
-        "VWAP-STRETCH"
-      ]
-    },
-    {
       "book": "EV-CONT",
       "trigger_id": "US100|2026-11-13T16:25:00+00:00",
       "symbol": "US100",
@@ -109,6 +96,16 @@
     "EV-REV": {
       "LVL-SWEEP": {
         "room_skip": 1
+      },
+      "VWAP-STRETCH": {
+        "n": 1,
+        "R": 1.0,
+        "wins": 1
+      },
+      "ALL": {
+        "n": 1,
+        "R": 1.0,
+        "wins": 1
       }
     }
   },

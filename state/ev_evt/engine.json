@@ -9,13 +9,13 @@
       "stretch_armed": false
     },
     "XAUUSD": {
-      "stretch_armed": true
+      "stretch_armed": false
     }
   },
   "last_bar": {
-    "XAUUSD": "2026-11-13T19:35:00+00:00",
-    "EURUSD": "2026-11-13T19:35:00+00:00",
-    "US100": "2026-11-13T19:35:00+00:00"
+    "XAUUSD": "2026-11-13T19:40:00+00:00",
+    "EURUSD": "2026-11-13T19:40:00+00:00",
+    "US100": "2026-11-13T19:40:00+00:00"
   },
   "whatif": [
     {
@@ -71,14 +71,29 @@
         "LVL-BREAK",
         "VOL-BURST"
       ]
+    },
+    {
+      "book": "EV-CONT",
+      "trigger_id": "XAUUSD|2026-11-13T19:45:00+00:00",
+      "symbol": "XAUUSD",
+      "side": -1,
+      "entry": null,
+      "t0": "2026-11-13T19:45:15+00:00",
+      "atr": 6.52,
+      "primary": "LVL-BREAK",
+      "types": [
+        "LVL-BREAK",
+        "VWAP-STRETCH"
+      ]
     }
   ],
   "stats": {
     "triggers": {
       "VWAP-STRETCH": {
         "n_EURUSD": 1,
-        "n": 2,
-        "n_US100": 1
+        "n": 3,
+        "n_US100": 1,
+        "n_XAUUSD": 1
       },
       "LVL-SWEEP": {
         "n_US100": 8,
@@ -92,8 +107,8 @@
       },
       "LVL-BREAK": {
         "n_US100": 3,
-        "n": 6,
-        "n_XAUUSD": 2,
+        "n": 7,
+        "n_XAUUSD": 3,
         "n_EURUSD": 1
       }
     },
@@ -141,7 +156,7 @@
         "wins": 1
       },
       "LVL-BREAK": {
-        "room_skip": 5
+        "room_skip": 6
       }
     },
     "EV-REV": {
@@ -159,7 +174,7 @@
         "wins": 1
       },
       "LVL-BREAK": {
-        "room_skip": 6
+        "room_skip": 7
       },
       "VOL-BURST": {
         "n": 2,
@@ -256,6 +271,10 @@
     {
       "t": "2026-11-13T19:40:00+00:00",
       "symbol": "US100"
+    },
+    {
+      "t": "2026-11-13T19:45:00+00:00",
+      "symbol": "XAUUSD"
     }
   ],
   "ai_signals": [],
@@ -266,8 +285,8 @@
   "feed_days": {
     "2026-11-13": {
       "first": "2026-11-13T17:15:10.001749+00:00",
-      "last": "2026-11-13T19:44:10.007982+00:00",
-      "n": 149
+      "last": "2026-11-13T19:45:10.006289+00:00",
+      "n": 150
     }
   }
 }

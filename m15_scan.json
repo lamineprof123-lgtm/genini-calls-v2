@@ -1,11 +1,11 @@
 {
-  "snapshot_id": "m15-20261113210000-d3e1577d6f00",
-  "snapshot_hash": "d3e1577d6f0089bf46c0c409929cd0aeb4573feb1c6ddecd9abe533138a93c45",
-  "package_id": "m15-20261113T211500-795498946ab0",
-  "bar_close_ts": "2026-11-13T21:15:00+00:00",
-  "snapshot_ts": "2026-11-13T21:15:37.540161+00:00",
-  "start_lag_s": 37.54,
-  "render_ms": 18044,
+  "snapshot_id": "m15-20261113211500-2a65c94bed74",
+  "snapshot_hash": "2a65c94bed749ed3031cae3d0c50af1378b84f905a447520d2cd7353d60b92bf",
+  "package_id": "m15-20261113T213000-dbce4f3ba217",
+  "bar_close_ts": "2026-11-13T21:30:00+00:00",
+  "snapshot_ts": "2026-11-13T21:30:33.604645+00:00",
+  "start_lag_s": 33.605,
+  "render_ms": 14105,
   "symbols": [
     "XAUUSD",
     "EURUSD",
@@ -15,12 +15,12 @@
     "BTCUSD"
   ],
   "chart_sha256": {
-    "XAUUSD": "474625e4898dcf044d4ac39d02d76825c1770cd65f84c46e5a8ff54bfb5cac2b",
-    "EURUSD": "db7f50f05a51d31b64a659d69c753adae60dd5158b1f4fc09cfaf94cc1c765a3",
-    "GBPUSD": "15aed1c3ff533edfd4ca237f20b8bea81d61545aaa4d6daf389bd140204b49ea",
+    "XAUUSD": "06e9651a1cac218a4dca771762f59d2d376a8912e87ee0ec54f9937f72a1a301",
+    "EURUSD": "547cf234e60957ed262854691cec6470b043c54521761866847a605d9ce954b2",
+    "GBPUSD": "c37bc7b0e0b03c8698d324470562da77c82d4aa646faa3bf022694aef16b9997",
     "US100": "c18269388897e49652c21bb1ffe474a8d58ed1e224d5e3c3f79dc902f871fca5",
-    "XAGUSD": "8e35e39323879801eec3ad877b91173021076f4178b98bccd4bf3a80f08560ad",
-    "BTCUSD": "372b10bf7ba65217376436e84ede6561cf237d0a972b3e1e8220661fe23b2791"
+    "XAGUSD": "6ed6b37da1ad0978268165c15dda8b3c589667e430e79eac2c559f5deb0332ea",
+    "BTCUSD": "ba91d2e2f698a1e50363205695b16018099075d571ea3601d3142a8363a0aafa"
   },
   "dispatched": {
     "claude": {
@@ -33,7 +33,7 @@
     "glow80": {
       "thinking_level": "low",
       "ok": true,
-      "latency_s": 15.882,
+      "latency_s": 8.064,
       "thinking_tokens": null,
       "error": null,
       "eval80": {
@@ -54,33 +54,28 @@
     },
     "gp5": {
       "gp5": {
-        "ok": true,
-        "skipped": null,
+        "ok": false,
+        "skipped": "no symbols to scan (XAUUSD: outside Lucid session, EURUSD: outside Lucid session, US100: outside Lucid session, XAGUSD: outside Lucid session)",
         "error": null,
-        "queued": [],
-        "latency_s": 12.097
+        "queued": null,
+        "latency_s": null
       },
       "gp5eval": {
-        "ok": true,
-        "skipped": null,
+        "ok": false,
+        "skipped": "no symbols to scan (XAUUSD: outside Lucid session, EURUSD: outside Lucid session, US100: outside Lucid session, XAGUSD: outside Lucid session)",
         "error": null,
         "queued": [],
         "eval_status": "ACTIVE"
       },
       "gp5event": {
-        "ok": true,
-        "skipped": null,
+        "ok": false,
+        "skipped": "no symbols to scan (XAUUSD: outside Lucid session, EURUSD: outside Lucid session, US100: outside Lucid session, XAGUSD: outside Lucid session)",
         "error": null,
-        "queued": [],
-        "fired": [
-          "XAUUSD",
-          "EURUSD",
-          "US100",
-          "XAGUSD"
-        ],
-        "shared_call": true
+        "queued": null,
+        "fired": [],
+        "shared_call": null
       }
     }
   },
-  "updated_at": "2026-11-13T21:15:53.984611+00:00"
+  "updated_at": "2026-11-13T21:30:50.358009+00:00"
 }

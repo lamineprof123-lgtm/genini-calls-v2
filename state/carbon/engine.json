@@ -24,11 +24,11 @@
     },
     "2026-11-13": {
       "usd": 3.521826,
-      "calls": 45,
-      "failed": 8,
+      "calls": 46,
+      "failed": 9,
       "by_kind": {
         "trigger": {
-          "calls": 28,
+          "calls": 29,
           "usd": 1.49255
         },
         "entry": {
@@ -46,13 +46,13 @@
   "last_scan_bar": "2026-11-13T11:30:00+00:00",
   "triggers": {
     "day": "2026-11-13",
-    "n": 29,
+    "n": 30,
     "per_bar": {
       "US100": "2026-11-13T10:45:00+00:00",
       "XAUUSD": "2026-11-13T10:30:00+00:00",
       "BTCUSD": "2026-11-13T09:00:00+00:00",
       "EURUSD": "2026-11-13T11:00:00+00:00",
-      "XAGUSD": "2026-11-13T10:15:00+00:00"
+      "XAGUSD": "2026-11-13T11:45:00+00:00"
     }
   },
   "cache": {
@@ -169,7 +169,7 @@
     "XAGUSD": {
       "bar": "2026-11-13T11:30:00+00:00",
       "atr": 0.142,
-      "price": 49.914,
+      "price": 50.039,
       "levels": [
         [
           "Prev Low",
@@ -184,7 +184,7 @@
         [
           "POC",
           50.0,
-          -1
+          1
         ],
         [
           "VAH",
@@ -245,15 +245,15 @@
   "whatif": [],
   "next_vid": 11,
   "last_call": {
-    "t": "2026-11-13T11:45:20.231907+00:00",
-    "t_dubai": "2026-11-13T15:45:20.231907+04:00",
-    "kind": "entry",
+    "t": "2026-11-13T11:49:13.754665+00:00",
+    "t_dubai": "2026-11-13T15:49:13.754665+04:00",
+    "kind": "trigger",
     "model": "gemini-4-carbon",
     "model_version": null,
     "thinking": "high",
     "ok": false,
     "error": "ClientError: 402 RESOURCE_EXHAUSTED. {'error': {'code': 402, 'message': 'Your prepayment credits are depleted. Please go to AI Studio at https://ai.studio/projects to manage your project and billing. Learn more at https://ai.google.dev/gemini-api/docs/billing#prepay. ', 'status': 'RESOURCE_EXHAUSTED'}}",
-    "latency_s": 0.225,
+    "latency_s": 0.161,
     "finish_reason": null,
     "tokens": {
       "input": 0,
@@ -269,15 +269,20 @@
     "cost_usd": 0.0,
     "spend_today_usd": 3.5218,
     "symbols": [
-      "XAUUSD",
-      "EURUSD",
-      "US100",
-      "XAGUSD",
-      "BTCUSD"
+      "XAGUSD"
     ],
-    "render_ms": 0,
+    "render_ms": 132,
     "parse_error": "ClientError: 402 RESOURCE_EXHAUSTED. {'error': {'code': 402, 'message': 'Your prepayment credits are depleted. Please go to AI Studio at https://ai.studio/projects to manage your project and billing. Learn more at https://ai.google.dev/gemini-api/docs/billing#prepay. ', 'status': 'RESOURCE_EXHAUSTED'}}",
-    "trigger": null
+    "trigger": {
+      "trigger": "level_cross",
+      "level": "POC",
+      "level_price": 50.0,
+      "price": 50.039,
+      "direction": "up",
+      "symbol": "XAGUSD",
+      "bar": "2026-11-13T11:45:00+00:00",
+      "n_today": 30
+    }
   },
   "first_call": {
     "t": "2026-11-12T18:18:04.014172+00:00",
@@ -314,15 +319,15 @@
     "parse_error": null,
     "trigger": null
   },
-  "calls_total": 60,
+  "calls_total": 61,
   "last_scan": {
     "kind": "entry",
-    "t": "2026-11-13T11:30:20.004035+00:00",
+    "t": "2026-11-13T11:45:20.006907+00:00",
     "trigger": null,
-    "snapshot_id": "m15-20261113111500-6c4e0f0bd776",
-    "snapshot_hash": "6c4e0f0bd77657360720f01a94dc413996d87da38c2b53f75cf2541af5060d50",
-    "bar_close_ts": "2026-11-13T11:30:00+00:00",
-    "snapshot_ts": "2026-11-13T11:30:24.085271+00:00",
+    "snapshot_id": "m15-20261113113000-33de2cb73bfd",
+    "snapshot_hash": "33de2cb73bfdbbe3e3540c3da25cd396e194b5353724e6667ddec775854aa323",
+    "bar_close_ts": "2026-11-13T11:45:00+00:00",
+    "snapshot_ts": "2026-11-13T11:45:23.708726+00:00",
     "sent": [
       "XAUUSD",
       "EURUSD",
@@ -332,7 +337,7 @@
     ],
     "blocked_session": [],
     "ok": false,
-    "latency_s": 0.21,
+    "latency_s": 0.225,
     "cost_usd": 0.0,
     "tokens": {
       "input": 0,
@@ -342,7 +347,7 @@
     },
     "error": "ClientError: 402 RESOURCE_EXHAUSTED. {'error': {'code': 402, 'message': 'Your prepayment credits are depleted. Please go to AI Studio at https://ai.studio/projects to manage your project and billing. Learn more at https://ai.google.dev/gemini-api/docs/billing#prepay. ', 'status': 'RESOURCE_EXHAUSTED'}}",
     "finish_reason": null,
-    "answer_ts": "2026-11-13T11:30:20.214035+00:00",
+    "answer_ts": "2026-11-13T11:45:20.231907+00:00",
     "signals": [
       {
         "symbol": "XAUUSD",

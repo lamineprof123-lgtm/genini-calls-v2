@@ -1,9 +1,9 @@
 {
-  "updated_at": "2026-11-13T20:31:38.159825+00:00",
+  "updated_at": "2026-11-13T20:33:50.135008+00:00",
   "exit_mode": "uniform-1atr-v1",
   "paper_only": true,
-  "pending": 3350,
-  "n_scored": 14974,
+  "pending": 3169,
+  "n_scored": 15077,
   "models": {
     "gemini-3.6-flash": {
       "n": 474,
@@ -95,19 +95,19 @@
       }
     },
     "claude-opus-5-5": {
-      "n": 41,
+      "n": 42,
       "label": "claude-opus-5-5",
-      "win_pct": 0.561,
-      "avg_R": -0.008,
-      "twin_avg_R": 0.15,
-      "edge_R": -0.158,
+      "win_pct": 0.548,
+      "avg_R": -0.032,
+      "twin_avg_R": 0.122,
+      "edge_R": -0.154,
       "by_band": {
         "<0.55": {
-          "n": 33,
-          "win_pct": 0.515,
-          "avg_R": -0.097,
-          "twin_avg_R": 0.192,
-          "edge_R": -0.289
+          "n": 34,
+          "win_pct": 0.5,
+          "avg_R": -0.124,
+          "twin_avg_R": 0.157,
+          "edge_R": -0.28
         },
         "0.55-0.75": {
           "n": 8,
@@ -119,19 +119,19 @@
       },
       "excursions": {
         "2h": {
-          "avg_mfe_atr": 2.103,
-          "avg_mae_atr": 1.389,
-          "n": 41
+          "avg_mfe_atr": 2.062,
+          "avg_mae_atr": 1.381,
+          "n": 42
         },
         "3h": {
-          "avg_mfe_atr": 2.683,
-          "avg_mae_atr": 1.653,
-          "n": 41
+          "avg_mfe_atr": 2.627,
+          "avg_mae_atr": 1.639,
+          "n": 42
         },
         "4h": {
-          "avg_mfe_atr": 2.929,
-          "avg_mae_atr": 1.749,
-          "n": 41
+          "avg_mfe_atr": 2.868,
+          "avg_mae_atr": 1.745,
+          "n": 42
         }
       }
     },
@@ -211,19 +211,19 @@
       }
     },
     "deepseek-flash": {
-      "n": 11,
+      "n": 12,
       "label": "deepseek-flash",
-      "win_pct": 0.545,
-      "avg_R": 0.024,
-      "twin_avg_R": -0.27,
-      "edge_R": 0.294,
+      "win_pct": 0.5,
+      "avg_R": -0.063,
+      "twin_avg_R": -0.333,
+      "edge_R": 0.27,
       "by_band": {
         "<0.55": {
-          "n": 5,
-          "win_pct": 0.6,
-          "avg_R": 0.088,
-          "twin_avg_R": -0.544,
-          "edge_R": 0.632
+          "n": 6,
+          "win_pct": 0.5,
+          "avg_R": -0.097,
+          "twin_avg_R": -0.623,
+          "edge_R": 0.526
         },
         "0.55-0.75": {
           "n": 6,
@@ -235,19 +235,19 @@
       },
       "excursions": {
         "2h": {
-          "avg_mfe_atr": 1.257,
-          "avg_mae_atr": 1.122,
-          "n": 11
+          "avg_mfe_atr": 1.181,
+          "avg_mae_atr": 1.117,
+          "n": 12
         },
         "3h": {
-          "avg_mfe_atr": 1.597,
-          "avg_mae_atr": 1.122,
-          "n": 11
+          "avg_mfe_atr": 1.492,
+          "avg_mae_atr": 1.117,
+          "n": 12
         },
         "4h": {
-          "avg_mfe_atr": 1.731,
-          "avg_mae_atr": 1.301,
-          "n": 11
+          "avg_mfe_atr": 1.616,
+          "avg_mae_atr": 1.322,
+          "n": 12
         }
       }
     },
@@ -416,12 +416,12 @@
       }
     },
     "deepseek-flash@DS-FLASH": {
-      "n": 3,
+      "n": 4,
       "label": "deepseek-flash@DS-FLASH",
-      "win_pct": 0.667,
-      "avg_R": 0.605,
-      "twin_avg_R": -0.731,
-      "edge_R": 1.336,
+      "win_pct": 0.5,
+      "avg_R": 0.199,
+      "twin_avg_R": -0.305,
+      "edge_R": 0.504,
       "by_band": {
         "0.55-0.75": {
           "n": 3,
@@ -429,91 +429,98 @@
           "avg_R": 0.605,
           "twin_avg_R": -0.731,
           "edge_R": 1.336
+        },
+        "<0.55": {
+          "n": 1,
+          "win_pct": 0.0,
+          "avg_R": -1.021,
+          "twin_avg_R": 0.971,
+          "edge_R": -1.992
         }
       },
       "excursions": {
         "2h": {
-          "avg_mfe_atr": 2.413,
-          "avg_mae_atr": 0.668,
-          "n": 3
+          "avg_mfe_atr": 1.895,
+          "avg_mae_atr": 0.766,
+          "n": 4
         },
         "3h": {
-          "avg_mfe_atr": 2.491,
-          "avg_mae_atr": 0.668,
-          "n": 3
+          "avg_mfe_atr": 1.954,
+          "avg_mae_atr": 0.766,
+          "n": 4
         },
         "4h": {
-          "avg_mfe_atr": 2.491,
-          "avg_mae_atr": 1.326,
-          "n": 3
+          "avg_mfe_atr": 1.954,
+          "avg_mae_atr": 1.383,
+          "n": 4
         }
       }
     },
     "gemini-3.8-flash@G-P5": {
-      "n": 1,
+      "n": 3,
       "label": "gemini-3.8-flash@G-P5",
       "win_pct": 1.0,
-      "avg_R": 0.252,
-      "twin_avg_R": -0.47,
-      "edge_R": 0.722,
+      "avg_R": 0.691,
+      "twin_avg_R": -0.85,
+      "edge_R": 1.541,
       "by_band": {
         "0.55-0.75": {
-          "n": 1,
+          "n": 3,
           "win_pct": 1.0,
-          "avg_R": 0.252,
-          "twin_avg_R": -0.47,
-          "edge_R": 0.722
+          "avg_R": 0.691,
+          "twin_avg_R": -0.85,
+          "edge_R": 1.541
         }
       },
       "excursions": {
         "2h": {
-          "avg_mfe_atr": 0.665,
-          "avg_mae_atr": 0.464,
-          "n": 1
+          "avg_mfe_atr": 0.928,
+          "avg_mae_atr": 0.303,
+          "n": 3
         },
         "3h": {
-          "avg_mfe_atr": 0.816,
-          "avg_mae_atr": 0.464,
-          "n": 1
+          "avg_mfe_atr": 1.03,
+          "avg_mae_atr": 0.303,
+          "n": 3
         },
         "4h": {
-          "avg_mfe_atr": 1.368,
-          "avg_mae_atr": 0.464,
-          "n": 1
+          "avg_mfe_atr": 1.576,
+          "avg_mae_atr": 0.303,
+          "n": 3
         }
       }
     },
     "gemini-3.8-flash@G-P5-EVENT": {
-      "n": 1,
+      "n": 3,
       "label": "gemini-3.8-flash@G-P5-EVENT",
       "win_pct": 1.0,
-      "avg_R": 0.252,
-      "twin_avg_R": -0.47,
-      "edge_R": 0.722,
+      "avg_R": 0.691,
+      "twin_avg_R": -0.214,
+      "edge_R": 0.905,
       "by_band": {
         "0.55-0.75": {
-          "n": 1,
+          "n": 3,
           "win_pct": 1.0,
-          "avg_R": 0.252,
-          "twin_avg_R": -0.47,
-          "edge_R": 0.722
+          "avg_R": 0.691,
+          "twin_avg_R": -0.214,
+          "edge_R": 0.905
         }
       },
       "excursions": {
         "2h": {
-          "avg_mfe_atr": 0.665,
-          "avg_mae_atr": 0.464,
-          "n": 1
+          "avg_mfe_atr": 0.928,
+          "avg_mae_atr": 0.303,
+          "n": 3
         },
         "3h": {
-          "avg_mfe_atr": 0.816,
-          "avg_mae_atr": 0.464,
-          "n": 1
+          "avg_mfe_atr": 1.03,
+          "avg_mae_atr": 0.303,
+          "n": 3
         },
         "4h": {
-          "avg_mfe_atr": 1.368,
-          "avg_mae_atr": 0.464,
-          "n": 1
+          "avg_mfe_atr": 1.576,
+          "avg_mae_atr": 0.303,
+          "n": 3
         }
       }
     }

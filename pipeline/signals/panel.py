@@ -29,6 +29,7 @@ BOOKS = [
     ("bracket", "gemini-3.8-flash", "Gemini flash · bracket (conf≥0.75)"),
     ("G-LOW-80", "gemini-3.8-flash", "Gemini flash · G-LOW-80 (own call, thinking low, min 0.70)"),
     ("EVAL-80", "gemini-3.8-flash", "Gemini flash · EVAL-80 (G-LOW-80's call, min 0.80, 0.8 stop / 1.0 target ATR, ~$450, Lucid eval)"),
+    ("EVAL-R4", "gemini-3.8-flash", "Gemini flash · EVAL-R4 (EVAL-80 + R4 trend filter: H1 trend ≥2.7 ATR, <3 ATR from EMA20, no chase, <3.5 ATR from VWAP)"),
     ("CB-BRACKET", "gemini-4-carbon", "Carbon · CB-BRACKET"),
     ("CB-RUNNER", "gemini-4-carbon", "Carbon · CB-RUNNER"),
     ("C-OPUS", "claude-opus-5-5", "Claude Opus · C-OPUS"),
@@ -39,7 +40,7 @@ BOOKS = [
 MODEL_OF = {b: m for b, m, _ in BOOKS}
 LABEL_OF = {b: l for b, _, l in BOOKS}
 LUCID, OV = "LUCID", "OTHER-VENUE"
-LUCID_ONLY = {"EVAL-80"}          # no other-venue (BTC) account
+LUCID_ONLY = {"EVAL-80", "EVAL-R4"}          # no other-venue (BTC) account
 
 
 def _dt(s) -> datetime | None:
@@ -180,6 +181,8 @@ class PanelLedger:
             out.append(("G-LOW-80", LUCID, p))
         for p in (_read(S / "eval80" / "account.json") or {}).get("positions") or []:
             out.append(("EVAL-80", LUCID, p))
+        for p in (_read(S / "evalr4" / "account.json") or {}).get("positions") or []:
+            out.append(("EVAL-R4", LUCID, p))
         for b in ("CB-BRACKET", "CB-RUNNER"):
             for p in (_read(S / "carbon" / f"{b}.json") or {}).get("positions") or []:
                 out.append((b, LUCID, p))
@@ -206,6 +209,7 @@ class PanelLedger:
         out[("bracket", LUCID)] = (_read(S / "bracket" / "account.json") or {}).get("balance")
         out[("G-LOW-80", LUCID)] = (_read(S / "glow80" / "account.json") or {}).get("balance")
         out[("EVAL-80", LUCID)] = (_read(S / "eval80" / "account.json") or {}).get("balance")
+        out[("EVAL-R4", LUCID)] = (_read(S / "evalr4" / "account.json") or {}).get("balance")
         for b in ("CB-BRACKET", "CB-RUNNER"):
             out[(b, LUCID)] = (_read(S / "carbon" / f"{b}.json") or {}).get("balance")
         for b in ("C-OPUS", "C-SONNET"):
@@ -249,6 +253,9 @@ class PanelLedger:
         for r in self._log_rows("eval80_trades.jsonl"):
             if r.get("event", "close") == "close":
                 out.append(("EVAL-80", LUCID, r))
+        for r in self._log_rows("evalr4_trades.jsonl"):
+            if r.get("event", "close") == "close":
+                out.append(("EVAL-R4", LUCID, r))
         for r in self._log_rows("carbon_trades.jsonl"):
             if r.get("event", "close") == "close" and r.get("book") in ("CB-BRACKET", "CB-RUNNER"):
                 out.append((r["book"], LUCID, r))
@@ -470,15 +477,20 @@ class PanelLedger:
                 # Ambiguous without ticks stays "?". A full window with neither side is "—" and done.
                 r["first_cross_backfill"] = "done"
 
-    def eval_status(self) -> dict | None:
-        """EVAL-80 eval card fields from its own site file (written by the book on every persist)."""
-        v = _read(self.site / "eval80.json") or {}
+    def eval_status(self, site_file: str = "eval80.json") -> dict | None:
+        """Eval card fields from an eval book's own site file (written by the book on every persist).
+        EVAL-80: eval80.json; EVAL-R4: evalr4.json (adds its "filter" block)."""
+        v = _read(self.site / site_file) or {}
         e = v.get("eval")
         if not e:
             return None
-        return {k: e.get(k) for k in ("status", "reason", "at", "profit", "profit_target", "progress_pct",
-                                      "mll_floor", "mll_locked", "mll_room", "dll_used", "dll_limit",
-                                      "dll_paused", "highest_eod", "missed_scans", "missed_total")}
+        out = {k: e.get(k) for k in ("status", "reason", "at", "profit", "profit_target", "progress_pct",
+                                     "mll_floor", "mll_locked", "mll_room", "dll_used", "dll_limit",
+                                     "dll_paused", "highest_eod", "missed_scans", "missed_total")}
+        if e.get("filter") is not None:
+            f = e["filter"]
+            out["filter"] = {k: f.get(k) for k in ("seen", "passed", "filtered_out", "no_data", "fail_by")}
+        return out
 
     # ---------------- site
     def site_payload(self, now: datetime) -> dict:
@@ -506,10 +518,12 @@ class PanelLedger:
                              "open_positions": len(opn), **wpf})
                 if book == "EVAL-80" and venue == LUCID:
                     perf[-1]["eval"] = self.eval_status()
+                if book == "EVAL-R4" and venue == LUCID:
+                    perf[-1]["eval"] = self.eval_status("evalr4.json")
         return {"updated_at": _iso(now), "paper_only": True,
                 "reset": {"token": self.reset.get("token"), "at": self.reset.get("at")},
                 "exit_rule": ("uniform-1atr-v1: 1 ATR stop · 1 ATR target · 90-min cap (all books, no model exits; "
-                              "EVAL-80: 0.8 ATR stop · 1 ATR target · 90-min cap)"),
+                              "EVAL-80 / EVAL-R4: 0.8 ATR stop · 1 ATR target · 90-min cap)"),
                 "pnl_note": ("Max / lowest $ P&L: gross mark-to-market reached while open (live quote every "
                              f"{int(self.pc.get('poll_seconds', 15))} s, plus the book's own recorded excursion and "
                              "the exit price). P&L at close is net of commissions/fees. "

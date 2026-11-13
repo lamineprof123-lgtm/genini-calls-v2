@@ -763,6 +763,42 @@ check_seconds = 18
 reset_token = "eval80-v1"
 
 # ---------------------------------------------------------------------------------------------------------------
+# EVAL-R4 (signals/evalr4.py, t288u). PAPER ONLY. Separate side book; every other book unchanged.
+# EVAL-80 + the backtested R4 entry filter. NO own model call (G-LOW-80's low-thinking response, conf >= 0.80).
+# Entry ONLY when, from CLOSED M15 bars at signal time (feature formulas of the bb_feat backtest), with a = the
+# signal's M15 ATR: side*(H1 EMA20 - EMA50)/a >= 2.7; side*(price - M15 EMA20)/a < 3.0; side*(last close - open of
+# the 3rd-last bar)/a < 2.2; side*(price - UTC-day VWAP)/a < 3.5. Same bracket / sizing / LucidPro 100K eval rules
+# as EVAL-80 on its own fresh $100k. Every 0.8+ signal is logged with the four values + pass/fail per condition.
+[evalr4]
+enabled = true
+source_book = "G-LOW-80"
+min_confidence = 0.80
+symbols = ["XAUUSD", "EURUSD", "GBPUSD", "US100", "XAGUSD"]
+h1_trend_min_atr = 2.7
+max_px_vs_ema20_atr = 3.0
+max_last3_atr = 2.2
+max_vwap_dist_atr = 3.5
+history_bars = 1500
+min_history_bars = 600
+stop_atr = 0.8
+target_atr = 1.0
+max_hold_minutes = 90
+max_chase_atr = 0.3
+risk_usd = 450.0
+max_risk_usd = 1500.0
+max_minis_per_position = 2
+max_minis = 6
+micros_per_mini = 10
+start_balance = 100000.0
+profit_target = 6000.0
+mll = 3000.0
+initial_trail_balance = 103100.0
+locked_mll_balance = 100100.0
+dll = 1800.0
+check_seconds = 18
+reset_token = "evalr4-v1"
+
+# ---------------------------------------------------------------------------------------------------------------
 # OTHER-VENUE (signals/other_venue.py). PAPER ONLY. Parallel $100k CFD/spot sub-account on every model's book
 # for symbols that are not Lucid products. BTCUSD trades here (no longer site-only/what-if). Silver stays on
 # Lucid as SI (fees file 2026-11-09 lists SI in the GC/SI/HG/PL group at $2.30/side). Sizing: ~$900 risk per

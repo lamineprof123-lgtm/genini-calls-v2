@@ -177,11 +177,16 @@
     const kv = (k, v, c = '') => `<div><div class="mc-k">${k}</div><div class="mc-v ${c}">${v}</div></div>`;
     const missedTxt = e => { const m = e.missed_scans || {}, ks = Object.keys(m).filter(k => m[k]);
       return (e.missed_total || 0) + (ks.length ? ' (' + ks.map(k => esc(k) + ' ' + m[k]).join(', ') + ')' : ''); };
+    const FILT_NAME = { h1_trend: 'weak H1 trend', m15_ema20: 'stretched from EMA20', chase: 'chasing', vwap: 'far from VWAP' };
+    const filtTxt = f => { const fb = f.fail_by || {}, ks = Object.keys(fb).filter(k => fb[k]);
+      return `${f.filtered_out || 0} of ${f.seen || 0} signals 0.8+` +
+        (ks.length ? ' (' + ks.map(k => esc(FILT_NAME[k] || k) + ' ' + fb[k]).join(', ') + (f.no_data ? ', no data ' + f.no_data : '') + ')' : (f.no_data ? ' (no data ' + f.no_data + ')' : '')); };
     const evalLine = e => `Eval <span class="st ${esc(e.status)}">${esc(e.status)}</span> · profit ` +
       `<span class="${cls(e.profit)}">${usd(e.profit)}</span> of ${usd(e.profit_target, false)} (${Number(e.progress_pct || 0).toFixed(0)}%)` +
       ` · MLL floor ${bal(e.mll_floor)} ${e.mll_locked ? '(locked)' : '(trailing)'}` +
       ` · DLL used ${usd(e.dll_used, false)} of ${usd(e.dll_limit, false)}${e.dll_paused ? ' (paused)' : ''}` +
       ` · missed (G-LOW-80 held) ${missedTxt(e)}` +
+      `${e.filter ? ' · filtered out ' + filtTxt(e.filter) : ''}` +
       `${e.reason && e.status !== 'ACTIVE' ? ' · ' + esc(e.reason) : ''}`;
     const evalCard = e => `<div class="ev"><div class="ev-h"><span>Lucid eval</span><span class="st ${esc(e.status)}">${esc(e.status)}</span></div>
       <div class="ev-bar"><i style="width:${Math.min(100, Math.max(0, Number(e.progress_pct || 0)))}%"></i></div>
@@ -189,6 +194,7 @@
       ${kv('MLL floor', bal(e.mll_floor) + (e.mll_locked ? ' 🔒' : ''))}
       ${kv('DLL used', usd(e.dll_used, false) + ' / ' + usd(e.dll_limit, false).replace('.00', ''), e.dll_paused ? 'neg' : '')}</div>
       <div class="mc-s">Missed (G-LOW-80 held the symbol): ${missedTxt(e)}</div>
+      ${e.filter ? `<div class="mc-s">Filtered out by the R4 rules: ${filtTxt(e.filter)}</div>` : ''}
       ${e.reason && e.status !== 'ACTIVE' ? `<div class="mc-s">${esc(e.reason)}</div>` : ''}${e.dll_paused ? '<div class="mc-s">Daily loss limit hit: paused for the session.</div>' : ''}</div>`;
     let h = `<tr><th class="l">Book</th><th class="l">Venue</th><th>Balance</th><th>Net P&amp;L</th><th>Open P&amp;L</th>
       <th>Closed</th><th>W / L</th><th>Win rate</th><th>Went + first</th><th>Open</th></tr>`;
@@ -264,7 +270,7 @@
           ${st === 'OPEN' ? kv('Open P&amp;L', usd(x.last_pnl_usd), cls(x.last_pnl_usd)) : kv('Close P&amp;L', usd(x.net_at_close_usd), cls(x.net_at_close_usd))}</div></div>`;
       }).join('');
     }
-    $('posNote').textContent = (P.pnl_note || '') + ' Status: OPEN, or CLOSED-stop / CLOSED-target / CLOSED-time by the mechanical bracket (1 ATR stop / 1 ATR target; EVAL-80: 0.8 ATR stop / 1 ATR target). EVAL-80 can also show CLOSED-dll_1800 / CLOSED-mll_breach / CLOSED-eval_passed_flat from the Lucid eval rules.';
+    $('posNote').textContent = (P.pnl_note || '') + ' Status: OPEN, or CLOSED-stop / CLOSED-target / CLOSED-time by the mechanical bracket (1 ATR stop / 1 ATR target; EVAL-80 and EVAL-R4: 0.8 ATR stop / 1 ATR target). EVAL-80 and EVAL-R4 can also show CLOSED-dll_1800 / CLOSED-mll_breach / CLOSED-eval_passed_flat from the Lucid eval rules.';
   }
 
   async function pollStatus() { const s = await getJSON('status.json'); if (s && newer(s, status)) status = s; }

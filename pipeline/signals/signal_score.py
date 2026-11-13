@@ -46,7 +46,7 @@ def _dt(s) -> datetime | None:
 
 # Books that share another book's model call get their own score rows (EVAL-80 reuses G-LOW-80's response,
 # same model / symbol / signal_at). Older books keep their historical keys unchanged.
-OWN_KEY_BOOKS = ("EVAL-80",)
+OWN_KEY_BOOKS = ("EVAL-80", "EVAL-R4")
 
 
 def score_key(row: dict) -> str:
@@ -352,6 +352,7 @@ class SignalScorer:
         n += self._ingest_claude()
         n += self._ingest_glow80()
         n += self._ingest_eval80()
+        n += self._ingest_evalr4()
         n += self._ingest_jsonl("deepseek_signals.jsonl", model="deepseek-flash",
                                 nested=True)
         self.save()
@@ -440,6 +441,27 @@ class SignalScorer:
                         **s, "model": s.get("model") or d.get("model") or "gemini-3.8-flash",
                         "thinking_level": s.get("thinking_level") or d.get("thinking_level") or "low",
                         "signal_at": d.get("t"), "kind": "entry", "book": "EVAL-80",
+                        "entry": s.get("entry") or s.get("live_price"),
+                    }))
+        return n
+
+    def _ingest_evalr4(self) -> int:
+        """EVAL-R4 (t288u): one evalr4_signals.jsonl line per M15 cycle on G-LOW-80's shared response (own keys)."""
+        n = 0
+        for f in sorted(self.logs_dir.glob("*/evalr4_signals.jsonl")):
+            for line in f.read_text().splitlines():
+                try:
+                    d = json.loads(line)
+                except Exception:
+                    continue
+                if not d.get("ok"):
+                    continue
+                for s in d.get("signals") or []:
+                    s = {k: v for k, v in s.items() if k != "r4"}
+                    n += len(self.enqueue({
+                        **s, "model": s.get("model") or d.get("model") or "gemini-3.8-flash",
+                        "thinking_level": s.get("thinking_level") or d.get("thinking_level") or "low",
+                        "signal_at": d.get("t"), "kind": "entry", "book": "EVAL-R4",
                         "entry": s.get("entry") or s.get("live_price"),
                     }))
         return n

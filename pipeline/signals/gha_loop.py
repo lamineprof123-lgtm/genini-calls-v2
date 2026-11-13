@@ -21,7 +21,7 @@ from .pipeline import next_boundary, run_once
 from .site import write_status
 
 log = logging.getLogger("signals.gha")
-SITE_JSON = ("status.json", "latest_signal.json", "history.json", "lucid.json", "claude.json", "bracket.json", "glow80.json", "eval80.json",
+SITE_JSON = ("status.json", "latest_signal.json", "history.json", "lucid.json", "claude.json", "bracket.json", "glow80.json", "eval80.json", "evalr4.json",
              "carbon.json", "deepseek.json", "signal_scores.json", "opus_b.json", "m15_scan.json", "other_venue.json",
              "panel.json")
 DATA_JSON = ("books.json",)  # committed to the data branch only (not deployed to Pages)
@@ -74,6 +74,8 @@ class GhaLoop:
         self.glow80_task: asyncio.Task | None = None
         self.eval80 = None                   # EVAL-80 Lucid eval book on G-LOW-80's call (signals/eval80.py)
         self.eval80_task: asyncio.Task | None = None
+        self.evalr4 = None                   # EVAL-R4 = EVAL-80 + R4 entry filter (signals/evalr4.py)
+        self.evalr4_task: asyncio.Task | None = None
         self.other_venue = None
         self.other_venue_task: asyncio.Task | None = None
         for sub in ("state", "logs"):
@@ -222,6 +224,7 @@ class GhaLoop:
         self.start_scorer()
         self.start_glow80()
         self.start_eval80()
+        self.start_evalr4()
         self.start_m15_scan()
         self.start_panel()
         while True:
@@ -521,7 +524,7 @@ class GhaLoop:
             self.m15 = M15Coordinator(
                 self.cfg, io_lock=self.io_lock,
                 claude=self.claude, carbon=self.carbon,
-                deepseek=self.deepseek, opus_b=self.opus_b, scorer=self.scorer, glow80=self.glow80, eval80=self.eval80,
+                deepseek=self.deepseek, opus_b=self.opus_b, scorer=self.scorer, glow80=self.glow80, eval80=self.eval80, evalr4=self.evalr4,
                 state_dir=self.data / "state", logs_dir=self.data / "logs", site_dir=self.data,
             )
             self.m15_task = asyncio.create_task(run_m15_scan_loop(self.m15), name="m15-scan")
@@ -569,6 +572,36 @@ class GhaLoop:
         except Exception:
             log.exception("EVAL-80 failed to start (other books unaffected)")
             self.eval80 = None
+
+    def start_evalr4(self) -> None:
+        """EVAL-R4 (t288u): EVAL-80 + the R4 entry filter on its own fresh $100k LucidPro eval. Needs G-LOW-80."""
+        from .evalr4 import evalr4_cfg
+        if self.dry_run or not evalr4_cfg(self.cfg).get("enabled", False) or self.glow80 is None:
+            return
+        try:
+            from .evalr4 import EvalR4Book
+            from .bracket import run_bracket_loop
+            self.evalr4 = EvalR4Book(self.cfg, io_lock=self.io_lock, state_dir=self.data / "state",
+                                     logs_dir=self.data / "logs", site_dir=self.data)
+            self.evalr4.hist.start()             # seed the M15 history in the background
+            self.evalr4_task = asyncio.create_task(run_bracket_loop(self.evalr4), name="evalr4")
+            log.info("EVAL-R4 on: min_conf=%s h1>=%s ema20<%s last3<%s vwap<%s eval=%s",
+                     self.evalr4.b["min_confidence"], self.evalr4.b["h1_trend_min_atr"],
+                     self.evalr4.b["max_px_vs_ema20_atr"], self.evalr4.b["max_last3_atr"],
+                     self.evalr4.b["max_vwap_dist_atr"], self.evalr4.ev.get("status"))
+        except Exception:
+            log.exception("EVAL-R4 failed to start (other books unaffected)")
+            self.evalr4 = None
+
+    async def stop_evalr4(self) -> None:
+        t, self.evalr4_task = self.evalr4_task, None
+        if t:
+            t.cancel()
+            with contextlib.suppress(BaseException):
+                await asyncio.wait_for(t, 30)
+        if self.evalr4 is not None and self.evalr4.hist.seed_task is not None:
+            self.evalr4.hist.seed_task.cancel()
+        self.evalr4 = None
 
     async def stop_eval80(self) -> None:
         t, self.eval80_task = self.eval80_task, None
@@ -705,6 +738,7 @@ class GhaLoop:
         await self.stop_m15_scan()
         await self.stop_glow80()
         await self.stop_eval80()
+        await self.stop_evalr4()
         await self.stop_deepseek()
         await self.stop_opus_b()
         await self.stop_other_venue()

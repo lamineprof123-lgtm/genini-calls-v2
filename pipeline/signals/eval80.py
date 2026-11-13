@@ -96,6 +96,8 @@ class Eval80Book(BracketBook):
     TRADES_LOG = "eval80_trades.jsonl"
     EVENTS_LOG = "eval80_events.jsonl"
     SITE_FILE = "eval80.json"
+    SIGNALS_LOG = "eval80_signals.jsonl"
+    SOURCE_BOOK = SOURCE_BOOK
 
     def __init__(self, cfg: dict, io_lock: asyncio.Lock | None = None, **kw):
         self._micro = eval80_contracts(cfg)
@@ -115,7 +117,7 @@ class Eval80Book(BracketBook):
 
     def fresh(self) -> dict:
         s = super().fresh()
-        s.update({"book": BOOK, "eval": self._fresh_eval(), "day": {"day": None, "net": 0.0},
+        s.update({"book": self.BOOK_NAME, "eval": self._fresh_eval(), "day": {"day": None, "net": 0.0},
                   "cycles": {"seen": 0, "with_signals": 0, "skipped": 0, "last": None}})
         return s
 
@@ -239,7 +241,7 @@ class Eval80Book(BracketBook):
         e.update({"status": status, "reason": reason, "at": now.astimezone(UTC).isoformat(),
                   "final_balance": self.s["balance"]})
         self._event(now, f"eval_{status.lower()}", reason=reason, balance=self.s["balance"], mll_floor=e["mll_floor"])
-        log.warning("EVAL-80 %s: %s (balance %.2f)", status, reason, self.s["balance"])
+        log.warning("%s %s: %s (balance %.2f)", self.BOOK_NAME, status, reason, self.s["balance"])
 
     def roll_eod(self, now: datetime) -> bool:
         """At the first look in a new Lucid day: the previous day's close updates the trailing MLL."""
@@ -356,12 +358,16 @@ class Eval80Book(BracketBook):
             out.append(pe)
         return out
 
+    def _signal_extra(self, v: dict) -> dict:
+        """Extra per-signal fields for the signals log (EVAL-80: none; EVAL-R4 adds its filter values)."""
+        return {}
+
     async def on_shared(self, g: dict | None, snap=None, now: datetime | None = None) -> dict:
         """One evaluation cycle on G-LOW-80's response for this M15 close. Never raises."""
         now = now or getattr(snap, "now", None) or datetime.now(UTC)
         g = g or {}
         sig_at = g.get("signal_at") or now.astimezone(UTC).isoformat()
-        out = {"book": BOOK, "source_book": SOURCE_BOOK, "model": self.b["model"],
+        out = {"book": self.BOOK_NAME, "source_book": SOURCE_BOOK, "model": self.b["model"],
                "thinking_level": self.b["thinking_level"], "ok": bool(g.get("ok")), "signal_at": sig_at,
                "eval_status": self.ev.get("status")}
         try:
@@ -386,24 +392,24 @@ class Eval80Book(BracketBook):
             out["missed_held_by_glow80"] = [s for s in held_by_source if not self.held(s)]
             out["signals"] = [{k: v.get(k) for k in ("symbol", "action", "confidence", "atr", "entry")} for v in validated]
             out["score_signals"] = [{**v, "signal_at": sig_at, "kind": "entry", "traded": v["symbol"] in traded,
-                                     "book": BOOK, "model": self.b["model"], "thinking_level": self.b["thinking_level"],
+                                     "book": self.BOOK_NAME, "model": self.b["model"], "thinking_level": self.b["thinking_level"],
                                      "prompt_version": "system_prompt.j2"}
                                     for v in validated] if g.get("ok") else []
             c["last"] = {"t": sig_at, "ok": bool(g.get("ok")), "signals": len(validated), "queued": out["queued"],
                          "eval_status": self.ev.get("status")}
-            self._jsonl("eval80_signals.jsonl", now, {
-                "t": sig_at, "book": BOOK, "source_book": SOURCE_BOOK, "model": self.b["model"],
+            self._jsonl(self.SIGNALS_LOG, now, {
+                "t": sig_at, "book": self.BOOK_NAME, "source_book": SOURCE_BOOK, "model": self.b["model"],
                 "thinking_level": self.b["thinking_level"], "snapshot_id": getattr(snap, "snapshot_id", None),
                 "ok": bool(g.get("ok")), "skipped": out.get("skipped"), "error": g.get("error"),
                 "missed_held_by_glow80": out["missed_held_by_glow80"], "eval": self.eval_view(now),
-                "signals": [{**v, "traded": v["symbol"] in traded} for v in validated]})
+                "signals": [{**v, "traded": v["symbol"] in traded, **self._signal_extra(v)} for v in validated]})
             if queued:
                 await self.tick(now)
             else:
                 await self.persist()
             return out
         except Exception as e:
-            log.exception("EVAL-80 on_shared failed (other books unaffected)")
+            log.exception("%s on_shared failed (other books unaffected)", self.BOOK_NAME)
             out["ok"] = False
             out["error"] = f"{type(e).__name__}: {e}"
             return out
@@ -423,7 +429,7 @@ class Eval80Book(BracketBook):
             if self.enforce(now):
                 await self.persist()
         except Exception as e:
-            log.exception("EVAL-80 enforce failed")
+            log.exception("%s enforce failed", self.BOOK_NAME)
             res = {**(res or {}), "error": f"{type(e).__name__}: {e}"}
         finally:
             self.busy = False

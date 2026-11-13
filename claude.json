@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-13T16:01:11.729233+00:00",
+  "updated_at": "2026-11-13T16:16:03.829662+00:00",
   "paper_only": true,
   "key_present": true,
   "status": "running",
@@ -12,7 +12,7 @@
   "uniform_1atr_exits": true,
   "exit_calls_note": "All books: 1 ATR / 1 ATR bracket, no model exits",
   "exit_mode": "uniform-1atr-v1",
-  "last_entry_bar": "2026-11-13T15:45:00+00:00",
+  "last_entry_bar": "2026-11-13T16:00:00+00:00",
   "last_entry_skipped": null,
   "rules": "Binding server rules: hard stop = model stop clamped 0.6-1.5 ATR; $900 risk sizing (NQ 1, GC 1, 6E/6B up to 4, 6 max); break-even at +0.5 ATR; profit lock 50% of best at +1.0 ATR, 60% at +1.5 ATR; 45-min time stop; daily -$1,500; trailing $300 buffer; re-entry lock; USD-group cap (one open per long-USD / short-USD group; 30-min lock after a stop-out); skip fill if the live quote is >0.3 ATR worse than the chart; one entry per M15 close +20s (score >= 5). Phase A (never +0.25 ATR): Haiku CLOSE is ignored; server exits on a closed M15 after entry beyond invalidation or wrong-side of both VWAP and EMA20. Phases B/C ignore a CLOSE until the first M15 close after entry. Exit confidence is logged, never acted on. Exit model every 18 s.",
   "reset": {
@@ -149,18 +149,18 @@
         }
       },
       "signals": {
-        "rows": 264,
-        "buy_sell": 24,
-        "gated": 24,
+        "rows": 270,
+        "buy_sell": 25,
+        "gated": 25,
         "opened": 10
       },
       "ops": {
         "entry": {
-          "calls": 44,
+          "calls": 45,
           "failed": 0,
-          "latency_p50_ms": 23233.0,
-          "latency_p95_ms": 33717.1,
-          "cost_usd": 5.2066,
+          "latency_p50_ms": 23856.0,
+          "latency_p95_ms": 33671.4,
+          "cost_usd": 5.3357,
           "by_utc_day": {
             "2026-11-12": {
               "calls": 12,
@@ -170,11 +170,11 @@
               "thinking_tokens": 11181
             },
             "2026-11-13": {
-              "calls": 32,
-              "cost_usd": 3.8551,
-              "input_tokens": 514890,
-              "output_tokens": 89780,
-              "thinking_tokens": 39523
+              "calls": 33,
+              "cost_usd": 3.9842,
+              "input_tokens": 531221,
+              "output_tokens": 92969,
+              "thinking_tokens": 41049
             }
           }
         },
@@ -197,15 +197,15 @@
       },
       "exit_prompt_version": "v3",
       "last_entry_call": {
-        "bar": "2026-11-13T15:45:00+00:00",
-        "t": "2026-11-13T16:00:20.054165+00:00",
+        "bar": "2026-11-13T16:00:00+00:00",
+        "t": "2026-11-13T16:15:20.001258+00:00",
         "ok": true,
-        "latency_ms": 24532,
-        "cost_usd": 0.118796,
+        "latency_ms": 30719,
+        "cost_usd": 0.129104,
         "error": null,
         "model": "claude-opus-5-5",
-        "answer_ts": "2026-11-13T16:01:11.716596+00:00",
-        "thinking_tokens": 1174,
+        "answer_ts": "2026-11-13T16:16:03.816771+00:00",
+        "thinking_tokens": 1526,
         "stop_reason": "end_turn",
         "signals": [
           {
@@ -220,17 +220,17 @@
             "symbol": "EURUSD",
             "action": "HOLD",
             "setup_type": "none",
-            "score": 0,
+            "score": 4,
             "confidence": 0.0,
             "decision": "HOLD"
           },
           {
             "symbol": "GBPUSD",
-            "action": "HOLD",
-            "setup_type": "none",
-            "score": 0,
-            "confidence": 0.0,
-            "decision": "HOLD"
+            "action": "SELL",
+            "setup_type": "trend",
+            "score": 6,
+            "confidence": 0.52,
+            "decision": "skip: daily guard: day loss $1,513 + open stop risk $0 + new $219 > $1,500"
           },
           {
             "symbol": "US100",
@@ -244,7 +244,7 @@
             "symbol": "XAGUSD",
             "action": "HOLD",
             "setup_type": "none",
-            "score": 0,
+            "score": 4,
             "confidence": 0.0,
             "decision": "HOLD"
           },
@@ -252,7 +252,7 @@
             "symbol": "BTCUSD",
             "action": "HOLD",
             "setup_type": "none",
-            "score": 4,
+            "score": 0,
             "confidence": 0.0,
             "decision": "HOLD"
           }
@@ -315,18 +315,18 @@
         }
       },
       "signals": {
-        "rows": 264,
+        "rows": 270,
         "buy_sell": 0,
         "gated": 0,
         "opened": 0
       },
       "ops": {
         "entry": {
-          "calls": 44,
+          "calls": 45,
           "failed": 0,
           "latency_p50_ms": 10380.0,
-          "latency_p95_ms": 12004.6,
-          "cost_usd": 2.0772,
+          "latency_p95_ms": 11986.4,
+          "cost_usd": 2.1251,
           "by_utc_day": {
             "2026-11-12": {
               "calls": 12,
@@ -336,10 +336,10 @@
               "thinking_tokens": 0
             },
             "2026-11-13": {
-              "calls": 32,
-              "cost_usd": 1.5098,
-              "input_tokens": 514890,
-              "output_tokens": 47995,
+              "calls": 33,
+              "cost_usd": 1.5577,
+              "input_tokens": 531221,
+              "output_tokens": 49523,
               "thinking_tokens": 0
             }
           }
@@ -363,14 +363,14 @@
       },
       "exit_prompt_version": "v3",
       "last_entry_call": {
-        "bar": "2026-11-13T15:45:00+00:00",
-        "t": "2026-11-13T16:00:20.054165+00:00",
+        "bar": "2026-11-13T16:00:00+00:00",
+        "t": "2026-11-13T16:15:20.001258+00:00",
         "ok": true,
-        "latency_ms": 10301,
-        "cost_usd": 0.047638,
+        "latency_ms": 10471,
+        "cost_usd": 0.047942,
         "error": null,
         "model": "claude-sonnet-5-5",
-        "answer_ts": "2026-11-13T16:01:11.716596+00:00",
+        "answer_ts": "2026-11-13T16:16:03.816771+00:00",
         "thinking_tokens": 0,
         "stop_reason": "end_turn",
         "signals": [

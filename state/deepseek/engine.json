@@ -15,33 +15,33 @@
       }
     },
     "2026-11-13": {
-      "usd": 0.255528,
-      "calls": 81,
+      "usd": 0.257758,
+      "calls": 82,
       "failed": 0,
       "tokens": {
-        "prompt": 917427,
-        "cache_hit": 146432,
-        "cache_miss": 770995,
-        "completion": 125682,
-        "reasoning": 43053
+        "prompt": 929049,
+        "cache_hit": 148224,
+        "cache_miss": 780825,
+        "completion": 126932,
+        "reasoning": 43385
       }
     }
   },
   "last_call": {
-    "t": "2026-11-13T16:00:20.054165+00:00",
+    "t": "2026-11-13T16:15:20.001258+00:00",
     "ok": true,
-    "cost_usd": 0.00241273,
-    "spend_today_usd": 0.2555,
+    "cost_usd": 0.00222988,
+    "spend_today_usd": 0.2578,
     "band": "off_peak",
     "tokens": {
-      "prompt": 11589,
+      "prompt": 11622,
       "cache_hit": 1792,
-      "cache_miss": 9797,
-      "completion": 1563,
-      "reasoning": 590,
-      "total": 13152
+      "cache_miss": 9830,
+      "completion": 1250,
+      "reasoning": 332,
+      "total": 12872
     },
-    "latency_s": 8.886,
+    "latency_s": 6.815,
     "error": null,
     "model": "deepseek-flash",
     "symbols": [
@@ -53,11 +53,11 @@
     ],
     "http_status": 200,
     "prompt_version": "bracket-v1",
-    "snapshot_id": "m15-20261113154500-fc19b4249724",
-    "bar_close_ts": "2026-11-13T16:00:00+00:00",
-    "snapshot_ts": "2026-11-13T16:00:36.140171+00:00",
-    "call_start": "2026-11-13T16:00:47.177572+00:00",
-    "answer_ts": "2026-11-13T16:00:56.063572+00:00"
+    "snapshot_id": "m15-20261113160000-0a907b488b6e",
+    "bar_close_ts": "2026-11-13T16:15:00+00:00",
+    "snapshot_ts": "2026-11-13T16:15:32.222977+00:00",
+    "call_start": "2026-11-13T16:15:32.747614+00:00",
+    "answer_ts": "2026-11-13T16:15:39.562962+00:00"
   },
   "last_signals": [
     {
@@ -68,7 +68,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "No setup. T1 fails: price 3872.18 below VWAP 3895.93 and EMA50 3892.35. TREND hard gate fails: vwap_distance -2.61 ATR (>2.0, chasing) and room_down only 0.01 ATR to Put Wall. FADE fails F1: lows touched, not rejected back inside; price sit"
+      "rationale": "Both setups fail. TREND: T2 yes (closed_through VAL, Put Wall #1) but price 1.87 ATR below VWAP and only 0.163 ATR room down to VAL, 0.705 up to Gamma Flip \u2014 S1 fails. FADE: GEX NEGATIVE_AMPLIFYING forbids fading. HOLD."
     },
     {
       "symbol": "EURUSD",
@@ -78,7 +78,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "No setup. Below VWAP 1.10555 and EMA50 1.10533 so T1 fails. Room gates fail both ways: 0.45 ATR up, 0.33 ATR down to Session Low \u2014 no 1 ATR target reachable. No rejection wick at an extreme for FADE. Only S4 applies."
+      "rationale": "TREND: T1 fails (below VWAP and EMA50), price 2.81 ATR from VWAP is chasing, and only 0.251 ATR room down to ATR Lower. FADE: no rejection at a labelled extreme, no magnet 1 ATR away. S1 fails. HOLD."
     },
     {
       "symbol": "US100",
@@ -88,7 +88,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "No setup. Every key level untouched on the last closed bar (VAL, ATR Lower, Call/Put Walls all untouched), so no T2/F1 event. Also -5.00 ATR from VWAP (hard gate) and room_down 0.84 ATR < 1.0. HOLD despite S2 auto-award and S4."
+      "rationale": "TREND: T2 yes (closed_through Put Wall #2) but price 5.3 ATR below VWAP \u2014 chasing, hard gate fails. Room up 0.44 ATR, down 0.32 ATR; S1 fails. FADE: GEX NEGATIVE_AMPLIFYING forbids. HOLD."
     },
     {
       "symbol": "XAGUSD",
@@ -98,7 +98,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "No setup. Below VWAP 50.029 and EMA50 49.882, T1 fails. vwap_distance -4.35 ATR (hard gate). Room up 0.68 ATR to ATR Lower and room down 0.35 ATR \u2014 neither supports a 1 ATR bracket. FADE fails: extreme touched, no rejection close back insid"
+      "rationale": "TREND: T1 fails (below VWAP/EMA50), price 4.06 ATR from VWAP \u2014 chasing. Room up 0.249 ATR, down 0.785 ATR, both under 1 ATR \u2014 S1 fails. FADE: touches, no clean rejection at extreme with a 1 ATR magnet. HOLD."
     },
     {
       "symbol": "BTCUSD",
@@ -108,7 +108,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "No setup. The last bar closed up through VAL and ATR Lower but price remains below VWAP 69266.97 and EMA50 69276.88, so T1 fails. Those closes are acceptance, not rejection, so FADE fails F1. Room up 0.61 ATR to EMA20 < 1.0. S4 only."
+      "rationale": "TREND: T1 yes (below VWAP and EMA50, direction down) but no level event on the last closed bar \u2014 T2 fails. Room down 0.595 ATR to VAL, under 1 ATR, so S1 fails too. FADE: no extreme rejection. HOLD."
     }
   ],
   "last_bars": {

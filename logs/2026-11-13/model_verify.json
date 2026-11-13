@@ -1,6 +1,6 @@
 {
-  "ok": true,
-  "list_seconds": 0.123,
+  "ok": false,
+  "list_seconds": 0.159,
   "listed_error": null,
   "listed_gemini3_or_4": [
     "gemini-3-pro-image",
@@ -20,25 +20,13 @@
   "probes": [
     {
       "id": "gemini-3.8-flash",
-      "ok": true,
-      "latency_s": 2.124,
+      "ok": false,
+      "latency_s": 0.176,
       "thinking": null,
-      "thoughts_token_count": 73,
-      "model_version": "gemini-3.8-flash",
-      "text": "pong",
-      "usage": {
-        "candidates_token_count": 1,
-        "prompt_token_count": 8,
-        "prompt_tokens_details": [
-          {
-            "modality": "TEXT",
-            "token_count": 8
-          }
-        ],
-        "thoughts_token_count": 73,
-        "total_token_count": 82
-      },
-      "error": null,
+      "model_version": null,
+      "text": null,
+      "usage": null,
+      "error": "ClientError: 402 RESOURCE_EXHAUSTED. {'error': {'code': 402, 'message': 'Your prepayment credits are depleted. Please go to AI Studio at https://ai.studio/projects to manage your project and billing. Learn more at https://ai.google.dev/gemini-api/docs/billing#prepay. ', 'status': 'RESOURCE_EXHAUSTED'}}",
       "exact_in_list": true,
       "closest": [
         "gemini-3.8-flash",

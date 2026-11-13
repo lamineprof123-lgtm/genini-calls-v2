@@ -1,7 +1,7 @@
 {
   "version": 1,
   "created_at": "2026-11-12T18:11:32.231856+00:00",
-  "last_processed": "2026-11-13T14:46:00+00:00",
+  "last_processed": "2026-11-13T14:47:00+00:00",
   "account": {
     "no": 1,
     "phase": "eval",
@@ -22,7 +22,162 @@
     "trades": 6
   },
   "positions": [],
-  "pending": [],
+  "pending": [
+    {
+      "symbol": "US100",
+      "side": -1,
+      "created": "2026-11-13T14:47:05.712152+00:00",
+      "fill_after": "2026-11-13T14:48:00+00:00",
+      "reserved_risk": 0.0,
+      "planned": {
+        "contract": "NQ",
+        "qty": 1,
+        "risk_usd": null,
+        "tdist": null,
+        "target_source": "none (gemini_only)"
+      },
+      "expires": "2026-11-13T14:58:00+00:00",
+      "atr": 66.377,
+      "scalp": {
+        "action": "SELL",
+        "side": -1,
+        "entry": 28113.04,
+        "stop_loss": 28308.88,
+        "take_profit": 28108.04,
+        "sdist": 195.8388500000001,
+        "tdist": 5.0,
+        "stop_source": "structure",
+        "target_source": "fixed",
+        "rr": 0.026,
+        "structure_stop": 28308.87885,
+        "atr_stop": 28166.141600000003,
+        "fixed_tp": 28108.04,
+        "structure_tp": 28113.38754,
+        "structure_label": "Session Low",
+        "candle": {
+          "high": 28305.56,
+          "low": 28112.06
+        },
+        "levels": [
+          {
+            "price": 28151.81,
+            "label": "S/R"
+          },
+          {
+            "price": 28209.17,
+            "label": "S/R"
+          },
+          {
+            "price": 28265.71,
+            "label": "S/R"
+          },
+          {
+            "price": 28112.06,
+            "label": "Session Low"
+          },
+          {
+            "price": 28030.0,
+            "label": "S/R"
+          },
+          {
+            "price": 27912.13,
+            "label": "Prev Low"
+          }
+        ],
+        "vp": {
+          "poc": 28260.78,
+          "vah": 28409.49,
+          "val": 28208.53
+        }
+      },
+      "session": "LONDON_NY_OVERLAP",
+      "telemetry": {
+        "symbol": "US100",
+        "session": "LONDON_NY_OVERLAP",
+        "last_close": 28144.83,
+        "atr": 66.377,
+        "vwap": 28309.5,
+        "ema20": 28295.62,
+        "ema50": 28290.85,
+        "price_vs_vwap": {
+          "side": "below",
+          "dist_atr": -2.4808
+        },
+        "price_vs_ema50": {
+          "side": "below",
+          "dist_atr": -2.1999
+        },
+        "vwap_aligned_with_side": true,
+        "ema50_aligned_with_side": true,
+        "poc": 28260.78,
+        "vah": 28409.49,
+        "val": 28208.53,
+        "price_vs_value_area": "below_val",
+        "dist_to_poc_atr": -1.7468,
+        "cvd": -1.3,
+        "cvd_label": "NEUTRAL",
+        "cvd_slope": -2.87,
+        "cvd_agrees_with_side": true,
+        "rvol": 2.156,
+        "rvol_spike": true,
+        "rvol_bars_since_spike": 0,
+        "atr_band_z": -2.2717,
+        "atr_upper": 28428.38,
+        "atr_lower": 28162.87,
+        "nearest_sr": {
+          "above": {
+            "price": 28151.81,
+            "label": "S/R",
+            "dist_atr": 0.1052
+          },
+          "below": {
+            "price": 28112.06,
+            "label": "Session Low",
+            "dist_atr": 0.4937
+          }
+        },
+        "gemini": {
+          "action": "SELL",
+          "confidence": 0.85,
+          "confidence_band": ">=0.8",
+          "rationale": "Price is trading below VAL (28208.53) and below POC (28260.78). CVD label is NEUTRAL (-1.30) with an accelerating negative slope (-2.87) confirming sharp selling pressure. Session is LONDON_NY_OVERLAP. Price suffered a severe structural break below VWAP (28309.50) and EMA50 (28290.85). The candle is puncturing below the lower ATR band (28162.87) in a volatility expansion. RVOL printed 2.156, a rare and highly significant yellow spike on Dukascopy US100 confirming institutional liquidation. Price broke through Session Low 28112.06. GEX regime is NEGATIVE_AMPLIFYING below Gamma Flip 28308.35 where dealer hedging accelerates downward trend flushes; Put Wall #1 sits at 27999.34, leaving over 113 points of room to scalp ahead of major dealer support and S/R 28030.00.",
+          "model": "gemini-3.8-flash",
+          "model_action": "SELL"
+        },
+        "scalp": {
+          "stop_basis": "structure",
+          "target_basis": "fixed",
+          "tdist": 5.0,
+          "sdist": 195.8388500000001,
+          "structure_label": "Session Low"
+        },
+        "planned": {
+          "tdist": 5.0,
+          "sdist": 195.8388500000001,
+          "qty": null,
+          "contract": null,
+          "target_usd_net": null,
+          "risk_usd": null
+        },
+        "run_at_utc": "2026-11-13T14:45:37.311538+00:00",
+        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-13/cycles/184537.json/US100.png"
+      },
+      "gemini": {
+        "action": "SELL",
+        "entry": 28113.04,
+        "stop_loss": 28308.88,
+        "take_profit": 28108.04,
+        "confidence": 0.85,
+        "rr": 0.026,
+        "shown_on_site": true,
+        "basis": "site signal",
+        "run_at_utc": "2026-11-13T14:45:37.311538+00:00",
+        "session": "LONDON_NY_OVERLAP",
+        "rationale": "Price is trading below VAL (28208.53) and below POC (28260.78). CVD label is NEUTRAL (-1.30) with an accelerating negative slope (-2.87) confirming sharp selling pressure. Session is LONDON_NY_OVERLAP. Price suffered a severe structural break below VWAP (28309.50) and EMA50 (28290.85). The candle is puncturing below the lower ATR band (28162.87) in a volatility expansion. RVOL printed 2.156, a rare and highly significant yellow spike on Dukascopy US100 confirming institutional liquidation. Price broke through Session Low 28112.06. GEX regime is NEGATIVE_AMPLIFYING below Gamma Flip 28308.35 where dealer hedging accelerates downward trend flushes; Put Wall #1 sits at 27999.34, leaving over 113 points of room to scalp ahead of major dealer support and S/R 28030.00.",
+        "model": "gemini-3.8-flash"
+      }
+    }
+  ],
   "next_pos_id": 7,
   "day": {
     "id": "2026-11-13",
@@ -66,7 +221,7 @@
     "commissions": 61.2,
     "net_trade_pnl": 1506.3,
     "skipped_signals": 2,
-    "accepted_signals": 8
+    "accepted_signals": 9
   },
   "reset_token": "2026-11-12-uniform-reset",
   "reset_at": "2026-11-12T18:11:32.231856+00:00",

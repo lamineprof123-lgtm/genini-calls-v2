@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-13T13:02:48.171635+00:00",
+  "updated_at": "2026-11-13T13:02:29.063529+00:00",
   "paper_only": true,
   "model": "gemini-4-carbon",
   "entry_thinking": "high",
@@ -18,16 +18,16 @@
   "min_confidence": 0.75,
   "spend": {
     "day_dubai": "2026-11-13",
-    "usd": 3.6815,
+    "usd": 3.7364,
     "soft_usd": 15,
     "hard_usd": 19,
     "state": "ok",
-    "calls": 52,
+    "calls": 53,
     "failed": 14,
     "by_kind": {
       "trigger": {
-        "calls": 30,
-        "usd": 1.49255
+        "calls": 31,
+        "usd": 1.547374
       },
       "entry": {
         "calls": 22,
@@ -35,9 +35,9 @@
       }
     },
     "tokens": {
-      "input": 327915,
-      "output": 45887,
-      "thoughts": 256684
+      "input": 333662,
+      "output": 46679,
+      "thoughts": 260225
     },
     "price_per_mtok": [
       2.0,
@@ -45,7 +45,7 @@
     ],
     "history": {
       "2026-11-12": 3.1289,
-      "2026-11-13": 3.6815
+      "2026-11-13": 3.7364
     }
   },
   "triggers_today": 32,
@@ -53,39 +53,44 @@
   "next_scan_at": "2026-11-13T13:15:20+00:00",
   "in_window": true,
   "last_call": {
-    "t": "2026-11-13T13:02:48.171635+00:00",
-    "t_dubai": "2026-11-13T17:02:48.171635+04:00",
-    "kind": "entry",
+    "t": "2026-11-13T13:02:29.063529+00:00",
+    "t_dubai": "2026-11-13T17:02:29.063529+04:00",
+    "kind": "trigger",
     "model": "gemini-4-carbon",
     "model_version": "gemini-4-carbon",
     "thinking": "high",
     "ok": true,
     "error": null,
-    "latency_s": 148.166,
+    "latency_s": 52.461,
     "finish_reason": "FinishReason.STOP",
     "tokens": {
-      "input": 14057,
-      "output": 185,
-      "thoughts": 12975,
-      "total": 27217
+      "input": 5747,
+      "output": 792,
+      "thoughts": 3541,
+      "total": 10080
     },
-    "thoughts_token_count": 12975,
+    "thoughts_token_count": 3541,
     "price_per_mtok": [
       2.0,
       10.0
     ],
-    "cost_usd": 0.159714,
-    "spend_today_usd": 3.6815,
+    "cost_usd": 0.054824,
+    "spend_today_usd": 3.7364,
     "symbols": [
-      "XAUUSD",
-      "EURUSD",
-      "US100",
-      "XAGUSD",
-      "BTCUSD"
+      "XAGUSD"
     ],
-    "render_ms": 0,
+    "render_ms": 321,
     "parse_error": null,
-    "trigger": null
+    "trigger": {
+      "trigger": "level_cross",
+      "level": "POC",
+      "level_price": 50.0,
+      "price": 50.041,
+      "direction": "up",
+      "symbol": "XAGUSD",
+      "bar": "2026-11-13T13:00:00+00:00",
+      "n_today": 32
+    }
   },
   "first_call": {
     "t": "2026-11-12T18:18:04.014172+00:00",
@@ -122,39 +127,62 @@
     "parse_error": null,
     "trigger": null
   },
-  "calls_total": 67,
+  "calls_total": 68,
   "last_scan": {
-    "kind": "trigger",
-    "t": "2026-11-13T12:47:41.870537+00:00",
-    "trigger": {
-      "trigger": "level_cross",
-      "level": "Session Low",
-      "level_price": 1.10462,
-      "price": 1.10446,
-      "direction": "down",
-      "symbol": "EURUSD",
-      "bar": "2026-11-13T12:45:00+00:00",
-      "n_today": 31
-    },
+    "kind": "entry",
+    "t": "2026-11-13T13:00:20.005635+00:00",
+    "trigger": null,
+    "snapshot_id": "m15-20261113124500-e5259b19f4f8",
+    "snapshot_hash": "e5259b19f4f8e859cfd4063b3216a50b9c041e5a57e8fd715f6ded8532daf987",
+    "bar_close_ts": "2026-11-13T13:00:00+00:00",
+    "snapshot_ts": "2026-11-13T13:00:36.897969+00:00",
     "sent": [
-      "EURUSD"
+      "XAUUSD",
+      "EURUSD",
+      "US100",
+      "XAGUSD",
+      "BTCUSD"
     ],
     "blocked_session": [],
-    "ok": false,
-    "latency_s": 0.196,
-    "cost_usd": 0.0,
+    "ok": true,
+    "latency_s": 148.166,
+    "cost_usd": 0.159714,
     "tokens": {
-      "input": 0,
-      "output": 0,
-      "thoughts": 0,
-      "total": 0
+      "input": 14057,
+      "output": 185,
+      "thoughts": 12975,
+      "total": 27217
     },
-    "error": "ClientError: 402 RESOURCE_EXHAUSTED. {'error': {'code': 402, 'message': 'Your prepayment credits are depleted. Please go to AI Studio at https://ai.studio/projects to manage your project and billing. Learn more at https://ai.google.dev/gemini-api/docs/billing#prepay. ', 'status': 'RESOURCE_EXHAUSTED'}}",
-    "finish_reason": null,
-    "answer_ts": "2026-11-13T12:47:42.371537+00:00",
+    "error": null,
+    "finish_reason": "FinishReason.STOP",
+    "answer_ts": "2026-11-13T13:02:48.171635+00:00",
     "signals": [
       {
+        "symbol": "XAUUSD",
+        "action": "HOLD",
+        "confidence": 0.4,
+        "thinking_level": "high"
+      },
+      {
         "symbol": "EURUSD",
+        "action": "HOLD",
+        "confidence": null,
+        "thinking_level": "high"
+      },
+      {
+        "symbol": "US100",
+        "action": "HOLD",
+        "confidence": null,
+        "thinking_level": "high"
+      },
+      {
+        "symbol": "XAGUSD",
+        "action": "HOLD",
+        "confidence": null,
+        "thinking_level": "high"
+      },
+      {
+        "symbol": "BTCUSD",
         "action": "HOLD",
         "confidence": null,
         "thinking_level": "high"

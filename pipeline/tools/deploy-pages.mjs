@@ -45,6 +45,7 @@ try {
   });
   if (cr.status >= 300) done({ stage: 'create', http: cr.status, error: JSON.stringify(cr.body).slice(0, 300) });
   const dep = cr.body;
+  out.create_http = cr.status; out.create_body = JSON.stringify(dep).slice(0, 200);
   const id = dep.id || String(dep.status_url || '').split('/').pop();
   out.deployment_id = id;
   out.build_version = buildVersion(process.env.GITHUB_SHA, name);
@@ -54,6 +55,7 @@ try {
     await new Promise((r) => setTimeout(r, 3000));
     const st = await api(`/repos/${repo}/pages/deployments/${id}`);
     const s = st.body && st.body.status;
+    out.last_status = s; out.last_http = st.status;
     if (s === 'succeed') done({ ok: true, status: s });
     if (failed.has(s)) done({ stage: 'status', status: s, http: st.status });
   }

@@ -177,6 +177,15 @@ class GhaLoop:
             res = {"ok": False, "error": f"{type(e).__name__}: {e}"}
         finally:
             shutil.rmtree(st, ignore_errors=True)
+        try:  # persisted so a stuck/failing publisher is visible on pipeline-data while the run is live
+            day = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+            d = self.data / "logs" / day
+            d.mkdir(parents=True, exist_ok=True)
+            with open(d / "pages_deploys.jsonl", "a") as f:
+                f.write(json.dumps({"at": datetime.now(timezone.utc).isoformat(), "cycle": self.cycles,
+                                    "run_id": self.run_id, **res}, default=str)[:1000] + "\n")
+        except Exception:
+            log.exception("pages deploy log write failed")
         if res.get("ok"):
             self.stats["deploys_ok"] += 1; self.stats["deploy_ms"].append(res.get("ms"))
             self.deploy_fail_streak = 0

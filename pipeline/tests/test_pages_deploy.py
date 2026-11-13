@@ -21,8 +21,8 @@ def test_build_version_unique_per_deploy_same_sha():
     sha = "104c39118ef7e03d97096e637fc7d27696ef6fff"
     v = _versions(sha, ["pages-1-8-1794573037", "pages-1-9-1794573144", "pages-1-9-1794573144"])
     assert v[0] != v[1] and v[1] == v[2]
-    assert all(x.startswith(sha + "-") and x != sha for x in v)
-    assert all("/" not in x and " " not in x for x in v)
+    assert all(x != sha and len(x) == 40 and all(c in "0123456789abcdef" for c in x) for x in v)
+    assert _versions("de3fd0f63780fb2e1e21b2287eb67842c6eb46fb", ["pages-1-9-1794573144"])[0] != v[1]
 
 
 def test_deployer_uses_build_version_not_bare_sha():

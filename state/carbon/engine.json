@@ -24,15 +24,15 @@
     },
     "2026-11-13": {
       "usd": 3.521826,
-      "calls": 46,
-      "failed": 9,
+      "calls": 47,
+      "failed": 10,
       "by_kind": {
         "trigger": {
           "calls": 29,
           "usd": 1.49255
         },
         "entry": {
-          "calls": 17,
+          "calls": 18,
           "usd": 2.029276
         }
       },
@@ -43,7 +43,7 @@
       }
     }
   },
-  "last_scan_bar": "2026-11-13T11:30:00+00:00",
+  "last_scan_bar": "2026-11-13T11:45:00+00:00",
   "triggers": {
     "day": "2026-11-13",
     "n": 30,
@@ -57,9 +57,9 @@
   },
   "cache": {
     "XAUUSD": {
-      "bar": "2026-11-13T11:30:00+00:00",
-      "atr": 6.369,
-      "price": 3889.01,
+      "bar": "2026-11-13T11:45:00+00:00",
+      "atr": 6.582,
+      "price": 3893.41,
       "levels": [
         [
           "Session High",
@@ -92,15 +92,20 @@
           1
         ]
       ],
-      "vol_avg": 0.5147,
+      "vol_avg": 0.49663500000000005,
       "blocked": false,
       "session": "LONDON_SESSION"
     },
     "EURUSD": {
-      "bar": "2026-11-13T11:30:00+00:00",
-      "atr": 0.000496,
-      "price": 1.10517,
+      "bar": "2026-11-13T11:45:00+00:00",
+      "atr": 0.000493,
+      "price": 1.10528,
       "levels": [
+        [
+          "Session High",
+          1.10726,
+          -1
+        ],
         [
           "Session Low",
           1.10462,
@@ -122,14 +127,14 @@
           -1
         ]
       ],
-      "vol_avg": 2555.161,
+      "vol_avg": 2410.061,
       "blocked": false,
       "session": "LONDON_SESSION"
     },
     "US100": {
-      "bar": "2026-11-13T11:30:00+00:00",
-      "atr": 45.811,
-      "price": 28306.48,
+      "bar": "2026-11-13T11:45:00+00:00",
+      "atr": 46.431,
+      "price": 28364.93,
       "levels": [
         [
           "Session High",
@@ -158,19 +163,24 @@
         ],
         [
           "VAL",
-          28159.05,
+          28166.3,
           1
         ]
       ],
-      "vol_avg": 0.994145,
+      "vol_avg": 0.999935,
       "blocked": false,
       "session": "LONDON_SESSION"
     },
     "XAGUSD": {
-      "bar": "2026-11-13T11:30:00+00:00",
-      "atr": 0.142,
-      "price": 50.039,
+      "bar": "2026-11-13T11:45:00+00:00",
+      "atr": 0.1485,
+      "price": 50.032,
       "levels": [
+        [
+          "Session High",
+          50.783,
+          -1
+        ],
         [
           "Prev Low",
           49.688,
@@ -197,14 +207,14 @@
           1
         ]
       ],
-      "vol_avg": 22.486425,
+      "vol_avg": 21.75105,
       "blocked": false,
       "session": "LONDON_SESSION"
     },
     "BTCUSD": {
-      "bar": "2026-11-13T11:30:00+00:00",
-      "atr": 281.926,
-      "price": 69271.5,
+      "bar": "2026-11-13T11:45:00+00:00",
+      "atr": 277.605,
+      "price": 69296.2,
       "levels": [
         [
           "Prev Low",
@@ -237,7 +247,7 @@
           1
         ]
       ],
-      "vol_avg": 0.00727,
+      "vol_avg": 0.00716,
       "blocked": false,
       "session": "LONDON_SESSION"
     }
@@ -245,15 +255,15 @@
   "whatif": [],
   "next_vid": 11,
   "last_call": {
-    "t": "2026-11-13T11:49:13.754665+00:00",
-    "t_dubai": "2026-11-13T15:49:13.754665+04:00",
-    "kind": "trigger",
+    "t": "2026-11-13T12:00:20.212013+00:00",
+    "t_dubai": "2026-11-13T16:00:20.212013+04:00",
+    "kind": "entry",
     "model": "gemini-4-carbon",
     "model_version": null,
     "thinking": "high",
     "ok": false,
     "error": "ClientError: 402 RESOURCE_EXHAUSTED. {'error': {'code': 402, 'message': 'Your prepayment credits are depleted. Please go to AI Studio at https://ai.studio/projects to manage your project and billing. Learn more at https://ai.google.dev/gemini-api/docs/billing#prepay. ', 'status': 'RESOURCE_EXHAUSTED'}}",
-    "latency_s": 0.161,
+    "latency_s": 0.21,
     "finish_reason": null,
     "tokens": {
       "input": 0,
@@ -269,20 +279,15 @@
     "cost_usd": 0.0,
     "spend_today_usd": 3.5218,
     "symbols": [
-      "XAGUSD"
+      "XAUUSD",
+      "EURUSD",
+      "US100",
+      "XAGUSD",
+      "BTCUSD"
     ],
-    "render_ms": 132,
+    "render_ms": 0,
     "parse_error": "ClientError: 402 RESOURCE_EXHAUSTED. {'error': {'code': 402, 'message': 'Your prepayment credits are depleted. Please go to AI Studio at https://ai.studio/projects to manage your project and billing. Learn more at https://ai.google.dev/gemini-api/docs/billing#prepay. ', 'status': 'RESOURCE_EXHAUSTED'}}",
-    "trigger": {
-      "trigger": "level_cross",
-      "level": "POC",
-      "level_price": 50.0,
-      "price": 50.039,
-      "direction": "up",
-      "symbol": "XAGUSD",
-      "bar": "2026-11-13T11:45:00+00:00",
-      "n_today": 30
-    }
+    "trigger": null
   },
   "first_call": {
     "t": "2026-11-12T18:18:04.014172+00:00",
@@ -319,7 +324,7 @@
     "parse_error": null,
     "trigger": null
   },
-  "calls_total": 61,
+  "calls_total": 62,
   "last_scan": {
     "kind": "trigger",
     "t": "2026-11-13T11:49:13.461665+00:00",

@@ -1,29 +1,29 @@
 {
-  "updated_at": "2026-11-13T14:22:22.984647+00:00",
+  "updated_at": "2026-11-13T14:24:28.727525+00:00",
   "paper_only": true,
   "book": "G-LOW-80",
   "label": "Gemini flash \u00b7 G-LOW-80 (low thinking, min 0.70)",
   "account": {
     "start_balance": 100000.0,
-    "balance": 100084.6,
-    "equity": 100278.6,
-    "net_pnl": 98.9,
-    "open_pnl": 194.0,
-    "trades": 3,
-    "wins": 1,
+    "balance": 100447.6,
+    "equity": 100008.6,
+    "net_pnl": 449.9,
+    "open_pnl": -439.0,
+    "trades": 4,
+    "wins": 2,
     "losses": 2,
-    "win_rate": 0.333,
-    "avg_win": 906.5,
+    "win_rate": 0.5,
+    "avg_win": 628.75,
     "avg_loss": -403.8,
     "max_drawdown": -441.3,
     "peak_balance": 100465.2,
-    "commissions": 75.4,
+    "commissions": 87.4,
     "exit_reasons": {
       "stop_1atr": 2,
-      "target_1atr": 1
+      "target_1atr": 2
     },
     "stopped": 2,
-    "open_positions": 2,
+    "open_positions": 1,
     "pending": 0,
     "signals_seen": 11,
     "signals_taken": 6,
@@ -47,28 +47,46 @@
       "risk_usd": 854.6,
       "target_usd": 845.4,
       "side": "SHORT",
-      "last_price": 3882.36,
-      "unrealized": -56.0
-    },
+      "last_price": 3886.19,
+      "unrealized": -439.0
+    }
+  ],
+  "recent_trades": [
     {
+      "event": "close",
+      "book": "G-LOW-80",
+      "t_exit": "2026-11-13T14:22:57.634743+00:00",
+      "t_exit_dubai": "2026-11-13T18:22:57.634743+04:00",
       "id": 5,
       "symbol": "EURUSD",
       "contract": "6E",
       "qty": 5,
-      "entry": 1.10495,
+      "side": "SHORT",
       "entry_time": "2026-11-13T14:01:23.449628+00:00",
+      "entry": 1.10495,
       "stop": 1.1056,
       "target": 1.1043,
-      "deadline": "2026-11-13T15:31:23.449628+00:00",
-      "confidence": 0.79,
+      "exit": 1.10435,
+      "reason": "target_1atr",
+      "stopped": false,
+      "gross": 375.0,
+      "commission": 24.0,
+      "net": 351.0,
+      "hold_seconds": 1294,
+      "balance_after": 100447.6,
       "risk_usd": 430.25,
       "target_usd": 382.25,
-      "side": "SHORT",
-      "last_price": 1.10455,
-      "unrealized": 250.0
-    }
-  ],
-  "recent_trades": [
+      "confidence": 0.79,
+      "atr": 0.000639,
+      "signal_at": "2026-11-13T14:00:37.877286+00:00",
+      "R": 0.816,
+      "mfe_atr": 1.017,
+      "mae_atr": 0.876,
+      "checks": 58,
+      "exit_prompt_version": "gemini-profit-lock-reset6",
+      "trigger": "live_price",
+      "live_price": 1.1043
+    },
     {
       "event": "close",
       "book": "G-LOW-80",
@@ -192,6 +210,6 @@
   },
   "day": {
     "day": "2026-11-13",
-    "net": 98.9
+    "net": 449.9
   }
 }

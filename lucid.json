@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-13T09:01:32.737246+00:00",
+  "updated_at": "2026-11-13T09:03:30.082219+00:00",
   "paper_only": true,
   "plan": "LucidPro 100K (DLL on)",
   "exit_mode": "gemini_only",
@@ -27,15 +27,15 @@
       "hard_stop_net_usd": 500.0,
       "stop_txt": "\u2212$500 net \u00b7 1 ATR tgt \u00b7 90 min",
       "exit_rule": "\u2212$500 net \u00b7 1 ATR tgt \u00b7 90 min",
-      "balance": 97653.45,
-      "equity": 97656.49,
-      "net_pnl": -2344.8,
-      "open_pnl": 3.04,
-      "trades": 2,
+      "balance": 96591.7,
+      "equity": 96591.7,
+      "net_pnl": -3408.3,
+      "open_pnl": 0.0,
+      "trades": 3,
       "wins": 0,
-      "losses": 2,
+      "losses": 3,
       "stopped": 0,
-      "open_positions": 1
+      "open_positions": 0
     },
     {
       "book": "1-strike",
@@ -43,15 +43,15 @@
       "hard_stop_net_usd": 500.0,
       "stop_txt": "\u2212$500 net \u00b7 1 ATR tgt \u00b7 90 min",
       "exit_rule": "\u2212$500 net \u00b7 1 ATR tgt \u00b7 90 min",
-      "balance": 97653.45,
-      "equity": 97205.65,
-      "net_pnl": -2344.8,
-      "open_pnl": -447.8,
-      "trades": 2,
+      "balance": 96591.7,
+      "equity": 96591.7,
+      "net_pnl": -3408.3,
+      "open_pnl": 0.0,
+      "trades": 3,
       "wins": 0,
-      "losses": 2,
+      "losses": 3,
       "stopped": 0,
-      "open_positions": 1,
+      "open_positions": 0,
       "overlap_trades": 0
     },
     {
@@ -60,15 +60,15 @@
       "hard_stop_net_usd": null,
       "stop_txt": "1 ATR stop \u00b7 1 ATR tgt \u00b7 90 min",
       "exit_rule": "1 ATR stop \u00b7 1 ATR tgt \u00b7 90 min",
-      "balance": 97653.45,
-      "equity": 97205.65,
-      "net_pnl": -2344.8,
-      "open_pnl": -447.8,
-      "trades": 2,
+      "balance": 96591.7,
+      "equity": 96591.7,
+      "net_pnl": -3408.3,
+      "open_pnl": 0.0,
+      "trades": 3,
       "wins": 0,
-      "losses": 2,
+      "losses": 3,
       "stopped": 0,
-      "open_positions": 1,
+      "open_positions": 0,
       "overlap_trades": 0
     }
   ],
@@ -79,6 +79,14 @@
       "kind": "DLL",
       "level": 98200.0,
       "equity": 98096.5,
+      "note": "log-only (gemini_only): no block, no forced close"
+    },
+    {
+      "t": "2026-11-13T09:01:00+00:00",
+      "day": "2026-11-13",
+      "kind": "MLL",
+      "level": 97000.0,
+      "equity": 96860.25,
       "note": "log-only (gemini_only): no block, no forced close"
     }
   ],
@@ -93,41 +101,41 @@
     "no": 1,
     "phase": "eval",
     "start_balance": 100000.0,
-    "balance": 97653.45,
-    "equity": 97656.49,
-    "realized_pnl_since_reset": -2344.8,
-    "open_pnl": 3.04,
-    "commission_on_open": 1.75,
-    "trades_since_reset": 2,
+    "balance": 96591.7,
+    "equity": 96591.7,
+    "realized_pnl_since_reset": -3408.3,
+    "open_pnl": 0.0,
+    "commission_on_open": 0.0,
+    "trades_since_reset": 3,
     "wins": 0,
-    "losses": 2,
+    "losses": 3,
     "mll_floor": 97000.0,
-    "mll_room": 656.49,
+    "mll_room": -408.3,
     "dll": 1800.0,
-    "day_realized": -441.3,
+    "day_realized": -1504.8,
     "day_locked": null,
-    "to_target": 8346.55
+    "to_target": 9408.3
   },
-  "open_positions": [
+  "open_positions": [],
+  "pending": 0,
+  "recent_trades": [
     {
+      "t_exit": "2026-11-13T09:02:00+00:00",
       "symbol": "US100",
       "contract": "NQ",
       "qty": 1,
       "side": "SHORT",
       "entry_time": "2026-11-13T08:54:13.828097+00:00",
       "entry": 28171.25,
-      "stop": 28224.0,
-      "target": 28118.5,
-      "last": 28171.098,
-      "unrealized": 3.04,
-      "risk_usd": null,
-      "hard_stop_px": null,
-      "target_usd_net": null,
-      "target_source": "none (gemini_only)"
-    }
-  ],
-  "pending": 0,
-  "recent_trades": [
+      "exit": 28224.25,
+      "reason": "stop_1atr",
+      "net": -1063.5,
+      "balance_after": 96591.7,
+      "hold_seconds": 466,
+      "held": "7m 46s",
+      "stopped": false,
+      "exit_prompt_version": "uniform-1atr-v1"
+    },
     {
       "t_exit": "2026-11-13T08:42:00+00:00",
       "symbol": "EURUSD",
@@ -163,5 +171,5 @@
       "exit_prompt_version": "uniform-1atr-v1"
     }
   ],
-  "last_processed": "2026-11-13T09:01:00+00:00"
+  "last_processed": "2026-11-13T09:03:00+00:00"
 }

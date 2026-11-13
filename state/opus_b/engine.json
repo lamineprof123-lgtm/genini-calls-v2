@@ -2,11 +2,11 @@
   "reset_token": "c-opus-b-v1",
   "created_at": "2026-11-12T17:19:59.566947+00:00",
   "last_call": {
-    "t": "2026-11-13T05:15:37.902208+00:00",
+    "t": "2026-11-13T05:30:43.393619+00:00",
     "ok": true,
-    "latency_ms": 12562,
-    "cost_usd": 0.093052,
-    "thinking_tokens": 0,
+    "latency_ms": 17282,
+    "cost_usd": 0.101852,
+    "thinking_tokens": 336,
     "usage": {
       "cache_creation": {
         "ephemeral_1h_input_tokens": 0,
@@ -16,9 +16,9 @@
       "cache_read_input_tokens": 0,
       "inference_geo": "global",
       "input_tokens": 16848,
-      "output_tokens": 1283,
+      "output_tokens": 1723,
       "output_tokens_details": {
-        "thinking_tokens": 0
+        "thinking_tokens": 336
       },
       "service_tier": "standard",
       "speed": "standard"
@@ -26,14 +26,14 @@
     "error": null,
     "effort": "high",
     "prompt_version": "bracket-v1",
-    "snapshot_id": "m15-20261113050000-39fdee9e5d5e",
-    "snapshot_hash": "39fdee9e5d5eb0cd0302ccf0964f5f0731caaf92eeaf80a7f4ed70a121e57b31",
-    "package_id": "m15-20261113T051500-0e6a8fb56d18",
-    "package_hash": "0e6a8fb56d1881d6dc75243f3ebac86cd87363977796e349f74b6766963f25ea",
-    "bar_close_ts": "2026-11-13T05:15:00+00:00",
-    "snapshot_ts": "2026-11-13T05:15:22.872904+00:00",
-    "call_start": "2026-11-13T05:15:25.339710+00:00",
-    "answer_ts": "2026-11-13T05:15:37.902208+00:00",
+    "snapshot_id": "m15-20261113051500-4ec336f70230",
+    "snapshot_hash": "4ec336f7023020835c1b71d4746afc462de5ce2505737f3e0cbf313bc95098d2",
+    "package_id": "m15-20261113T053000-4660ae58e26f",
+    "package_hash": "4660ae58e26f2d83e6ee45ef5fd89f36b944f2b468fdce366a1a63b560015a0a",
+    "bar_close_ts": "2026-11-13T05:30:00+00:00",
+    "snapshot_ts": "2026-11-13T05:30:24.512786+00:00",
+    "call_start": "2026-11-13T05:30:26.111344+00:00",
+    "answer_ts": "2026-11-13T05:30:43.393619+00:00",
     "model": "claude-opus-5-5"
   },
   "last_signals": [
@@ -45,7 +45,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "Session blocks automation (Asian chop). Every level untouched on the last closed bar, so neither T2 nor F1 is met. Room up 0.94 ATR to ATR Upper, below the 1.0 gate. HOLD.",
+      "rationale": "HOLD: session_blocks_automation is true (Asian chop). T2 missing: every level is untouched on the last closed bar. Room up is only 0.80 ATR to ATR Upper, below the 1.0 gate. No fresh event, so no trade.",
       "gate_reasons": [],
       "issues": []
     },
@@ -57,7 +57,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "Session blocks automation. Bearish close through EMA50 and POC, but price is still above VWAP, so T1 fails for a SELL. Room down is 0.05 ATR to EMA20 and room up 0.22 ATR, both below the 1.0 gate. HOLD.",
+      "rationale": "HOLD: session_blocks_automation is true. Room is 0.11 ATR up to EMA50 and 0.08 ATR down to POC, so the S1 room gate fails both ways. Price is compressed inside the value area.",
       "gate_reasons": [],
       "issues": []
     },
@@ -69,7 +69,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "Session blocks automation. S/R 28265.71 rejection is not a labelled extreme for a fade, and a long would be against VWAP. Room up 0.65 ATR to VAL and room down 0.28 ATR, both below 1.0. HOLD.",
+      "rationale": "HOLD: session_blocks_automation is true. A trend sell is barred because |vwap_distance| 2.58 > 2.0 (chasing). Room down is 0.16 ATR to Session Low, failing S1. h1 is up, so it opposes the sell.",
       "gate_reasons": [],
       "issues": []
     },
@@ -81,7 +81,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "Session blocks automation. VAL fade long has only 0.02 ATR of room up and conflicts with bearish CVD and the H1 downtrend. No trend-side closed_through for a SELL. HOLD.",
+      "rationale": "HOLD: session_blocks_automation is true. A sell had T1 yes and T2 (EMA20/S/R rejection), with S1 room 1.31 ATR down. But there is no S2, S4 fails (Asian session), and S3 is mixed (bearish label, slope up). The session block overrides.",
       "gate_reasons": [],
       "issues": []
     },
@@ -93,7 +93,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "Session blocks automation. A trend SELL is chasing at 3.03 ATR from VWAP. The Session Low was only touched, not rejected or swept, so F1 is not met, and room up is 0.55 ATR. HOLD.",
+      "rationale": "HOLD: session_blocks_automation is true. A trend sell is barred at -3.27 ATR from VWAP. A fade buy has only 0.63 ATR of room to ATR Lower, under the 1.0 gate, and is against a strong downtrend.",
       "gate_reasons": [],
       "issues": []
     }

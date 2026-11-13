@@ -45,6 +45,11 @@ class GhaLoop:
         # prices, positions, Lucid, bracket exits and the panel moving without a Gemini call.
         self.main_m15 = main_m15_only(cfg)
         self.m15_served: datetime | None = None   # last M15 close the loop ran a MAIN cycle for (in memory)
+        # The MAIN Gemini call (high thinking, ~1-3 min) runs as a background task so the 2-min price / position /
+        # panel cycles never wait for it; its result is processed in an extra cycle the moment it lands.
+        self.main_task: asyncio.Task | None = None
+        self.main_done = asyncio.Event()
+        self.main_result: dict | None = None
         if self.main_m15:
             self.scan_interval = int(cfg["general"]["timeframe_minutes"])
         self.t_start = datetime.now(timezone.utc)
@@ -269,6 +274,45 @@ class GhaLoop:
             log.exception("MAIN: waiting for the shared M15 snapshot failed (own fetch fallback)")
             return None
 
+    def start_main_call(self, close: datetime) -> bool:
+        """Kick MAIN's one Gemini call for M15 close `close` in the background. False if one is still running."""
+        self.m15_served = close
+        if self.main_task is not None and not self.main_task.done():
+            log.warning("MAIN: previous M15 call still running; close %s not called", close.isoformat())
+            return False
+        self.main_task = asyncio.create_task(self._main_call(close), name="main-m15-call")
+        return True
+
+    async def _main_call(self, close: datetime) -> None:
+        res: dict = {}
+        try:
+            snap = await self.main_snapshot(close)
+            log.info("MAIN M15 call for close %s (snapshot %s)", close.isoformat(),
+                     getattr(snap, "snapshot_id", None) or "own fetch")
+            res = await run_once(self.cfg, dry_run=self.dry_run, force=True, model=self.model,
+                                 m15_close=close, snapshot=snap) or {}
+        except asyncio.CancelledError:
+            raise
+        except Exception:
+            log.exception("MAIN M15 call failed")
+        self.main_result = res
+        self.main_done.set()
+
+    def take_main_result(self) -> tuple[bool, dict | None]:
+        if not self.main_done.is_set():
+            return False, None
+        r, self.main_result = self.main_result, None
+        self.main_done.clear()
+        return True, r
+
+    async def sleep_until(self, wake: datetime) -> None:
+        """Sleep to `wake`, returning early when the background MAIN call lands."""
+        delay = max(0.0, (wake - datetime.now(timezone.utc)).total_seconds())
+        try:
+            await asyncio.wait_for(self.main_done.wait(), timeout=delay)
+        except asyncio.TimeoutError:
+            pass
+
     # ---------- main loop ----------
     async def run(self) -> str:
         if not self.acquire():
@@ -299,9 +343,11 @@ class GhaLoop:
             nxt = next_boundary(datetime.now(timezone.utc), self.scan_interval,
                                 self.m15_offset() if self.main_m15 else self.offset)
             self.status("running", nxt)
-            await asyncio.sleep(max(0.0, (wake - datetime.now(timezone.utc)).total_seconds()))
+            await self.sleep_until(wake)
+            got_main, main_res = self.take_main_result()
             started = datetime.now(timezone.utc)
-            self.stats["late_s"].append(round((started - wake).total_seconds(), 1))
+            if not got_main:
+                self.stats["late_s"].append(round((started - wake).total_seconds(), 1))
             t0 = time.monotonic()
             res = {}
             try:
@@ -314,14 +360,15 @@ class GhaLoop:
                             log.info("lucid pre-scan fill: %s", rpl)
                     except Exception:
                         log.exception("lucid replay before entry scan failed")
-                if m15_close is not None:
-                    self.m15_served = m15_close
-                    snap = await self.main_snapshot(m15_close)
-                    log.info("MAIN M15 call for close %s (snapshot %s)", m15_close.isoformat(),
-                             getattr(snap, "snapshot_id", None) or "own fetch")
-                    res = await run_once(self.cfg, dry_run=self.dry_run, force=True, model=self.model,
-                                         m15_close=m15_close, snapshot=snap)
+                if got_main:
+                    # the background MAIN call just landed: book its record now (no extra fetch / call)
+                    res = main_res or {}
+                    log.info("MAIN M15 result cycle: %s", json.dumps({k: (res or {}).get(k) for k in
+                             ("skipped", "skipped_reason", "run_dir")}, default=str))
                 else:
+                    if m15_close is not None:
+                        self.start_main_call(m15_close)
+                    # price / position / panel cycle (never a Gemini call in M15 mode)
                     res = await run_once(self.cfg, dry_run=self.dry_run, force=True, model=self.model)
             except Exception:
                 log.exception("cycle failed")
@@ -373,8 +420,35 @@ class GhaLoop:
                 reason = "handoff"; break
             if t >= self.hard_cap:
                 reason = "hard-cap"; break
+        await self.finish_main_call()
         await self.shutdown(reason)
         return reason
+
+    async def finish_main_call(self, timeout: float = 150.0) -> None:
+        """On exit: let an in-flight MAIN call land and book it, so a handoff never drops a paid signal."""
+        t = self.main_task
+        if t is not None and not t.done():
+            log.info("MAIN: waiting up to %.0fs for the in-flight M15 call before exit", timeout)
+            with contextlib.suppress(BaseException):
+                await asyncio.wait_for(asyncio.shield(t), timeout)
+            if not t.done():
+                t.cancel()
+        got, res = self.take_main_result()
+        if not got or self.dry_run or not (res or {}).get("record"):
+            return
+        try:
+            self.schedule_bracket(res)
+            lres = await lucid_step(self.cfg, res.get("record"))
+            log.info("lucid (final MAIN result): %s", json.dumps(lres, default=str)[:300])
+            from .other_venue import get_hub, MAIN_COPIES
+            hub = get_hub(self.cfg)
+            if hub is not None:
+                hub.intake_from_record("MAIN", res.get("record"), datetime.now(timezone.utc), copy_to=MAIN_COPIES)
+                hub.persist()
+            async with self.io_lock:
+                await asyncio.to_thread(self.commit_push, f"MAIN final result run {self.run_id}")
+        except Exception:
+            log.exception("MAIN final result booking failed")
 
     async def _verify_models_once(self) -> None:
         """Probe configured entry/exit IDs with the repo key. Log the result; never swap a rejected ID."""

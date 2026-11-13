@@ -202,3 +202,60 @@ def test_bracket_ignores_main_m15_skip_records():
     import inspect
     from signals import bracket
     assert "main_m15_cadence" in inspect.getsource(bracket.BracketBook.intake)
+
+
+def test_main_call_runs_in_background_and_wakes_loop(tmp_path, monkeypatch):
+    """The 2-min cycle never waits for MAIN's (slow, high-thinking) call; its result wakes the loop at once."""
+    import signals.gha_loop as G
+    lp, cfg = _loop(tmp_path)
+    seen = []
+    gate = asyncio.Event()
+
+    async def fake_run_once(cfg, dry_run=False, force=True, model=None, m15_close=None, snapshot=None, **kw):
+        seen.append(m15_close)
+        if m15_close is not None:
+            await gate.wait()
+            return {"skipped": False, "record": {"signals": []}, "m15": m15_close}
+        return {"skipped": True, "skipped_reason": P.MAIN_M15_SKIP}
+
+    monkeypatch.setattr(G, "run_once", fake_run_once)
+    c = datetime(2026, 11, 13, 14, 0, tzinfo=UTC)
+
+    async def go():
+        assert lp.start_main_call(c) is True
+        assert lp.m15_served == c
+        await asyncio.sleep(0)
+        assert lp.start_main_call(c) is False                 # never two in flight
+        # a price cycle runs while the call is still in flight
+        r = await G.run_once(cfg)
+        assert r["skipped_reason"] == P.MAIN_M15_SKIP
+        assert lp.take_main_result() == (False, None)
+        far = datetime.now(UTC).replace(year=2027)
+        waiter = asyncio.create_task(lp.sleep_until(far))
+        await asyncio.sleep(0.05)
+        gate.set()
+        await asyncio.wait_for(waiter, 2)                    # woke early on the result
+        got, res = lp.take_main_result()
+        assert got and res["m15"] == c
+        assert lp.take_main_result() == (False, None)
+
+    asyncio.run(go())
+    assert seen == [c, None]
+
+
+def test_finish_main_call_waits_for_in_flight_call(tmp_path, monkeypatch):
+    import signals.gha_loop as G
+    lp, cfg = _loop(tmp_path)
+
+    async def fake_run_once(cfg, m15_close=None, snapshot=None, **kw):
+        await asyncio.sleep(0.05)
+        return {"skipped": False, "record": None}
+
+    monkeypatch.setattr(G, "run_once", fake_run_once)
+
+    async def go():
+        lp.start_main_call(datetime(2026, 11, 13, 14, 15, tzinfo=UTC))
+        await lp.finish_main_call(timeout=2)
+        return lp.main_task.done()
+
+    assert asyncio.run(go()) is True

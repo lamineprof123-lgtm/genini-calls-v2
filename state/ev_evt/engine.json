@@ -13,37 +13,11 @@
     }
   },
   "last_bar": {
-    "XAUUSD": "2026-11-13T17:40:00+00:00",
-    "EURUSD": "2026-11-13T17:40:00+00:00",
-    "US100": "2026-11-13T17:40:00+00:00"
+    "XAUUSD": "2026-11-13T17:45:00+00:00",
+    "EURUSD": "2026-11-13T17:45:00+00:00",
+    "US100": "2026-11-13T17:45:00+00:00"
   },
   "whatif": [
-    {
-      "book": "EV-REV",
-      "trigger_id": "EURUSD|2026-11-13T16:20:00+00:00",
-      "symbol": "EURUSD",
-      "side": 1,
-      "entry": 1.10313,
-      "t0": "2026-11-13T16:20:15+00:00",
-      "atr": 0.000797,
-      "primary": "VWAP-STRETCH",
-      "types": [
-        "VWAP-STRETCH"
-      ]
-    },
-    {
-      "book": "EV-TWIN",
-      "trigger_id": "EURUSD|2026-11-13T16:20:00+00:00",
-      "symbol": "EURUSD",
-      "side": 1,
-      "entry": 1.10313,
-      "t0": "2026-11-13T16:20:15+00:00",
-      "atr": 0.000797,
-      "primary": "VWAP-STRETCH",
-      "types": [
-        "VWAP-STRETCH"
-      ]
-    },
     {
       "book": "EV-REV",
       "trigger_id": "US100|2026-11-13T16:30:00+00:00",
@@ -80,8 +54,8 @@
       },
       "LVL-SWEEP": {
         "n_US100": 1,
-        "n": 2,
-        "n_XAUUSD": 1
+        "n": 3,
+        "n_XAUUSD": 2
       },
       "VOL-BURST": {
         "n_US100": 2,
@@ -102,7 +76,8 @@
       "LVL-SWEEP": {
         "n": 2,
         "R": 2.0,
-        "wins": 2
+        "wins": 2,
+        "room_skip": 1
       },
       "ALL": {
         "n": 2,
@@ -115,20 +90,23 @@
     },
     "EV-TWIN": {
       "VWAP-STRETCH": {
-        "room_skip": 1
+        "room_skip": 1,
+        "n": 1,
+        "R": -0.301,
+        "wins": 0
       },
       "VOL-BURST": {
         "room_skip": 2
       },
       "LVL-SWEEP": {
-        "room_skip": 1,
+        "room_skip": 2,
         "n": 1,
         "R": 1.0,
         "wins": 1
       },
       "ALL": {
-        "n": 1,
-        "R": 1.0,
+        "n": 2,
+        "R": 0.699,
         "wins": 1
       },
       "LVL-BREAK": {
@@ -137,16 +115,16 @@
     },
     "EV-REV": {
       "LVL-SWEEP": {
-        "room_skip": 2
+        "room_skip": 3
       },
       "VWAP-STRETCH": {
-        "n": 1,
-        "R": 1.0,
+        "n": 2,
+        "R": 0.699,
         "wins": 1
       },
       "ALL": {
-        "n": 1,
-        "R": 1.0,
+        "n": 2,
+        "R": 0.699,
         "wins": 1
       },
       "LVL-BREAK": {
@@ -186,6 +164,10 @@
     {
       "t": "2026-11-13T17:45:00+00:00",
       "symbol": "US100"
+    },
+    {
+      "t": "2026-11-13T17:50:00+00:00",
+      "symbol": "XAUUSD"
     }
   ],
   "ai_signals": [],
@@ -196,8 +178,8 @@
   "feed_days": {
     "2026-11-13": {
       "first": "2026-11-13T17:15:10.001749+00:00",
-      "last": "2026-11-13T17:50:10.003064+00:00",
-      "n": 36
+      "last": "2026-11-13T17:52:10.007915+00:00",
+      "n": 38
     }
   }
 }

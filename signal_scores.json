@@ -1,9 +1,9 @@
 {
-  "updated_at": "2026-11-13T18:47:28.817404+00:00",
+  "updated_at": "2026-11-13T18:50:34.897129+00:00",
   "exit_mode": "uniform-1atr-v1",
   "paper_only": true,
-  "pending": 3178,
-  "n_scored": 14274,
+  "pending": 3118,
+  "n_scored": 14319,
   "models": {
     "gemini-3.6-flash": {
       "n": 474,
@@ -95,43 +95,43 @@
       }
     },
     "claude-opus-5-5": {
-      "n": 33,
+      "n": 35,
       "label": "claude-opus-5-5",
-      "win_pct": 0.545,
-      "avg_R": -0.056,
-      "twin_avg_R": 0.32,
-      "edge_R": -0.377,
+      "win_pct": 0.543,
+      "avg_R": -0.054,
+      "twin_avg_R": 0.244,
+      "edge_R": -0.298,
       "by_band": {
         "<0.55": {
-          "n": 28,
-          "win_pct": 0.536,
-          "avg_R": -0.064,
-          "twin_avg_R": 0.276,
-          "edge_R": -0.34
+          "n": 29,
+          "win_pct": 0.517,
+          "avg_R": -0.096,
+          "twin_avg_R": 0.232,
+          "edge_R": -0.328
         },
         "0.55-0.75": {
-          "n": 5,
-          "win_pct": 0.6,
-          "avg_R": -0.015,
-          "twin_avg_R": 0.568,
-          "edge_R": -0.583
+          "n": 6,
+          "win_pct": 0.667,
+          "avg_R": 0.152,
+          "twin_avg_R": 0.304,
+          "edge_R": -0.152
         }
       },
       "excursions": {
         "2h": {
-          "avg_mfe_atr": 2.004,
-          "avg_mae_atr": 1.424,
-          "n": 33
+          "avg_mfe_atr": 2.195,
+          "avg_mae_atr": 1.389,
+          "n": 35
         },
         "3h": {
-          "avg_mfe_atr": 2.723,
-          "avg_mae_atr": 1.739,
-          "n": 33
+          "avg_mfe_atr": 2.874,
+          "avg_mae_atr": 1.686,
+          "n": 35
         },
         "4h": {
-          "avg_mfe_atr": 3.03,
-          "avg_mae_atr": 1.859,
-          "n": 33
+          "avg_mfe_atr": 3.163,
+          "avg_mae_atr": 1.8,
+          "n": 35
         }
       }
     },
@@ -170,12 +170,12 @@
       }
     },
     "gemini-4-carbon": {
-      "n": 10,
+      "n": 11,
       "label": "gemini-4-carbon",
-      "win_pct": 0.4,
-      "avg_R": -0.116,
-      "twin_avg_R": -0.116,
-      "edge_R": -0.0,
+      "win_pct": 0.455,
+      "avg_R": -0.016,
+      "twin_avg_R": -0.197,
+      "edge_R": 0.181,
       "by_band": {
         "0.55-0.75": {
           "n": 10,
@@ -183,23 +183,30 @@
           "avg_R": -0.116,
           "twin_avg_R": -0.116,
           "edge_R": -0.0
+        },
+        "0.75-0.90": {
+          "n": 1,
+          "win_pct": 1.0,
+          "avg_R": 0.992,
+          "twin_avg_R": -1.004,
+          "edge_R": 1.996
         }
       },
       "excursions": {
         "2h": {
-          "avg_mfe_atr": 1.029,
-          "avg_mae_atr": 1.187,
-          "n": 10
+          "avg_mfe_atr": 1.627,
+          "avg_mae_atr": 1.192,
+          "n": 11
         },
         "3h": {
-          "avg_mfe_atr": 1.143,
-          "avg_mae_atr": 1.31,
-          "n": 10
+          "avg_mfe_atr": 1.73,
+          "avg_mae_atr": 1.304,
+          "n": 11
         },
         "4h": {
-          "avg_mfe_atr": 1.422,
-          "avg_mae_atr": 1.412,
-          "n": 10
+          "avg_mfe_atr": 1.985,
+          "avg_mae_atr": 1.397,
+          "n": 11
         }
       }
     },

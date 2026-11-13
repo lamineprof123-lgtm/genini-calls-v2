@@ -2,11 +2,11 @@
   "reset_token": "c-opus-b-v1",
   "created_at": "2026-11-12T17:19:59.566947+00:00",
   "last_call": {
-    "t": "2026-11-13T03:45:36.243908+00:00",
+    "t": "2026-11-13T04:00:39.666892+00:00",
     "ok": true,
-    "latency_ms": 14019,
-    "cost_usd": 0.100712,
-    "thinking_tokens": 370,
+    "latency_ms": 15022,
+    "cost_usd": 0.101508,
+    "thinking_tokens": 287,
     "usage": {
       "cache_creation": {
         "ephemeral_1h_input_tokens": 0,
@@ -15,10 +15,10 @@
       "cache_creation_input_tokens": 0,
       "cache_read_input_tokens": 0,
       "inference_geo": "global",
-      "input_tokens": 16893,
-      "output_tokens": 1657,
+      "input_tokens": 16892,
+      "output_tokens": 1697,
       "output_tokens_details": {
-        "thinking_tokens": 370
+        "thinking_tokens": 287
       },
       "service_tier": "standard",
       "speed": "standard"
@@ -26,14 +26,14 @@
     "error": null,
     "effort": "high",
     "prompt_version": "bracket-v1",
-    "snapshot_id": "m15-20261113033000-fde3b7c7e292",
-    "snapshot_hash": "fde3b7c7e2921095d663a064242f9e12904dde71ab46de3f30326ca90bea44b3",
-    "package_id": "m15-20261113T034500-c8e97f90052a",
-    "package_hash": "c8e97f90052ae32c68cb02f668cb2ebd7c24d4fbc40b3bcb52497a0fd92db015",
-    "bar_close_ts": "2026-11-13T03:45:00+00:00",
-    "snapshot_ts": "2026-11-13T03:45:21.764941+00:00",
-    "call_start": "2026-11-13T03:45:22.225089+00:00",
-    "answer_ts": "2026-11-13T03:45:36.243908+00:00",
+    "snapshot_id": "m15-20261113034500-45ddf417d406",
+    "snapshot_hash": "45ddf417d40645e1c3c17a7c15c968924343e7c805fbeea2b75a00f1d3b0eb7e",
+    "package_id": "m15-20261113T040000-4960b67df80f",
+    "package_hash": "4960b67df80fd593bd34cdb5c5b22790cbc596e941855835dd47addd22460a55",
+    "bar_close_ts": "2026-11-13T04:00:00+00:00",
+    "snapshot_ts": "2026-11-13T04:00:22.870599+00:00",
+    "call_start": "2026-11-13T04:00:24.644627+00:00",
+    "answer_ts": "2026-11-13T04:00:39.666892+00:00",
     "model": "claude-opus-5-5"
   },
   "last_signals": [
@@ -41,11 +41,11 @@
       "symbol": "XAUUSD",
       "action": "HOLD",
       "confidence": 0.0,
-      "score": 1,
+      "score": 0,
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "Hard HOLD: session_blocks_automation (Asian chop). Trend is chasing at +2.02 ATR from VWAP (>2.0). Room up only 0.54 ATR to VAH/Session High, so S1 fails. h1_trend down disagrees. CVD bearish.",
+      "rationale": "HOLD: session_blocks_automation is true (Asian chop). A trend trade fails the VWAP-distance gate (+2.218 > 2.0). Room is under 1 ATR both ways (up 0.359, down 0.274), so S1 is missing. A fade has no magnet 1 ATR clear. RVOL 0.604.",
       "gate_reasons": [],
       "issues": []
     },
@@ -53,11 +53,11 @@
       "symbol": "EURUSD",
       "action": "HOLD",
       "confidence": 0.0,
-      "score": 1,
+      "score": 0,
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "Hard HOLD: session_blocks_automation. T1 is mixed: price is above VWAP but below EMA50. Room is 0.24 ATR up and 0.38 ATR down, so S1 fails both ways. RVOL 0.52.",
+      "rationale": "HOLD: session_blocks_automation is true. T1 and T2 are met for a long, but room up is only 0.187 ATR to VAH/Session High 1.10636 (S1 fails). h1_trend is down. RVOL 1.069 gives no S2.",
       "gate_reasons": [],
       "issues": []
     },
@@ -65,11 +65,11 @@
       "symbol": "US100",
       "action": "HOLD",
       "confidence": 0.0,
-      "score": 1,
+      "score": 0,
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "Hard HOLD: session_blocks_automation. A touch is not a closed_through or rejection, so T2/F1 are missing. Room down 0.39 ATR and room up 0.36 ATR, so S1 fails. h1_trend up conflicts with the down move.",
+      "rationale": "HOLD: session_blocks_automation is true. A trend short fails the VWAP-distance gate (-2.642). Room down is 0.584 ATR to S/R 28209.17 (<1). A touch is not a rejection, so no fade F1. h1_trend is up.",
       "gate_reasons": [],
       "issues": []
     },
@@ -77,11 +77,11 @@
       "symbol": "XAGUSD",
       "action": "HOLD",
       "confidence": 0.0,
-      "score": 1,
+      "score": 0,
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "Hard HOLD: session_blocks_automation. POC is not a labelled extreme for a fade. Room up 0.14 ATR and room down 0.42 ATR, so S1 fails. CVD bearish and h1 down.",
+      "rationale": "HOLD: session_blocks_automation is true. Rejections at both VWAP and POC give a conflicting inside-value bar. Room is 0.324 ATR up and 0.235 ATR down, so S1 fails. CVD is bearish and h1 is down. RVOL 0.624.",
       "gate_reasons": [],
       "issues": []
     },
@@ -93,7 +93,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "Hard HOLD: session_blocks_automation. No level event on the last closed bar. Trend sell would chase at -3.43 ATR from VWAP. Room down only 0.35 ATR to Session Low 68892.4.",
+      "rationale": "HOLD: session_blocks_automation is true. A trend short fails the VWAP-distance gate (-3.502) and has only 0.811 ATR of room down. A touch is not a rejection or sweep-close, so no fade F1. RVOL 1.437.",
       "gate_reasons": [],
       "issues": []
     }

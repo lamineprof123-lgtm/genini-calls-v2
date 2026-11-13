@@ -12,7 +12,7 @@
   "last_price": {
     "US100": 28416.45,
     "EURUSD": 1.10602,
-    "XAGUSD": 49.71,
+    "XAGUSD": 49.798,
     "XAUUSD": 3874.12
   },
   "books": {
@@ -42,9 +42,9 @@
           "fill_source": "live_quote:dukascopy:tick",
           "book": "1-strike",
           "strikes": 0,
-          "mfe": 0.0870000000000033,
+          "mfe": 0.14400000000000546,
           "mae": 0.03899999999999437,
-          "scan_from": "2026-11-13T13:50:00+00:00",
+          "scan_from": "2026-11-13T13:52:00+00:00",
           "checks": 0,
           "opened_at": "2026-11-13T13:49:03.783322+00:00",
           "stop_note": "uniform_1atr",
@@ -98,9 +98,9 @@
           "fill_source": "live_quote:dukascopy:tick",
           "book": "nostop",
           "strikes": 0,
-          "mfe": 0.0870000000000033,
+          "mfe": 0.14400000000000546,
           "mae": 0.03899999999999437,
-          "scan_from": "2026-11-13T13:50:00+00:00",
+          "scan_from": "2026-11-13T13:52:00+00:00",
           "checks": 0,
           "opened_at": "2026-11-13T13:49:03.783322+00:00",
           "stop_note": "uniform_1atr",
@@ -137,7 +137,8 @@
     1,
     2,
     3,
-    4
+    4,
+    5
   ],
   "post_exit": [
     {
@@ -165,6 +166,19 @@
       "reason": "target",
       "net": 1510.8,
       "due": "2026-11-13T13:56:08.912029+00:00"
+    },
+    {
+      "book": "baseline",
+      "id": 5,
+      "symbol": "XAUUSD",
+      "contract": "GC",
+      "qty": 2,
+      "side": "SHORT",
+      "exit": 3876.8,
+      "t_exit": "2026-11-13T13:51:00+00:00",
+      "reason": "target",
+      "net": 1510.8,
+      "due": "2026-11-13T13:56:00+00:00"
     }
   ]
 }

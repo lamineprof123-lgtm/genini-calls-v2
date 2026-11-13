@@ -2,11 +2,11 @@
   "reset_token": "c-opus-b-v1",
   "created_at": "2026-11-12T17:19:59.566947+00:00",
   "last_call": {
-    "t": "2026-11-13T11:00:41.284541+00:00",
+    "t": "2026-11-13T11:15:40.345637+00:00",
     "ok": true,
-    "latency_ms": 14367,
-    "cost_usd": 0.100916,
-    "thinking_tokens": 280,
+    "latency_ms": 14935,
+    "cost_usd": 0.101532,
+    "thinking_tokens": 354,
     "usage": {
       "cache_creation": {
         "ephemeral_1h_input_tokens": 0,
@@ -15,10 +15,10 @@
       "cache_creation_input_tokens": 0,
       "cache_read_input_tokens": 0,
       "inference_geo": "global",
-      "input_tokens": 16714,
-      "output_tokens": 1703,
+      "input_tokens": 16723,
+      "output_tokens": 1732,
       "output_tokens_details": {
-        "thinking_tokens": 280
+        "thinking_tokens": 354
       },
       "service_tier": "standard",
       "speed": "standard"
@@ -26,14 +26,14 @@
     "error": null,
     "effort": "high",
     "prompt_version": "bracket-v1",
-    "snapshot_id": "m15-20261113104500-cca7b26b3e1c",
-    "snapshot_hash": "cca7b26b3e1ccb767807c2cadf9d7f32ec06a2bf237f1620e4524904fb0de76c",
-    "package_id": "m15-20261113T110000-4d6dade665fd",
-    "package_hash": "4d6dade665fdda59d7bb690937906dd7321a32c46d4a6de9260ac5495c54f0f0",
-    "bar_close_ts": "2026-11-13T11:00:00+00:00",
-    "snapshot_ts": "2026-11-13T11:00:24.137980+00:00",
-    "call_start": "2026-11-13T11:00:26.917025+00:00",
-    "answer_ts": "2026-11-13T11:00:41.284541+00:00",
+    "snapshot_id": "m15-20261113110000-e43e1a63c456",
+    "snapshot_hash": "e43e1a63c45694dea5e89dcd6056199576329e00745b4ff1ac41fc1be05d25c8",
+    "package_id": "m15-20261113T111500-e070fefb7b08",
+    "package_hash": "e070fefb7b08d75f08e9a811f1a957ae9ea7d5229eb87187ae8d663eec47a5f8",
+    "bar_close_ts": "2026-11-13T11:15:00+00:00",
+    "snapshot_ts": "2026-11-13T11:15:24.973071+00:00",
+    "call_start": "2026-11-13T11:15:25.410707+00:00",
+    "answer_ts": "2026-11-13T11:15:40.345637+00:00",
     "model": "claude-opus-5-5"
   },
   "last_signals": [
@@ -45,7 +45,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "No level event: every key level untouched on the last closed bar. T2 and F1 missing. Room is under 1 ATR both ways: up 0.787 to POC, down 0.600 to S/R 3887.45. S1 fails. HOLD.",
+      "rationale": "T2/F1 missing: every level untouched on last closed bar. Room fails both ways (up 0.83 ATR to POC, down 0.62 ATR to S/R 3887.45). CVD bearish, h1 down, London only. HOLD.",
       "gate_reasons": [],
       "issues": []
     },
@@ -53,11 +53,11 @@
       "symbol": "EURUSD",
       "action": "HOLD",
       "confidence": 0.0,
-      "score": 3,
+      "score": 0,
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "F1 yes: rejected ATR Lower near Session Low. F2 VWAP magnet 1.8 ATR away. But room up is only 0.951 ATR to S/R 1.10543, so the S1 hard gate fails. No RVOL, CVD neutral, London only, h1 down. HOLD.",
+      "rationale": "T2/F1 missing: all levels untouched on last closed bar. Room up 0.66 ATR to S/R 1.10543, down 0.81 ATR to ATR Lower; S1 fails both ways. CVD neutral, h1 down. HOLD.",
       "gate_reasons": [],
       "issues": []
     },
@@ -65,11 +65,11 @@
       "symbol": "US100",
       "action": "HOLD",
       "confidence": 0.0,
-      "score": 0,
+      "score": 4,
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "Sell T1 fails: price is above EMA50. VWAP is not a labelled extreme for a fade. Room down is 0.586 ATR to EMA50 and room up is 0.161 ATR, so S1 fails both ways. HOLD.",
+      "rationale": "T1 yes: above VWAP and EMA50. T2 yes: closed_through VWAP. S1 no: only 0.66 ATR room to ATR Upper 28357.33 (hard gate). S2 awarded, S3 cvd_slope up. S4 no (London), S5 no (h1 flat). Score 4. HOLD.",
       "gate_reasons": [],
       "issues": []
     },
@@ -81,7 +81,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "Only a touch of S/R 49.922, with no closed_through or rejection, so T2 and F1 fail. Price sits at the 2.0 ATR VWAP chase limit. Room is 0.404 ATR up and 0.430 ATR down, so S1 fails. HOLD.",
+      "rationale": "T2/F1 missing: all levels untouched on last closed bar. Room up 0.16 ATR to S/R 49.922, down 0.71 ATR to VAL 49.796; S1 fails. CVD bearish, h1 down. HOLD.",
       "gate_reasons": [],
       "issues": []
     },
@@ -93,7 +93,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "VWAP was only touched, not rejected or closed through, so T2 and F1 fail. Room is 0.339 ATR up and 0.808 ATR down to EMA20, so S1 fails. HOLD.",
+      "rationale": "T2 missing: VWAP only touched, not a clean rejection or close-through. Short room 0.69 ATR to EMA20 69037; long room 0.43 ATR. S1 fails both ways. CVD bearish, h1 down, London. HOLD.",
       "gate_reasons": [],
       "issues": []
     }

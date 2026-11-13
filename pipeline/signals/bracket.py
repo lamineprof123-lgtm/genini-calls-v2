@@ -254,7 +254,7 @@ class BracketBook:
         """Queue pendings from one entry-cycle record. Returns queued rows. Never touches main's state."""
         out = []
         if not record or record.get("dry_run") or record.get("skipped_reason") in ("blocked_session_throttle", "main_m15_cadence",
-                                                                                "main_outside_window"):
+                                                                                "main_outside_window", "markets_closed"):
             if record and record.get("skipped_reason"):
                 self._missed(record, now)
             return out

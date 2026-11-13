@@ -276,6 +276,11 @@ class M15Coordinator:
 
     async def dispatch(self, snap: M15Snapshot) -> dict:
         """Fan out to every M15-close model in parallel. Never raises out."""
+        from .market_hours import markets_closed
+        if markets_closed(getattr(snap, "now", None), self.cfg):
+            # Weekend: NO model call for any book (G-LOW-80 / EVAL, Carbon, Claude, C-OPUS-B, DeepSeek, P5 books).
+            log.info("m15 %s: markets closed (weekend) - no model calls", getattr(snap, "snapshot_id", None))
+            return {"markets_closed": {"skipped": "markets_closed"}}
         tasks = {}
         if self.claude is not None:
             tasks["claude"] = asyncio.create_task(self._run_claude(snap), name="m15-claude")

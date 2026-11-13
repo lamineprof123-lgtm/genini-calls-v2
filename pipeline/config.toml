@@ -141,6 +141,14 @@ provider = "paper_file"    # "paper_file" | "mt5"
 paper_file = "state/paper_equity.json"
 paper_start_equity = 100000.0
 
+# Weekend gate (signals/market_hours.py, 13 Nov 2026): Friday close -> Sunday reopen, NO model calls of any kind
+# (MAIN, G-LOW-80, Carbon, Claude / C-OPUS-B, DeepSeek, P5 books, Gemini exits, model probes). BTC alone never
+# triggers a call. America/New_York times: Fri 17:00 ET close, Sun 18:00 ET reopen.
+[market_hours]
+enabled = true
+friday_close_et = "17:00"
+sunday_open_et = "18:00"
+
 [scheduler]
 interval_minutes = 2       # GitHub Actions in-job loop default (env SIGNALS_INTERVAL_MINUTES overrides). Was 5.
 # user schedule: a signal every 5 min (blueprint said 10; 15 aligns to M15 closes)

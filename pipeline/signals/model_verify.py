@@ -44,6 +44,7 @@ def probe_model(client, mid: str, thinking: str | None = None) -> dict:
             from google.genai import types
             kw["config"] = types.GenerateContentConfig(
                 thinking_config=types.ThinkingConfig(thinking_level=thinking), max_output_tokens=2000)
+        from .market_hours import guard as _mh_guard; _mh_guard("model probe")
         resp = client.models.generate_content(
             model=mid, contents=("Think briefly: which is larger, 9.11 or 9.9? Then reply with the single word pong."
                                  if thinking else "Reply with the single word pong."), **kw)

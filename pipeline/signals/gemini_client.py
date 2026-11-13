@@ -146,6 +146,8 @@ def _gen_config(cfg: dict, model: str, payloads: list[dict]):
 async def call_gemini(cfg: dict, payloads: list[dict], pngs: dict[str, bytes], model: str | None = None) -> dict:
     """Single multimodal request with all charts, with retry/backoff and model fallback.
     Returns {'model', 'raw_text', 'usage', 'attempts'}; raises RuntimeError if every model fails."""
+    from .market_hours import guard as _mh_guard
+    _mh_guard("Gemini")                      # weekend backstop: raises MarketsClosed before any request
     from google import genai
     from google.genai import types
     key = os.environ.get("GEMINI_API_KEY")

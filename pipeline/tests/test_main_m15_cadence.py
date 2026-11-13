@@ -24,6 +24,7 @@ def _cfg(tmp_path: Path, cadence: str = "m15") -> dict:
     cfg.setdefault("publish", {})["enabled"] = False
     cfg["gemini"]["main_entry_cadence"] = cadence
     cfg["gemini"].pop("main_window_utc", None)   # trading window is tested in test_main_window.py
+    cfg["market_hours"] = {"enabled": False}        # weekend gate is tested in test_market_hours.py
     (tmp_path / "state").mkdir(parents=True, exist_ok=True)
     return cfg
 

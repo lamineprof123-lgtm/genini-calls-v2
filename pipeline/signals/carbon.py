@@ -237,6 +237,7 @@ async def carbon_generate(cc: dict, *, system_text: str, contents, schema, think
         from google import genai
         from google.genai import types
         timeout = float(cc["timeout_seconds"])
+        from .market_hours import guard as _mh_guard; _mh_guard("Carbon")
         client = genai.Client(api_key=key, http_options=types.HttpOptions(timeout=int(timeout * 1000)))
         conf = types.GenerateContentConfig(
             system_instruction=system_text, response_mime_type="application/json", response_schema=schema,

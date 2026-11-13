@@ -37,6 +37,8 @@ class GhaLoop:
                  max_runtime_min: float = 330, hard_cap_min: float = 350, deploy: bool = True,
                  max_cycles: int | None = None, model: str | None = None):
         self.cfg, self.data, self.run_id, self.role = cfg, data, run_id, role
+        from .market_hours import configure as _mh_configure
+        _mh_configure(cfg)                   # client-level weekend backstop reads [market_hours]
         self.dry_run, self.deploy_enabled, self.max_cycles, self.model = dry_run, deploy, max_cycles, model
         self.interval = int(cfg["scheduler"]["interval_minutes"])
         self.scan_interval = self.interval  # published to status.json (2 active / 15 blocked)
@@ -290,7 +292,11 @@ class GhaLoop:
     async def _main_call(self, close: datetime) -> None:
         res: dict = {}
         try:
-            snap = await self.main_snapshot(close)
+            from .market_hours import markets_closed
+            from .pipeline import main_window_open
+            # weekend / outside MAIN's window: run_once skips the call; don't wait up to 90 s for the snapshot
+            snap = (await self.main_snapshot(close)) if (not markets_closed(close, self.cfg)
+                                                         and main_window_open(self.cfg, close)) else None
             log.info("MAIN M15 call for close %s (snapshot %s)", close.isoformat(),
                      getattr(snap, "snapshot_id", None) or "own fetch")
             res = await run_once(self.cfg, dry_run=self.dry_run, force=True, model=self.model,
@@ -459,6 +465,10 @@ class GhaLoop:
         """Probe configured entry/exit IDs with the repo key. Log the result; never swap a rejected ID."""
         from .config import entry_model, exit_model
         from .model_verify import verify_models, format_report
+        from .market_hours import markets_closed
+        if markets_closed(datetime.now(timezone.utc), self.cfg):
+            log.info("model verification skipped: markets closed (weekend) - no model calls")
+            return
         log.info("configured models: entry=%s exit=%s (override entry=%s)",
                  entry_model(self.cfg, self.model), exit_model(self.cfg), self.model)
         try:

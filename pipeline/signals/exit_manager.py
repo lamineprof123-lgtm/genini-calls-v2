@@ -854,6 +854,7 @@ async def call_exit_gemini(cfg: dict, system_text: str, image: bytes, user_text:
         left = budget - (time.monotonic() - t0)
         if left < 2:
             break
+        from .market_hours import guard as _mh_guard; _mh_guard("Gemini exit")
         kw = dict(system_instruction=system_text, response_mime_type="application/json",
                   response_schema=ExitDecision)
         if m.startswith("gemini-3") and g.get("thinking_level"):

@@ -40,6 +40,7 @@ THROTTLE_SKIP = "blocked_session_throttle"
 MAIN_M15_SKIP = "main_m15_cadence"   # t296u: MAIN calls Gemini only once per M15 close (+20 s)
 MAIN_M15_STATE = "main_m15_last_call.json"
 ALL_IN_POS_SKIP = "all_symbols_in_position"
+MARKETS_CLOSED_SKIP = "markets_closed"    # weekend (signals/market_hours.py): no model call of any kind
 MAIN_WINDOW_SKIP = "main_outside_window"   # t30xu: MAIN calls Gemini / opens trades only inside [gemini].main_window_utc
 
 
@@ -265,6 +266,21 @@ async def run_once(cfg: dict, dry_run: bool = False, force: bool = True, model: 
     if busy:
         log.info("entry scan excluding in-position symbols: %s (entry=%s)",
                  sorted(busy), [p["symbol"] for p in entry_payloads])
+    from .market_hours import markets_closed
+    if markets_closed(now, cfg):
+        # Weekend: no MAIN Gemini call, no DeepSeek kick, no entries; 2-min cycle still logged (prices / panel).
+        record = _throttle_skip_record(cfg, payloads, data_errors, last_bars, now, tz, equity=None,
+                                       reason=MARKETS_CLOSED_SKIP, interval=interval)
+        record["in_position"] = sorted(busy)
+        record["session_blocked"] = blocked
+        if busy:
+            write_in_position_overlay(cfg, busy)
+        _atomic_write(seen_path, last_bars)
+        log.info("markets closed (weekend) - no model calls")
+        return {"skipped": True, "skipped_reason": MARKETS_CLOSED_SKIP, "last_bars": last_bars,
+                "scan_interval_minutes": interval, "session_blocked": blocked, "record": record,
+                "payloads": payloads}
+
     if not no_throttle and should_throttle_gemini(payloads, gemini_seen, cfg):
         log.info("blocked session throttle - skipping Gemini (keep last site signals); next scan on M%s close",
                  cfg["general"]["timeframe_minutes"])

@@ -181,6 +181,11 @@ async def messages_call(*, model: str, system: str, content: list, schema: dict,
     """One structured-output call with retries on transient errors. Never raises."""
     if not key_present():
         return {"ok": False, "model": model, "error": "ANTHROPIC_API_KEY not set", "attempts": 0}
+    from .market_hours import MarketsClosed, guard as _mh_guard
+    try:
+        _mh_guard("Claude")
+    except MarketsClosed as e:
+        return {"ok": False, "model": model, "error": str(e), "attempts": 0}
     attempts, err = 0, None
     t0 = time.monotonic()
     for i in range(max(1, int(max_attempts))):

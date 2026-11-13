@@ -247,6 +247,12 @@ async def call_deepseek(cc: dict, *, messages: list[dict]) -> dict:
     if not key:
         return {"ok": False, "raw_text": "", "usage": None, "latency_s": 0.0,
                 "error": "DEEPSEEK_API_KEY missing", "model": cc.get("model") or MODEL}
+    from .market_hours import MarketsClosed, guard as _mh_guard
+    try:
+        _mh_guard("DeepSeek")
+    except MarketsClosed as e:
+        return {"ok": False, "raw_text": "", "usage": None, "latency_s": 0.0, "error": str(e),
+                "model": cc.get("model") or MODEL}
     url = str(cc.get("base_url") or "https://api.deepseek.com").rstrip("/") + "/chat/completions"
     body = {
         "model": cc.get("model") or MODEL,

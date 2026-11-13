@@ -7,15 +7,17 @@
       "fired": [],
       "touches": {},
       "t2_done": [],
-      "prev_rvol": 0.234,
+      "prev_rvol": 0.308,
       "cvd_stable": -1,
       "cvd_n": 0,
-      "prev_live": 3876.78
+      "prev_live": 3877.15
     },
     "EURUSD": {
       "bar": "2026-11-13T19:30:00+00:00",
       "fired": [
-        "T1"
+        "T1",
+        "T2",
+        "T6"
       ],
       "touches": {
         "Session Low@1.10257": {
@@ -24,11 +26,13 @@
           "orig": 1
         }
       },
-      "t2_done": [],
-      "prev_rvol": 0.11,
+      "t2_done": [
+        "Session Low@1.10257"
+      ],
+      "prev_rvol": 0.19,
       "cvd_stable": -1,
       "cvd_n": 0,
-      "prev_live": 1.10262
+      "prev_live": 1.10232
     },
     "US100": {
       "bar": "2026-11-13T19:30:00+00:00",
@@ -49,17 +53,17 @@
       "prev_rvol": null,
       "cvd_stable": 1,
       "cvd_n": 0,
-      "prev_live": 27921.5
+      "prev_live": 27912.82
     }
   },
   "whatif": [],
   "stats": {
     "DS-IMG-E": {
       "T2": {
-        "fired": 6,
+        "fired": 7,
         "calls": 2,
         "suppressed_per_hour_cap": 1,
-        "suppressed_debounced": 3
+        "suppressed_debounced": 4
       },
       "T1": {
         "fired": 7,
@@ -74,8 +78,9 @@
         "suppressed_per_hour_cap": 1
       },
       "T6": {
-        "fired": 1,
-        "calls": 1
+        "fired": 2,
+        "calls": 1,
+        "suppressed_debounced": 1
       },
       "T8": {
         "fired": 9,
@@ -86,10 +91,10 @@
     },
     "DS-TXT-E": {
       "T2": {
-        "fired": 6,
+        "fired": 7,
         "calls": 2,
         "suppressed_per_hour_cap": 1,
-        "suppressed_debounced": 3
+        "suppressed_debounced": 4
       },
       "T1": {
         "fired": 7,
@@ -104,8 +109,9 @@
         "suppressed_per_hour_cap": 1
       },
       "T6": {
-        "fired": 1,
-        "calls": 1
+        "fired": 2,
+        "calls": 1,
+        "suppressed_debounced": 1
       },
       "T8": {
         "fired": 9,
@@ -119,8 +125,8 @@
   "feed_days": {
     "2026-11-13": {
       "first": "2026-11-13T17:15:10.001749+00:00",
-      "last": "2026-11-13T19:36:10.001621+00:00",
-      "n": 141
+      "last": "2026-11-13T19:38:10.009430+00:00",
+      "n": 143
     }
   }
 }

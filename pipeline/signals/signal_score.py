@@ -113,6 +113,8 @@ class SignalScorer:
             "bar": sig.get("bar") or sig.get("last_closed_bar_utc"),
             "traded": bool(sig.get("traded")),
         }
+        if sig.get("book"):
+            base["book"] = sig.get("book")
         if not base["symbol"] or not base["signal_at"] or not base["entry"] or not base["atr"]:
             return added
         jobs = []
@@ -320,7 +322,7 @@ class SignalScorer:
         by_model = defaultdict(list)
         for r in sigs:
             if r.get("role") == "signal":
-                by_model[r.get("model") or "unknown"].append(r)
+                by_model[(f"{r.get('model')}@{r['book']}" if r.get("book") else None) or r.get("model") or "unknown"].append(r)
         models = {m: pack(rs, m) for m, rs in by_model.items()}
         return {"updated_at": datetime.now(UTC).isoformat(), "exit_mode": UNIFORM_EXIT_VERSION,
                 "paper_only": True, "pending": len(self.s.get("queue") or []),
@@ -342,6 +344,7 @@ class SignalScorer:
         n += self._ingest_jsonl("carbon_signals.jsonl", model="gemini-4-carbon",
                                 thinking_default="medium")
         n += self._ingest_claude()
+        n += self._ingest_glow80()
         n += self._ingest_jsonl("deepseek_signals.jsonl", model="deepseek-flash",
                                 nested=True)
         self.save()
@@ -391,6 +394,26 @@ class SignalScorer:
                         **d, "model": d.get("model") or model,
                         "thinking_level": d.get("thinking_level") or thinking_default,
                         "signal_at": d.get("signal_at") or d.get("t"),
+                    }))
+        return n
+
+    def _ingest_glow80(self) -> int:
+        """G-LOW-80 (t272u): one glow80_signals.jsonl line per M15 call, nested validated signals."""
+        n = 0
+        for f in sorted(self.logs_dir.glob("*/glow80_signals.jsonl")):
+            for line in f.read_text().splitlines():
+                try:
+                    d = json.loads(line)
+                except Exception:
+                    continue
+                if not d.get("ok"):
+                    continue
+                for s in d.get("signals") or []:
+                    n += len(self.enqueue({
+                        **s, "model": s.get("model") or d.get("model") or "gemini-3.8-flash",
+                        "thinking_level": s.get("thinking_level") or d.get("thinking_level") or "low",
+                        "signal_at": d.get("t"), "kind": "entry", "book": "G-LOW-80",
+                        "entry": s.get("entry") or s.get("live_price"),
                     }))
         return n
 

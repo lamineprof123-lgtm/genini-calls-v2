@@ -83,7 +83,7 @@ class M15Coordinator:
     """Owned by GhaLoop. Renders once per M15 close +20s and fans out to every close-bar model."""
 
     def __init__(self, cfg: dict, *, io_lock: asyncio.Lock | None = None,
-                 claude=None, carbon=None, deepseek=None, opus_b=None, scorer=None,
+                 claude=None, carbon=None, deepseek=None, opus_b=None, scorer=None, glow80=None,
                  snapshot=None, render=None, h1=None,
                  state_dir=None, logs_dir=None, site_dir=None):
         self.cfg = cfg
@@ -93,6 +93,7 @@ class M15Coordinator:
         self.carbon = carbon
         self.deepseek = deepseek
         self.opus_b = opus_b
+        self.glow80 = glow80
         self.scorer = scorer
         self._snapshot = snapshot
         self._render = render
@@ -274,6 +275,8 @@ class M15Coordinator:
             tasks["carbon"] = asyncio.create_task(self._run_carbon(snap), name="m15-carbon")
         if self.opus_b is not None or self.deepseek is not None:
             tasks["bracket"] = asyncio.create_task(self._run_bracket(snap), name="m15-bracket")
+        if self.glow80 is not None:
+            tasks["glow80"] = asyncio.create_task(self._run_glow80(snap), name="m15-glow80")
         out = {}
         if tasks:
             done = await asyncio.gather(*tasks.values(), return_exceptions=True)
@@ -324,6 +327,30 @@ class M15Coordinator:
             log.exception("m15 carbon fan-out failed (other models unaffected)")
             return {"error": f"{type(e).__name__}: {e}"}
 
+    async def _run_glow80(self, snap: M15Snapshot) -> dict:
+        """G-LOW-80 (t272u): its own LOW-thinking Gemini call on the same shared snapshot."""
+        call_start = datetime.now(UTC)
+        try:
+            r = await self.glow80.on_snapshot(snap, now=snap.now)
+        except Exception as e:
+            log.exception("m15 G-LOW-80 fan-out failed (other models unaffected)")
+            r = {"ok": False, "error": f"{type(e).__name__}: {e}"}
+        try:
+            r = r or {}
+            self.log_call(book="G-LOW-80", model=r.get("model") or "gemini-3.8-flash", snap=snap,
+                          call_start=call_start, answer_ts=_dt(r.get("answer_ts")) or datetime.now(UTC),
+                          fill_ts=None, ok=bool(r.get("ok")), latency_s=r.get("latency_s"),
+                          cost_usd=r.get("cost_usd"), thinking_tokens=r.get("thinking_tokens"),
+                          error=r.get("error"),
+                          extra={"skipped": r.get("skipped"), "thinking_level": r.get("thinking_level"),
+                                 "model_version": r.get("model_version"), "usage": r.get("usage"),
+                                 "symbols": r.get("symbols"), "queued": r.get("queued"),
+                                 "signals": r.get("signals")})
+        except Exception:
+            log.exception("m15_calls G-LOW-80 log failed")
+        self.enqueue_signals(r.get("score_signals") or [])
+        return r
+
     async def _run_bracket(self, snap: M15Snapshot) -> dict:
         """C-OPUS-B and DS-FLASH get the identical bracket-v1 package (same bytes)."""
         pkg = snap.package
@@ -371,7 +398,7 @@ class M15Coordinator:
         dispatched = await self.dispatch(snap)
         rec = {**self.last, "dispatched": {k: {kk: vv for kk, vv in (v or {}).items()
                                                if kk in ("ok", "skipped", "error", "latency_s", "cost_usd",
-                                                         "thinking_tokens", "start_lag_s")}
+                                                         "thinking_tokens", "start_lag_s", "thinking_level")}
                                            if isinstance(v, dict) else v
                                            for k, v in dispatched.items()}}
         self.last = rec

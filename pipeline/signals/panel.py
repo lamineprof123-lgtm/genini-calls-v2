@@ -27,6 +27,7 @@ BOOKS = [
     ("1-strike", "gemini-3.8-flash", "Gemini flash · 1-strike"),
     ("nostop", "gemini-3.8-flash", "Gemini flash · nostop"),
     ("bracket", "gemini-3.8-flash", "Gemini flash · bracket (conf≥0.75)"),
+    ("G-LOW-80", "gemini-3.8-flash", "Gemini flash · G-LOW-80 (own call, thinking low, conf≥0.80)"),
     ("CB-BRACKET", "gemini-4-carbon", "Carbon · CB-BRACKET"),
     ("CB-RUNNER", "gemini-4-carbon", "Carbon · CB-RUNNER"),
     ("C-OPUS", "claude-opus-5-5", "Claude Opus · C-OPUS"),
@@ -172,6 +173,8 @@ class PanelLedger:
                 out.append((b, LUCID, p))
         for p in (_read(S / "bracket" / "account.json") or {}).get("positions") or []:
             out.append(("bracket", LUCID, p))
+        for p in (_read(S / "glow80" / "account.json") or {}).get("positions") or []:
+            out.append(("G-LOW-80", LUCID, p))
         for b in ("CB-BRACKET", "CB-RUNNER"):
             for p in (_read(S / "carbon" / f"{b}.json") or {}).get("positions") or []:
                 out.append((b, LUCID, p))
@@ -196,6 +199,7 @@ class PanelLedger:
         for b in ("1-strike", "nostop"):
             out[(b, LUCID)] = (eb.get(b) or {}).get("balance")
         out[("bracket", LUCID)] = (_read(S / "bracket" / "account.json") or {}).get("balance")
+        out[("G-LOW-80", LUCID)] = (_read(S / "glow80" / "account.json") or {}).get("balance")
         for b in ("CB-BRACKET", "CB-RUNNER"):
             out[(b, LUCID)] = (_read(S / "carbon" / f"{b}.json") or {}).get("balance")
         for b in ("C-OPUS", "C-SONNET"):
@@ -233,6 +237,9 @@ class PanelLedger:
         for r in self._log_rows("bracket_trades.jsonl"):
             if r.get("event", "close") == "close":
                 out.append(("bracket", LUCID, r))
+        for r in self._log_rows("glow80_trades.jsonl"):
+            if r.get("event", "close") == "close":
+                out.append(("G-LOW-80", LUCID, r))
         for r in self._log_rows("carbon_trades.jsonl"):
             if r.get("event", "close") == "close" and r.get("book") in ("CB-BRACKET", "CB-RUNNER"):
                 out.append((r["book"], LUCID, r))

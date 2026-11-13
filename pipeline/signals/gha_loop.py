@@ -21,7 +21,7 @@ from .pipeline import next_boundary, run_once
 from .site import write_status
 
 log = logging.getLogger("signals.gha")
-SITE_JSON = ("status.json", "latest_signal.json", "history.json", "lucid.json", "claude.json", "bracket.json",
+SITE_JSON = ("status.json", "latest_signal.json", "history.json", "lucid.json", "claude.json", "bracket.json", "glow80.json",
              "carbon.json", "deepseek.json", "signal_scores.json", "opus_b.json", "m15_scan.json", "other_venue.json",
              "panel.json")
 DATA_JSON = ("books.json",)  # committed to the data branch only (not deployed to Pages)
@@ -70,6 +70,8 @@ class GhaLoop:
         self.opus_b_exit_task: asyncio.Task | None = None
         self.m15 = None
         self.m15_task: asyncio.Task | None = None
+        self.glow80 = None                   # G-LOW-80 low-thinking Gemini side book (signals/glow80.py)
+        self.glow80_task: asyncio.Task | None = None
         self.other_venue = None
         self.other_venue_task: asyncio.Task | None = None
         for sub in ("state", "logs"):
@@ -216,6 +218,7 @@ class GhaLoop:
         self.start_deepseek()
         self.start_opus_b()
         self.start_scorer()
+        self.start_glow80()
         self.start_m15_scan()
         self.start_panel()
         while True:
@@ -515,7 +518,7 @@ class GhaLoop:
             self.m15 = M15Coordinator(
                 self.cfg, io_lock=self.io_lock,
                 claude=self.claude, carbon=self.carbon,
-                deepseek=self.deepseek, opus_b=self.opus_b, scorer=self.scorer,
+                deepseek=self.deepseek, opus_b=self.opus_b, scorer=self.scorer, glow80=self.glow80,
                 state_dir=self.data / "state", logs_dir=self.data / "logs", site_dir=self.data,
             )
             self.m15_task = asyncio.create_task(run_m15_scan_loop(self.m15), name="m15-scan")
@@ -526,6 +529,32 @@ class GhaLoop:
         except Exception:
             log.exception("m15 shared scan failed to start (2-min Gemini loop unaffected)")
             self.m15 = None
+
+    def start_glow80(self) -> None:
+        """G-LOW-80 (t272u): own LOW-thinking Gemini call on the shared M15 snapshot, conf >= 0.80, own $100k
+        Lucid + OTHER-VENUE accounts, uniform 1 ATR / 1 ATR / 90-min server exits. Isolated from every book."""
+        from .glow80 import glow80_cfg
+        if self.dry_run or not glow80_cfg(self.cfg).get("enabled", False):
+            return
+        try:
+            from .glow80 import GLow80Book
+            from .bracket import run_bracket_loop
+            self.glow80 = GLow80Book(self.cfg, io_lock=self.io_lock, state_dir=self.data / "state",
+                                     logs_dir=self.data / "logs", site_dir=self.data)
+            self.glow80_task = asyncio.create_task(run_bracket_loop(self.glow80), name="glow80")
+            log.info("G-LOW-80 on: model=%s thinking=%s min_conf=%s", self.glow80.b["model"],
+                     self.glow80.b["thinking_level"], self.glow80.b["min_confidence"])
+        except Exception:
+            log.exception("G-LOW-80 failed to start (other books unaffected)")
+            self.glow80 = None
+
+    async def stop_glow80(self) -> None:
+        t, self.glow80_task = self.glow80_task, None
+        if t:
+            t.cancel()
+            with contextlib.suppress(BaseException):
+                await asyncio.wait_for(t, 30)
+        self.glow80 = None
 
     async def stop_m15_scan(self) -> None:
         t, self.m15_task = self.m15_task, None
@@ -644,6 +673,7 @@ class GhaLoop:
         await self.stop_bracket()
         await self.stop_carbon()
         await self.stop_m15_scan()
+        await self.stop_glow80()
         await self.stop_deepseek()
         await self.stop_opus_b()
         await self.stop_other_venue()

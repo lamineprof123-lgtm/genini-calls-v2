@@ -698,6 +698,38 @@ effort = "high"
 
 
 # ---------------------------------------------------------------------------------------------------------------
+# G-LOW-80 (signals/glow80.py, t272u). PAPER ONLY. Separate Gemini side book; MAIN is unchanged (thinking high).
+# Its OWN gemini-3.8-flash entry call at every M15 close +20 s on the shared M15 snapshot (same charts / payloads /
+# MAIN prompt + schema + server scalp levels + validator), thinking LOW = the exact pre-21:24 (12 Nov) config
+# (git b23b41bb^: thinking_level "low", timeout 45 s, 2 attempts / 60 s budget, no fallback). Trades only BUY/SELL
+# with confidence >= 0.80 (backtest: 0.8-0.9 +$204 avg, 0.9-1.0 +$844; 0.7-0.8 lower at +$136). Fresh $100k
+# Lucid account (XAUUSD / EURUSD / GBPUSD / US100 / XAGUSD) + own $100k OTHER-VENUE account (BTCUSD).
+# Uniform 1 ATR stop / 1 ATR target / 90-min cap, no model exits, ~$900 risk full-size, max 6 open, one per symbol,
+# 0.3 ATR fill check, daily loss stop $1,800 (Lucid DLL). Symbols this book holds are not re-sent (like MAIN).
+[glow80]
+enabled = true
+model = "gemini-3.8-flash"
+thinking_level = "low"
+timeout_seconds = 45
+max_attempts_per_model = 2
+retry_budget_seconds = 60
+min_confidence = 0.80
+symbols = ["XAUUSD", "EURUSD", "GBPUSD", "US100", "XAGUSD"]
+scan_symbols = ["XAUUSD", "EURUSD", "GBPUSD", "US100", "XAGUSD", "BTCUSD"]
+other_venue_symbols = ["BTCUSD"]
+stop_atr = 1.0
+target_atr = 1.0
+max_hold_minutes = 90
+risk_usd = 900.0
+max_risk_usd = 1500.0
+max_minis = 6
+max_chase_atr = 0.3
+daily_loss_usd = 1800.0
+start_balance = 100000.0
+check_seconds = 18
+reset_token = "glow80-v1"
+
+# ---------------------------------------------------------------------------------------------------------------
 # OTHER-VENUE (signals/other_venue.py). PAPER ONLY. Parallel $100k CFD/spot sub-account on every model's book
 # for symbols that are not Lucid products. BTCUSD trades here (no longer site-only/what-if). Silver stays on
 # Lucid as SI (fees file 2026-11-09 lists SI in the GC/SI/HG/PL group at $2.30/side). Sizing: ~$900 risk per
@@ -711,7 +743,7 @@ risk_usd = 900.0
 fee_rate = 0.0005
 slippage_ticks = 1
 symbols = ["BTCUSD"]
-books = ["MAIN", "1-strike", "nostop", "bracket", "CB-BRACKET", "CB-RUNNER", "C-OPUS", "C-SONNET", "C-OPUS-B", "DS-FLASH"]
+books = ["MAIN", "1-strike", "nostop", "bracket", "CB-BRACKET", "CB-RUNNER", "C-OPUS", "C-SONNET", "C-OPUS-B", "DS-FLASH", "G-LOW-80"]
 
 [other_venue.specs.BTCUSD]
 tick = 5.0

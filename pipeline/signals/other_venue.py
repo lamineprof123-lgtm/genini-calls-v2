@@ -44,7 +44,7 @@ DEFAULT_BOOKS = [
     "MAIN", "1-strike", "nostop", "bracket",
     "CB-BRACKET", "CB-RUNNER",
     "C-OPUS", "C-SONNET", "C-OPUS-B",
-    "DS-FLASH",
+    "DS-FLASH", "G-LOW-80",
 ]
 # When MAIN (flash) accepts a BTC fill, these books copy it (same pattern as Lucid exit books).
 MAIN_COPIES = ("1-strike", "nostop", "bracket")

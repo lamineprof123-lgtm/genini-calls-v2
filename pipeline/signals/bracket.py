@@ -122,15 +122,25 @@ def round_adverse(x: float, tick: float, side: int, entering: bool) -> float:
 
 class BracketBook:
     """Pure-ish accounting + I/O for the bracket shadow book. `quotes` is injectable for tests:
-    async quotes(symbols, now) -> ({sym: quote dict}, {sym: M1 DataFrame})."""
+    async quotes(symbols, now) -> ({sym: quote dict}, {sym: M1 DataFrame}).
+    Subclasses (e.g. signals/glow80.py G-LOW-80) override the names / files / config section below."""
+    BOOK_NAME = BOOK
+    BOOK_LABEL = LABEL
+    STATE_SUBDIR = "bracket"
+    TRADES_LOG = "bracket_trades.jsonl"
+    EVENTS_LOG = "bracket_events.jsonl"
+    SITE_FILE = "bracket.json"
+
+    def load_cfg(self, cfg: dict) -> dict:
+        return bracket_cfg(cfg)
 
     def __init__(self, cfg: dict, io_lock: asyncio.Lock | None = None, *, state_dir=None, logs_dir=None,
                  site_dir=None, quotes=None):
         self.cfg = cfg
-        self.b = bracket_cfg(cfg)
+        self.b = self.load_cfg(cfg)
         self.L = cfg["lucid"]
         self.io_lock = io_lock or asyncio.Lock()
-        self.state_dir = Path(state_dir or cfg["general"]["state_dir"]) / "bracket"
+        self.state_dir = Path(state_dir or cfg["general"]["state_dir"]) / self.STATE_SUBDIR
         self.logs_dir = Path(logs_dir or cfg["general"]["logs_dir"])
         self.site_dir = Path(site_dir or (cfg.get("site") or {}).get("dir") or self.state_dir.parent.parent)
         self.tz = ZoneInfo(cfg["general"]["session_tz"])
@@ -154,7 +164,7 @@ class BracketBook:
     # ------------------------------------------------------------------ state
     def fresh(self) -> dict:
         sb = float(self.b["start_balance"])
-        return {"version": 1, "book": BOOK, "reset_token": self.b["reset_token"],
+        return {"version": 1, "book": self.BOOK_NAME, "reset_token": self.b["reset_token"],
                 "created_at": datetime.now(UTC).isoformat(), "start_balance": sb, "balance": sb,
                 "peak_balance": sb, "max_drawdown": 0.0, "next_id": 1, "positions": [], "pending": [],
                 "last_price": {}, "seen_cycles": [],
@@ -315,7 +325,7 @@ class BracketBook:
             stop, target = self.levels(pe["side"], entry, pe["atr"], tick)
             et = _dt(q.get("fetched_at")) or now
             comm = round(sp["commission"] * pe["qty"], 2)
-            p = {**pe, "id": self.s["next_id"], "book": BOOK, "entry": entry, "entry_time": _iso(et),
+            p = {**pe, "id": self.s["next_id"], "book": self.BOOK_NAME, "entry": entry, "entry_time": _iso(et),
                  "quote_price": float(q["price"]), "quote_source": q.get("source"), "quote_age_s": q.get("age_s"),
                  "stop": stop, "target": target,
                  "deadline": _iso(et + timedelta(minutes=float(self.b["max_hold_minutes"]))),
@@ -410,7 +420,7 @@ class BracketBook:
         s["max_drawdown"] = round(min(float(s.get("max_drawdown") or 0), s["balance"] - s["peak_balance"]), 2)
         s["positions"] = [q for q in s["positions"] if q["id"] != p["id"]]
         atr = p.get("atr") or 0
-        rec = {"event": "close", "book": BOOK, "t_exit": t.astimezone(UTC).isoformat(),
+        rec = {"event": "close", "book": self.BOOK_NAME, "t_exit": t.astimezone(UTC).isoformat(),
                "t_exit_dubai": t.astimezone(self.tz).isoformat(), "id": p["id"], "symbol": p["symbol"],
                "contract": p["contract"], "qty": p["qty"], "side": _side_word(p["side"]),
                "entry_time": p["entry_time"], "entry": p["entry"], "stop": p["stop"], "target": p["target"],
@@ -422,7 +432,7 @@ class BracketBook:
                "mfe_atr": round(p.get("mfe", 0) / atr, 3) if atr else None,
                "mae_atr": round(p.get("mae", 0) / atr, 3) if atr else None,
                "checks": p.get("checks", 0), "exit_prompt_version": GEMINI_EXIT_PROMPT_VERSION, **(extra or {})}
-        self._jsonl("bracket_trades.jsonl", t, rec)
+        self._jsonl(self.TRADES_LOG, t, rec)
         return rec
 
     def manage(self, quotes: dict, m1: dict, now: datetime) -> list[dict]:
@@ -458,7 +468,7 @@ class BracketBook:
             f.write(json.dumps(obj, default=str, separators=(",", ":")) + "\n")
 
     def _event(self, t: datetime, kind: str, **kw) -> None:
-        self._jsonl("bracket_events.jsonl", t, {"t": t.astimezone(UTC).isoformat(), "event": kind, **kw})
+        self._jsonl(self.EVENTS_LOG, t, {"t": t.astimezone(UTC).isoformat(), "event": kind, **kw})
 
     def _write_state(self) -> None:
         self.state_dir.mkdir(parents=True, exist_ok=True)
@@ -467,7 +477,7 @@ class BracketBook:
     def recent_trades(self, n: int | None = None) -> list[dict]:
         n = n or int(self.b["recent_trades"])
         rows = []
-        for f in sorted(self.logs_dir.glob("*/bracket_trades.jsonl")):
+        for f in sorted(self.logs_dir.glob(f"*/{self.TRADES_LOG}")):
             for line in f.read_text().splitlines():
                 try:
                     r = json.loads(line)
@@ -498,7 +508,7 @@ class BracketBook:
                           "unrealized": round(p["side"] * (lp - p["entry"]) * upp, 2)})
         op = self.open_pnl()
         return {
-            "updated_at": datetime.now(UTC).isoformat(), "paper_only": True, "book": BOOK, "label": LABEL,
+            "updated_at": datetime.now(UTC).isoformat(), "paper_only": True, "book": self.BOOK_NAME, "label": self.BOOK_LABEL,
             "account": {"start_balance": s["start_balance"], "balance": s["balance"],
                         "equity": round(s["balance"] + op, 2), "net_pnl": st["net_pnl"], "open_pnl": op,
                         "trades": n, "wins": st["wins"], "losses": st["losses"],
@@ -529,7 +539,7 @@ class BracketBook:
         async with self.io_lock:
             self._write_state()
             try:
-                _atomic_write(self.site_dir / "bracket.json", view)
+                _atomic_write(self.site_dir / self.SITE_FILE, view)
             except Exception:
                 log.exception("bracket.json write failed")
 

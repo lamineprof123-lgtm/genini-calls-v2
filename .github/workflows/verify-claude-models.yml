@@ -1,0 +1,39 @@
+name: Verify Claude models (ev-v1)
+
+# Uses the repo ANTHROPIC_API_KEY secret to list models and smoke-call each model at its effort. Never prints the key.
+on:
+  workflow_dispatch:
+    inputs:
+      models:
+        description: 'model:effort:max_tokens:timeout_s, comma-separated'
+        default: 'claude-fable-5-2:xhigh:32000:90,claude-opus-5-5:high:16000:60'
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: pipeline
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: pipeline/requirements.txt
+      - name: Install
+        run: pip install -r requirements.txt
+      - name: List + smoke
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          PYTHONUNBUFFERED: '1'
+        run: |
+          set +e
+          python tools/verify_claude_models.py "${{ inputs.models }}" | tee /tmp/claude_verify.txt
+          status=${PIPESTATUS[0]}
+          echo '## Claude model verification (ev-v1)' >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          cat /tmp/claude_verify.txt >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          exit $status

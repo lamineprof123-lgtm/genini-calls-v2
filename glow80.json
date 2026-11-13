@@ -1,14 +1,14 @@
 {
-  "updated_at": "2026-11-13T08:15:38.300256+00:00",
+  "updated_at": "2026-11-13T08:31:08.641881+00:00",
   "paper_only": true,
   "book": "G-LOW-80",
   "label": "Gemini flash \u00b7 G-LOW-80 (low thinking, min 0.70)",
   "account": {
     "start_balance": 100000.0,
-    "balance": 100000.0,
-    "equity": 100000.0,
+    "balance": 99985.6,
+    "equity": 99858.1,
     "net_pnl": 0.0,
-    "open_pnl": 0.0,
+    "open_pnl": -127.5,
     "trades": 0,
     "wins": 0,
     "losses": 0,
@@ -17,17 +17,35 @@
     "avg_loss": null,
     "max_drawdown": 0.0,
     "peak_balance": 100000.0,
-    "commissions": 0.0,
+    "commissions": 14.4,
     "exit_reasons": {},
     "stopped": 0,
-    "open_positions": 0,
+    "open_positions": 1,
     "pending": 0,
-    "signals_seen": 0,
-    "signals_taken": 0,
+    "signals_seen": 1,
+    "signals_taken": 1,
     "skips": {},
     "missed_scans_main_held": {}
   },
-  "open_positions": [],
+  "open_positions": [
+    {
+      "id": 1,
+      "symbol": "EURUSD",
+      "contract": "6E",
+      "qty": 6,
+      "entry": 1.10675,
+      "entry_time": "2026-11-13T08:30:41.609911+00:00",
+      "stop": 1.10625,
+      "target": 1.10725,
+      "deadline": "2026-11-13T10:00:41.609911+00:00",
+      "confidence": 0.76,
+      "risk_usd": 403.8,
+      "target_usd": 346.2,
+      "side": "LONG",
+      "last_price": 1.10658,
+      "unrealized": -127.5
+    }
+  ],
   "recent_trades": [],
   "since": "2026-11-13T02:42:34.711453+00:00",
   "rules": "Own Gemini gemini-3.8-flash entry call at every M15 close +20 s on the shared snapshot, thinking low (pre-21:24 12 Nov config), MAIN prompt and charts. BUY/SELL with confidence >= 0.7 only. Lucid: XAUUSD, EURUSD, GBPUSD, US100, XAGUSD; BTCUSD on its own OTHER-VENUE $100k account. Uniform 1 ATR stop / 1 ATR target / 90 min cap, no model exits. ~$900 risk, full-size, max 6 open, one per symbol, 0.3 ATR fill check, daily loss stop $1800.",
@@ -35,13 +53,13 @@
   "model": "gemini-3.8-flash",
   "thinking_level": "low",
   "calls": {
-    "ok": 23,
+    "ok": 24,
     "failed": 0,
     "skipped": 0,
     "tokens": {
-      "prompt_token_count": 360675,
-      "candidates_token_count": 44610,
-      "total_token_count": 405285
+      "prompt_token_count": 376291,
+      "candidates_token_count": 46505,
+      "total_token_count": 422796
     }
   },
   "day": {

@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-13T17:45:40.341575+00:00",
+  "updated_at": "2026-11-13T18:01:37.113426+00:00",
   "paper_only": true,
   "key_present": true,
   "status": "running",
@@ -12,7 +12,7 @@
   "uniform_1atr_exits": true,
   "exit_calls_note": "All books: 1 ATR / 1 ATR bracket, no model exits",
   "exit_mode": "uniform-1atr-v1",
-  "last_entry_bar": "2026-11-13T17:30:00+00:00",
+  "last_entry_bar": "2026-11-13T17:45:00+00:00",
   "last_entry_skipped": null,
   "rules": "Binding server rules: hard stop = model stop clamped 0.6-1.5 ATR; $900 risk sizing (NQ 1, GC 1, 6E/6B up to 4, 6 max); break-even at +0.5 ATR; profit lock 50% of best at +1.0 ATR, 60% at +1.5 ATR; 45-min time stop; daily -$1,500; trailing $300 buffer; re-entry lock; USD-group cap (one open per long-USD / short-USD group; 30-min lock after a stop-out); skip fill if the live quote is >0.3 ATR worse than the chart; one entry per M15 close +20s (score >= 5). Phase A (never +0.25 ATR): Haiku CLOSE is ignored; server exits on a closed M15 after entry beyond invalidation or wrong-side of both VWAP and EMA20. Phases B/C ignore a CLOSE until the first M15 close after entry. Exit confidence is logged, never acted on. Exit model every 18 s.",
   "reset": {
@@ -149,18 +149,18 @@
         }
       },
       "signals": {
-        "rows": 306,
-        "buy_sell": 28,
-        "gated": 28,
+        "rows": 312,
+        "buy_sell": 29,
+        "gated": 29,
         "opened": 10
       },
       "ops": {
         "entry": {
-          "calls": 51,
+          "calls": 52,
           "failed": 0,
-          "latency_p50_ms": 23856.0,
-          "latency_p95_ms": 33397.5,
-          "cost_usd": 6.0144,
+          "latency_p50_ms": 23972.0,
+          "latency_p95_ms": 33351.8,
+          "cost_usd": 6.1302,
           "by_utc_day": {
             "2026-11-12": {
               "calls": 12,
@@ -170,11 +170,11 @@
               "thinking_tokens": 11181
             },
             "2026-11-13": {
-              "calls": 39,
-              "cost_usd": 4.6628,
-              "input_tokens": 629175,
-              "output_tokens": 107313,
-              "thinking_tokens": 46788
+              "calls": 40,
+              "cost_usd": 4.7786,
+              "input_tokens": 645280,
+              "output_tokens": 109882,
+              "thinking_tokens": 47916
             }
           }
         },
@@ -197,24 +197,24 @@
       },
       "exit_prompt_version": "v3",
       "last_entry_call": {
-        "bar": "2026-11-13T17:30:00+00:00",
-        "t": "2026-11-13T17:45:20.002643+00:00",
+        "bar": "2026-11-13T17:45:00+00:00",
+        "t": "2026-11-13T18:00:20.009385+00:00",
         "ok": true,
-        "latency_ms": 17207,
-        "cost_usd": 0.102788,
+        "latency_ms": 24509,
+        "cost_usd": 0.1158,
         "error": null,
         "model": "claude-opus-5-5",
-        "answer_ts": "2026-11-13T17:45:40.327689+00:00",
-        "thinking_tokens": 468,
+        "answer_ts": "2026-11-13T18:01:37.099140+00:00",
+        "thinking_tokens": 1128,
         "stop_reason": "end_turn",
         "signals": [
           {
             "symbol": "XAUUSD",
-            "action": "HOLD",
-            "setup_type": "none",
-            "score": 0,
-            "confidence": 0.0,
-            "decision": "HOLD"
+            "action": "SELL",
+            "setup_type": "trend",
+            "score": 6,
+            "confidence": 0.52,
+            "decision": "skip: daily guard: day loss $1,513 + open stop risk $0 + new $765 > $1,500"
           },
           {
             "symbol": "EURUSD",
@@ -315,18 +315,18 @@
         }
       },
       "signals": {
-        "rows": 306,
+        "rows": 312,
         "buy_sell": 0,
         "gated": 0,
         "opened": 0
       },
       "ops": {
         "entry": {
-          "calls": 51,
+          "calls": 52,
           "failed": 0,
           "latency_p50_ms": 10380.0,
-          "latency_p95_ms": 11877.5,
-          "cost_usd": 2.4083,
+          "latency_p95_ms": 11859.3,
+          "cost_usd": 2.4548,
           "by_utc_day": {
             "2026-11-12": {
               "calls": 12,
@@ -336,10 +336,10 @@
               "thinking_tokens": 0
             },
             "2026-11-13": {
-              "calls": 39,
-              "cost_usd": 1.8409,
-              "input_tokens": 629175,
-              "output_tokens": 58251,
+              "calls": 40,
+              "cost_usd": 1.8874,
+              "input_tokens": 645280,
+              "output_tokens": 59678,
               "thinking_tokens": 0
             }
           }
@@ -363,14 +363,14 @@
       },
       "exit_prompt_version": "v3",
       "last_entry_call": {
-        "bar": "2026-11-13T17:30:00+00:00",
-        "t": "2026-11-13T17:45:20.002643+00:00",
+        "bar": "2026-11-13T17:45:00+00:00",
+        "t": "2026-11-13T18:00:20.009385+00:00",
         "ok": true,
-        "latency_ms": 10592,
-        "cost_usd": 0.047664,
+        "latency_ms": 9915,
+        "cost_usd": 0.04648,
         "error": null,
         "model": "claude-sonnet-5-5",
-        "answer_ts": "2026-11-13T17:45:40.327689+00:00",
+        "answer_ts": "2026-11-13T18:01:37.099140+00:00",
         "thinking_tokens": 0,
         "stop_reason": "end_turn",
         "signals": [

@@ -1,14 +1,14 @@
 {
-  "updated_at": "2026-11-13T14:15:10.815331+00:00",
+  "updated_at": "2026-11-13T14:16:23.583897+00:00",
   "paper_only": true,
   "book": "EVAL-R4",
   "label": "Gemini flash \u00b7 EVAL-R4 (G-LOW-80's call, min 0.80, R4 trend filter, 0.8/1.0 ATR, Lucid eval rules)",
   "account": {
     "start_balance": 100000.0,
-    "balance": 100510.6,
-    "equity": 100351.0,
+    "balance": 100505.8,
+    "equity": 100448.2,
     "net_pnl": 515.4,
-    "open_pnl": -159.6,
+    "open_pnl": -57.6,
     "trades": 1,
     "wins": 1,
     "losses": 0,
@@ -17,19 +17,21 @@
     "avg_loss": null,
     "max_drawdown": 0.0,
     "peak_balance": 100510.6,
-    "commissions": 14.4,
+    "commissions": 19.2,
     "exit_reasons": {
       "target_1atr": 1
     },
     "stopped": 0,
-    "open_positions": 1,
+    "open_positions": 2,
     "pending": 0,
-    "signals_seen": 8,
-    "signals_taken": 2,
+    "signals_seen": 10,
+    "signals_taken": 3,
     "skips": {
-      "confidence<min": 6
+      "confidence<min": 7
     },
-    "missed_scans_glow80_held": {}
+    "missed_scans_glow80_held": {
+      "EURUSD": 1
+    }
   },
   "open_positions": [
     {
@@ -46,8 +48,26 @@
       "risk_usd": 417.6,
       "target_usd": 500.4,
       "side": "SHORT",
-      "last_price": 3884.86,
-      "unrealized": -159.6,
+      "last_price": 3883.56,
+      "unrealized": -81.6,
+      "micro": true
+    },
+    {
+      "id": 3,
+      "symbol": "XAGUSD",
+      "contract": "SIL",
+      "qty": 3,
+      "entry": 49.59,
+      "entry_time": "2026-11-13T14:16:00.014691+00:00",
+      "stop": 49.74,
+      "target": 49.4,
+      "deadline": "2026-11-13T15:46:00.014691+00:00",
+      "confidence": 0.8,
+      "risk_usd": 459.6,
+      "target_usd": 560.4,
+      "side": "SHORT",
+      "last_price": 49.582,
+      "unrealized": 24.0,
       "micro": true
     }
   ],
@@ -97,24 +117,26 @@
     "status": "ACTIVE",
     "reason": null,
     "at": null,
-    "profit": 510.6,
+    "profit": 505.8,
     "profit_target": 6000.0,
-    "progress_pct": 8.5,
-    "equity": 100351.0,
+    "progress_pct": 8.4,
+    "equity": 100448.2,
     "mll_floor": 97000.0,
     "mll_locked": false,
-    "mll_room": 3351.0,
+    "mll_room": 3448.2,
     "highest_eod": 100000.0,
     "dll_limit": 1800.0,
     "dll_used": 0.0,
     "dll_paused": false,
     "lucid_day": "2026-11-13",
-    "missed_scans": {},
-    "missed_total": 0,
+    "missed_scans": {
+      "EURUSD": 1
+    },
+    "missed_total": 1,
     "eod_closes": [],
     "filter": {
-      "seen": 2,
-      "passed": 2,
+      "seen": 3,
+      "passed": 3,
       "filtered_out": 0,
       "no_data": 0,
       "fail_by": {
@@ -134,13 +156,13 @@
           "vwap": 2.076
         },
         "XAGUSD": {
-          "t": "2026-11-13T14:00:20.005233+00:00",
+          "t": "2026-11-13T14:15:20.001830+00:00",
           "pass": true,
           "reason": null,
-          "h1_trend": 3.301,
-          "m15_ema20": 0.996,
-          "chase": 1.147,
-          "vwap": 2.026
+          "h1_trend": 3.169,
+          "m15_ema20": 1.673,
+          "chase": 1.117,
+          "vwap": 2.795
         }
       },
       "rules": {
@@ -156,23 +178,22 @@
     "net": 515.4
   },
   "cycles": {
-    "seen": 29,
-    "with_signals": 20,
+    "seen": 30,
+    "with_signals": 21,
     "skipped": 9,
     "last": {
-      "t": "2026-11-13T14:00:37.877286+00:00",
+      "t": "2026-11-13T14:15:35.771424+00:00",
       "ok": true,
-      "signals": 5,
+      "signals": 3,
       "queued": [
-        "XAGUSD",
-        "XAUUSD"
+        "XAGUSD"
       ],
       "eval_status": "ACTIVE"
     }
   },
   "r4": {
-    "seen": 2,
-    "passed": 2,
+    "seen": 3,
+    "passed": 3,
     "filtered_out": 0,
     "no_data": 0,
     "fail_by": {
@@ -192,13 +213,13 @@
         "vwap": 2.076
       },
       "XAGUSD": {
-        "t": "2026-11-13T14:00:20.005233+00:00",
+        "t": "2026-11-13T14:15:20.001830+00:00",
         "pass": true,
         "reason": null,
-        "h1_trend": 3.301,
-        "m15_ema20": 0.996,
-        "chase": 1.147,
-        "vwap": 2.026
+        "h1_trend": 3.169,
+        "m15_ema20": 1.673,
+        "chase": 1.117,
+        "vwap": 2.795
       }
     },
     "rules": {

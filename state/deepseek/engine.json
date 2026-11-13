@@ -15,33 +15,33 @@
       }
     },
     "2026-11-13": {
-      "usd": 0.234385,
-      "calls": 73,
+      "usd": 0.236711,
+      "calls": 74,
       "failed": 0,
       "tokens": {
-        "prompt": 825513,
-        "cache_hit": 132096,
-        "cache_miss": 693417,
-        "completion": 109910,
-        "reasoning": 35715
+        "prompt": 836778,
+        "cache_hit": 133888,
+        "cache_miss": 702890,
+        "completion": 111410,
+        "reasoning": 36241
       }
     }
   },
   "last_call": {
-    "t": "2026-11-13T14:00:20.005233+00:00",
+    "t": "2026-11-13T14:15:20.001830+00:00",
     "ok": true,
-    "cost_usd": 0.00284608,
-    "spend_today_usd": 0.2344,
+    "cost_usd": 0.00232633,
+    "spend_today_usd": 0.2367,
     "band": "off_peak",
     "tokens": {
-      "prompt": 11278,
+      "prompt": 11265,
       "cache_hit": 1792,
-      "cache_miss": 9486,
-      "completion": 2363,
-      "reasoning": 1147,
-      "total": 13641
+      "cache_miss": 9473,
+      "completion": 1500,
+      "reasoning": 526,
+      "total": 12765
     },
-    "latency_s": 11.373,
+    "latency_s": 8.138,
     "error": null,
     "model": "deepseek-flash",
     "symbols": [
@@ -53,11 +53,11 @@
     ],
     "http_status": 200,
     "prompt_version": "bracket-v1",
-    "snapshot_id": "m15-20261113134500-e5f79f12a78b",
-    "bar_close_ts": "2026-11-13T14:00:00+00:00",
-    "snapshot_ts": "2026-11-13T14:00:35.847070+00:00",
-    "call_start": "2026-11-13T14:00:38.747299+00:00",
-    "answer_ts": "2026-11-13T14:00:50.120530+00:00"
+    "snapshot_id": "m15-20261113140000-dfb5b405db5a",
+    "bar_close_ts": "2026-11-13T14:15:00+00:00",
+    "snapshot_ts": "2026-11-13T14:15:33.425450+00:00",
+    "call_start": "2026-11-13T14:15:36.846967+00:00",
+    "answer_ts": "2026-11-13T14:15:44.985370+00:00"
   },
   "last_signals": [
     {
@@ -68,7 +68,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "T1 yes: below VWAP 3898.76 and EMA50 3895.2. T2 yes: closed_through VAL. Hard gates fail: |vwap_distance_atr| 2.08 > 2.0 is chasing, and room_down 0.89 ATR < 1.0, so a 1 ATR target has no runway. HOLD."
+      "rationale": "T1 yes for SELL: price 3884.57 below VWAP 3898.36 and EMA50 3894.8. T2 missing: last closed bar only touched VAL and S/R 3887.45, no closing event. S1 fails: room_down 0.457 ATR, room_up 0.344 ATR, both under 1.0 ATR. S4 only."
     },
     {
       "symbol": "EURUSD",
@@ -78,7 +78,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "T1 yes: below VWAP 1.10578 and EMA50 1.10567. T2 yes: closed_through VAL and multiple S/R. Room gate fails: room_down only 0.423 ATR to S/R 1.10475, under the 1.0 ATR required for a 1 ATR target. HOLD."
+      "rationale": "T1 yes for SELL: below VWAP 1.10576 and EMA50 1.10565. T2 partial: rejections at EMA20/S/R on last closed bar. S1 fails hard: room_down 0.713 ATR, room_up 0.032 ATR. S2 no (RVOL 1.964). S3 no (CVD neutral). S4 yes."
     },
     {
       "symbol": "US100",
@@ -88,7 +88,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "T1 yes: above VWAP 28313.25 and EMA50 28294.41. T2 missing: last closed bar only touched VWAP, no closed_through or rejection of a labelled level in the BUY direction. No fresh event, so no trade despite 1.48 ATR room. HOLD."
+      "rationale": "T1 yes: price 28359.43 above VWAP 28313.81 and EMA50 28296.64. T2 missing: no level event at all on last closed bar, just an intact uptrend. S1 also fails: room_up 0.840 ATR to VAH. S2 awarded, S4 yes."
     },
     {
       "symbol": "XAGUSD",
@@ -98,7 +98,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "T1 yes: below VWAP 50.12 and EMA50 50.045. T2 yes: closed_through VAL. Hard gates fail: |vwap_distance_atr| 2.03 > 2.0 is chasing, and room_down only 0.405 ATR to Prev Low 49.688. No 1 ATR runway. HOLD."
+      "rationale": "Trend blocked twice: vwap_distance -2.794 exceeds 2.0 ATR (chasing) and room_down 0.076 ATR. Fade blocked by S1: room_up only 0.512 ATR to Prev Low. h1_trend down, CVD bearish, RVOL 1.111. No trade."
     },
     {
       "symbol": "BTCUSD",
@@ -108,7 +108,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "T1 fails both ways: price above VWAP 69358.09 but closed below EMA50 69463.12, so neither side of both filters holds. Room_up only 0.013 ATR to EMA50. h1_trend down, CVD bearish. Nothing tradable. HOLD."
+      "rationale": "T1 yes for SELL: below VWAP and EMA50 69454.82; VWAP closed_through supports trend. S1 fails hard: room_down 0.003 ATR to POC, room_up 0.000 ATR to EMA20. Too little room for a 1 ATR target. S4 yes."
     }
   ],
   "last_bars": {

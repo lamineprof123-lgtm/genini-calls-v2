@@ -7,17 +7,17 @@
       "fired": [],
       "touches": {},
       "t2_done": [],
-      "prev_rvol": 0.0,
+      "prev_rvol": 0.063,
       "cvd_stable": -1,
       "cvd_n": 0,
-      "prev_live": 3877.11
+      "prev_live": 3877.1
     },
     "EURUSD": {
       "bar": "2026-11-13T19:30:00+00:00",
       "fired": [],
       "touches": {},
       "t2_done": [],
-      "prev_rvol": 0.051,
+      "prev_rvol": 0.07,
       "cvd_stable": -1,
       "cvd_n": 0,
       "prev_live": 1.1027
@@ -25,7 +25,8 @@
     "US100": {
       "bar": "2026-11-13T19:30:00+00:00",
       "fired": [
-        "T1"
+        "T1",
+        "T2"
       ],
       "touches": {
         "Prev Low@27912.13": {
@@ -34,21 +35,23 @@
           "orig": 1
         }
       },
-      "t2_done": [],
+      "t2_done": [
+        "Prev Low@27912.13"
+      ],
       "prev_rvol": null,
       "cvd_stable": 1,
       "cvd_n": 0,
-      "prev_live": 27916.06
+      "prev_live": 27914.14
     }
   },
   "whatif": [],
   "stats": {
     "DS-IMG-E": {
       "T2": {
-        "fired": 5,
+        "fired": 6,
         "calls": 2,
         "suppressed_per_hour_cap": 1,
-        "suppressed_debounced": 2
+        "suppressed_debounced": 3
       },
       "T1": {
         "fired": 6,
@@ -75,10 +78,10 @@
     },
     "DS-TXT-E": {
       "T2": {
-        "fired": 5,
+        "fired": 6,
         "calls": 2,
         "suppressed_per_hour_cap": 1,
-        "suppressed_debounced": 2
+        "suppressed_debounced": 3
       },
       "T1": {
         "fired": 6,
@@ -108,8 +111,8 @@
   "feed_days": {
     "2026-11-13": {
       "first": "2026-11-13T17:15:10.001749+00:00",
-      "last": "2026-11-13T19:31:10.003117+00:00",
-      "n": 136
+      "last": "2026-11-13T19:32:10.000933+00:00",
+      "n": 137
     }
   }
 }

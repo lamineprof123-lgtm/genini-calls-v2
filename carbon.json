@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-13T19:46:40.748671+00:00",
+  "updated_at": "2026-11-13T19:48:28.748578+00:00",
   "paper_only": true,
   "model": "gemini-4-carbon",
   "entry_thinking": "high",
@@ -281,11 +281,11 @@
   "whatif": {
     "CB-BRACKET": {
       "all": {
-        "n": 16,
-        "r_avg": -0.138,
-        "r_total": -2.209,
-        "net_1c": -3169.35,
-        "win_rate": 0.438
+        "n": 17,
+        "r_avg": -0.073,
+        "r_total": -1.233,
+        "net_1c": -2403.95,
+        "win_rate": 0.471
       },
       "conf>=min": {
         "n": 4,
@@ -295,11 +295,11 @@
         "win_rate": 0.75
       },
       "conf<min": {
-        "n": 12,
-        "r_avg": -0.349,
-        "r_total": -4.184,
-        "net_1c": -5855.35,
-        "win_rate": 0.333
+        "n": 13,
+        "r_avg": -0.247,
+        "r_total": -3.208,
+        "net_1c": -5089.95,
+        "win_rate": 0.385
       },
       "site_only": {
         "n": 0,
@@ -309,20 +309,20 @@
         "win_rate": null
       },
       "tradeable": {
-        "n": 16,
-        "r_avg": -0.138,
-        "r_total": -2.209,
-        "net_1c": -3169.35,
-        "win_rate": 0.438
+        "n": 17,
+        "r_avg": -0.073,
+        "r_total": -1.233,
+        "net_1c": -2403.95,
+        "win_rate": 0.471
       }
     },
     "CB-RUNNER": {
       "all": {
-        "n": 16,
-        "r_avg": -0.175,
-        "r_total": -2.806,
-        "net_1c": -4354.35,
-        "win_rate": 0.438
+        "n": 17,
+        "r_avg": -0.108,
+        "r_total": -1.83,
+        "net_1c": -3588.95,
+        "win_rate": 0.471
       },
       "conf>=min": {
         "n": 4,
@@ -332,11 +332,11 @@
         "win_rate": 0.75
       },
       "conf<min": {
-        "n": 12,
-        "r_avg": -0.398,
-        "r_total": -4.781,
-        "net_1c": -7040.35,
-        "win_rate": 0.333
+        "n": 13,
+        "r_avg": -0.293,
+        "r_total": -3.805,
+        "net_1c": -6274.95,
+        "win_rate": 0.385
       },
       "site_only": {
         "n": 0,
@@ -346,43 +346,15 @@
         "win_rate": null
       },
       "tradeable": {
-        "n": 16,
-        "r_avg": -0.175,
-        "r_total": -2.806,
-        "net_1c": -4354.35,
-        "win_rate": 0.438
+        "n": 17,
+        "r_avg": -0.108,
+        "r_total": -1.83,
+        "net_1c": -3588.95,
+        "win_rate": 0.471
       }
     },
-    "open": 4,
+    "open": 2,
     "open_rows": [
-      {
-        "vid": 27,
-        "exit": "CB-BRACKET",
-        "symbol": "XAUUSD",
-        "side": "SHORT",
-        "entry": 3881.2,
-        "stop": 3889.0,
-        "target": 3873.4,
-        "confidence": 0.68,
-        "site_only": false,
-        "flag": null,
-        "unit": "1 GC",
-        "thinking_level": "high"
-      },
-      {
-        "vid": 28,
-        "exit": "CB-RUNNER",
-        "symbol": "XAUUSD",
-        "side": "SHORT",
-        "entry": 3881.2,
-        "stop": 3889.0,
-        "target": 3873.4,
-        "confidence": 0.68,
-        "site_only": false,
-        "flag": null,
-        "unit": "1 GC",
-        "thinking_level": "high"
-      },
       {
         "vid": 29,
         "exit": "CB-BRACKET",
@@ -413,6 +385,54 @@
       }
     ],
     "recent": [
+      {
+        "t_exit": "2026-11-13T19:46:58.747968+00:00",
+        "vid": 28,
+        "exit_rules": "CB-RUNNER",
+        "symbol": "XAUUSD",
+        "side": "SHORT",
+        "confidence": 0.68,
+        "passes_filter": false,
+        "kind": "entry",
+        "signal_at": "2026-11-13T18:33:19.412875+00:00",
+        "entry_time": "2026-11-13T18:33:42.655228+00:00",
+        "entry": 3881.2,
+        "exit": 3873.5,
+        "reason": "target",
+        "net_1c": 765.4,
+        "R": 0.976,
+        "atr": 7.725,
+        "chase_atr": 0.193,
+        "mfe_atr": 0.948,
+        "site_only": false,
+        "flag": null,
+        "unit": "1 GC",
+        "thinking_level": "high"
+      },
+      {
+        "t_exit": "2026-11-13T19:46:58.747968+00:00",
+        "vid": 27,
+        "exit_rules": "CB-BRACKET",
+        "symbol": "XAUUSD",
+        "side": "SHORT",
+        "confidence": 0.68,
+        "passes_filter": false,
+        "kind": "entry",
+        "signal_at": "2026-11-13T18:33:19.412875+00:00",
+        "entry_time": "2026-11-13T18:33:42.655228+00:00",
+        "entry": 3881.2,
+        "exit": 3873.5,
+        "reason": "target",
+        "net_1c": 765.4,
+        "R": 0.976,
+        "atr": 7.725,
+        "chase_atr": 0.193,
+        "mfe_atr": 0.948,
+        "site_only": false,
+        "flag": null,
+        "unit": "1 GC",
+        "thinking_level": "high"
+      },
       {
         "t_exit": "2026-11-13T17:06:00+00:00",
         "vid": 26,
@@ -1084,46 +1104,6 @@
         "flag": null,
         "unit": null,
         "thinking_level": null
-      },
-      {
-        "t_exit": "2026-11-12T16:54:59.622740+00:00",
-        "vid": 4,
-        "exit_rules": "CB-RUNNER",
-        "symbol": "XAUUSD",
-        "side": "SHORT",
-        "confidence": 0.74,
-        "passes_filter": false,
-        "kind": "entry",
-        "signal_at": "2026-11-12T16:45:46.214777+00:00",
-        "entry_time": "2026-11-12T16:45:53.100091+00:00",
-        "entry": 3871.0,
-        "exit": 3882.9,
-        "reason": "stop_1atr",
-        "net_1c": -1194.6,
-        "R": -1.008,
-        "atr": 11.716,
-        "chase_atr": 0.009,
-        "mfe_atr": 0.023
-      },
-      {
-        "t_exit": "2026-11-12T16:54:59.622740+00:00",
-        "vid": 3,
-        "exit_rules": "CB-BRACKET",
-        "symbol": "XAUUSD",
-        "side": "SHORT",
-        "confidence": 0.74,
-        "passes_filter": false,
-        "kind": "entry",
-        "signal_at": "2026-11-12T16:45:46.214777+00:00",
-        "entry_time": "2026-11-12T16:45:53.100091+00:00",
-        "entry": 3871.0,
-        "exit": 3882.9,
-        "reason": "stop_1atr",
-        "net_1c": -1194.6,
-        "R": -1.008,
-        "atr": 11.716,
-        "chase_atr": 0.009,
-        "mfe_atr": 0.023
       }
     ],
     "note": "BTCUSD trades on the Other-venue $100k CFD book (~$900 / 1 ATR); also scored 1-unit what-if; CB-BRACKET and CB-RUNNER never open it (no Lucid contract)."

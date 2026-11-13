@@ -36,7 +36,8 @@
     "2026-11-13T13:45:37.672697+00:00",
     "2026-11-13T14:00:37.877286+00:00",
     "2026-11-13T14:15:35.771424+00:00",
-    "2026-11-13T14:30:33.886709+00:00"
+    "2026-11-13T14:30:33.886709+00:00",
+    "2026-11-13T14:45:37.354411+00:00"
   ],
   "stats": {
     "trades": 3,
@@ -51,10 +52,11 @@
       "target_1atr": 1,
       "stop_0.8atr": 2
     },
-    "signals_seen": 11,
+    "signals_seen": 13,
     "signals_taken": 3,
     "skips": {
-      "confidence<min": 8
+      "confidence<min": 9,
+      "r4_filter": 1
     },
     "missed_scans": {
       "EURUSD": 1
@@ -77,11 +79,11 @@
     "net": -382.8
   },
   "cycles": {
-    "seen": 31,
-    "with_signals": 22,
+    "seen": 32,
+    "with_signals": 23,
     "skipped": 9,
     "last": {
-      "t": "2026-11-13T14:30:33.886709+00:00",
+      "t": "2026-11-13T14:45:37.354411+00:00",
       "ok": true,
       "signals": 5,
       "queued": [],
@@ -89,14 +91,14 @@
     }
   },
   "r4": {
-    "seen": 3,
+    "seen": 4,
     "passed": 3,
-    "filtered_out": 0,
+    "filtered_out": 1,
     "no_data": 0,
     "fail_by": {
-      "h1_trend": 0,
+      "h1_trend": 1,
       "m15_ema20": 0,
-      "chase": 0,
+      "chase": 1,
       "vwap": 0
     },
     "last": {
@@ -117,6 +119,15 @@
         "m15_ema20": 1.673,
         "chase": 1.117,
         "vwap": 2.795
+      },
+      "US100": {
+        "t": "2026-11-13T14:45:20.003708+00:00",
+        "pass": false,
+        "reason": "H1 EMA20-EMA50 with the trade -1.13 ATR < 2.7; last 3 bars move +2.72 ATR >= 2.2",
+        "h1_trend": -1.131,
+        "m15_ema20": 2.751,
+        "chase": 2.72,
+        "vwap": 2.872
       }
     }
   }

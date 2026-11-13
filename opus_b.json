@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-13T14:30:53.345218+00:00",
+  "updated_at": "2026-11-13T14:45:58.261595+00:00",
   "paper_only": true,
   "plan": "LucidPro 100K (DLL on)",
   "exit_mode": "uniform-1atr-v1",
@@ -152,11 +152,11 @@
   "rules": "C-OPUS-B: claude-opus-5-5 entries, adaptive thinking, effort high, shared bracket-v1 package with DS-FLASH (same charts, facts, 3 symbols, M15 close +20s). Question: will price travel 1 ATR my way before 1 ATR against? Code-computed facts + hold gates (no trend >2 ATR from VWAP; \u22651 ATR room; US100 volume-free S2). 0.3 ATR fill check. Uniform 1 ATR / 1 ATR / 90-min exits, no model exits. Fresh $100k Lucid account.",
   "stop_txt": "1 ATR stop \u00b7 1 ATR target \u00b7 90 min",
   "last_call": {
-    "t": "2026-11-13T14:30:53.341780+00:00",
+    "t": "2026-11-13T14:45:58.258185+00:00",
     "ok": true,
-    "latency_ms": 19435,
-    "cost_usd": 0.11168,
-    "thinking_tokens": 768,
+    "latency_ms": 20883,
+    "cost_usd": 0.1172,
+    "thinking_tokens": 801,
     "usage": {
       "cache_creation": {
         "ephemeral_1h_input_tokens": 0,
@@ -165,10 +165,10 @@
       "cache_creation_input_tokens": 0,
       "cache_read_input_tokens": 0,
       "inference_geo": "global",
-      "input_tokens": 16755,
-      "output_tokens": 2233,
+      "input_tokens": 17100,
+      "output_tokens": 2440,
       "output_tokens_details": {
-        "thinking_tokens": 768
+        "thinking_tokens": 801
       },
       "service_tier": "standard",
       "speed": "standard"
@@ -176,14 +176,14 @@
     "error": null,
     "effort": "high",
     "prompt_version": "bracket-v1",
-    "snapshot_id": "m15-20261113141500-a0d9f2ede770",
-    "snapshot_hash": "a0d9f2ede7701373bc4f5cc496e42e85ec88481c20116785f76de269ec2e2cf8",
-    "package_id": "m15-20261113T143000-216e1edcf74d",
-    "package_hash": "216e1edcf74d54e70ef6ba293c1ef8abd71d6213c6b2c208bf3198eb3f6d9bdb",
-    "bar_close_ts": "2026-11-13T14:30:00+00:00",
-    "snapshot_ts": "2026-11-13T14:30:33.306795+00:00",
-    "call_start": "2026-11-13T14:30:33.906798+00:00",
-    "answer_ts": "2026-11-13T14:30:53.341780+00:00",
+    "snapshot_id": "m15-20261113143000-ba945099cf76",
+    "snapshot_hash": "ba945099cf76245bf4c8c2b369bdb70bef8a0f4a9284b4ba6cbfc35730381083",
+    "package_id": "m15-20261113T144500-a0782b432f31",
+    "package_hash": "a0782b432f31f7d0f9f25b0ef7765da8ceb2f1093af650b1b4ad7bb94be0b766",
+    "bar_close_ts": "2026-11-13T14:45:00+00:00",
+    "snapshot_ts": "2026-11-13T14:45:36.834367+00:00",
+    "call_start": "2026-11-13T14:45:37.374899+00:00",
+    "answer_ts": "2026-11-13T14:45:58.258185+00:00",
     "model": "claude-opus-5-5"
   },
   "last_signals": [
@@ -195,7 +195,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "T1 yes for a sell: below VWAP and EMA50. T2 yes: rejected EMA20. Hard gate fails: room_down only 0.085 ATR to S/R 3887.45, so the 1 ATR target is blocked. HOLD.",
+      "rationale": "",
       "gate_reasons": [],
       "issues": []
     },
@@ -203,11 +203,11 @@
       "symbol": "EURUSD",
       "action": "HOLD",
       "confidence": 0.0,
-      "score": 0,
+      "score": 2,
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "There are mixed rejections at VAL above and Prev Low below. Room up is 0.486 ATR and room down is 0.441 ATR, so S1 fails both ways and neither direction has 1 ATR open. HOLD.",
+      "rationale": "Price sits inside a cluster of levels. Room is 0.120 ATR up to EMA50 and 0.135 ATR down to S/R 1.10543, so S1 fails both ways. T1 fails for a buy because price is below VWAP and EMA50. HOLD.",
       "gate_reasons": [],
       "issues": []
     },
@@ -215,11 +215,11 @@
       "symbol": "US100",
       "action": "HOLD",
       "confidence": 0.0,
-      "score": 0,
+      "score": 2,
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "T1 partial: the close at 28301.45 is still above EMA50 28296.82. Live price is already 0.77 ATR past the close (more than 0.5 ATR). Room down is 0.853 ATR to VAL, under the 1 ATR gate. HOLD.",
+      "rationale": "A trend SELL is blocked: |vwap_distance| 2.96 > 2.0 (chasing), and only 0.015 ATR of room to Session Low. A FADE BUY is barred because GEX is NEGATIVE_AMPLIFYING and the bar is a full-bodied acceptance below VAL. Room up is 0.584 ATR. HOLD.",
       "gate_reasons": [],
       "issues": []
     },
@@ -227,11 +227,11 @@
       "symbol": "XAGUSD",
       "action": "HOLD",
       "confidence": 0.0,
-      "score": 0,
+      "score": 2,
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "Trend sell is blocked: VWAP distance exceeds 2 ATR. Fade buy off S/R 49.579 has only 0.409 ATR of room to Prev Low 49.688, so S1 fails. CVD is bearish. HOLD.",
+      "rationale": "A reversal bar off S/R 49.579, but room is only 0.184 ATR up to POC 49.994 and 0.174 ATR down to S/R 49.922. S1 fails both ways. A fade buy needs at least 1 ATR to the magnet; POC is too close. HOLD.",
       "gate_reasons": [],
       "issues": []
     },
@@ -243,7 +243,7 @@
       "setup_type": "trend",
       "gated": true,
       "decision": "OPENED",
-      "rationale": "T1 yes: below VWAP 69353.5 and EMA50. T2 yes: closed_through POC and EMA20 downward after the 70156 spike rejection. S1 (1.78 ATR to ATR Lower), S3 (CVD bearish, slope down), S4, S5 (h1 down). S2 no (RVOL 1.24). Score 6.",
+      "rationale": "T1 yes: below VWAP 69346.57 and EMA50 69424.59. T2 yes: pullback rejected VWAP/EMA20/POC and closed back below. 1.575 ATR room to ATR Lower. S1 S3 (CVD bearish, slope down) S4 S5 (H1 down). S2 no (RVOL 1.77).",
       "gate_reasons": [],
       "issues": []
     }

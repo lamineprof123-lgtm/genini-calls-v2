@@ -1,34 +1,34 @@
 {
-  "updated_at": "2026-11-13T14:30:55.504147+00:00",
+  "updated_at": "2026-11-13T14:46:32.434905+00:00",
   "paper_only": true,
   "book": "EVAL-80",
   "label": "Gemini flash \u00b7 EVAL-80 (G-LOW-80's call, min 0.80, 0.8/1.0 ATR, Lucid eval rules)",
   "account": {
     "start_balance": 100000.0,
-    "balance": 99617.2,
-    "equity": 99617.2,
-    "net_pnl": -382.8,
+    "balance": 99185.2,
+    "equity": 99185.2,
+    "net_pnl": -814.8,
     "open_pnl": 0.0,
-    "trades": 3,
+    "trades": 4,
     "wins": 1,
-    "losses": 2,
-    "win_rate": 0.333,
+    "losses": 3,
+    "win_rate": 0.25,
     "avg_win": 515.4,
-    "avg_loss": -449.1,
-    "max_drawdown": -893.4,
+    "avg_loss": -443.4,
+    "max_drawdown": -1325.4,
     "peak_balance": 100510.6,
-    "commissions": 28.8,
+    "commissions": 32.8,
     "exit_reasons": {
       "target_1atr": 1,
-      "stop_0.8atr": 2
+      "stop_0.8atr": 3
     },
-    "stopped": 2,
+    "stopped": 3,
     "open_positions": 0,
     "pending": 0,
-    "signals_seen": 11,
-    "signals_taken": 3,
+    "signals_seen": 13,
+    "signals_taken": 4,
     "skips": {
-      "confidence<min": 8
+      "confidence<min": 9
     },
     "missed_scans_glow80_held": {
       "EURUSD": 1
@@ -36,6 +36,41 @@
   },
   "open_positions": [],
   "recent_trades": [
+    {
+      "event": "close",
+      "book": "EVAL-80",
+      "t_exit": "2026-11-13T14:46:21.632932+00:00",
+      "t_exit_dubai": "2026-11-13T18:46:21.632932+04:00",
+      "id": 4,
+      "symbol": "US100",
+      "contract": "MNQ",
+      "qty": 4,
+      "side": "SHORT",
+      "entry_time": "2026-11-13T14:46:06.826585+00:00",
+      "entry": 28131.25,
+      "stop": 28184.5,
+      "target": 28064.75,
+      "exit": 28184.75,
+      "reason": "stop_0.8atr",
+      "stopped": true,
+      "gross": -428.0,
+      "commission": 4.0,
+      "net": -432.0,
+      "hold_seconds": 14,
+      "balance_after": 99185.2,
+      "risk_usd": 430.0,
+      "target_usd": 528.0,
+      "confidence": 0.8,
+      "atr": 66.377,
+      "signal_at": "2026-11-13T14:45:37.354411+00:00",
+      "R": -1.005,
+      "mfe_atr": 0.0,
+      "mae_atr": 0.913,
+      "checks": 2,
+      "exit_prompt_version": "gemini-profit-lock-reset6",
+      "trigger": "live_price",
+      "live_price": 28191.84
+    },
     {
       "event": "close",
       "book": "EVAL-80",
@@ -150,16 +185,16 @@
     "status": "ACTIVE",
     "reason": null,
     "at": null,
-    "profit": -382.8,
+    "profit": -814.8,
     "profit_target": 6000.0,
     "progress_pct": 0.0,
-    "equity": 99617.2,
+    "equity": 99185.2,
     "mll_floor": 97000.0,
     "mll_locked": false,
-    "mll_room": 2617.2,
+    "mll_room": 2185.2,
     "highest_eod": 100000.0,
     "dll_limit": 1800.0,
-    "dll_used": 382.8,
+    "dll_used": 814.8,
     "dll_paused": false,
     "lucid_day": "2026-11-13",
     "missed_scans": {
@@ -170,17 +205,19 @@
   },
   "day": {
     "day": "2026-11-13",
-    "net": -382.8
+    "net": -814.8
   },
   "cycles": {
-    "seen": 33,
-    "with_signals": 24,
+    "seen": 34,
+    "with_signals": 25,
     "skipped": 9,
     "last": {
-      "t": "2026-11-13T14:30:33.886709+00:00",
+      "t": "2026-11-13T14:45:37.354411+00:00",
       "ok": true,
       "signals": 5,
-      "queued": [],
+      "queued": [
+        "US100"
+      ],
       "eval_status": "ACTIVE"
     }
   }

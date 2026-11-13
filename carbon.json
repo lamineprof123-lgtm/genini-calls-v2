@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-13T12:47:42.371537+00:00",
+  "updated_at": "2026-11-13T13:00:20.001598+00:00",
   "paper_only": true,
   "model": "gemini-4-carbon",
   "entry_thinking": "high",
@@ -50,7 +50,7 @@
   },
   "triggers_today": 31,
   "max_triggers_per_day": 40,
-  "next_scan_at": "2026-11-13T13:00:20+00:00",
+  "next_scan_at": "2026-11-13T13:15:20+00:00",
   "in_window": true,
   "last_call": {
     "t": "2026-11-13T12:47:42.371537+00:00",
@@ -129,23 +129,24 @@
   },
   "calls_total": 66,
   "last_scan": {
-    "kind": "entry",
-    "t": "2026-11-13T12:45:20.000947+00:00",
-    "trigger": null,
-    "snapshot_id": "m15-20261113123000-2fe945cc62ed",
-    "snapshot_hash": "2fe945cc62ed6df5c8fb26da0f5b3727d730184b35cfb4b6e67456dc9f5ec393",
-    "bar_close_ts": "2026-11-13T12:45:00+00:00",
-    "snapshot_ts": "2026-11-13T12:45:51.395577+00:00",
+    "kind": "trigger",
+    "t": "2026-11-13T12:47:41.870537+00:00",
+    "trigger": {
+      "trigger": "level_cross",
+      "level": "Session Low",
+      "level_price": 1.10462,
+      "price": 1.10446,
+      "direction": "down",
+      "symbol": "EURUSD",
+      "bar": "2026-11-13T12:45:00+00:00",
+      "n_today": 31
+    },
     "sent": [
-      "XAUUSD",
-      "EURUSD",
-      "US100",
-      "XAGUSD",
-      "BTCUSD"
+      "EURUSD"
     ],
     "blocked_session": [],
     "ok": false,
-    "latency_s": 0.29,
+    "latency_s": 0.196,
     "cost_usd": 0.0,
     "tokens": {
       "input": 0,
@@ -155,34 +156,10 @@
     },
     "error": "ClientError: 402 RESOURCE_EXHAUSTED. {'error': {'code': 402, 'message': 'Your prepayment credits are depleted. Please go to AI Studio at https://ai.studio/projects to manage your project and billing. Learn more at https://ai.google.dev/gemini-api/docs/billing#prepay. ', 'status': 'RESOURCE_EXHAUSTED'}}",
     "finish_reason": null,
-    "answer_ts": "2026-11-13T12:45:20.290947+00:00",
+    "answer_ts": "2026-11-13T12:47:42.371537+00:00",
     "signals": [
       {
-        "symbol": "XAUUSD",
-        "action": "HOLD",
-        "confidence": null,
-        "thinking_level": "high"
-      },
-      {
         "symbol": "EURUSD",
-        "action": "HOLD",
-        "confidence": null,
-        "thinking_level": "high"
-      },
-      {
-        "symbol": "US100",
-        "action": "HOLD",
-        "confidence": null,
-        "thinking_level": "high"
-      },
-      {
-        "symbol": "XAGUSD",
-        "action": "HOLD",
-        "confidence": null,
-        "thinking_level": "high"
-      },
-      {
-        "symbol": "BTCUSD",
         "action": "HOLD",
         "confidence": null,
         "thinking_level": "high"

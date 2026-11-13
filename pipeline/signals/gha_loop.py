@@ -49,6 +49,7 @@ class GhaLoop:
         self.dispatched = False
         self.deploy_skip = 0         # adaptive back-off after failed deploys (cycles to skip)
         self.deploy_fail_streak = 0
+        self.last_deploy_version: str | None = None  # pipeline-data commit used as pages_build_version
         self.stats = {"deploys_ok": 0, "deploys_failed": 0, "deploy_ms": [], "cycle_s": [], "late_s": []}
         self.last = {}
         # Serialises data-dir writes from the exit-manager task with git add/commit/push (never held long).
@@ -154,6 +155,13 @@ class GhaLoop:
                 shutil.copy2(self.data / f, st / f)
         return st
 
+    def pages_build_version(self) -> str | None:
+        """Pages needs a real repo commit per deployment, and repeat deploys of one version stop rolling out.
+        The data checkout's HEAD is the newest pushed cycle commit, so it is new every cycle."""
+        r = _git(self.data, "rev-parse", "HEAD", check=False, timeout=15)
+        v = (r.stdout or "").strip().lower() if r.returncode == 0 else ""
+        return v if len(v) == 40 and all(c in "0123456789abcdef" for c in v) else None
+
     async def deploy(self) -> dict | None:
         if not self.deploy_enabled:
             return None
@@ -161,11 +169,16 @@ class GhaLoop:
             self.deploy_skip -= 1
             log.info("pages: skipping this cycle (back-off, %d more)", self.deploy_skip)
             return None
+        version = self.pages_build_version()
+        if version and version == self.last_deploy_version:
+            log.info("pages: data commit %s already deployed, waiting for the next cycle's commit", version[:8])
+            return None
         st = self.stage_site()
         name = f"pages-{os.environ.get('GITHUB_RUN_ATTEMPT', '1')}-{self.cycles}-{int(time.time())}"
         try:
             proc = await asyncio.create_subprocess_exec(
                 "node", str(ROOT / "tools" / "deploy-pages.mjs"), str(st), name, cwd=str(ROOT),
+                env={**os.environ, "PAGES_BUILD_VERSION": version or ""},
                 stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.STDOUT)
             out, _ = await asyncio.wait_for(proc.communicate(), 170)
             line = (out.decode().strip().splitlines() or ["{}"])[-1]
@@ -187,6 +200,7 @@ class GhaLoop:
         except Exception:
             log.exception("pages deploy log write failed")
         if res.get("ok"):
+            self.last_deploy_version = version
             self.stats["deploys_ok"] += 1; self.stats["deploy_ms"].append(res.get("ms"))
             self.deploy_fail_streak = 0
             log.info("pages deployed in %sms (artifact %s, deployment %s)", res.get("ms"), res.get("artifact_id"),

@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-13T14:16:31.675190+00:00",
+  "updated_at": "2026-11-13T14:16:52.525208+00:00",
   "venue": "OTHER-VENUE",
   "version": "other-venue-v1",
   "banner": "All books: 1 ATR / 1 ATR bracket, no model exits",
@@ -145,10 +145,10 @@
       "venue": "OTHER-VENUE",
       "label": "C-OPUS \u00b7 Other venue",
       "account": {
-        "balance": 98541.7881,
-        "equity": 98541.79,
+        "balance": 98443.5019,
+        "equity": 98410.84,
         "start_balance": 100000.0,
-        "open_pnl": 0.0,
+        "open_pnl": -32.66,
         "net_pnl": -1458.2119,
         "realized_pnl": -1458.2119,
         "wins": 1,
@@ -156,7 +156,33 @@
         "trades": 3,
         "stopped": 1
       },
-      "open_positions": [],
+      "open_positions": [
+        {
+          "id": 4,
+          "venue": "OTHER-VENUE",
+          "book": "C-OPUS",
+          "symbol": "BTCUSD",
+          "side": -1,
+          "qty": 2.84,
+          "entry": 69215.6,
+          "raw_quote": 69220.6,
+          "atr": 316.835,
+          "entry_time": "2026-11-13T14:16:33.081114+00:00",
+          "entry_fee": 98.2862,
+          "confidence": 0.55,
+          "model": "claude-opus-5-5",
+          "thinking_level": null,
+          "exit_mode": "uniform-1atr-v1",
+          "prompt_version": null,
+          "stop": 69535.0,
+          "target": 68895.0,
+          "stop_note": "uniform_1atr",
+          "mech_target_atr": 1.0,
+          "uniform_exit": "uniform-1atr-v1",
+          "deadline": "2026-11-13T15:46:33.081114+00:00",
+          "mark": 69227.1
+        }
+      ],
       "pending": [],
       "symbols": [
         "BTCUSD"

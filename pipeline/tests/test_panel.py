@@ -36,12 +36,16 @@ def test_ledger_tracks_open_mfe_mae_and_close(tmp_path):
 
     async def q(syms):
         return {"US100": {"price": px["v"]}}
-    led = PanelLedger(cfg, state_dir=st, logs_dir=lg, site_dir=tmp_path, quote_fn=q)
-    asyncio.run(led.tick(T0))
+    led = PanelLedger(cfg, state_dir=st, logs_dir=lg, site_dir=tmp_path, quote_fn=q, history_fn=False)
+    t1 = datetime(2026, 11, 12, 18, 6, tzinfo=UTC)
+    asyncio.run(led.tick(t1))
     px["v"] = 20015.0
-    asyncio.run(led.tick(T0))
+    asyncio.run(led.tick(t1))
     row = next(iter(led.s["rows"].values()))
     assert row["status"] == "OPEN" and row["max_pnl_usd"] == 200.0 and row["min_pnl_usd"] == -300.0
+    # first print was +$200 gross / +$196.50 net (NQ RT fees $3.50) — went positive first
+    assert row["went_positive_first"] == "yes" and row["first_cross"] == "pos"
+    assert row["first_cross_basis"] == "live_net_tick"
     # close lands in the trade log, position leaves the book
     (st / "lucid" / "account.json").write_text(json.dumps({"account": {"balance": 99196.5}, "positions": []}))
     d = lg / "2026-11-12"; d.mkdir(parents=True)
@@ -55,6 +59,8 @@ def test_ledger_tracks_open_mfe_mae_and_close(tmp_path):
     assert r["status"] == "CLOSED-stop" and r["net_at_close_usd"] == -803.5 and r["min_pnl_usd"] == -800.0
     main = next(p for p in site["performance"] if p["book"] == "MAIN" and p["venue"] == "LUCID")
     assert main["trades"] == 1 and main["losses"] == 1 and main["net_pnl_usd"] == -803.5
+    assert r["went_positive_first"] == "yes" and r["went_positive_first_label"] == "Yes"
+    assert main["went_positive_first"] == "100% (1/1)" and main["went_positive_first_yes"] == 1
     assert site["reset"]["token"] == "tok-1" and site["reset"]["at"].startswith("2026-11-12T18:00")
     assert {p["book"] for p in site["performance"]} >= {"MAIN", "C-OPUS-B", "DS-FLASH", "CB-BRACKET", "C-SONNET"}
 
@@ -69,7 +75,7 @@ def test_pre_reset_positions_are_ignored(tmp_path):
 
     async def q(syms):
         return {}
-    led = PanelLedger(cfg, state_dir=st, logs_dir=tmp_path / "logs", site_dir=tmp_path, quote_fn=q)
+    led = PanelLedger(cfg, state_dir=st, logs_dir=tmp_path / "logs", site_dir=tmp_path, quote_fn=q, history_fn=False)
     asyncio.run(led.tick(T0))
     assert led.s["rows"] == {}
 

@@ -158,18 +158,25 @@
       ` (token <b>${esc(r.token || '—')}</b>) · ${esc(P.exit_rule || '')}`;
     $('perfUpd').textContent = `updated ${hm(P.updated_at)} ${TZL}`;
     // performance: grouped by model, one Lucid line + one Other-venue line per book
+    const wpfVal = (x) => {
+      if (x.went_positive_first_label) return x.went_positive_first_label;
+      const v = x.went_positive_first;
+      return v === 'yes' ? 'Yes' : v === 'no' ? 'No' : v === '?' ? '?' : '—';
+    };
+    const wpfCls = v => v === 'Yes' ? 'pos' : (v === 'No' ? 'neg' : 'dim');
     let h = `<tr><th class="l">Book</th><th class="l">Venue</th><th>Balance</th><th>Net P&amp;L</th><th>Open P&amp;L</th>
-      <th>Closed</th><th>W / L</th><th>Win rate</th><th>Open</th></tr>`;
+      <th>Closed</th><th>W / L</th><th>Win rate</th><th>Went positive first</th><th>Open</th></tr>`;
     let lastModel = null;
     for (const p of P.performance || []) {
-      if (p.model !== lastModel) { lastModel = p.model; h += `<tr class="model"><td class="l" colspan="9">${esc(MODEL_NAME[p.model] || p.model)}</td></tr>`; }
+      if (p.model !== lastModel) { lastModel = p.model; h += `<tr class="model"><td class="l" colspan="10">${esc(MODEL_NAME[p.model] || p.model)}</td></tr>`; }
       const ov = p.venue !== 'LUCID';
       h += `<tr class="${ov ? 'ov' : ''}"><td class="l book">${ov ? '↳ ' : ''}${esc(p.book)}</td>
         <td class="l">${ov ? 'Other venue (BTC)' : 'Lucid'}</td>
         <td>${bal(p.balance)}</td><td class="${cls(p.net_pnl_usd)}">${usd(p.net_pnl_usd)}</td>
         <td class="${cls(p.open_pnl_usd)}">${p.open_positions ? usd(p.open_pnl_usd) : '—'}</td>
         <td>${p.trades}</td><td>${p.wins} / ${p.losses}</td>
-        <td>${p.win_rate == null ? '—' : (100 * p.win_rate).toFixed(0) + '%'}</td><td>${p.open_positions}</td></tr>`;
+        <td>${p.win_rate == null ? '—' : (100 * p.win_rate).toFixed(0) + '%'}</td>
+        <td>${p.went_positive_first == null ? '—' : esc(p.went_positive_first)}</td><td>${p.open_positions}</td></tr>`;
     }
     $('perf').innerHTML = h;
     const kv = (k, v, c = '') => `<div><div class="mc-k">${k}</div><div class="mc-v ${c}">${v}</div></div>`;
@@ -184,9 +191,11 @@
         <div class="mc-g">${kv('Balance', bal(p.balance))}${kv('Net P&amp;L', usd(p.net_pnl_usd), cls(p.net_pnl_usd))}
         ${kv('Open P&amp;L', p.open_positions ? usd(p.open_pnl_usd) : '—', cls(p.open_pnl_usd))}
         ${kv('Closed', p.trades)}${kv('W / L', p.wins + ' / ' + p.losses)}
-        ${kv('Win rate', p.win_rate == null ? '—' : (100 * p.win_rate).toFixed(0) + '%')}</div>
+        ${kv('Win rate', p.win_rate == null ? '—' : (100 * p.win_rate).toFixed(0) + '%')}
+        ${kv('Went positive first', p.went_positive_first == null ? '—' : esc(p.went_positive_first))}</div>
         ${o ? `<div class="mc-s" style="margin-top:8px">Other venue (BTC): ${bal(o.balance)} · net <span class="${cls(o.net_pnl_usd)}">${usd(o.net_pnl_usd)}</span>
-          · ${o.trades} closed (${o.wins}/${o.losses})${o.open_positions ? ` · ${o.open_positions} open <span class="${cls(o.open_pnl_usd)}">${usd(o.open_pnl_usd)}</span>` : ''}</div>` : ''}</div>`;
+          · ${o.trades} closed (${o.wins}/${o.losses})${o.open_positions ? ` · ${o.open_positions} open <span class="${cls(o.open_pnl_usd)}">${usd(o.open_pnl_usd)}</span>` : ''}
+          · went positive first ${o.went_positive_first == null ? '—' : esc(o.went_positive_first)}</div>` : ''}</div>`;
     }
     $('perfCards').innerHTML = pc;
     // positions
@@ -197,7 +206,8 @@
       $('posCards').innerHTML = `<div class="empty">No positions since the reset yet.</div>`;
     } else {
       let t = `<tr><th class="l">Book</th><th class="l">Model</th><th class="l">Symbol</th><th class="l">Side</th><th>Size</th>
-        <th class="l">Entry (${TZL})</th><th>Entry px</th><th>Max $ P&amp;L</th><th>Lowest $ P&amp;L</th><th class="l">Status</th>
+        <th class="l">Entry (${TZL})</th><th>Entry px</th><th>Max $ P&amp;L</th><th>Lowest $ P&amp;L</th>
+        <th class="l">Went positive first</th><th class="l">Status</th>
         <th>Now / exit px</th><th>P&amp;L at close</th></tr>`;
       for (const x of rows) {
         const st = x.status || 'OPEN', k = st === 'OPEN' ? 'OPEN' : st.replace('CLOSED-', '');
@@ -208,6 +218,7 @@
           <td class="l side ${esc(x.side)}">${esc(x.side)}</td><td>${qty(x.qty)}</td>
           <td class="l">${esc(dhm(x.entry_time))}</td><td>${px(x.entry)}</td>
           <td class="${cls(x.max_pnl_usd)}">${usd(x.max_pnl_usd)}</td><td class="${cls(x.min_pnl_usd)}">${usd(x.min_pnl_usd)}</td>
+          <td class="l ${wpfCls(wpfVal(x))}">${esc(wpfVal(x))}</td>
           <td class="l"><span class="st ${esc(k)}">${esc(label)}</span>${st === 'OPEN' && x.last_pnl_usd != null ? ` <span class="${cls(x.last_pnl_usd)}">${usd(x.last_pnl_usd)}</span>` : ''}</td>
           <td>${st === 'OPEN' ? px(x.last_price) : px(x.exit)}</td>
           <td class="${cls(x.net_at_close_usd)}">${st === 'OPEN' ? '—' : usd(x.net_at_close_usd)}</td></tr>`;
@@ -222,6 +233,7 @@
           <div class="mc-g">${kv('Entry ' + TZL, esc(dhm(x.entry_time)))}${kv('Entry px', px(x.entry))}
           ${kv(st === 'OPEN' ? 'Now' : 'Exit px', st === 'OPEN' ? px(x.last_price) : px(x.exit))}
           ${kv('Max $', usd(x.max_pnl_usd), cls(x.max_pnl_usd))}${kv('Lowest $', usd(x.min_pnl_usd), cls(x.min_pnl_usd))}
+          ${kv('Went positive first', esc(wpfVal(x)), wpfCls(wpfVal(x)))}
           ${st === 'OPEN' ? kv('Open P&amp;L', usd(x.last_pnl_usd), cls(x.last_pnl_usd)) : kv('Close P&amp;L', usd(x.net_at_close_usd), cls(x.net_at_close_usd))}</div></div>`;
       }).join('');
     }

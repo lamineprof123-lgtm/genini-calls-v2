@@ -15,6 +15,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from .risk import _atomic_write
+from . import first_cross as fc
 
 log = logging.getLogger("signals.panel")
 UTC = timezone.utc
@@ -85,7 +86,8 @@ def _read(p: Path):
 
 
 class PanelLedger:
-    def __init__(self, cfg: dict, *, state_dir=None, logs_dir=None, site_dir=None, quote_fn=None):
+    def __init__(self, cfg: dict, *, state_dir=None, logs_dir=None, site_dir=None, quote_fn=None,
+                 history_fn=None):
         self.cfg = cfg
         self.state = Path(state_dir or cfg["general"]["state_dir"])
         self.logs = Path(logs_dir or cfg["general"]["logs_dir"])
@@ -94,6 +96,8 @@ class PanelLedger:
         self.path = self.state / "panel" / "ledger.json"
         self.path.parent.mkdir(parents=True, exist_ok=True)
         self.quote_fn = quote_fn
+        # None = default Dukascopy/Binance fetch; False = skip (tests); callable = injected.
+        self.history_fn = history_fn
         self.reset = self._reset_marker()
         st = _read(self.path)
         if not st or st.get("reset_token") != self.reset.get("token"):
@@ -127,6 +131,32 @@ class PanelLedger:
             return float(p.get("entry_fee") or 0) * 2
         c = self.contracts.get(p.get("contract")) or {}
         return 2 * float(c.get("commission") or 0) * float(p.get("qty") or 1)
+
+    def fees_of(self, venue: str, p: dict, row: dict | None = None) -> float:
+        """Round-trip fees in USD. Prefer a recorded total, then entry_fee*2 / contract commission."""
+        src = {**(row or {}), **{k: v for k, v in (p or {}).items() if v is not None}}
+        if isinstance(src.get("fees"), (int, float)):
+            return float(src["fees"])
+        if isinstance(src.get("fees_usd"), (int, float)) and (venue != OV or src.get("fees_usd")):
+            # Use a previously stored value only as a fallback after recorded fees.
+            stored = float(src["fees_usd"])
+        else:
+            stored = None
+        if venue == OV:
+            if isinstance(src.get("entry_fee"), (int, float)):
+                return float(src["entry_fee"]) * 2
+            try:
+                from .other_venue import fee_usd
+                entry = float(src.get("entry") or 0)
+                qty = float(src.get("qty") or 1)
+                if entry and qty:
+                    return fee_usd(self.cfg, qty, entry) * 2
+            except Exception:
+                pass
+            return stored or 0.0
+        contract = src.get("contract") or (row or {}).get("contract")
+        qty = src.get("qty") or (row or {}).get("qty") or 1
+        return self.comm_rt(venue, {**src, "contract": contract, "qty": qty})
 
     # ---------------- adapters: open positions
     def open_positions(self) -> list[tuple[str, str, dict, dict]]:
@@ -234,8 +264,13 @@ class PanelLedger:
                        "target": p.get("target"), "atr": p.get("atr"), "status": "OPEN",
                        "max_pnl_usd": 0.0, "min_pnl_usd": 0.0, "last_pnl_usd": 0.0, "last_price": None,
                        "close_reason": None, "exit": None, "t_exit": None, "net_at_close_usd": None,
-                       "id": p.get("id")}
-        return rows[k]
+                       "fees_usd": None, "went_positive_first": None, "first_cross": None,
+                       "first_cross_at": None, "first_cross_basis": None, "id": p.get("id")}
+        row = rows[k]
+        fees = self.fees_of(venue, p, row)
+        if fees and not row.get("fees_usd"):
+            row["fees_usd"] = round(fees, 4)
+        return row
 
     def _merge_ext(self, row, venue, p, price=None) -> None:
         side = _side(p.get("side"))
@@ -302,10 +337,16 @@ class PanelLedger:
             row["status"] = "OPEN"
             if px is not None:
                 side = _side(p.get("side"))
-                g = side * (float(px) - float(row["entry"])) * float(p.get("qty") or 1) * self.pv(venue, p)
+                qty = float(p.get("qty") or row.get("qty") or 1)
+                pv = self.pv(venue, p)
+                g = side * (float(px) - float(row["entry"])) * qty * pv
                 row["last_pnl_usd"] = round(g, 2)
                 row["last_price"] = float(px)
                 row["last_at"] = _iso(now)
+                fees = self.fees_of(venue, p, row)
+                row["fees_usd"] = round(fees, 4)
+                fc.observe_print(row, float(px), now, side=side, entry=float(row["entry"]),
+                                 qty=qty, pv=pv, fees=fees, basis="live_net_tick")
             self._merge_ext(row, venue, p, px)
         for book, venue, r in self.closes():
             row = self._row(book, venue, r)
@@ -321,13 +362,97 @@ class PanelLedger:
             row["last_pnl_usd"] = r.get("gross") if r.get("gross") is not None else r.get("net")
             if r.get("id") is not None:
                 row["id"] = r.get("id")
+            fees = self.fees_of(venue, r, row)
+            row["fees_usd"] = round(fees, 4)
             self._merge_ext(row, venue, {**r, "contract": r.get("contract") or row.get("contract")}, r.get("exit"))
+        await self._backfill(now)
+        # Exit print is a last-resort crossing only if the live path and the backfill left it unresolved.
+        for book, venue, r in self.closes():
+            row = self._row(book, venue, r)
+            if row is None or fc.resolved(row) or r.get("exit") is None:
+                continue
+            fc.observe_print(row, float(r["exit"]), _dt(r.get("t_exit")) or now,
+                             side=_side(r.get("side") or row.get("side")),
+                             entry=float(row["entry"]), qty=float(r.get("qty") or row.get("qty") or 1),
+                             pv=self.pv(venue, {**r, "contract": r.get("contract") or row.get("contract"),
+                                                "symbol": row["symbol"]}),
+                             fees=float(row.get("fees_usd") or self.fees_of(venue, r, row)),
+                             basis="exit_print")
         # A row that vanished from the book without a close record yet: keep OPEN until its log row lands.
         self.s["updated_at"] = _iso(now)
         _atomic_write(self.path, self.s)
         site = self.site_payload(now)
         _atomic_write(self.site / "panel.json", site)
         return {"open": len(live_keys), "rows": len(self.s["rows"])}
+
+    async def _backfill(self, now: datetime) -> None:
+        """Fill went-positive-first from M1 (and ticks if needed) for rows not yet resolved."""
+        if self.history_fn is False:
+            return
+        need = [r for r in self.s["rows"].values()
+                if not fc.resolved(r) and not r.get("first_cross_backfill")]
+        if not need:
+            return
+        by_sym: dict[str, list[dict]] = {}
+        for r in need:
+            if r.get("symbol") and r.get("entry_time"):
+                by_sym.setdefault(r["symbol"], []).append(r)
+        for sym, rows in by_sym.items():
+            starts = [fc._dt(r["entry_time"]) for r in rows]
+            ends = [fc._dt(r.get("t_exit")) or now for r in rows]
+            start, end = min(starts), max(ends)
+            m1 = ticks = None
+            try:
+                if callable(self.history_fn):
+                    path = await self.history_fn(sym, start, end)
+                    path = path or {}
+                    m1, ticks = path.get("m1"), path.get("ticks")
+                else:
+                    m1, _src = await fc.fetch_m1_range(sym, start, end, self.cfg)
+                    try:
+                        ticks, _ts = await fc.fetch_tick_range(sym, start, end, self.cfg)
+                    except Exception as e:
+                        log.warning("first-cross tick backfill %s failed: %s", sym, e)
+                        ticks = None
+            except Exception as e:
+                log.warning("first-cross backfill %s failed: %s", sym, e)
+                continue
+            # First pass without ticks (or with whatever the injected fn already gave us).
+            rerun = []
+            for r in rows:
+                res = fc.first_cross_from_history(
+                    m1, side=1 if r.get("side") == "LONG" else -1,
+                    entry=float(r["entry"]), qty=float(r.get("qty") or 1),
+                    pv=self.pv(r["venue"], r), fees=float(r.get("fees_usd") or self.fees_of(r["venue"], r, r) or 0),
+                    entry_time=r.get("entry_time"), exit_time=r.get("t_exit"),
+                    ticks=ticks, exit_price=r.get("exit") or r.get("last_price"))
+                if res.get("first_cross") == "ambiguous" or res.get("first_cross") is None:
+                    rerun.append(r)
+                else:
+                    fc.apply_result(r, res)
+                    r["first_cross_backfill"] = "done"
+            if rerun and ticks is None and self.history_fn is not False:
+                try:
+                    if callable(self.history_fn):
+                        path = await self.history_fn(sym, start, end, want_ticks=True) if                             _accepts_want_ticks(self.history_fn) else None
+                        ticks = (path or {}).get("ticks") if path else None
+                    else:
+                        ticks, _src = await fc.fetch_tick_range(sym, start, end, self.cfg)
+                except TypeError:
+                    ticks = None
+                except Exception as e:
+                    log.warning("first-cross tick backfill %s failed: %s", sym, e)
+                    ticks = None
+            for r in rerun:
+                res = fc.first_cross_from_history(
+                    m1, side=1 if r.get("side") == "LONG" else -1,
+                    entry=float(r["entry"]), qty=float(r.get("qty") or 1),
+                    pv=self.pv(r["venue"], r), fees=float(r.get("fees_usd") or self.fees_of(r["venue"], r, r) or 0),
+                    entry_time=r.get("entry_time"), exit_time=r.get("t_exit"),
+                    ticks=ticks, exit_price=r.get("exit") or r.get("last_price"))
+                fc.apply_result(r, res)
+                # Ambiguous without ticks stays "?". A full window with neither side is "—" and done.
+                r["first_cross_backfill"] = "done"
 
     # ---------------- site
     def site_payload(self, now: datetime) -> dict:
@@ -344,19 +469,40 @@ class PanelLedger:
                 net = round(sum(float(r["net_at_close_usd"]) for r in closed), 2)
                 op = round(sum(float(r.get("last_pnl_usd") or 0) for r in opn), 2)
                 b = bal.get((book, venue))
+                wpf = fc.book_share(rs)
+                for r in rs:
+                    r["went_positive_first_label"] = fc.display_of(r)
                 perf.append({"book": book, "venue": venue, "model": model, "label": label,
                              "balance": round(float(b), 2) if b is not None else round(START + net, 2),
                              "start_balance": START, "net_pnl_usd": net, "open_pnl_usd": op,
                              "trades": len(closed), "wins": wins, "losses": losses,
                              "win_rate": round(wins / len(closed), 3) if closed else None,
-                             "open_positions": len(opn)})
+                             "open_positions": len(opn), **wpf})
         return {"updated_at": _iso(now), "paper_only": True,
                 "reset": {"token": self.reset.get("token"), "at": self.reset.get("at")},
                 "exit_rule": "uniform-1atr-v1: 1 ATR stop · 1 ATR target · 90-min cap (all books, no model exits)",
                 "pnl_note": ("Max / lowest $ P&L: gross mark-to-market reached while open (live quote every "
                              f"{int(self.pc.get('poll_seconds', 15))} s, plus the book's own recorded excursion and "
-                             "the exit price). P&L at close is net of commissions/fees."),
+                             "the exit price). P&L at close is net of commissions/fees. "
+                             "Went positive first: net unrealized P&L (gross minus round-trip fees) rose above $0 "
+                             "before gross fell below $0. The fee cushion (gross between $0 and fees) is neither "
+                             "side; the entry fill is not a crossing. Open positions that have not yet done either "
+                             "show —. If both sides occur in the same M1 bar and tick order is unavailable, the "
+                             "cell is ?. Going forward this uses the 15s live-quote poll (same path as the exit "
+                             "checks). Already-open / already-closed positions are backfilled from the same 15s "
+                             "last-print path reconstructed from Dukascopy or Binance ticks when available, "
+                             "otherwise from M1 bars; a bar that hits both sides with no 15s path is ?."),
+                "wpf_basis": ("net_usd = gross - round-trip fees; live_net_tick / tick_15s = 15s last-print path; "
+                              "m1_ohlc = M1 fallback"),
                 "performance": perf, "positions": rows}
+
+
+def _accepts_want_ticks(fn) -> bool:
+    try:
+        import inspect
+        return "want_ticks" in inspect.signature(fn).parameters
+    except Exception:
+        return False
 
 
 def _prev_day(day: str) -> str:

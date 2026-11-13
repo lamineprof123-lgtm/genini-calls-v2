@@ -367,7 +367,7 @@ class Eval80Book(BracketBook):
         now = now or getattr(snap, "now", None) or datetime.now(UTC)
         g = g or {}
         sig_at = g.get("signal_at") or now.astimezone(UTC).isoformat()
-        out = {"book": self.BOOK_NAME, "source_book": SOURCE_BOOK, "model": self.b["model"],
+        out = {"book": self.BOOK_NAME, "source_book": self.SOURCE_BOOK, "model": self.b["model"],
                "thinking_level": self.b["thinking_level"], "ok": bool(g.get("ok")), "signal_at": sig_at,
                "eval_status": self.ev.get("status")}
         try:
@@ -393,12 +393,12 @@ class Eval80Book(BracketBook):
             out["signals"] = [{k: v.get(k) for k in ("symbol", "action", "confidence", "atr", "entry")} for v in validated]
             out["score_signals"] = [{**v, "signal_at": sig_at, "kind": "entry", "traded": v["symbol"] in traded,
                                      "book": self.BOOK_NAME, "model": self.b["model"], "thinking_level": self.b["thinking_level"],
-                                     "prompt_version": "system_prompt.j2"}
+                                     "prompt_version": v.get("prompt_version") or "system_prompt.j2"}
                                     for v in validated] if g.get("ok") else []
             c["last"] = {"t": sig_at, "ok": bool(g.get("ok")), "signals": len(validated), "queued": out["queued"],
                          "eval_status": self.ev.get("status")}
             self._jsonl(self.SIGNALS_LOG, now, {
-                "t": sig_at, "book": self.BOOK_NAME, "source_book": SOURCE_BOOK, "model": self.b["model"],
+                "t": sig_at, "book": self.BOOK_NAME, "source_book": self.SOURCE_BOOK, "model": self.b["model"],
                 "thinking_level": self.b["thinking_level"], "snapshot_id": getattr(snap, "snapshot_id", None),
                 "ok": bool(g.get("ok")), "skipped": out.get("skipped"), "error": g.get("error"),
                 "missed_held_by_glow80": out["missed_held_by_glow80"], "eval": self.eval_view(now),

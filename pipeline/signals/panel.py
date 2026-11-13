@@ -30,6 +30,9 @@ BOOKS = [
     ("G-LOW-80", "gemini-3.8-flash", "Gemini flash · G-LOW-80 (own call, thinking low, min 0.70)"),
     ("EVAL-80", "gemini-3.8-flash", "Gemini flash · EVAL-80 (G-LOW-80's call, min 0.80, 0.8 stop / 1.0 target ATR, ~$450, Lucid eval)"),
     ("EVAL-R4", "gemini-3.8-flash", "Gemini flash · EVAL-R4 (EVAL-80 + R4 trend filter: H1 trend ≥2.7 ATR, <3 ATR from EMA20, no chase, <3.5 ATR from VWAP)"),
+    ("G-P5", "gemini-3.8-flash", "Gemini flash · G-P5 (NEW: P5 prompt, low thinking, min 0.72, P5 gates, 0.8 / 1.0 ATR, 30-min dead cut)"),
+    ("G-P5-EVAL", "gemini-3.8-flash", "Gemini flash · G-P5-EVAL (NEW: G-P5's call, min 0.75, P5 gates, 0.8 / 1.0 ATR, ~$450, Lucid eval)"),
+    ("G-P5-EVENT", "gemini-3.8-flash", "Gemini flash · G-P5-EVENT (NEW: G-P5, Gemini called only when something happened: level touch ≤0.25 ATR, RVOL ≥2, ATR ratio ≥1.3)"),
     ("CB-BRACKET", "gemini-4-carbon", "Carbon · CB-BRACKET"),
     ("CB-RUNNER", "gemini-4-carbon", "Carbon · CB-RUNNER"),
     ("C-OPUS", "claude-opus-5-5", "Claude Opus · C-OPUS"),
@@ -40,7 +43,10 @@ BOOKS = [
 MODEL_OF = {b: m for b, m, _ in BOOKS}
 LABEL_OF = {b: l for b, _, l in BOOKS}
 LUCID, OV = "LUCID", "OTHER-VENUE"
-LUCID_ONLY = {"EVAL-80", "EVAL-R4"}          # no other-venue (BTC) account
+LUCID_ONLY = {"EVAL-80", "EVAL-R4", "G-P5", "G-P5-EVAL", "G-P5-EVENT"}   # no other-venue (BTC) account
+# New P5 books (13 Nov) start after the shared reset: the panel shows them since their own account's created_at.
+# book -> (state subdir, site file with an "eval" block or None)
+OWN_RESET = {"G-P5": ("gp5", None), "G-P5-EVAL": ("gp5eval", "gp5eval.json"), "G-P5-EVENT": ("gp5event", None)}
 
 
 def _dt(s) -> datetime | None:
@@ -183,6 +189,9 @@ class PanelLedger:
             out.append(("EVAL-80", LUCID, p))
         for p in (_read(S / "evalr4" / "account.json") or {}).get("positions") or []:
             out.append(("EVAL-R4", LUCID, p))
+        for b, (d, _f) in OWN_RESET.items():
+            for p in (_read(S / d / "account.json") or {}).get("positions") or []:
+                out.append((b, LUCID, p))
         for b in ("CB-BRACKET", "CB-RUNNER"):
             for p in (_read(S / "carbon" / f"{b}.json") or {}).get("positions") or []:
                 out.append((b, LUCID, p))
@@ -210,6 +219,8 @@ class PanelLedger:
         out[("G-LOW-80", LUCID)] = (_read(S / "glow80" / "account.json") or {}).get("balance")
         out[("EVAL-80", LUCID)] = (_read(S / "eval80" / "account.json") or {}).get("balance")
         out[("EVAL-R4", LUCID)] = (_read(S / "evalr4" / "account.json") or {}).get("balance")
+        for b, (d, _f) in OWN_RESET.items():
+            out[(b, LUCID)] = (_read(S / d / "account.json") or {}).get("balance")
         for b in ("CB-BRACKET", "CB-RUNNER"):
             out[(b, LUCID)] = (_read(S / "carbon" / f"{b}.json") or {}).get("balance")
         for b in ("C-OPUS", "C-SONNET"):
@@ -256,6 +267,10 @@ class PanelLedger:
         for r in self._log_rows("evalr4_trades.jsonl"):
             if r.get("event", "close") == "close":
                 out.append(("EVAL-R4", LUCID, r))
+        for b, (d, _f) in OWN_RESET.items():
+            for r in self._log_rows(f"{d}_trades.jsonl"):
+                if r.get("event", "close") == "close":
+                    out.append((b, LUCID, r))
         for r in self._log_rows("carbon_trades.jsonl"):
             if r.get("event", "close") == "close" and r.get("book") in ("CB-BRACKET", "CB-RUNNER"):
                 out.append((r["book"], LUCID, r))
@@ -271,9 +286,19 @@ class PanelLedger:
                 out.append((r["book"], OV, {**r, "entry_time": r.get("entry_time") or r.get("t_entry")}))
         return out
 
+    def book_since(self, book: str) -> datetime | None:
+        """Own start time for the books in OWN_RESET (their account's created_at), else the shared reset."""
+        base = self.since()
+        own = OWN_RESET.get(book)
+        if own:
+            t = _dt((_read(self.state / own[0] / "account.json") or {}).get("created_at"))
+            if t is not None and (base is None or t > base):
+                return t
+        return base
+
     # ---------------- update
     def _row(self, book, venue, p) -> dict | None:
-        since = self.since()
+        since = self.book_since(book)
         et = _dt(p.get("entry_time"))
         if since is not None and (et is None or et < since):
             return None
@@ -490,6 +515,9 @@ class PanelLedger:
         if e.get("filter") is not None:
             f = e["filter"]
             out["filter"] = {k: f.get(k) for k in ("seen", "passed", "filtered_out", "no_data", "fail_by")}
+        if e.get("trigger") is not None:
+            out["trigger"] = dict(e["trigger"])
+            out["trigger"].pop("last", None)
         return out
 
     # ---------------- site
@@ -516,6 +544,14 @@ class PanelLedger:
                              "trades": len(closed), "wins": wins, "losses": losses,
                              "win_rate": round(wins / len(closed), 3) if closed else None,
                              "open_positions": len(opn), **wpf})
+                if book in OWN_RESET:
+                    perf[-1].update({"since": _iso(self.book_since(book)), "own_reset": True})
+                    if OWN_RESET[book][1] and venue == LUCID:
+                        perf[-1]["eval"] = self.eval_status(OWN_RESET[book][1])
+                    if book == "G-P5-EVENT":
+                        tv = (_read(self.site / "gp5event.json") or {}).get("trigger")
+                        if tv:
+                            perf[-1]["trigger"] = {k: v for k, v in tv.items() if k != "last"}
                 if book == "EVAL-80" and venue == LUCID:
                     perf[-1]["eval"] = self.eval_status()
                 if book == "EVAL-R4" and venue == LUCID:
@@ -523,7 +559,8 @@ class PanelLedger:
         return {"updated_at": _iso(now), "paper_only": True,
                 "reset": {"token": self.reset.get("token"), "at": self.reset.get("at")},
                 "exit_rule": ("uniform-1atr-v1: 1 ATR stop · 1 ATR target · 90-min cap (all books, no model exits; "
-                              "EVAL-80 / EVAL-R4: 0.8 ATR stop · 1 ATR target · 90-min cap)"),
+                              "EVAL-80 / EVAL-R4: 0.8 ATR stop · 1 ATR target · 90-min cap; new P5 books G-P5 / "
+                              "G-P5-EVAL / G-P5-EVENT: 0.8 ATR stop · 1 ATR target · 90-min cap · 30-min dead cut)"),
                 "pnl_note": ("Max / lowest $ P&L: gross mark-to-market reached while open (live quote every "
                              f"{int(self.pc.get('poll_seconds', 15))} s, plus the book's own recorded excursion and "
                              "the exit price). P&L at close is net of commissions/fees. "

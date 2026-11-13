@@ -116,6 +116,10 @@ entry_thinking_level = "high"         # MAIN flash entry scans only (t244u); tag
 # Carbon / Claude); the 2-min loop still refreshes prices, positions, bracket exits and the panel without a call.
 # "cycle" = legacy: one Gemini call every 2-min cycle (~720/day).
 main_entry_cadence = "m15"
+# User (13 Nov 2026): MAIN (and the 1-strike / nostop / bracket copies of its signals) calls Gemini and opens new
+# trades only 16:40-01:00 Dubai = 12:40-21:00 UTC (half-open). Outside: no MAIN Gemini call, no new entries; open
+# positions are still managed by the bracket and the 01:45 Dubai flat rule. Remove the key = always open.
+main_window_utc = ["12:40", "21:00"]
 temperature = 0.2                     # sent ONLY to pre-3.x models (3.6+ deprecate sampling params)
 timeout_seconds = 110                 # per entry request; raised for thinking=high + XAGUSD/BTCUSD charts, inside 2-min cadence
 max_attempts_per_model = 2
@@ -801,6 +805,71 @@ locked_mll_balance = 100100.0
 dll = 1800.0
 check_seconds = 18
 reset_token = "evalr4-v1"
+
+# ---------------------------------------------------------------------------------------------------------------
+# G-P5 / G-P5-EVAL / G-P5-EVENT (signals/gp5.py, signals/p5.py, 13 Nov 2026). PAPER ONLY. Gemini's P5 spec as
+# three NEW books, each on its own fresh $100k; NO existing book is changed or reset. All: P5 prompt
+# (templates/system_prompt_p5.j2) + the five P5 context fields, gemini-3.8-flash thinking low, P5 entry gates,
+# XAUUSD / EURUSD / US100 / XAGUSD only (no GBPUSD / BTC), 0.8 ATR stop / 1.0 ATR target / 90-min cap, 30-min
+# dead-trade cut. G-P5: own call every M15 close, min 0.72. G-P5-EVAL: G-P5's response (no own call), min 0.75,
+# LucidPro 100K eval rules as EVAL-80. G-P5-EVENT: G-P5's rules, Gemini called only for symbols whose bar fired a
+# trigger (level within 0.25 ATR / RVOL >= 2 / ATR ratio >= 1.3); reuses G-P5's response when the request is identical.
+[gp5]
+enabled = true
+model = "gemini-3.8-flash"
+thinking_level = "low"
+min_confidence = 0.72
+symbols = ["XAUUSD", "EURUSD", "US100", "XAGUSD"]
+scan_symbols = ["XAUUSD", "EURUSD", "US100", "XAGUSD"]
+other_venue_symbols = []
+stop_atr = 0.8
+target_atr = 1.0
+max_hold_minutes = 90
+dead_cut_minutes = 30
+p5 = true
+p5_gates = true
+send_held = true
+risk_usd = 900.0
+daily_loss_usd = 1800.0
+start_balance = 100000.0
+reset_token = "p5-2026-11-13"
+
+[gp5eval]
+enabled = true
+source_book = "G-P5"
+min_confidence = 0.75
+symbols = ["XAUUSD", "EURUSD", "US100", "XAGUSD"]
+stop_atr = 0.8
+target_atr = 1.0
+max_hold_minutes = 90
+dead_cut_minutes = 30
+p5_gates = true
+risk_usd = 450.0
+start_balance = 100000.0
+profit_target = 6000.0
+mll = 3000.0
+dll = 1800.0
+reset_token = "p5-2026-11-13"
+
+[gp5event]
+enabled = true
+model = "gemini-3.8-flash"
+thinking_level = "low"
+min_confidence = 0.72
+symbols = ["XAUUSD", "EURUSD", "US100", "XAGUSD"]
+scan_symbols = ["XAUUSD", "EURUSD", "US100", "XAGUSD"]
+other_venue_symbols = []
+stop_atr = 0.8
+target_atr = 1.0
+max_hold_minutes = 90
+dead_cut_minutes = 30
+p5 = true
+p5_gates = true
+send_held = true
+risk_usd = 900.0
+daily_loss_usd = 1800.0
+start_balance = 100000.0
+reset_token = "p5-2026-11-13"
 
 # ---------------------------------------------------------------------------------------------------------------
 # OTHER-VENUE (signals/other_venue.py). PAPER ONLY. Parallel $100k CFD/spot sub-account on every model's book

@@ -20,6 +20,9 @@ best in the 0.8-0.9 (+$204 avg) and 0.9-1.0 (+$844) brackets. This book re-runs 
            (0.3 ATR fill check). Daily loss stop: no new entries after -$1,800 net on the Lucid trading day.
   Logs     logs/<day>/glow80_signals.jsonl (every call, every signal), glow80_trades.jsonl, glow80_events.jsonl,
            m15_calls.jsonl (book G-LOW-80, thinking_level low) and the universal signal scorer.
+P5 hooks (13 Nov 2026, signals/p5.py, used ONLY by the new G-P5 / G-P5-EVENT subclasses in signals/gp5.py; the
+G-LOW-80 config leaves them off, so this book is unchanged): `p5` = P5 prompt + five P5 context fields + P5 gate /
+event-trigger stamps on every validated signal; `send_held` = send every scan symbol even when held.
 State: state/glow80/account.json. Site: glow80.json at the data root; panel.json lists it as its own book.
 """
 from __future__ import annotations
@@ -52,6 +55,12 @@ DEFAULTS = {
     "max_chase_atr": 0.3,              # the 0.3 ATR fill check (vs the live price sent to the model)
     "daily_loss_usd": 1800.0,
     "reset_token": "glow80-v1",
+    "p5": False,
+    "send_held": False,
+    "history_bars": 1500,          # H1 EMA20/50 history for h1_ema20_50_spread_atr (P5 only)
+    "min_history_bars": 300,
+    "seed_timeout_s": 180,
+    "seed_retry_s": 600,
 }
 
 
@@ -70,6 +79,9 @@ def gemini_low_cfg(cfg: dict, g80: dict) -> dict:
     g["timeout_seconds"] = g80["timeout_seconds"]
     g["max_attempts_per_model"] = g80["max_attempts_per_model"]
     g["retry_budget_seconds"] = g80["retry_budget_seconds"]
+    if g80.get("p5"):
+        from .p5 import PROMPT_TEMPLATE
+        g["prompt_template"] = PROMPT_TEMPLATE
     return c
 
 
@@ -87,20 +99,28 @@ class GLow80Book(BracketBook):
     TRADES_LOG = "glow80_trades.jsonl"
     EVENTS_LOG = "glow80_events.jsonl"
     SITE_FILE = "glow80.json"
+    SIGNALS_LOG = "glow80_signals.jsonl"
 
     def __init__(self, cfg: dict, io_lock: asyncio.Lock | None = None, *, call=None, ov_hub=None, **kw):
+        bars_fetch = kw.pop("bars_fetch", None)
         super().__init__(cfg, io_lock, **kw)
+        kw["bars_fetch"] = bars_fetch
         self._call = call          # injectable for tests: async (cfg, payloads, pngs) -> gemini resp dict
         self._ov_hub = ov_hub      # injectable; default = other_venue.get_hub(cfg)
         self.s.setdefault("day", {"day": None, "net": 0.0})
         self.s.setdefault("calls", {"ok": 0, "failed": 0, "skipped": 0, "tokens": {}})
+        self.hist = None
+        self._p5_fields, self._p5_triggers = {}, {}
+        if self.b.get("p5"):
+            from .evalr4 import BarHistory
+            self.hist = BarHistory(cfg, [s for s in self.b["scan_symbols"]], self.b, fetch=kw.get("bars_fetch"))
 
     def load_cfg(self, cfg: dict) -> dict:
         return glow80_cfg(cfg)
 
     def fresh(self) -> dict:
         s = super().fresh()
-        s.update({"book": BOOK, "day": {"day": None, "net": 0.0},
+        s.update({"book": self.BOOK_NAME, "day": {"day": None, "net": 0.0},
                   "calls": {"ok": 0, "failed": 0, "skipped": 0, "tokens": {}}})
         return s
 
@@ -129,7 +149,7 @@ class GLow80Book(BracketBook):
     def held_any(self, sym: str) -> bool:
         if sym in self.b["other_venue_symbols"]:
             hub = self.hub()
-            return bool(hub is not None and hub.held(BOOK, sym))
+            return bool(hub is not None and hub.held(self.BOOK_NAME, sym))
         return self.held(sym)
 
     def hub(self):
@@ -150,7 +170,7 @@ class GLow80Book(BracketBook):
         for s in self.b["scan_symbols"]:
             if s not in snap_symbols:
                 why[s] = "not in snapshot"
-            elif self.held_any(s):
+            elif self.held_any(s) and not self.b.get("send_held"):
                 why[s] = "held"
             elif s not in self.b["other_venue_symbols"] and not lucid_ok:
                 why[s] = "outside Lucid session"
@@ -193,15 +213,55 @@ class GLow80Book(BracketBook):
                     v[k] = ctx[k]
             v["thinking_level"] = self.b["thinking_level"]
             v["model"] = self.b["model"]
-            v["book"] = BOOK
+            v["book"] = self.BOOK_NAME
+            if self.b.get("p5"):
+                self._p5_stamp(v, ctx)
         return validated, obj, perr
+
+    # ------------------------------------------------------------------ P5
+    def _p5_stamp(self, v: dict, ctx: dict) -> None:
+        from .p5 import validate_entry_gates, public_fields, PROMPT_VERSION
+        f = self._p5_fields.get(v["symbol"]) or {}
+        v["p5"] = public_fields(f)
+        v["p5_internal"] = {k: x for k, x in (f.get("_p5") or {}).items() if k not in ("price",)}
+        v["prompt_version"] = PROMPT_VERSION
+        if v.get("action") in ("BUY", "SELL"):
+            v["p5_gate"] = validate_entry_gates(v["action"], ctx, f, self.b.get("gates"))
+        tr = self._p5_triggers.get(v["symbol"])
+        if tr is not None:
+            v["p5_trigger"] = tr
+
+    async def _p5_prepare(self, snap, now: datetime) -> None:
+        """Five P5 fields + event trigger per snapshot symbol (H1 from the seeded M15 history)."""
+        from .p5 import compute_fields, event_trigger
+        self._p5_fields, self._p5_triggers = {}, {}
+        if self.hist is not None:
+            try:
+                await self.hist.update(snap, now)
+            except Exception:
+                log.exception("%s P5 history update failed (fields fall back to the snapshot)", self.BOOK_NAME)
+        for p in getattr(snap, "payloads", None) or []:
+            sym = p.get("symbol")
+            if sym not in self.b["scan_symbols"]:
+                continue
+            try:
+                f = compute_fields(p, self.hist.df.get(sym) if self.hist is not None else None)
+                self._p5_fields[sym] = f
+                self._p5_triggers[sym] = event_trigger(p, f, self.b.get("trigger"))
+            except Exception as e:
+                log.exception("P5 fields %s failed", sym)
+                self._p5_fields[sym] = {"_p5": {"error": f"{type(e).__name__}: {e}"}}
 
     async def on_snapshot(self, snap, now: datetime | None = None) -> dict:
         """One LOW-thinking Gemini call on the shared snapshot, then intake. Never raises."""
         now = now or getattr(snap, "now", None) or datetime.now(UTC)
         t_call = datetime.now(UTC)
-        out = {"book": BOOK, "model": self.b["model"], "thinking_level": self.b["thinking_level"], "ok": False}
+        out = {"book": self.BOOK_NAME, "model": self.b["model"], "thinking_level": self.b["thinking_level"], "ok": False}
         try:
+            self._p5_fields, self._p5_triggers = {}, {}
+            if self.b.get("p5"):
+                await self._p5_prepare(snap, now)
+            self._snap = snap
             snap_syms = [p["symbol"] for p in snap.payloads]
             syms, why = self.scan_symbols(snap_syms, now)
             out["excluded"] = why
@@ -211,6 +271,9 @@ class GLow80Book(BracketBook):
                 await self.persist()
                 return out
             payloads = snap.slice(syms)
+            if self.b.get("p5"):
+                from .p5 import with_fields
+                payloads = with_fields(payloads, self._p5_fields)
             pngs = snap.charts_for(syms)
             payloads = [p for p in payloads if p["symbol"] in pngs]
             if not payloads:
@@ -257,16 +320,20 @@ class GLow80Book(BracketBook):
             score = []
             for v in validated:
                 score.append({**v, "signal_at": sig_at, "kind": "entry", "traded": v["symbol"] in traded,
-                              "prompt_version": "system_prompt.j2", "book": BOOK,
+                              "prompt_version": v.get("prompt_version") or "system_prompt.j2", "book": self.BOOK_NAME,
                               "model_version": resp.get("model_version")})
             out["score_signals"] = score if ok else []
             out["validated"] = validated        # in-memory only: shared with EVAL-80 (no extra Gemini call)
+            out["p5_triggers"] = dict(self._p5_triggers)
+            out["p5_fields"] = {k: {kk: vv for kk, vv in f.items() if kk != "_p5"} for k, f in self._p5_fields.items()}
+            out["prompt_version"] = "p5" if self.b.get("p5") else "system_prompt.j2"
             out["signal_at"] = sig_at
             out["signals"] = [{k: v.get(k) for k in ("symbol", "action", "confidence", "session", "atr",
                                                     "entry", "live_price")} for v in validated]
-            self._jsonl("glow80_signals.jsonl", now, {
-                "t": sig_at, "book": BOOK, "model": self.b["model"], "model_version": resp.get("model_version"),
+            self._jsonl(self.SIGNALS_LOG, now, {
+                "t": sig_at, "book": self.BOOK_NAME, "model": self.b["model"], "model_version": resp.get("model_version"),
                 "thinking_level": self.b["thinking_level"], "snapshot_id": getattr(snap, "snapshot_id", None),
+                "prompt_version": out["prompt_version"], "p5_triggers": out["p5_triggers"],
                 "snapshot_hash": getattr(snap, "snapshot_hash", None), "ok": ok, "error": out["error"],
                 "latency_s": out["latency_s"], "usage": out["usage"], "attempts": resp.get("attempts"),
                 "market_summary": (obj or {}).get("market_summary"), "excluded": why,
@@ -278,7 +345,7 @@ class GLow80Book(BracketBook):
                 await self.persist()
             return out
         except Exception as e:
-            log.exception("G-LOW-80 on_snapshot failed (other books unaffected)")
+            log.exception("%s on_snapshot failed (other books unaffected)", self.BOOK_NAME)
             out["error"] = f"{type(e).__name__}: {e}"
             return out
 
@@ -316,7 +383,7 @@ class GLow80Book(BracketBook):
                 if qq and qq.get("price") is not None:
                     px = float(qq["price"])
             except Exception as e:
-                log.warning("G-LOW-80 BTC fill quote failed: %s", e)
+                log.warning("%s BTC fill quote failed: %s", self.BOOK_NAME, e)
             px = px if px is not None else (float(ref) if ref is not None else None)
             if px is not None and ref is not None and side * (px - float(ref)) > float(self.b["max_chase_atr"]) * float(v["atr"]):
                 why = "chase > max_chase_atr"
@@ -325,7 +392,7 @@ class GLow80Book(BracketBook):
                 out.append({"skipped": why, "symbol": v["symbol"]})
                 continue
             self.s["stats"]["signals_seen"] += 1
-            r = hub.intake_signal(BOOK, {**v, "model": self.b["model"]}, now, quote=px)
+            r = hub.intake_signal(self.BOOK_NAME, {**v, "model": self.b["model"]}, now, quote=px)
             try:
                 hub.persist()
             except Exception:

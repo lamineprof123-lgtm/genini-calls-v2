@@ -21,7 +21,7 @@ from .pipeline import next_boundary, run_once, main_m15_only, main_m15_last_clos
 from .site import write_status
 
 log = logging.getLogger("signals.gha")
-SITE_JSON = ("status.json", "latest_signal.json", "history.json", "lucid.json", "claude.json", "bracket.json", "glow80.json", "eval80.json", "evalr4.json",
+SITE_JSON = ("status.json", "latest_signal.json", "history.json", "lucid.json", "claude.json", "bracket.json", "glow80.json", "eval80.json", "evalr4.json", "gp5.json", "gp5eval.json", "gp5event.json",
              "carbon.json", "deepseek.json", "signal_scores.json", "opus_b.json", "m15_scan.json", "other_venue.json",
              "panel.json")
 DATA_JSON = ("books.json",)  # committed to the data branch only (not deployed to Pages)
@@ -88,6 +88,10 @@ class GhaLoop:
         self.eval80_task: asyncio.Task | None = None
         self.evalr4 = None                   # EVAL-R4 = EVAL-80 + R4 entry filter (signals/evalr4.py)
         self.evalr4_task: asyncio.Task | None = None
+        self.gp5 = None                      # G-P5 / G-P5-EVAL / G-P5-EVENT (signals/gp5.py): NEW P5 books
+        self.gp5eval = None
+        self.gp5event = None
+        self.gp5_tasks: list[asyncio.Task] = []
         self.other_venue = None
         self.other_venue_task: asyncio.Task | None = None
         for sub in ("state", "logs"):
@@ -334,6 +338,7 @@ class GhaLoop:
         self.start_glow80()
         self.start_eval80()
         self.start_evalr4()
+        self.start_gp5()
         self.start_m15_scan()
         self.start_panel()
         while True:
@@ -674,7 +679,7 @@ class GhaLoop:
                 self.cfg, io_lock=self.io_lock,
                 claude=self.claude, carbon=self.carbon,
                 deepseek=self.deepseek, opus_b=self.opus_b, scorer=self.scorer, glow80=self.glow80, eval80=self.eval80, evalr4=self.evalr4,
-                state_dir=self.data / "state", logs_dir=self.data / "logs", site_dir=self.data,
+                gp5=self.gp5, gp5eval=self.gp5eval, gp5event=self.gp5event, state_dir=self.data / "state", logs_dir=self.data / "logs", site_dir=self.data,
             )
             self.m15_task = asyncio.create_task(run_m15_scan_loop(self.m15), name="m15-scan")
             log.info("m15 shared scan on: offset=%ss symbols=%s claude=%s carbon=%s ds=%s opus_b=%s",
@@ -741,6 +746,40 @@ class GhaLoop:
         except Exception:
             log.exception("EVAL-R4 failed to start (other books unaffected)")
             self.evalr4 = None
+
+    def start_gp5(self) -> None:
+        """G-P5 / G-P5-EVAL / G-P5-EVENT (13 Nov, P5 spec as NEW books; no existing book changes)."""
+        if self.dry_run:
+            return
+        from .gp5 import gp5_cfg, gp5eval_cfg, gp5event_cfg, GP5Book, GP5EvalBook, GP5EventBook
+        from .bracket import run_bracket_loop
+        kw = dict(io_lock=self.io_lock, state_dir=self.data / "state", logs_dir=self.data / "logs", site_dir=self.data)
+        for attr, cfn, mk in (("gp5", gp5_cfg, lambda: GP5Book(self.cfg, **kw)),
+                              ("gp5eval", gp5eval_cfg, lambda: GP5EvalBook(self.cfg, **kw) if self.gp5 else None),
+                              ("gp5event", gp5event_cfg, lambda: GP5EventBook(self.cfg, shared_from=self.gp5, **kw))):
+            if not cfn(self.cfg).get("enabled", False):
+                continue
+            try:
+                book = mk()
+                if book is None:
+                    continue
+                setattr(self, attr, book)
+                if getattr(book, "hist", None) is not None and attr == "gp5":
+                    book.hist.start()            # seed the M15 history (H1 spread field) in the background
+                self.gp5_tasks.append(asyncio.create_task(run_bracket_loop(book), name=attr))
+                log.info("%s on: min_conf=%s stop=%s target=%s", book.BOOK_NAME, book.b["min_confidence"],
+                         book.b["stop_atr"], book.b["target_atr"])
+            except Exception:
+                log.exception("%s failed to start (other books unaffected)", attr)
+                setattr(self, attr, None)
+
+    async def stop_gp5(self) -> None:
+        ts, self.gp5_tasks = self.gp5_tasks, []
+        for t in ts:
+            t.cancel()
+            with contextlib.suppress(BaseException):
+                await asyncio.wait_for(t, 30)
+        self.gp5 = self.gp5eval = self.gp5event = None
 
     async def stop_evalr4(self) -> None:
         t, self.evalr4_task = self.evalr4_task, None
@@ -888,6 +927,7 @@ class GhaLoop:
         await self.stop_glow80()
         await self.stop_eval80()
         await self.stop_evalr4()
+        await self.stop_gp5()
         await self.stop_deepseek()
         await self.stop_opus_b()
         await self.stop_other_venue()

@@ -84,7 +84,7 @@ class M15Coordinator:
 
     def __init__(self, cfg: dict, *, io_lock: asyncio.Lock | None = None,
                  claude=None, carbon=None, deepseek=None, opus_b=None, scorer=None, glow80=None, eval80=None, evalr4=None,
-                 snapshot=None, render=None, h1=None,
+                 gp5=None, gp5eval=None, gp5event=None, snapshot=None, render=None, h1=None,
                  state_dir=None, logs_dir=None, site_dir=None):
         self.cfg = cfg
         self.cc = (cfg.get("m15_scan") or {})
@@ -96,6 +96,9 @@ class M15Coordinator:
         self.glow80 = glow80
         self.eval80 = eval80
         self.evalr4 = evalr4
+        self.gp5 = gp5                  # P5 side books (signals/gp5.py): G-P5 own call, G-P5-EVAL on it,
+        self.gp5eval = gp5eval          # G-P5-EVENT own call only on triggered symbols (shared when identical)
+        self.gp5event = gp5event
         self.scorer = scorer
         self._snapshot = snapshot
         self._render = render
@@ -282,6 +285,8 @@ class M15Coordinator:
             tasks["bracket"] = asyncio.create_task(self._run_bracket(snap), name="m15-bracket")
         if self.glow80 is not None:
             tasks["glow80"] = asyncio.create_task(self._run_glow80(snap), name="m15-glow80")
+        if self.gp5 is not None or self.gp5event is not None:
+            tasks["gp5"] = asyncio.create_task(self._run_gp5(snap), name="m15-gp5")
         out = {}
         if tasks:
             done = await asyncio.gather(*tasks.values(), return_exceptions=True)
@@ -359,6 +364,62 @@ class M15Coordinator:
         if self.evalr4 is not None:
             r = {**r, "evalr4": await self._run_evalr4(snap, r)}
         return r
+
+    async def _run_p5_call(self, book, name: str, snap: M15Snapshot) -> dict:
+        call_start = datetime.now(UTC)
+        try:
+            r = await book.on_snapshot(snap, now=snap.now)
+        except Exception as e:
+            log.exception("m15 %s failed (other models unaffected)", name)
+            r = {"ok": False, "error": f"{type(e).__name__}: {e}"}
+        try:
+            r = r or {}
+            self.log_call(book=name, model=r.get("model") or "gemini-3.8-flash", snap=snap,
+                          call_start=call_start, answer_ts=_dt(r.get("answer_ts")) or datetime.now(UTC),
+                          fill_ts=None, ok=bool(r.get("ok")), latency_s=r.get("latency_s"),
+                          cost_usd=r.get("cost_usd"), thinking_tokens=r.get("thinking_tokens"),
+                          error=r.get("error"),
+                          extra={"skipped": r.get("skipped"), "thinking_level": r.get("thinking_level"),
+                                 "prompt_version": "p5", "model_version": r.get("model_version"),
+                                 "usage": None if r.get("shared_call") else r.get("usage"),
+                                 "shared_from": "G-P5" if r.get("shared_call") else None,
+                                 "fired": r.get("fired"), "symbols": r.get("symbols"), "queued": r.get("queued"),
+                                 "signals": r.get("signals")})
+        except Exception:
+            log.exception("m15_calls %s log failed", name)
+        self.enqueue_signals(r.get("score_signals") or [])
+        return r
+
+    async def _run_gp5(self, snap: M15Snapshot) -> dict:
+        """G-P5 call first, then G-P5-EVAL (no call) and G-P5-EVENT (triggered symbols; reuses G-P5's identical
+        request). Never raises."""
+        out = {}
+        g = {}
+        if self.gp5 is not None:
+            g = await self._run_p5_call(self.gp5, "G-P5", snap)
+            out["gp5"] = {k: g.get(k) for k in ("ok", "skipped", "error", "queued", "latency_s")}
+        if self.gp5eval is not None and self.gp5 is not None:
+            call_start = datetime.now(UTC)
+            try:
+                e = await self.gp5eval.on_shared(g, snap, now=snap.now)
+            except Exception as ex:
+                log.exception("m15 G-P5-EVAL failed")
+                e = {"ok": False, "error": f"{type(ex).__name__}: {ex}"}
+            try:
+                self.log_call(book="G-P5-EVAL", model="gemini-3.8-flash", snap=snap, call_start=call_start,
+                              answer_ts=datetime.now(UTC), fill_ts=None, ok=bool(e.get("ok")), latency_s=0.0,
+                              cost_usd=0.0, thinking_tokens=None, error=e.get("error"),
+                              extra={"shared_from": "G-P5", "prompt_version": "p5", "skipped": e.get("skipped"),
+                                     "queued": e.get("queued"), "signals": e.get("signals"),
+                                     "eval_status": e.get("eval_status")})
+            except Exception:
+                log.exception("m15_calls G-P5-EVAL log failed")
+            self.enqueue_signals(e.get("score_signals") or [])
+            out["gp5eval"] = {k: e.get(k) for k in ("ok", "skipped", "error", "queued", "eval_status")}
+        if self.gp5event is not None:
+            r = await self._run_p5_call(self.gp5event, "G-P5-EVENT", snap)
+            out["gp5event"] = {k: r.get(k) for k in ("ok", "skipped", "error", "queued", "fired", "shared_call")}
+        return out
 
     async def _run_eval80(self, snap: M15Snapshot, g: dict) -> dict:
         """EVAL-80 (t284u): no model call; evaluates G-LOW-80's response for the same snapshot."""
@@ -483,7 +544,8 @@ class M15Coordinator:
         dispatched = await self.dispatch(snap)
         rec = {**self.last, "dispatched": {k: {kk: vv for kk, vv in (v or {}).items()
                                                if kk in ("ok", "skipped", "error", "latency_s", "cost_usd",
-                                                         "thinking_tokens", "start_lag_s", "thinking_level", "eval80", "evalr4")}
+                                                         "thinking_tokens", "start_lag_s", "thinking_level", "eval80", "evalr4",
+                                                         "gp5", "gp5eval", "gp5event")}
                                            if isinstance(v, dict) else v
                                            for k, v in dispatched.items()}}
         self.last = rec

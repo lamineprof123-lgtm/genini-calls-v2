@@ -40,6 +40,7 @@ THROTTLE_SKIP = "blocked_session_throttle"
 MAIN_M15_SKIP = "main_m15_cadence"   # t296u: MAIN calls Gemini only once per M15 close (+20 s)
 MAIN_M15_STATE = "main_m15_last_call.json"
 ALL_IN_POS_SKIP = "all_symbols_in_position"
+MAIN_WINDOW_SKIP = "main_outside_window"   # t30xu: MAIN calls Gemini / opens trades only inside [gemini].main_window_utc
 
 
 def lucid_symbols(cfg: dict) -> list[str]:
@@ -121,6 +122,21 @@ def main_m15_only(cfg: dict) -> bool:
     """t296u: MAIN's own Gemini entry call fires once per M15 close (+20 s, shared M15 snapshot) instead of
     every 2-min cycle. Price / position / panel cycles keep their 2-min cadence. [gemini].main_entry_cadence."""
     return str((cfg.get("gemini") or {}).get("main_entry_cadence") or "cycle").lower() == "m15"
+
+
+def main_window_open(cfg: dict, now: datetime) -> bool:
+    """MAIN trading window (user, 13 Nov 2026): Gemini calls + new entries only 12:40-21:00 UTC (16:40-01:00 Dubai).
+    Half-open [start, end); a window that wraps midnight UTC is supported. Unset = always open."""
+    w = (cfg.get("gemini") or {}).get("main_window_utc")
+    if not w:
+        return True
+    def hm(x):
+        h, m = str(x).split(":")
+        return int(h) * 60 + int(m)
+    a, b = hm(w[0]), hm(w[1])
+    t = now.astimezone(timezone.utc)
+    m = t.hour * 60 + t.minute + t.second / 60.0
+    return (a <= m < b) if a <= b else (m >= a or m < b)
 
 
 def main_m15_last_close(cfg: dict, state_dir: str | Path | None = None) -> str | None:
@@ -259,6 +275,23 @@ async def run_once(cfg: dict, dry_run: bool = False, force: bool = True, model: 
         _kick_deepseek(cfg, payloads, skipped=THROTTLE_SKIP, now=now, dry_run=dry_run)
         return {"skipped": True, "skipped_reason": THROTTLE_SKIP, "last_bars": last_bars,
                 "scan_interval_minutes": interval, "session_blocked": True, "record": record,
+                "payloads": payloads}
+
+    if not main_window_open(cfg, now) or (m15_close is not None and not main_window_open(cfg, m15_close)):
+        # MAIN trading window: no Gemini call and no new entries (empty signals); Lucid / exit books / bracket keep
+        # managing open positions and the 01:45 Dubai flat on the 2-min cycles. The M15 close is not claimed.
+        record = _throttle_skip_record(cfg, payloads, data_errors, last_bars, now, tz, equity=None,
+                                       reason=MAIN_WINDOW_SKIP, interval=interval)
+        record["in_position"] = sorted(busy)
+        record["session_blocked"] = blocked
+        record["main_window_utc"] = (cfg.get("gemini") or {}).get("main_window_utc")
+        if busy:
+            write_in_position_overlay(cfg, busy)
+        _atomic_write(seen_path, last_bars)
+        log.info("MAIN outside its trading window %s UTC - no Gemini call, no new entries",
+                 record["main_window_utc"])
+        return {"skipped": True, "skipped_reason": MAIN_WINDOW_SKIP, "last_bars": last_bars,
+                "scan_interval_minutes": interval, "session_blocked": blocked, "record": record,
                 "payloads": payloads}
 
     if not no_throttle and not main_call_allowed(cfg, m15_close, state_dir):

@@ -239,12 +239,22 @@ class BracketBook:
             return f"confidence {conf:.2f} < {self.b['min_confidence']:g}"
         if not sig.get("atr") or float(sig["atr"]) <= 0:
             return "no ATR"
+        if self.b.get("p5_gates"):
+            g = sig.get("p5_gate")
+            if not g:
+                return "P5 gate: no gate result (no P5 fields)"
+            if not g.get("pass"):
+                return f"P5 gate: {g.get('reason')}"
         return None
+
+    def stop_reason(self) -> str:
+        return f"stop_{float(self.b['stop_atr']):g}atr"
 
     def intake(self, record: dict | None, now: datetime) -> list[dict]:
         """Queue pendings from one entry-cycle record. Returns queued rows. Never touches main's state."""
         out = []
-        if not record or record.get("dry_run") or record.get("skipped_reason") in ("blocked_session_throttle", "main_m15_cadence"):
+        if not record or record.get("dry_run") or record.get("skipped_reason") in ("blocked_session_throttle", "main_m15_cadence",
+                                                                                "main_outside_window"):
             if record and record.get("skipped_reason"):
                 self._missed(record, now)
             return out
@@ -372,7 +382,7 @@ class BracketBook:
             tgt_hit = (h >= p["target"]) if sd > 0 else (l <= p["target"])
             if stop_hit:
                 gap = (o <= p["stop"]) if sd > 0 else (o >= p["stop"])
-                return "stop_1atr", self._slip(p, o if gap else p["stop"]), ts.to_pydatetime()
+                return self.stop_reason(), self._slip(p, o if gap else p["stop"]), ts.to_pydatetime()
             if tgt_hit:
                 gap = (o >= p["target"]) if sd > 0 else (o <= p["target"])
                 return "target_1atr", self._slip(p, o if gap else p["target"]), ts.to_pydatetime()
@@ -389,11 +399,19 @@ class BracketBook:
             # (last check, else the fill) is <= gap_seconds old; otherwise a gap -> live price + slip
             prev = _dt(p.get("last_check_at") or p["entry_time"])
             resting = (now - prev).total_seconds() <= float(self.b.get("gap_seconds", 180))
-            return "stop_1atr", self._slip(p, p["stop"] if resting else price)
+            return self.stop_reason(), self._slip(p, p["stop"] if resting else price)
         if (price >= p["target"]) if sd > 0 else (price <= p["target"]):
             return "target_1atr", self._slip(p, p["target"])
         if now >= _dt(p["deadline"]):
             return "time_90min", self._slip(p, price)
+        dc = float(self.b.get("dead_cut_minutes") or 0)
+        if dc > 0 and p.get("atr"):
+            # P5 30-min dead-trade cut: open >= 30 min, MFE < 0.25 ATR and P&L <= -0.25 ATR -> close at market
+            a = float(p["atr"])
+            age = (now - _dt(p["entry_time"])).total_seconds() / 60.0
+            if age >= dc and float(p.get("mfe") or 0) < float(self.b.get("dead_cut_mfe_atr", 0.25)) * a \
+                    and sd * (price - p["entry"]) <= -float(self.b.get("dead_cut_loss_atr", 0.25)) * a + 1e-12:
+                return f"dead_{dc:g}min", self._slip(p, price)
         if not self.in_session(now):
             return "flat_2145utc", self._slip(p, price)
         return None
@@ -517,7 +535,7 @@ class BracketBook:
                         "avg_loss": round(st["gross_loss"] / st["losses"], 2) if st["losses"] else None,
                         "max_drawdown": s.get("max_drawdown"), "peak_balance": s.get("peak_balance"),
                         "commissions": st["commissions"], "exit_reasons": st["exit_reasons"],
-                        "stopped": st["exit_reasons"].get("stop_1atr", 0), "open_positions": len(s["positions"]),
+                        "stopped": sum(v for k, v in st["exit_reasons"].items() if k.startswith("stop")), "open_positions": len(s["positions"]),
                         "pending": len(s["pending"]), "signals_seen": st["signals_seen"],
                         "signals_taken": st["signals_taken"], "skips": st["skips"],
                         "missed_scans_main_held": st["missed_scans"]},

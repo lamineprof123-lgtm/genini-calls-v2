@@ -181,6 +181,12 @@
     const filtTxt = f => { const fb = f.fail_by || {}, ks = Object.keys(fb).filter(k => fb[k]);
       return `${f.filtered_out || 0} of ${f.seen || 0} signals 0.8+` +
         (ks.length ? ' (' + ks.map(k => esc(FILT_NAME[k] || k) + ' ' + fb[k]).join(', ') + (f.no_data ? ', no data ' + f.no_data : '') + ')' : (f.no_data ? ' (no data ' + f.no_data + ')' : '')); };
+    const TRIG_NAME = { level: 'level touch', rvol: 'RVOL ≥2', atr_ratio: 'ATR ratio ≥1.3' };
+    const trigTxt = t => { const b = t.by || {}, ks = Object.keys(b).filter(k => b[k]);
+      return `Something happened on ${t.fired || 0} of ${t.evaluated || 0} symbol-bars` +
+        (ks.length ? ' (' + ks.map(k => esc(TRIG_NAME[k] || k) + ' ' + b[k]).join(', ') + ')' : '') +
+        ` · Gemini called on ${t.calls || 0} of ${t.closes || 0} closes (${t.shared_calls || 0} shared with G-P5), ${t.symbols_sent || 0} charts sent`; };
+    const sinceTxt = p => p.own_reset && p.since ? `<div class="mc-s">New book: started at $100,000 on ${esc(dhms(p.since))} ${TZL} · results since then</div>` : '';
     const evalLine = e => `Eval <span class="st ${esc(e.status)}">${esc(e.status)}</span> · profit ` +
       `<span class="${cls(e.profit)}">${usd(e.profit)}</span> of ${usd(e.profit_target, false)} (${Number(e.progress_pct || 0).toFixed(0)}%)` +
       ` · MLL floor ${bal(e.mll_floor)} ${e.mll_locked ? '(locked)' : '(trailing)'}` +
@@ -202,7 +208,7 @@
     for (const p of P.performance || []) {
       if (p.model !== lastModel) { lastModel = p.model; h += `<tr class="model"><td class="l" colspan="10">${esc(MODEL_NAME[p.model] || p.model)}</td></tr>`; }
       const ov = p.venue !== 'LUCID';
-      h += `<tr class="${ov ? 'ov' : ''}"><td class="l book">${ov ? '↳ ' : ''}${esc(p.book)}</td>
+      h += `<tr class="${ov ? 'ov' : ''}"><td class="l book">${ov ? '↳ ' : ''}${esc(p.book)}${p.own_reset && p.since ? `<div class="dim" style="font-size:11px">since ${esc(dhm(p.since))}</div>` : ''}</td>
         <td class="l">${ov ? 'Other venue (BTC)' : 'Lucid'}</td>
         <td>${bal(p.balance)}</td><td class="${cls(p.net_pnl_usd)}">${usd(p.net_pnl_usd)}</td>
         <td class="${cls(p.open_pnl_usd)}">${p.open_positions ? usd(p.open_pnl_usd) : '—'}</td>
@@ -210,6 +216,7 @@
         <td>${p.win_rate == null ? '—' : (100 * p.win_rate).toFixed(0) + '%'}</td>
         <td>${p.went_positive_first == null ? '—' : esc(p.went_positive_first)}</td><td>${p.open_positions}</td></tr>`;
       if (p.eval) h += `<tr class="evrow"><td class="l" colspan="10">${evalLine(p.eval)}</td></tr>`;
+      if (p.trigger) h += `<tr class="evrow"><td class="l" colspan="10">${trigTxt(p.trigger)}</td></tr>`;
     }
     $('perf').innerHTML = h;
     let pc = '', lm = null;
@@ -219,13 +226,13 @@
       const o = perfs.find(q => q.book === p.book && q.venue !== 'LUCID');
       pc += `<div class="mc"><div class="mc-h"><span class="mc-t">${esc(p.book)}</span>
         <span class="mc-s">${p.open_positions + (o ? o.open_positions : 0)} open</span></div>
-        <div class="mc-s">${esc(p.label || '')}</div>
+        <div class="mc-s">${esc(p.label || '')}</div>${sinceTxt(p)}
         <div class="mc-g">${kv('Balance', bal(p.balance))}${kv('Net P&amp;L', usd(p.net_pnl_usd), cls(p.net_pnl_usd))}
         ${kv('Open P&amp;L', p.open_positions ? usd(p.open_pnl_usd) : '—', cls(p.open_pnl_usd))}
         ${kv('Closed', p.trades)}${kv('W / L', p.wins + ' / ' + p.losses)}
         ${kv('Win rate', p.win_rate == null ? '—' : (100 * p.win_rate).toFixed(0) + '%')}
         ${kv('Went positive first', p.went_positive_first == null ? '—' : esc(p.went_positive_first))}</div>
-        ${p.eval ? evalCard(p.eval) : ''}
+        ${p.eval ? evalCard(p.eval) : ''}${p.trigger ? `<div class="mc-s" style="margin-top:8px">${trigTxt(p.trigger)}</div>` : ''}
         ${o ? `<div class="mc-s" style="margin-top:8px">Other venue (BTC): ${bal(o.balance)} · net <span class="${cls(o.net_pnl_usd)}">${usd(o.net_pnl_usd)}</span>
           · ${o.trades} closed (${o.wins}/${o.losses})${o.open_positions ? ` · ${o.open_positions} open <span class="${cls(o.open_pnl_usd)}">${usd(o.open_pnl_usd)}</span>` : ''}
           · went positive first ${o.went_positive_first == null ? '—' : esc(o.went_positive_first)}</div>` : ''}</div>`;
@@ -270,7 +277,7 @@
           ${st === 'OPEN' ? kv('Open P&amp;L', usd(x.last_pnl_usd), cls(x.last_pnl_usd)) : kv('Close P&amp;L', usd(x.net_at_close_usd), cls(x.net_at_close_usd))}</div></div>`;
       }).join('');
     }
-    $('posNote').textContent = (P.pnl_note || '') + ' Status: OPEN, or CLOSED-stop / CLOSED-target / CLOSED-time by the mechanical bracket (1 ATR stop / 1 ATR target; EVAL-80 and EVAL-R4: 0.8 ATR stop / 1 ATR target). EVAL-80 and EVAL-R4 can also show CLOSED-dll_1800 / CLOSED-mll_breach / CLOSED-eval_passed_flat from the Lucid eval rules.';
+    $('posNote').textContent = (P.pnl_note || '') + ' Status: OPEN, or CLOSED-stop / CLOSED-target / CLOSED-time by the mechanical bracket (1 ATR stop / 1 ATR target; EVAL-80 and EVAL-R4: 0.8 ATR stop / 1 ATR target; new P5 books G-P5, G-P5-EVAL, G-P5-EVENT: 0.8 ATR stop / 1 ATR target, plus CLOSED-dead_30min from the 30-minute dead-trade cut). EVAL-80, EVAL-R4 and G-P5-EVAL can also show CLOSED-dll_1800 / CLOSED-mll_breach / CLOSED-eval_passed_flat from the Lucid eval rules.';
   }
 
   async function pollStatus() { const s = await getJSON('status.json'); if (s && newer(s, status)) status = s; }

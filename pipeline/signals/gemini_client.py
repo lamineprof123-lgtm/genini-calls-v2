@@ -46,7 +46,10 @@ _env = Environment(loader=FileSystemLoader(ROOT / "templates"), undefined=Strict
 
 def system_prompt(cfg: dict, symbols: list[str]) -> str:
     r, ch = cfg["risk"], cfg["chart"]
-    return _env.get_template("system_prompt.j2").render(
+    # P5 books (signals/p5.py) set [gemini].prompt_template = "system_prompt_p5.j2" on their own cfg copy;
+    # MAIN / Carbon / DS-FLASH keep the P4 default.
+    tpl = (cfg.get("gemini") or {}).get("prompt_template") or "system_prompt.j2"
+    return _env.get_template(tpl).render(
         n=len(symbols), symbols=symbols, timeframe=f"M{cfg['general']['timeframe_minutes']}",
         min_rr=r["min_rr"], max_entry_atr=r["max_entry_distance_atr"], min_stop_atr=r["min_stop_distance_atr"],
         max_risk_pct=r["max_risk_pct"], c=ch)

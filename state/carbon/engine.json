@@ -23,13 +23,13 @@
       }
     },
     "2026-11-13": {
-      "usd": 0.896232,
-      "calls": 8,
+      "usd": 0.952492,
+      "calls": 9,
       "failed": 0,
       "by_kind": {
         "trigger": {
-          "calls": 4,
-          "usd": 0.251828
+          "calls": 5,
+          "usd": 0.308088
         },
         "entry": {
           "calls": 4,
@@ -37,9 +37,9 @@
         }
       },
       "tokens": {
-        "input": 80271,
-        "output": 10381,
-        "thoughts": 63188
+        "input": 85986,
+        "output": 11094,
+        "thoughts": 66958
       }
     }
   },
@@ -250,117 +250,47 @@
       "session": "LONDON_SESSION"
     }
   },
-  "whatif": [
-    {
-      "vid": 7,
-      "exit": "CB-BRACKET",
-      "symbol": "EURUSD",
-      "side": 1,
-      "contract": "6E",
-      "tick": 5e-05,
-      "point_value": 125000.0,
-      "commission": 2.4,
-      "site_only": false,
-      "flag": null,
-      "unit": "1 6E",
-      "atr": 0.000485,
-      "confidence": 0.68,
-      "signal_entry": 1.10672,
-      "signal_at": "2026-11-13T08:33:12.089108+00:00",
-      "kind": "entry",
-      "thinking_level": "high",
-      "queued_at": "2026-11-13T08:33:12.089108+00:00",
-      "entry": 1.10685,
-      "entry_time": "2026-11-13T08:33:16.643831+00:00",
-      "scan_from": "2026-11-13T08:35:00+00:00",
-      "best": 1.10685,
-      "mfe": 0.0,
-      "mae": 0.00032999999999994145,
-      "locked": false,
-      "checks": 0,
-      "stop": 1.10635,
-      "target": 1.10735,
-      "deadline": "2026-11-13T10:03:16.643831+00:00",
-      "init_stop": 1.10635,
-      "qty": 1,
-      "risk_usd": 67.3,
-      "chase_atr": 0.268,
-      "risk_1c_usd": 60.62,
-      "last_check_at": "2026-11-13T08:37:07.190567+00:00"
-    },
-    {
-      "vid": 8,
-      "exit": "CB-RUNNER",
-      "symbol": "EURUSD",
-      "side": 1,
-      "contract": "6E",
-      "tick": 5e-05,
-      "point_value": 125000.0,
-      "commission": 2.4,
-      "site_only": false,
-      "flag": null,
-      "unit": "1 6E",
-      "atr": 0.000485,
-      "confidence": 0.68,
-      "signal_entry": 1.10672,
-      "signal_at": "2026-11-13T08:33:12.089108+00:00",
-      "kind": "entry",
-      "thinking_level": "high",
-      "queued_at": "2026-11-13T08:33:12.089108+00:00",
-      "entry": 1.10685,
-      "entry_time": "2026-11-13T08:33:16.643831+00:00",
-      "scan_from": "2026-11-13T08:35:00+00:00",
-      "best": 1.10685,
-      "mfe": 0.0,
-      "mae": 0.00032999999999994145,
-      "locked": false,
-      "checks": 0,
-      "stop": 1.10635,
-      "target": 1.10735,
-      "deadline": "2026-11-13T10:03:16.643831+00:00",
-      "init_stop": 1.10635,
-      "qty": 1,
-      "risk_usd": 67.3,
-      "chase_atr": 0.268,
-      "risk_1c_usd": 60.62,
-      "last_check_at": "2026-11-13T08:37:07.190567+00:00"
-    }
-  ],
+  "whatif": [],
   "next_vid": 9,
   "last_call": {
-    "t": "2026-11-13T08:33:12.089108+00:00",
-    "t_dubai": "2026-11-13T12:33:12.089108+04:00",
-    "kind": "entry",
+    "t": "2026-11-13T08:37:23.121474+00:00",
+    "t_dubai": "2026-11-13T12:37:23.121474+04:00",
+    "kind": "trigger",
     "model": "gemini-4-carbon",
     "model_version": "gemini-4-carbon",
     "thinking": "high",
     "ok": true,
     "error": null,
-    "latency_s": 172.083,
+    "latency_s": 61.377,
     "finish_reason": "FinishReason.STOP",
     "tokens": {
-      "input": 14077,
-      "output": 2550,
-      "thoughts": 12906,
-      "total": 29533
+      "input": 5715,
+      "output": 713,
+      "thoughts": 3770,
+      "total": 10198
     },
-    "thoughts_token_count": 12906,
+    "thoughts_token_count": 3770,
     "price_per_mtok": [
       2.0,
       10.0
     ],
-    "cost_usd": 0.182714,
-    "spend_today_usd": 0.8962,
+    "cost_usd": 0.05626,
+    "spend_today_usd": 0.9525,
     "symbols": [
-      "XAUUSD",
-      "EURUSD",
-      "US100",
-      "XAGUSD",
       "BTCUSD"
     ],
-    "render_ms": 0,
+    "render_ms": 273,
     "parse_error": null,
-    "trigger": null
+    "trigger": {
+      "trigger": "level_cross",
+      "level": "POC",
+      "level_price": 68676.09,
+      "price": 68761.1,
+      "direction": "up",
+      "symbol": "BTCUSD",
+      "bar": "2026-11-13T08:30:00+00:00",
+      "n_today": 6
+    }
   },
   "first_call": {
     "t": "2026-11-12T18:18:04.014172+00:00",
@@ -397,64 +327,41 @@
     "parse_error": null,
     "trigger": null
   },
-  "calls_total": 23,
+  "calls_total": 24,
   "last_scan": {
-    "kind": "entry",
-    "t": "2026-11-13T08:30:20.006108+00:00",
-    "trigger": null,
-    "snapshot_id": "m15-20261113081500-86b0f1965083",
-    "snapshot_hash": "86b0f19650830abcf423b8c850ec94e3195d123c376a8489674b74cf7aca92d0",
-    "bar_close_ts": "2026-11-13T08:30:00+00:00",
-    "snapshot_ts": "2026-11-13T08:30:22.377706+00:00",
+    "kind": "trigger",
+    "t": "2026-11-13T08:36:21.471474+00:00",
+    "trigger": {
+      "trigger": "level_cross",
+      "level": "POC",
+      "level_price": 68676.09,
+      "price": 68761.1,
+      "direction": "up",
+      "symbol": "BTCUSD",
+      "bar": "2026-11-13T08:30:00+00:00",
+      "n_today": 6
+    },
     "sent": [
-      "XAUUSD",
-      "EURUSD",
-      "US100",
-      "XAGUSD",
       "BTCUSD"
     ],
     "blocked_session": [],
     "ok": true,
-    "latency_s": 172.083,
-    "cost_usd": 0.182714,
+    "latency_s": 61.377,
+    "cost_usd": 0.05626,
     "tokens": {
-      "input": 14077,
-      "output": 2550,
-      "thoughts": 12906,
-      "total": 29533
+      "input": 5715,
+      "output": 713,
+      "thoughts": 3770,
+      "total": 10198
     },
     "error": null,
     "finish_reason": "FinishReason.STOP",
-    "answer_ts": "2026-11-13T08:33:12.089108+00:00",
+    "answer_ts": "2026-11-13T08:37:23.121474+00:00",
     "signals": [
-      {
-        "symbol": "XAUUSD",
-        "action": "HOLD",
-        "confidence": 0.42,
-        "thinking_level": "high"
-      },
-      {
-        "symbol": "EURUSD",
-        "action": "BUY",
-        "confidence": 0.68,
-        "thinking_level": "high"
-      },
-      {
-        "symbol": "US100",
-        "action": "HOLD",
-        "confidence": 0.38,
-        "thinking_level": "high"
-      },
-      {
-        "symbol": "XAGUSD",
-        "action": "HOLD",
-        "confidence": 0.44,
-        "thinking_level": "high"
-      },
       {
         "symbol": "BTCUSD",
         "action": "HOLD",
-        "confidence": 0.35,
+        "confidence": 0.76,
         "thinking_level": "high"
       }
     ],

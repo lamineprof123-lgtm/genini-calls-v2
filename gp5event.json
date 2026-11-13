@@ -1,14 +1,14 @@
 {
-  "updated_at": "2026-11-13T17:30:23.961764+00:00",
+  "updated_at": "2026-11-13T17:31:31.334685+00:00",
   "paper_only": true,
   "book": "G-P5-EVENT",
   "label": "Gemini flash \u00b7 G-P5-EVENT (G-P5, Gemini called only when something happened: level touch \u22640.25 ATR, RVOL \u22652, ATR ratio \u22651.3)",
   "account": {
     "start_balance": 100000.0,
     "balance": 99985.6,
-    "equity": 100165.6,
+    "equity": 100300.6,
     "net_pnl": 0.0,
-    "open_pnl": 180.0,
+    "open_pnl": 315.0,
     "trades": 0,
     "wins": 0,
     "losses": 0,
@@ -45,8 +45,8 @@
       "risk_usd": 516.3,
       "target_usd": 571.2,
       "side": "SHORT",
-      "last_price": 1.10306,
-      "unrealized": 180.0
+      "last_price": 1.10288,
+      "unrealized": 315.0
     }
   ],
   "recent_trades": [],
@@ -56,13 +56,13 @@
   "model": "gemini-3.8-flash",
   "thinking_level": "low",
   "calls": {
-    "ok": 8,
+    "ok": 9,
     "failed": 0,
     "skipped": 0,
     "tokens": {
-      "prompt_token_count": 88540,
-      "candidates_token_count": 11547,
-      "total_token_count": 100087
+      "prompt_token_count": 93820,
+      "candidates_token_count": 12098,
+      "total_token_count": 105918
     }
   },
   "day": {
@@ -71,25 +71,23 @@
   },
   "prompt_version": "p5",
   "trigger": {
-    "closes": 8,
-    "evaluated": 32,
-    "fired": 29,
+    "closes": 9,
+    "evaluated": 36,
+    "fired": 30,
     "by": {
       "level": 24,
       "rvol": 0,
-      "atr_ratio": 20
+      "atr_ratio": 21
     },
-    "calls": 8,
+    "calls": 9,
     "shared_calls": 6,
-    "own_calls": 2,
-    "symbols_sent": 29,
+    "own_calls": 3,
+    "symbols_sent": 30,
     "no_call_closes": 0,
     "last": {
-      "t": "2026-11-13T17:15:20.000604+00:00",
+      "t": "2026-11-13T17:30:20.010010+00:00",
       "fired": [
-        "XAUUSD",
-        "US100",
-        "XAGUSD"
+        "US100"
       ],
       "called": true,
       "shared": false

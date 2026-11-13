@@ -15,33 +15,33 @@
       }
     },
     "2026-11-13": {
-      "usd": 0.042972,
-      "calls": 20,
+      "usd": 0.046642,
+      "calls": 21,
       "failed": 0,
       "tokens": {
-        "prompt": 224626,
-        "cache_hit": 37120,
-        "cache_miss": 187506,
-        "completion": 24557,
-        "reasoning": 5035
+        "prompt": 235915,
+        "cache_hit": 38912,
+        "cache_miss": 197003,
+        "completion": 25232,
+        "reasoning": 5143
       }
     }
   },
   "last_call": {
-    "t": "2026-11-13T00:45:20.009284+00:00",
+    "t": "2026-11-13T01:00:20.015376+00:00",
     "ok": true,
-    "cost_usd": 0.00229168,
-    "spend_today_usd": 0.043,
-    "band": "off_peak",
+    "cost_usd": 0.00366985,
+    "spend_today_usd": 0.0466,
+    "band": "peak",
     "tokens": {
-      "prompt": 11258,
+      "prompt": 11289,
       "cache_hit": 1792,
-      "cache_miss": 9466,
-      "completion": 1444,
-      "reasoning": 181,
-      "total": 12702
+      "cache_miss": 9497,
+      "completion": 675,
+      "reasoning": 108,
+      "total": 11964
     },
-    "latency_s": 6.801,
+    "latency_s": 5.176,
     "error": null,
     "model": "deepseek-flash",
     "symbols": [
@@ -53,11 +53,11 @@
     ],
     "http_status": 200,
     "prompt_version": "bracket-v1",
-    "snapshot_id": "m15-20261113003000-dfd1d6c925ff",
-    "bar_close_ts": "2026-11-13T00:45:00+00:00",
-    "snapshot_ts": "2026-11-13T00:45:21.938115+00:00",
-    "call_start": "2026-11-13T00:45:24.581363+00:00",
-    "answer_ts": "2026-11-13T00:45:31.382660+00:00"
+    "snapshot_id": "m15-20261113004500-be8eb6dc98ae",
+    "bar_close_ts": "2026-11-13T01:00:00+00:00",
+    "snapshot_ts": "2026-11-13T01:00:23.618501+00:00",
+    "call_start": "2026-11-13T01:00:24.806081+00:00",
+    "answer_ts": "2026-11-13T01:00:29.981957+00:00"
   },
   "last_signals": [
     {
@@ -68,7 +68,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "HOLD: session_blocks_automation true (ASIAN_SESSION_CHOP). T1 fails anyway: above VWAP 3884.89 but below EMA50 3894.57, h1 down. T2 partial (VWAP closed_through). S1 fails: room_up only 0.066 ATR to VAH 3887.9, so a 1 ATR target is unreacha"
+      "rationale": ""
     },
     {
       "symbol": "EURUSD",
@@ -78,7 +78,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "HOLD: session_blocks_automation true. T1 fails: above VWAP 1.10512 but below EMA50 1.10612 and EMA20, h1 down. T2: rejection of VWAP/VAH is a fade-side event, not a continuation. S1 fails either way: room_up 0.308 ATR, room_down 0.333 ATR, "
+      "rationale": ""
     },
     {
       "symbol": "US100",
@@ -88,7 +88,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "HOLD: session_blocks_automation true. T1 fails: below VWAP 28429.3. T2 fails: only touched VWAP/EMA20, no acceptance through a level for a continuation. S1 fails: room_down 0.259 ATR to EMA20, room_up 0.102 ATR to VAL. S2 awarded (US100 vol"
+      "rationale": ""
     },
     {
       "symbol": "XAGUSD",
@@ -98,7 +98,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "HOLD: session_blocks_automation true. T1 fails: below VWAP 50.128 and EMA50 50.298, h1 down. T2 weak: EMA20/POC closed_through but those are not directional levels here. S1 fails decisively: room_down 0.039 ATR to POC, room_up 0.309 ATR to "
+      "rationale": ""
     },
     {
       "symbol": "BTCUSD",
@@ -108,7 +108,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "HOLD: session_blocks_automation true. T1 yes: below VWAP 71063.72 and EMA50 71757.45, h1 down. T2 yes: closed_through VWAP/VAL/Prev Low. S3 yes (CVD bearish). But S1 fails: room_down 0.203 ATR to ATR Lower 70804.54, which was just rejected,"
+      "rationale": ""
     }
   ],
   "last_bars": {

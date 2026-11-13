@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-13T17:06:10.001689+00:00",
+  "updated_at": "2026-11-13T17:08:10.006051+00:00",
   "tag": "ev-v1",
   "paper_only": true,
   "live": false,
@@ -50,9 +50,9 @@
         "EURUSD": 0,
         "US100": 1
       },
-      "EV-CONT": null,
+      "EV-CONT": 1.0,
       "EV-REV": null,
-      "EV-TWIN": null
+      "EV-TWIN": 1.0
     },
     {
       "trigger": "LVL-BREAK",
@@ -104,13 +104,21 @@
     }
   ],
   "controls": {
-    "EV-CONT": {},
+    "EV-CONT": {
+      "n": 1,
+      "R": 1.0,
+      "wins": 1
+    },
     "EV-REV": {
       "n": 1,
       "R": 1.0,
       "wins": 1
     },
-    "EV-TWIN": {}
+    "EV-TWIN": {
+      "n": 1,
+      "R": 1.0,
+      "wins": 1
+    }
   },
   "q3": {
     "pairs": 0,

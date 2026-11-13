@@ -45,32 +45,6 @@
       ]
     },
     {
-      "book": "EV-CONT",
-      "trigger_id": "US100|2026-11-13T16:25:00+00:00",
-      "symbol": "US100",
-      "side": 1,
-      "entry": 27689.708,
-      "t0": "2026-11-13T16:25:15+00:00",
-      "atr": 105.868,
-      "primary": "LVL-SWEEP",
-      "types": [
-        "LVL-SWEEP"
-      ]
-    },
-    {
-      "book": "EV-TWIN",
-      "trigger_id": "US100|2026-11-13T16:25:00+00:00",
-      "symbol": "US100",
-      "side": 1,
-      "entry": 27689.708,
-      "t0": "2026-11-13T16:25:15+00:00",
-      "atr": 105.868,
-      "primary": "LVL-SWEEP",
-      "types": [
-        "LVL-SWEEP"
-      ]
-    },
-    {
       "book": "EV-REV",
       "trigger_id": "US100|2026-11-13T16:30:00+00:00",
       "symbol": "US100",
@@ -88,7 +62,7 @@
       "trigger_id": "XAUUSD|2026-11-13T17:05:00+00:00",
       "symbol": "XAUUSD",
       "side": 1,
-      "entry": null,
+      "entry": 3878.778,
       "t0": "2026-11-13T17:05:15+00:00",
       "atr": 8.821,
       "primary": "LVL-SWEEP",
@@ -120,6 +94,16 @@
       },
       "VOL-BURST": {
         "room_skip": 1
+      },
+      "LVL-SWEEP": {
+        "n": 1,
+        "R": 1.0,
+        "wins": 1
+      },
+      "ALL": {
+        "n": 1,
+        "R": 1.0,
+        "wins": 1
       }
     },
     "EV-TWIN": {
@@ -130,7 +114,15 @@
         "room_skip": 1
       },
       "LVL-SWEEP": {
-        "room_skip": 1
+        "room_skip": 1,
+        "n": 1,
+        "R": 1.0,
+        "wins": 1
+      },
+      "ALL": {
+        "n": 1,
+        "R": 1.0,
+        "wins": 1
       }
     },
     "EV-REV": {

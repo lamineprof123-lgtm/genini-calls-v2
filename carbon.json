@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-13T15:10:01.919824+00:00",
+  "updated_at": "2026-11-13T15:10:55.921018+00:00",
   "paper_only": true,
   "model": "gemini-4-carbon",
   "entry_thinking": "high",
@@ -281,17 +281,17 @@
   "whatif": {
     "CB-BRACKET": {
       "all": {
-        "n": 10,
-        "r_avg": -0.218,
-        "r_total": -2.183,
-        "net_1c": -2193.35,
-        "win_rate": 0.4
+        "n": 11,
+        "r_avg": -0.108,
+        "r_total": -1.191,
+        "net_1c": -646.85,
+        "win_rate": 0.455
       },
       "conf>=min": {
-        "n": 1,
-        "r_avg": 0.991,
-        "r_total": 0.991,
-        "net_1c": 1321.5,
+        "n": 2,
+        "r_avg": 0.992,
+        "r_total": 1.983,
+        "net_1c": 2868.0,
         "win_rate": 1.0
       },
       "conf<min": {
@@ -309,26 +309,26 @@
         "win_rate": null
       },
       "tradeable": {
-        "n": 10,
-        "r_avg": -0.218,
-        "r_total": -2.183,
-        "net_1c": -2193.35,
-        "win_rate": 0.4
+        "n": 11,
+        "r_avg": -0.108,
+        "r_total": -1.191,
+        "net_1c": -646.85,
+        "win_rate": 0.455
       }
     },
     "CB-RUNNER": {
       "all": {
-        "n": 10,
-        "r_avg": -0.278,
-        "r_total": -2.78,
-        "net_1c": -3378.35,
-        "win_rate": 0.4
+        "n": 11,
+        "r_avg": -0.163,
+        "r_total": -1.788,
+        "net_1c": -1831.85,
+        "win_rate": 0.455
       },
       "conf>=min": {
-        "n": 1,
-        "r_avg": 0.991,
-        "r_total": 0.991,
-        "net_1c": 1321.5,
+        "n": 2,
+        "r_avg": 0.992,
+        "r_total": 1.983,
+        "net_1c": 2868.0,
         "win_rate": 1.0
       },
       "conf<min": {
@@ -346,45 +346,64 @@
         "win_rate": null
       },
       "tradeable": {
-        "n": 10,
-        "r_avg": -0.278,
-        "r_total": -2.78,
-        "net_1c": -3378.35,
-        "win_rate": 0.4
+        "n": 11,
+        "r_avg": -0.163,
+        "r_total": -1.788,
+        "net_1c": -1831.85,
+        "win_rate": 0.455
       }
     },
-    "open": 2,
-    "open_rows": [
+    "open": 0,
+    "open_rows": [],
+    "recent": [
       {
-        "vid": 15,
-        "exit": "CB-BRACKET",
+        "t_exit": "2026-11-13T15:10:55.921018+00:00",
+        "vid": 16,
+        "exit_rules": "CB-RUNNER",
         "symbol": "US100",
         "side": "SHORT",
-        "entry": 27876.75,
-        "stop": 27954.5,
-        "target": 27799.0,
         "confidence": 0.76,
+        "passes_filter": true,
+        "kind": "entry",
+        "signal_at": "2026-11-13T15:03:18.271683+00:00",
+        "entry_time": "2026-11-13T15:03:56.970931+00:00",
+        "entry": 27876.75,
+        "exit": 27799.25,
+        "reason": "target",
+        "net_1c": 1546.5,
+        "R": 0.992,
+        "atr": 77.651,
+        "chase_atr": 1.036,
+        "mfe_atr": 0.872,
         "site_only": false,
         "flag": null,
         "unit": "1 NQ",
         "thinking_level": "high"
       },
       {
-        "vid": 16,
-        "exit": "CB-RUNNER",
+        "t_exit": "2026-11-13T15:10:55.921018+00:00",
+        "vid": 15,
+        "exit_rules": "CB-BRACKET",
         "symbol": "US100",
         "side": "SHORT",
-        "entry": 27876.75,
-        "stop": 27954.5,
-        "target": 27799.0,
         "confidence": 0.76,
+        "passes_filter": true,
+        "kind": "entry",
+        "signal_at": "2026-11-13T15:03:18.271683+00:00",
+        "entry_time": "2026-11-13T15:03:56.970931+00:00",
+        "entry": 27876.75,
+        "exit": 27799.25,
+        "reason": "target",
+        "net_1c": 1546.5,
+        "R": 0.992,
+        "atr": 77.651,
+        "chase_atr": 1.036,
+        "mfe_atr": 0.872,
         "site_only": false,
         "flag": null,
         "unit": "1 NQ",
         "thinking_level": "high"
-      }
-    ],
-    "recent": [
+      },
       {
         "t_exit": "2026-11-13T14:49:38.240554+00:00",
         "vid": 14,

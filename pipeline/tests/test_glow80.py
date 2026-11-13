@@ -1,4 +1,4 @@
-"""G-LOW-80 (t272u): own LOW-thinking Gemini call on the shared M15 snapshot, conf >= 0.80, own $100k Lucid +
+"""G-LOW-80 (t272u): own LOW-thinking Gemini call on the shared M15 snapshot, conf >= 0.70, own $100k Lucid +
 OTHER-VENUE accounts, uniform 1 ATR / 1 ATR / 90-min, 0.3 ATR fill check, m15_calls + scorer + panel. No network."""
 import asyncio, copy, json, sys
 from datetime import datetime, timedelta, timezone
@@ -93,7 +93,7 @@ def make(cfg, tmp_path, call, prices=None):
 def test_config_low_thinking_and_main_untouched(cfg):
     g = glow80_cfg(cfg)
     assert g["enabled"] and g["model"] == "gemini-3.8-flash" and g["thinking_level"] == "low"
-    assert g["min_confidence"] == 0.80 and g["stop_atr"] == 1.0 and g["target_atr"] == 1.0
+    assert g["min_confidence"] == 0.70 and g["stop_atr"] == 1.0 and g["target_atr"] == 1.0
     assert g["max_hold_minutes"] == 90 and g["risk_usd"] == 900.0 and g["max_chase_atr"] == 0.3
     assert set(g["scan_symbols"]) == set(cfg["general"]["symbols"])          # MAIN's symbol set
     assert "BTCUSD" not in g["symbols"] and g["other_venue_symbols"] == ["BTCUSD"]
@@ -110,13 +110,13 @@ def test_config_low_thinking_and_main_untouched(cfg):
 
 
 def test_on_snapshot_conf_filter_lucid_and_btc(cfg, tmp_path):
-    call = gem([s("XAUUSD", "SELL", 0.85, 3945.0), s("EURUSD", "BUY", 0.79, 1.1),
+    call = gem([s("XAUUSD", "SELL", 0.85, 3945.0), s("EURUSD", "BUY", 0.69, 1.1),
                 s("US100", "HOLD", 0.3, 21000.0), s("BTCUSD", "BUY", 0.9, 90000.0)])
     bk, hub = make(cfg, tmp_path, call)
     r = asyncio.run(bk.on_snapshot(snap(), now=T0))
     assert r["ok"] and r["thinking_level"] == "low" and r["thinking_tokens"] == 250
     assert call.calls[0]["cfg"]["gemini"]["entry_thinking_level"] == "low"
-    assert r["queued"] == ["XAUUSD"]                                  # EURUSD 0.79 < 0.80 skipped
+    assert r["queued"] == ["XAUUSD"]                                  # EURUSD 0.69 < 0.70 skipped
     pos = bk.s["positions"]
     assert len(pos) == 1 and pos[0]["symbol"] == "XAUUSD" and pos[0]["side"] == -1 and pos[0]["book"] == BOOK
     # 1 ATR stop / target, $900 risk on GC (1 ATR = $500 per contract -> 1 contract)

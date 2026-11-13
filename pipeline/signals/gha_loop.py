@@ -531,7 +531,7 @@ class GhaLoop:
             self.m15 = None
 
     def start_glow80(self) -> None:
-        """G-LOW-80 (t272u): own LOW-thinking Gemini call on the shared M15 snapshot, conf >= 0.80, own $100k
+        """G-LOW-80 (t272u): own LOW-thinking Gemini call on the shared M15 snapshot, conf >= 0.70, own $100k
         Lucid + OTHER-VENUE accounts, uniform 1 ATR / 1 ATR / 90-min server exits. Isolated from every book."""
         from .glow80 import glow80_cfg
         if self.dry_run or not glow80_cfg(self.cfg).get("enabled", False):

@@ -27,7 +27,7 @@ BOOKS = [
     ("1-strike", "gemini-3.8-flash", "Gemini flash · 1-strike"),
     ("nostop", "gemini-3.8-flash", "Gemini flash · nostop"),
     ("bracket", "gemini-3.8-flash", "Gemini flash · bracket (conf≥0.75)"),
-    ("G-LOW-80", "gemini-3.8-flash", "Gemini flash · G-LOW-80 (own call, thinking low, conf≥0.80)"),
+    ("G-LOW-80", "gemini-3.8-flash", "Gemini flash · G-LOW-80 (own call, thinking low, min 0.70)"),
     ("CB-BRACKET", "gemini-4-carbon", "Carbon · CB-BRACKET"),
     ("CB-RUNNER", "gemini-4-carbon", "Carbon · CB-RUNNER"),
     ("C-OPUS", "claude-opus-5-5", "Claude Opus · C-OPUS"),

@@ -10,7 +10,7 @@ best in the 0.8-0.9 (+$204 avg) and 0.9-1.0 (+$844) brackets. This book re-runs 
            SignalBatch schema, server scalp levels + validator, and thinking_level LOW: the exact pre-b23b41bb
            config (gemini-3.8-flash, ThinkingConfig(thinking_level="low"), 45 s timeout, 2 attempts / 60 s budget,
            no fallback). MAIN Gemini is untouched (stays on its own 2-min loop, thinking high).
-  Trades   only BUY/SELL with confidence >= 0.80. Lucid symbols (XAUUSD / EURUSD / GBPUSD / US100 / XAGUSD) go
+  Trades   only BUY/SELL with confidence >= 0.70. Lucid symbols (XAUUSD / EURUSD / GBPUSD / US100 / XAGUSD) go
            to its own fresh $100k Lucid-style account (this module, a BracketBook subclass); BTCUSD goes to its
            own $100k OTHER-VENUE account (signals/other_venue.py, book "G-LOW-80").
   Exits    uniform-1atr-v1: 1 ATR stop / 1 ATR target / 90-min cap, no model exits (18 s server checks).
@@ -33,7 +33,7 @@ log = logging.getLogger("signals.glow80")
 UTC = timezone.utc
 ET = ZoneInfo("America/New_York")
 BOOK = "G-LOW-80"
-LABEL = "Gemini flash · G-LOW-80 (low thinking, conf≥0.80)"
+LABEL = "Gemini flash · G-LOW-80 (low thinking, min 0.70)"
 MODEL = "gemini-3.8-flash"
 
 DEFAULTS = {
@@ -48,7 +48,7 @@ DEFAULTS = {
     "symbols": ["XAUUSD", "EURUSD", "GBPUSD", "US100", "XAGUSD"],   # Lucid books of this account
     "scan_symbols": ["XAUUSD", "EURUSD", "GBPUSD", "US100", "XAGUSD", "BTCUSD"],
     "other_venue_symbols": ["BTCUSD"],
-    "min_confidence": 0.80,
+    "min_confidence": 0.70,
     "max_chase_atr": 0.3,              # the 0.3 ATR fill check (vs the live price sent to the model)
     "daily_loss_usd": 1800.0,
     "reset_token": "glow80-v1",

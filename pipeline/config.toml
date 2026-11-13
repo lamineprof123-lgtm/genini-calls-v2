@@ -702,7 +702,7 @@ effort = "high"
 # Its OWN gemini-3.8-flash entry call at every M15 close +20 s on the shared M15 snapshot (same charts / payloads /
 # MAIN prompt + schema + server scalp levels + validator), thinking LOW = the exact pre-21:24 (12 Nov) config
 # (git b23b41bb^: thinking_level "low", timeout 45 s, 2 attempts / 60 s budget, no fallback). Trades only BUY/SELL
-# with confidence >= 0.80 (backtest: 0.8-0.9 +$204 avg, 0.9-1.0 +$844; 0.7-0.8 lower at +$136). Fresh $100k
+# with confidence >= 0.70 (t275u: lowered from 0.80). Fresh $100k
 # Lucid account (XAUUSD / EURUSD / GBPUSD / US100 / XAGUSD) + own $100k OTHER-VENUE account (BTCUSD).
 # Uniform 1 ATR stop / 1 ATR target / 90-min cap, no model exits, ~$900 risk full-size, max 6 open, one per symbol,
 # 0.3 ATR fill check, daily loss stop $1,800 (Lucid DLL). Symbols this book holds are not re-sent (like MAIN).
@@ -713,7 +713,7 @@ thinking_level = "low"
 timeout_seconds = 45
 max_attempts_per_model = 2
 retry_budget_seconds = 60
-min_confidence = 0.80
+min_confidence = 0.70
 symbols = ["XAUUSD", "EURUSD", "GBPUSD", "US100", "XAGUSD"]
 scan_symbols = ["XAUUSD", "EURUSD", "GBPUSD", "US100", "XAGUSD", "BTCUSD"]
 other_venue_symbols = ["BTCUSD"]

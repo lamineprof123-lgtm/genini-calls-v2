@@ -66,9 +66,9 @@
   "last_scan_bar": "2026-11-13T20:00:00+00:00",
   "triggers": {
     "day": "2026-11-14",
-    "n": 4,
+    "n": 5,
     "per_bar": {
-      "US100": "2026-11-13T20:00:00+00:00",
+      "US100": "2026-11-13T20:15:00+00:00",
       "XAGUSD": "2026-11-13T20:00:00+00:00",
       "XAUUSD": "2026-11-13T20:15:00+00:00"
     }
@@ -177,7 +177,7 @@
         [
           "Prev Low",
           27912.13,
-          1
+          -1
         ],
         [
           "Session Low",
@@ -197,7 +197,7 @@
         [
           "VAL",
           27916.11,
-          1
+          -1
         ],
         [
           "Call Wall #1",
@@ -374,65 +374,20 @@
   },
   "calls_total": 106,
   "last_scan": {
-    "kind": "entry",
-    "t": "2026-11-13T20:15:20.004595+00:00",
-    "trigger": null,
-    "snapshot_id": "m15-20261113200000-2c06c2d7424b",
-    "snapshot_hash": "2c06c2d7424bb70c28cf52224b144b4297766a8886962df54b8ba710f334d70c",
-    "bar_close_ts": "2026-11-13T20:15:00+00:00",
-    "snapshot_ts": "2026-11-13T20:15:37.012059+00:00",
-    "sent": [
-      "XAUUSD",
-      "EURUSD",
-      "US100",
-      "XAGUSD",
-      "BTCUSD"
-    ],
-    "blocked_session": [],
-    "ok": true,
-    "latency_s": 186.33,
-    "cost_usd": 0.19435,
-    "tokens": {
-      "input": 14330,
-      "output": 2510,
-      "thoughts": 14059,
-      "total": 30899
+    "kind": "trigger",
+    "t": "2026-11-13T20:29:45.397558+00:00",
+    "trigger": {
+      "trigger": "level_cross",
+      "level": "Prev Low",
+      "level_price": 27912.13,
+      "price": 27900.03,
+      "direction": "down",
+      "symbol": "US100",
+      "bar": "2026-11-13T20:15:00+00:00",
+      "n_today": 5
     },
-    "error": null,
-    "finish_reason": "FinishReason.STOP",
-    "answer_ts": "2026-11-13T20:18:26.334595+00:00",
-    "signals": [
-      {
-        "symbol": "XAUUSD",
-        "action": "HOLD",
-        "confidence": 0.4,
-        "thinking_level": "high"
-      },
-      {
-        "symbol": "EURUSD",
-        "action": "HOLD",
-        "confidence": 0.35,
-        "thinking_level": "high"
-      },
-      {
-        "symbol": "US100",
-        "action": "HOLD",
-        "confidence": 0.45,
-        "thinking_level": "high"
-      },
-      {
-        "symbol": "XAGUSD",
-        "action": "HOLD",
-        "confidence": 0.4,
-        "thinking_level": "high"
-      },
-      {
-        "symbol": "BTCUSD",
-        "action": "HOLD",
-        "confidence": 0.35,
-        "thinking_level": "high"
-      }
-    ],
-    "thinking_level": "high"
+    "sent": [],
+    "blocked_session": [],
+    "skipped": "no symbol to send"
   }
 }

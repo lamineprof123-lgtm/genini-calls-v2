@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-13T14:16:34.661453+00:00",
+  "updated_at": "2026-11-13T14:28:13.016667+00:00",
   "paper_only": true,
   "key_present": true,
   "status": "running",
@@ -27,44 +27,41 @@
       "exit_model": "claude-haiku-5-5",
       "account": {
         "start_balance": 100000.0,
-        "balance": 99816.6,
-        "equity": 99784.6,
-        "realized_pnl": -183.4,
-        "open_pnl": -32.0,
-        "trades": 3,
+        "balance": 98952.0,
+        "equity": 98952.0,
+        "realized_pnl": -1048.0,
+        "open_pnl": 0.0,
+        "trades": 4,
         "wins": 2,
-        "losses": 1,
-        "r_total": 0.132,
-        "r_per_trade": 0.044,
+        "losses": 2,
+        "r_total": -0.88,
+        "r_per_trade": -0.22,
         "mll_floor": 97465.4,
-        "mll_room": 2319.2,
-        "day_realized": -648.8,
+        "mll_room": 1486.6,
+        "day_realized": -1513.4,
         "day_flattened": false,
         "blown": null
       },
-      "open_positions": [
+      "open_positions": [],
+      "recent_trades": [
         {
+          "t_exit": "2026-11-13T14:26:00+00:00",
+          "entry_time": "2026-11-13T14:01:11.851566+00:00",
           "symbol": "XAUUSD",
           "contract": "GC",
           "qty": 1,
           "side": "SHORT",
-          "entry_time": "2026-11-13T14:01:11.851566+00:00",
           "entry": 3883.0,
-          "stop": 3889.6,
-          "floor": null,
-          "floor_label": null,
-          "last": 3883.32,
-          "unrealized": -32.0,
-          "risk_usd": 664.6,
-          "phase": "B",
+          "exit": 3891.6,
+          "reason": "hard_stop",
+          "net": -864.6,
+          "R": -1.012,
+          "hold_seconds": 1488,
           "setup_type": "trend",
           "score": 6,
-          "server_only": false,
-          "target": 3874.5,
-          "stop_live": 3891.5
-        }
-      ],
-      "recent_trades": [
+          "exit_prompt_version": "uniform-1atr-v1",
+          "held": "24m 48s"
+        },
         {
           "t_exit": "2026-11-13T10:01:00+00:00",
           "entry_time": "2026-11-13T09:30:48.544912+00:00",
@@ -122,33 +119,33 @@
       ],
       "books": {
         "mech": {
-          "n": 3,
+          "n": 4,
           "wins": 2,
-          "losses": 1,
-          "net": -183.4,
-          "r_total": 0.132,
-          "r_avg": 0.044
+          "losses": 2,
+          "net": -1048.0,
+          "r_total": -0.88,
+          "r_avg": -0.22
         },
         "whatif": {
-          "n": 8,
+          "n": 9,
           "wins": 5,
-          "losses": 3,
-          "net": 574.18,
-          "r_total": 0.607,
-          "r_avg": 0.076
+          "losses": 4,
+          "net": -289.42,
+          "r_total": -0.405,
+          "r_avg": -0.045
         },
         "twin": {
-          "n": 8,
-          "wins": 3,
+          "n": 9,
+          "wins": 4,
           "losses": 5,
-          "net": -2221.27,
-          "r_total": -2.208,
-          "r_avg": -0.276
+          "net": -1386.87,
+          "r_total": -1.233,
+          "r_avg": -0.137
         },
         "whatif_gated": {
-          "n": 8,
-          "r_total": 0.607,
-          "r_avg": 0.076
+          "n": 9,
+          "r_total": -0.405,
+          "r_avg": -0.045
         }
       },
       "signals": {

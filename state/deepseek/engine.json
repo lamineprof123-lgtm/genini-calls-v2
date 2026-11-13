@@ -15,33 +15,33 @@
       }
     },
     "2026-11-13": {
-      "usd": 0.086489,
-      "calls": 30,
+      "usd": 0.09097,
+      "calls": 31,
       "failed": 0,
       "tokens": {
-        "prompt": 338206,
-        "cache_hit": 55040,
-        "cache_miss": 283166,
-        "completion": 36817,
-        "reasoning": 7076
+        "prompt": 349580,
+        "cache_hit": 56832,
+        "cache_miss": 292748,
+        "completion": 38147,
+        "reasoning": 7433
       }
     }
   },
   "last_call": {
-    "t": "2026-11-13T03:15:20.006105+00:00",
+    "t": "2026-11-13T03:30:20.006839+00:00",
     "ok": true,
-    "cost_usd": 0.00477385,
-    "spend_today_usd": 0.0865,
+    "cost_usd": 0.00448135,
+    "spend_today_usd": 0.091,
     "band": "peak",
     "tokens": {
-      "prompt": 11373,
+      "prompt": 11374,
       "cache_hit": 1792,
-      "cache_miss": 9581,
-      "completion": 1574,
-      "reasoning": 238,
-      "total": 12947
+      "cache_miss": 9582,
+      "completion": 1330,
+      "reasoning": 357,
+      "total": 12704
     },
-    "latency_s": 8.262,
+    "latency_s": 8.014,
     "error": null,
     "model": "deepseek-flash",
     "symbols": [
@@ -53,11 +53,11 @@
     ],
     "http_status": 200,
     "prompt_version": "bracket-v1",
-    "snapshot_id": "m15-20261113030000-9d96e87777ef",
-    "bar_close_ts": "2026-11-13T03:15:00+00:00",
-    "snapshot_ts": "2026-11-13T03:15:21.783182+00:00",
-    "call_start": "2026-11-13T03:15:22.175131+00:00",
-    "answer_ts": "2026-11-13T03:15:30.437720+00:00"
+    "snapshot_id": "m15-20261113031500-b89e294b623c",
+    "bar_close_ts": "2026-11-13T03:30:00+00:00",
+    "snapshot_ts": "2026-11-13T03:30:23.057779+00:00",
+    "call_start": "2026-11-13T03:30:24.116032+00:00",
+    "answer_ts": "2026-11-13T03:30:32.129980+00:00"
   },
   "last_signals": [
     {
@@ -68,7 +68,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "session_blocks_automation true (ASIAN_SESSION_CHOP), so HOLD regardless. T1 yes (above VWAP and EMA50), but T2 missing: last closed bar only touched VAH 3921.07 with no closed_through or rejection, and price is +1.98 ATR from VWAP (chasing)"
+      "rationale": "T1 yes: above VWAP 3902.62 and EMA50 3899.19. T2 weak: only an ATR-band rejection, no labelled level closed through. S1 fails: 0.45 ATR room to VAH 3921.07, under 1.0 ATR. VWAP distance 1.95 ATR is near the 2.0 chase limit. Session blocks a"
     },
     {
       "symbol": "EURUSD",
@@ -78,7 +78,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "session_blocks_automation true (ASIAN_SESSION_CHOP), so HOLD. T1 fails: price is above VWAP but still below EMA50 1.10605, an unsettled reclaim. T2 arguably met on the EMA50/POC closed_through, but S1 fails hard: room_up only 0.291 ATR to P"
+      "rationale": "T1 yes: above VWAP 1.10568 and reclaimed EMA50. T2 yes: closed_through EMA50 and POC on the last closed bar. S3 yes: CVD bullish. S1 fails: only 0.77 ATR room to VAH 1.10636, under 1.0 ATR. S2 no (RVOL 0.69). Session blocks automation. HOLD"
     },
     {
       "symbol": "US100",
@@ -88,7 +88,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "session_blocks_automation true (ASIAN_SESSION_CHOP), so HOLD. Trend T1 fails: price is below VWAP; the EMA20 rejection is a bearish level event but the bar closed only marginally below VAL and room_down is 0.422 ATR to EMA50, far under the "
+      "rationale": "T1 yes for a sell: below VWAP 28420.31 and EMA50. T2 yes: closed_through EMA50. But S1 fails both ways: 0.18 ATR room up and 0.39 ATR down to Session Low 28303.05. S2 awarded automatically, S3 no (CVD neutral, h1 up). Session blocks automat"
     },
     {
       "symbol": "XAGUSD",
@@ -98,7 +98,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "session_blocks_automation true (ASIAN_SESSION_CHOP), so HOLD. T1 yes (above VWAP and both EMAs), but the POC rejection on the last closed bar is a rejection of a magnet, not a broken-level pullback, and it argues against continuation. S1 fa"
+      "rationale": "T1 yes: above VWAP and EMA50. T2 no real event: only VWAP/POC touches, no labelled level closed through or clear rejection. S1 fails: 0.98 ATR room to S/R 50.711, just under 1.0 ATR. S3 no (CVD bearish, h1 down). Session blocks automation. "
     },
     {
       "symbol": "BTCUSD",
@@ -108,7 +108,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "session_blocks_automation true (ASIAN_SESSION_CHOP), so HOLD. Bearish structure with a closed_through of ATR Lower, but price is -2.59 ATR from VWAP (extreme extension, HOLD gate) and only 0.304 ATR of room down to Session Low 69629.40. A 1"
+      "rationale": "T1 yes for a sell: below VWAP 70481.47 and EMA50. T2 no: only a touch of Session Low, no closed_through or sweep-and-reclaim. VWAP distance -3.00 ATR is deep chasing. Room down 1.15 ATR exists but momentum is extended. Session blocks automa"
     }
   ],
   "last_bars": {

@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-13T06:00:35.208353+00:00",
+  "updated_at": "2026-11-13T06:15:30.690335+00:00",
   "paper_only": true,
   "plan": "LucidPro 100K (DLL on)",
   "exit_mode": "mech",
@@ -72,17 +72,17 @@
   "rules": "deepseek-flash entries (effort low), shared bracket-v1 package with C-OPUS-B (same charts, facts, 3 symbols, M15 close +20s); no model exits; All books: 1 ATR / 1 ATR bracket, no model exits; same fill and full-size sizing as main; spend soft-stop $5/day Dubai",
   "spend": {
     "day_dubai": "2026-11-13",
-    "usd": 0.1181,
+    "usd": 0.1226,
     "soft_usd": 5.0,
     "state": "ok",
-    "calls": 41,
+    "calls": 42,
     "failed": 0,
     "tokens": {
-      "prompt": 463018,
-      "cache_hit": 74752,
-      "cache_miss": 388266,
-      "completion": 52075,
-      "reasoning": 10347
+      "prompt": 474396,
+      "cache_hit": 76544,
+      "cache_miss": 397852,
+      "completion": 53395,
+      "reasoning": 10503
     },
     "pricing": {
       "off_peak": {
@@ -104,20 +104,20 @@
     }
   },
   "last_call": {
-    "t": "2026-11-13T06:00:20.008280+00:00",
+    "t": "2026-11-13T06:15:20.001109+00:00",
     "ok": true,
-    "cost_usd": 0.00453655,
-    "spend_today_usd": 0.1181,
+    "cost_usd": 0.00447055,
+    "spend_today_usd": 0.1226,
     "band": "peak",
     "tokens": {
-      "prompt": 11386,
+      "prompt": 11378,
       "cache_hit": 1792,
-      "cache_miss": 9594,
-      "completion": 1373,
-      "reasoning": 370,
-      "total": 12759
+      "cache_miss": 9586,
+      "completion": 1320,
+      "reasoning": 156,
+      "total": 12698
     },
-    "latency_s": 8.31,
+    "latency_s": 7.24,
     "error": null,
     "model": "deepseek-flash",
     "symbols": [
@@ -129,11 +129,11 @@
     ],
     "http_status": 200,
     "prompt_version": "bracket-v1",
-    "snapshot_id": "m15-20261113054500-e5cbf917aa15",
-    "bar_close_ts": "2026-11-13T06:00:00+00:00",
-    "snapshot_ts": "2026-11-13T06:00:25.032033+00:00",
-    "call_start": "2026-11-13T06:00:26.896437+00:00",
-    "answer_ts": "2026-11-13T06:00:35.206330+00:00"
+    "snapshot_id": "m15-20261113060000-61e7b49e83aa",
+    "bar_close_ts": "2026-11-13T06:15:00+00:00",
+    "snapshot_ts": "2026-11-13T06:15:22.860327+00:00",
+    "call_start": "2026-11-13T06:15:23.448346+00:00",
+    "answer_ts": "2026-11-13T06:15:30.688283+00:00"
   },
   "last_signals": [
     {
@@ -144,7 +144,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "Session blocks automation (ASIAN_SESSION_CHOP), hard HOLD. Setup also fails: price below VWAP/EMA50 so no T1 for a buy, and room_down is 0.018 ATR and room_up 0.20 ATR, far under the 1.0 ATR gate. h1 down, CVD neutral. No trade."
+      "rationale": "HOLD: session_blocks_automation true (ASIAN_SESSION_CHOP), so no trade allowed. Level event exists but not tradable: room_up_atr only 0.353 ATR to VAL fails S1, and T1 fails since price is below VWAP 3905.22 and EMA50. h1_trend down."
     },
     {
       "symbol": "EURUSD",
@@ -154,7 +154,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "Session blocks automation (ASIAN_SESSION_CHOP), hard HOLD. Trend must-haves incomplete: price above VWAP but below EMA50 1.10601, and the EMA20 rejection is against the buy. Room is only 0.139 ATR up / 0.111 down, no 1 ATR target."
+      "rationale": "HOLD: session_blocks_automation true. Setup also fails on mechanics: room_up_atr 0.164 and room_down_atr 0.055 both far under 1.0 ATR, so S1 missing. Price sits inside value area, no clean trend side vs EMA50. Score gate unreachable."
     },
     {
       "symbol": "US100",
@@ -164,7 +164,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "Short-side structure exists but HOLD: session blocks automation, and price is 3.33 ATR below VWAP so the 2.0 ATR anti-chase gate fails. Room down only 0.181 ATR to Session Low. h1 flat, CVD bearish. Chasing a stretched move."
+      "rationale": "HOLD: session_blocks_automation true, and vwap_distance_atr -3.46 breaks the 2.0 ATR trend filter (chasing). Room_down_atr only 0.183 to Session Low, room_up 0.253, so S1 missing. CVD bearish but no valid entry."
     },
     {
       "symbol": "XAGUSD",
@@ -174,7 +174,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "Fade case weak and session blocks automation, HOLD. Rejections at ATR Lower/S-R are fade candidates, but room_down is only 0.220 ATR to S/R 49.922, no 1 ATR magnet reachable, and h1 trend is down against a long fade. Rvol 1.57."
+      "rationale": "HOLD: session_blocks_automation true. A fade would need a magnet 1.0 ATR away and room: room_down_atr only 0.211 to S/R 49.922, so S1 fails. Rejection wicks are real but VWAP at -1.83 ATR is too far for a clean fade target here."
     },
     {
       "symbol": "BTCUSD",
@@ -184,7 +184,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "HOLD: session blocks automation, price is 3.98 ATR below VWAP (anti-chase gate), and room_down is 0.925 ATR to Session Low, below the 1.0 ATR room gate. Trend down with h1 down, but the bracket target is unreachable."
+      "rationale": "HOLD: session_blocks_automation true and no level event on the last closed bar. Trend continuation blocked by vwap_distance_atr -3.00 (>2.0) and room_up_atr 0.120 to ATR Lower. h1_trend down but price extended; nothing to trade."
     }
   ]
 }

@@ -7,45 +7,57 @@
       "fired": [],
       "touches": {},
       "t2_done": [],
-      "prev_rvol": 0.086,
+      "prev_rvol": 0.266,
       "cvd_stable": -1,
       "cvd_n": 0,
-      "prev_live": 3878.7
+      "prev_live": 3878.49
     },
     "EURUSD": {
       "bar": "2026-11-13T19:00:00+00:00",
       "fired": [],
       "touches": {},
       "t2_done": [],
-      "prev_rvol": 0.028,
+      "prev_rvol": 0.12,
       "cvd_stable": -1,
       "cvd_n": 0,
-      "prev_live": 1.10276
+      "prev_live": 1.10269
     },
     "US100": {
       "bar": "2026-11-13T19:00:00+00:00",
-      "fired": [],
-      "touches": {},
-      "t2_done": [],
+      "fired": [
+        "T1",
+        "T2"
+      ],
+      "touches": {
+        "Prev Low@27912.13": {
+          "label": "Prev Low",
+          "price": 27912.13,
+          "orig": 1
+        }
+      },
+      "t2_done": [
+        "Prev Low@27912.13"
+      ],
       "prev_rvol": null,
       "cvd_stable": 1,
       "cvd_n": 0,
-      "prev_live": 27898.64
+      "prev_live": 27931.06
     }
   },
   "whatif": [],
   "stats": {
     "DS-IMG-E": {
       "T2": {
-        "fired": 4,
+        "fired": 5,
         "calls": 2,
         "suppressed_per_hour_cap": 1,
-        "suppressed_debounced": 1
+        "suppressed_debounced": 2
       },
       "T1": {
-        "fired": 4,
+        "fired": 5,
         "calls": 3,
-        "suppressed_per_hour_cap": 1
+        "suppressed_per_hour_cap": 1,
+        "suppressed_debounced": 1
       },
       "T7": {
         "fired": 7,
@@ -66,15 +78,16 @@
     },
     "DS-TXT-E": {
       "T2": {
-        "fired": 4,
+        "fired": 5,
         "calls": 2,
         "suppressed_per_hour_cap": 1,
-        "suppressed_debounced": 1
+        "suppressed_debounced": 2
       },
       "T1": {
-        "fired": 4,
+        "fired": 5,
         "calls": 3,
-        "suppressed_per_hour_cap": 1
+        "suppressed_per_hour_cap": 1,
+        "suppressed_debounced": 1
       },
       "T7": {
         "fired": 7,
@@ -98,8 +111,8 @@
   "feed_days": {
     "2026-11-13": {
       "first": "2026-11-13T17:15:10.001749+00:00",
-      "last": "2026-11-13T19:01:10.002582+00:00",
-      "n": 107
+      "last": "2026-11-13T19:04:10.001568+00:00",
+      "n": 109
     }
   }
 }

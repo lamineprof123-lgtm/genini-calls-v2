@@ -4,46 +4,14 @@
   "reset_token": "glow80-v1",
   "created_at": "2026-11-13T02:42:34.711453+00:00",
   "start_balance": 100000.0,
-  "balance": 99985.6,
+  "balance": 99558.7,
   "peak_balance": 100000.0,
-  "max_drawdown": 0.0,
+  "max_drawdown": -441.3,
   "next_id": 2,
-  "positions": [
-    {
-      "symbol": "EURUSD",
-      "side": 1,
-      "contract": "6E",
-      "qty": 6,
-      "atr": 0.000485,
-      "confidence": 0.76,
-      "signal_entry": 1.10672,
-      "signal_at": "2026-11-13T08:30:23.422708+00:00",
-      "queued_at": "2026-11-13T08:30:20.006108+00:00",
-      "level_event": "acceptance above S/R 1.10662",
-      "session": "LONDON_SESSION",
-      "rationale": "POC 1.10598 / VAH 1.10641 / VAL 1.10560: Price is breaking out above VAH (1.10641) and well above POC. CVD is +5583 (BULLISH) with a sharply positive slope (+3773.49) fully agreeing with the upward impulse. Session is LONDON_SESSION. Price has reclaimed and is holding above both VWAP (1.10594) and E",
-      "id": 1,
-      "book": "G-LOW-80",
-      "entry": 1.10675,
-      "entry_time": "2026-11-13T08:30:41.609911+00:00",
-      "quote_price": 1.1067,
-      "quote_source": "dukascopy:tick",
-      "quote_age_s": 1.09,
-      "stop": 1.10625,
-      "target": 1.10725,
-      "deadline": "2026-11-13T10:00:41.609911+00:00",
-      "risk_usd": 403.8,
-      "target_usd": 346.2,
-      "mfe": 7.00000000000145e-05,
-      "mae": 0.0004899999999998794,
-      "scan_from": "2026-11-13T08:37:00+00:00",
-      "checks": 30,
-      "last_check_at": "2026-11-13T08:39:14.229603+00:00"
-    }
-  ],
+  "positions": [],
   "pending": [],
   "last_price": {
-    "EURUSD": 1.10626
+    "EURUSD": 1.10625
   },
   "seen_cycles": [
     "2026-11-13T02:45:23.592457+00:00",
@@ -72,23 +40,25 @@
     "2026-11-13T08:30:23.422708+00:00"
   ],
   "stats": {
-    "trades": 0,
+    "trades": 1,
     "wins": 0,
-    "losses": 0,
+    "losses": 1,
     "gross_win": 0.0,
-    "gross_loss": 0.0,
-    "net_pnl": 0.0,
-    "commissions": 14.4,
-    "hold_seconds": 0,
-    "exit_reasons": {},
+    "gross_loss": -441.3,
+    "net_pnl": -441.3,
+    "commissions": 28.8,
+    "hold_seconds": 530,
+    "exit_reasons": {
+      "stop_1atr": 1
+    },
     "signals_seen": 1,
     "signals_taken": 1,
     "skips": {},
     "missed_scans": {}
   },
   "day": {
-    "day": null,
-    "net": 0.0
+    "day": "2026-11-13",
+    "net": -441.3
   },
   "calls": {
     "ok": 24,

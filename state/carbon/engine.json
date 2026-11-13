@@ -23,13 +23,13 @@
       }
     },
     "2026-11-13": {
-      "usd": 0.952492,
-      "calls": 9,
+      "usd": 1.015774,
+      "calls": 10,
       "failed": 0,
       "by_kind": {
         "trigger": {
-          "calls": 5,
-          "usd": 0.308088
+          "calls": 6,
+          "usd": 0.37137
         },
         "entry": {
           "calls": 4,
@@ -37,20 +37,21 @@
         }
       },
       "tokens": {
-        "input": 85986,
-        "output": 11094,
-        "thoughts": 66958
+        "input": 91767,
+        "output": 11863,
+        "thoughts": 71361
       }
     }
   },
   "last_scan_bar": "2026-11-13T08:15:00+00:00",
   "triggers": {
     "day": "2026-11-13",
-    "n": 6,
+    "n": 7,
     "per_bar": {
       "US100": "2026-11-12T20:00:00+00:00",
       "XAUUSD": "2026-11-13T08:15:00+00:00",
-      "BTCUSD": "2026-11-13T08:30:00+00:00"
+      "BTCUSD": "2026-11-13T08:30:00+00:00",
+      "EURUSD": "2026-11-13T08:30:00+00:00"
     }
   },
   "cache": {
@@ -102,7 +103,7 @@
     "EURUSD": {
       "bar": "2026-11-13T08:15:00+00:00",
       "atr": 0.000485,
-      "price": 1.10672,
+      "price": 1.10628,
       "levels": [
         [
           "Session High",
@@ -127,7 +128,7 @@
         [
           "VAH",
           1.10641,
-          1
+          -1
         ],
         [
           "VAL",
@@ -253,43 +254,43 @@
   "whatif": [],
   "next_vid": 9,
   "last_call": {
-    "t": "2026-11-13T08:37:23.121474+00:00",
-    "t_dubai": "2026-11-13T12:37:23.121474+04:00",
+    "t": "2026-11-13T08:40:11.869664+00:00",
+    "t_dubai": "2026-11-13T12:40:11.869664+04:00",
     "kind": "trigger",
     "model": "gemini-4-carbon",
     "model_version": "gemini-4-carbon",
     "thinking": "high",
     "ok": true,
     "error": null,
-    "latency_s": 61.377,
+    "latency_s": 75.248,
     "finish_reason": "FinishReason.STOP",
     "tokens": {
-      "input": 5715,
-      "output": 713,
-      "thoughts": 3770,
-      "total": 10198
+      "input": 5781,
+      "output": 769,
+      "thoughts": 4403,
+      "total": 10953
     },
-    "thoughts_token_count": 3770,
+    "thoughts_token_count": 4403,
     "price_per_mtok": [
       2.0,
       10.0
     ],
-    "cost_usd": 0.05626,
-    "spend_today_usd": 0.9525,
+    "cost_usd": 0.063282,
+    "spend_today_usd": 1.0158,
     "symbols": [
-      "BTCUSD"
+      "EURUSD"
     ],
-    "render_ms": 273,
+    "render_ms": 264,
     "parse_error": null,
     "trigger": {
       "trigger": "level_cross",
-      "level": "POC",
-      "level_price": 68676.09,
-      "price": 68761.1,
-      "direction": "up",
-      "symbol": "BTCUSD",
+      "level": "VAH",
+      "level_price": 1.10641,
+      "price": 1.10628,
+      "direction": "down",
+      "symbol": "EURUSD",
       "bar": "2026-11-13T08:30:00+00:00",
-      "n_today": 6
+      "n_today": 7
     }
   },
   "first_call": {
@@ -327,7 +328,7 @@
     "parse_error": null,
     "trigger": null
   },
-  "calls_total": 24,
+  "calls_total": 25,
   "last_scan": {
     "kind": "trigger",
     "t": "2026-11-13T08:36:21.471474+00:00",

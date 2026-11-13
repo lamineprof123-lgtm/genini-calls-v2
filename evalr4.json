@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-13T14:46:06.845169+00:00",
+  "updated_at": "2026-11-13T15:01:14.470768+00:00",
   "paper_only": true,
   "book": "EVAL-R4",
   "label": "Gemini flash \u00b7 EVAL-R4 (G-LOW-80's call, min 0.80, R4 trend filter, 0.8/1.0 ATR, Lucid eval rules)",
@@ -25,11 +25,11 @@
     "stopped": 2,
     "open_positions": 0,
     "pending": 0,
-    "signals_seen": 13,
+    "signals_seen": 14,
     "signals_taken": 3,
     "skips": {
       "confidence<min": 9,
-      "r4_filter": 1
+      "r4_filter": 2
     },
     "missed_scans_glow80_held": {
       "EURUSD": 1
@@ -170,15 +170,15 @@
     "missed_total": 1,
     "eod_closes": [],
     "filter": {
-      "seen": 4,
+      "seen": 5,
       "passed": 3,
-      "filtered_out": 1,
+      "filtered_out": 2,
       "no_data": 0,
       "fail_by": {
-        "h1_trend": 1,
-        "m15_ema20": 0,
-        "chase": 1,
-        "vwap": 0
+        "h1_trend": 2,
+        "m15_ema20": 1,
+        "chase": 2,
+        "vwap": 1
       },
       "last": {
         "XAUUSD": {
@@ -200,13 +200,13 @@
           "vwap": 2.795
         },
         "US100": {
-          "t": "2026-11-13T14:45:20.003708+00:00",
+          "t": "2026-11-13T15:00:20.007683+00:00",
           "pass": false,
-          "reason": "H1 EMA20-EMA50 with the trade -1.13 ATR < 2.7; last 3 bars move +2.72 ATR >= 2.2",
-          "h1_trend": -1.131,
-          "m15_ema20": 2.751,
-          "chase": 2.72,
-          "vwap": 2.872
+          "reason": "H1 EMA20-EMA50 with the trade -0.71 ATR < 2.7; price vs M15 EMA20 +3.93 ATR >= 3; last 3 bars move +4.74 ATR >= 2.2; distance from VWAP +4.34 ATR >= 3.5",
+          "h1_trend": -0.71,
+          "m15_ema20": 3.933,
+          "chase": 4.739,
+          "vwap": 4.34
         }
       },
       "rules": {
@@ -222,11 +222,11 @@
     "net": -382.8
   },
   "cycles": {
-    "seen": 32,
-    "with_signals": 23,
+    "seen": 33,
+    "with_signals": 24,
     "skipped": 9,
     "last": {
-      "t": "2026-11-13T14:45:37.354411+00:00",
+      "t": "2026-11-13T15:00:58.210867+00:00",
       "ok": true,
       "signals": 5,
       "queued": [],
@@ -234,15 +234,15 @@
     }
   },
   "r4": {
-    "seen": 4,
+    "seen": 5,
     "passed": 3,
-    "filtered_out": 1,
+    "filtered_out": 2,
     "no_data": 0,
     "fail_by": {
-      "h1_trend": 1,
-      "m15_ema20": 0,
-      "chase": 1,
-      "vwap": 0
+      "h1_trend": 2,
+      "m15_ema20": 1,
+      "chase": 2,
+      "vwap": 1
     },
     "last": {
       "XAUUSD": {
@@ -264,13 +264,13 @@
         "vwap": 2.795
       },
       "US100": {
-        "t": "2026-11-13T14:45:20.003708+00:00",
+        "t": "2026-11-13T15:00:20.007683+00:00",
         "pass": false,
-        "reason": "H1 EMA20-EMA50 with the trade -1.13 ATR < 2.7; last 3 bars move +2.72 ATR >= 2.2",
-        "h1_trend": -1.131,
-        "m15_ema20": 2.751,
-        "chase": 2.72,
-        "vwap": 2.872
+        "reason": "H1 EMA20-EMA50 with the trade -0.71 ATR < 2.7; price vs M15 EMA20 +3.93 ATR >= 3; last 3 bars move +4.74 ATR >= 2.2; distance from VWAP +4.34 ATR >= 3.5",
+        "h1_trend": -0.71,
+        "m15_ema20": 3.933,
+        "chase": 4.739,
+        "vwap": 4.34
       }
     },
     "rules": {

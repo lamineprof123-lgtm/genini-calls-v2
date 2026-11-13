@@ -4,16 +4,49 @@
   "reset_token": "eval80-v1",
   "created_at": "2026-11-13T06:18:34.249336+00:00",
   "start_balance": 100000.0,
-  "balance": 99185.2,
+  "balance": 99183.7,
   "peak_balance": 100510.6,
   "max_drawdown": -1325.4,
-  "next_id": 5,
-  "positions": [],
+  "next_id": 6,
+  "positions": [
+    {
+      "symbol": "US100",
+      "side": -1,
+      "contract": "MNQ",
+      "qty": 3,
+      "micro": true,
+      "atr": 77.651,
+      "confidence": 0.84,
+      "signal_entry": 27957.16,
+      "signal_at": "2026-11-13T15:00:58.210867+00:00",
+      "queued_at": "2026-11-13T15:00:20.007683+00:00",
+      "level_event": "breakdown below Put Wall #1 and session low",
+      "session": "LONDON_NY_OVERLAP",
+      "rationale": "Price is breaking out below VAL (28202.72) and well below POC (28261.75). CVD is BEARISH (-4.39) with steep negative acceleration (slope -5.10). Session is LONDON_NY_OVERLAP. Price is cleanly below declining VWAP (28300.24) and EMA50 (28277.29), riding beneath the lower ATR band (28107.26). GEX regi",
+      "id": 5,
+      "book": "EVAL-80",
+      "entry": 27990.0,
+      "entry_time": "2026-11-13T15:01:14.452117+00:00",
+      "quote_price": 27990.37,
+      "quote_source": "firmtape:NQ",
+      "quote_age_s": 1.45,
+      "stop": 28052.25,
+      "target": 27912.25,
+      "deadline": "2026-11-13T16:31:14.452117+00:00",
+      "risk_usd": 376.5,
+      "target_usd": 463.5,
+      "mfe": 18.5,
+      "mae": 0.36999999999898137,
+      "scan_from": "2026-11-13T15:01:14.452117+00:00",
+      "checks": 4,
+      "last_check_at": "2026-11-13T15:01:57.635014+00:00"
+    }
+  ],
   "pending": [],
   "last_price": {
     "XAUUSD": 3889.62,
     "XAGUSD": 49.691,
-    "US100": 28191.84
+    "US100": 27971.5
   },
   "seen_cycles": [
     "2026-11-13T06:30:24.363946+00:00",
@@ -40,7 +73,8 @@
     "2026-11-13T14:00:37.877286+00:00",
     "2026-11-13T14:15:35.771424+00:00",
     "2026-11-13T14:30:33.886709+00:00",
-    "2026-11-13T14:45:37.354411+00:00"
+    "2026-11-13T14:45:37.354411+00:00",
+    "2026-11-13T15:00:58.210867+00:00"
   ],
   "stats": {
     "trades": 4,
@@ -49,14 +83,14 @@
     "gross_win": 515.4,
     "gross_loss": -1330.2,
     "net_pnl": -814.8,
-    "commissions": 32.8,
+    "commissions": 34.3,
     "hold_seconds": 2037,
     "exit_reasons": {
       "target_1atr": 1,
       "stop_0.8atr": 3
     },
-    "signals_seen": 13,
-    "signals_taken": 4,
+    "signals_seen": 14,
+    "signals_taken": 5,
     "skips": {
       "confidence<min": 9
     },
@@ -74,18 +108,18 @@
     "mll_locked": false,
     "dll_paused_day": null,
     "eod_closes": [],
-    "min_equity": 99565.0
+    "min_equity": 99181.48
   },
   "day": {
     "day": "2026-11-13",
     "net": -814.8
   },
   "cycles": {
-    "seen": 34,
-    "with_signals": 25,
+    "seen": 35,
+    "with_signals": 26,
     "skipped": 9,
     "last": {
-      "t": "2026-11-13T14:45:37.354411+00:00",
+      "t": "2026-11-13T15:00:58.210867+00:00",
       "ok": true,
       "signals": 5,
       "queued": [

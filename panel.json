@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-13T18:50:05.578376+00:00",
+  "updated_at": "2026-11-13T18:52:13.599459+00:00",
   "paper_only": true,
   "reset": {
     "token": "2026-11-12-uniform-reset",
@@ -169,7 +169,7 @@
       "balance": 100458.4,
       "start_balance": 100000.0,
       "net_pnl_usd": 460.7,
-      "open_pnl_usd": 77.0,
+      "open_pnl_usd": 118.0,
       "trades": 6,
       "wins": 3,
       "losses": 3,
@@ -793,10 +793,10 @@
       "target": 3872.9,
       "atr": 7.491,
       "status": "OPEN",
-      "max_pnl_usd": 134.2,
+      "max_pnl_usd": 143.1,
       "min_pnl_usd": -48.8,
-      "last_pnl_usd": 77.0,
-      "last_price": 3879.63,
+      "last_pnl_usd": 118.0,
+      "last_price": 3879.22,
       "close_reason": null,
       "exit": null,
       "t_exit": null,
@@ -807,7 +807,7 @@
       "first_cross_at": "2026-11-13T18:45:48.041326+00:00",
       "first_cross_basis": "live_net_tick",
       "id": 7,
-      "last_at": "2026-11-13T18:50:05.578376+00:00",
+      "last_at": "2026-11-13T18:52:13.599459+00:00",
       "went_positive_first_label": "No"
     },
     {
@@ -3033,7 +3033,7 @@
       "mode": "dry_run (triggers logged, no API calls, no fills)",
       "live": false,
       "dry_run_started_at": "2026-11-13T16:19:10.001752+00:00",
-      "updated_at": "2026-11-13T18:50:10.006014+00:00",
+      "updated_at": "2026-11-13T18:52:10.002467+00:00",
       "per_trigger": [
         {
           "trigger": "T1",
@@ -3055,14 +3055,14 @@
         {
           "trigger": "T2",
           "DS-IMG-E": {
-            "fired": 3,
+            "fired": 4,
             "calls": 2,
             "gate_passed": 0,
             "R_per_signal": null,
             "win_rate": null
           },
           "DS-TXT-E": {
-            "fired": 3,
+            "fired": 4,
             "calls": 2,
             "gate_passed": 0,
             "R_per_signal": null,
@@ -3178,7 +3178,7 @@
       "mode": "dry_run (trigger-only, no API calls, no fills)",
       "live": false,
       "dry_run_started_at": "2026-11-13T16:19:10.001752+00:00",
-      "updated_at": "2026-11-13T18:50:10.006014+00:00",
+      "updated_at": "2026-11-13T18:52:10.002467+00:00",
       "triggers": [
         {
           "trigger": "LVL-SWEEP",
@@ -3188,9 +3188,9 @@
             "EURUSD": 0,
             "US100": 4
           },
-          "EV-CONT": 1.0,
+          "EV-CONT": 0.333,
           "EV-REV": null,
-          "EV-TWIN": 1.0
+          "EV-TWIN": 0.0
         },
         {
           "trigger": "LVL-BREAK",
@@ -3243,8 +3243,8 @@
       ],
       "controls": {
         "EV-CONT": {
-          "n": 2,
-          "R": 2.0,
+          "n": 3,
+          "R": 1.0,
           "wins": 2
         },
         "EV-REV": {
@@ -3253,8 +3253,8 @@
           "wins": 1
         },
         "EV-TWIN": {
-          "n": 2,
-          "R": 0.699,
+          "n": 3,
+          "R": -0.301,
           "wins": 1
         }
       },

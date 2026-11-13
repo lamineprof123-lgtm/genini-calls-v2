@@ -1,11 +1,11 @@
 {
-  "snapshot_id": "m15-20261113141500-a0d9f2ede770",
-  "snapshot_hash": "a0d9f2ede7701373bc4f5cc496e42e85ec88481c20116785f76de269ec2e2cf8",
-  "package_id": "m15-20261113T143000-216e1edcf74d",
-  "bar_close_ts": "2026-11-13T14:30:00+00:00",
-  "snapshot_ts": "2026-11-13T14:30:33.306795+00:00",
-  "start_lag_s": 33.307,
-  "render_ms": 13830,
+  "snapshot_id": "m15-20261113143000-ba945099cf76",
+  "snapshot_hash": "ba945099cf76245bf4c8c2b369bdb70bef8a0f4a9284b4ba6cbfc35730381083",
+  "package_id": "m15-20261113T144500-a0782b432f31",
+  "bar_close_ts": "2026-11-13T14:45:00+00:00",
+  "snapshot_ts": "2026-11-13T14:45:36.834367+00:00",
+  "start_lag_s": 36.834,
+  "render_ms": 17298,
   "symbols": [
     "XAUUSD",
     "EURUSD",
@@ -15,19 +15,19 @@
     "BTCUSD"
   ],
   "chart_sha256": {
-    "XAUUSD": "1b03289d329944e2c5a52d81f182949c7375e48c2ff19e1545a76ed7f8ad7fbd",
-    "EURUSD": "854903ed127b77980363c3f979fedcc21d6974a59db4da09f8dcc25cb6b5440e",
-    "GBPUSD": "5fdb5930ca90f9331cee634520781fbfe4f4c4dbd29b1cb07a9c20327df844b4",
-    "US100": "c41d63f311f73e421a31d04eab151c19f6c943ebcba6da45fadc145e536973d3",
-    "XAGUSD": "a2eb6ffb12e11fa395453e624e64dc38ebae8664758be6b92cb7f7a8b690fb59",
-    "BTCUSD": "d5d44029869a269332a70bdc76313a709de182c5b04ac3e819fab0b8f57a17a5"
+    "XAUUSD": "5fd3830b0f9b02912c291b315ecbea17b2b3b6f9e60683bc5ca99d294b88986d",
+    "EURUSD": "0ad0092d5aa76b5546e2accc30028639e9b24e7f70ad668ddc4827ed45145ee3",
+    "GBPUSD": "0546f034b3107e67b032d4296ba0ef53c3eeb15eb914706bd5301f6a0f7e9090",
+    "US100": "e371a20e9c0082cd66c4ccfda23e723e72d0c6085bd62aa868a2d59c70050b90",
+    "XAGUSD": "bd2627165cfd887b1ca1dd116899e0e73052a0fee0e2d4eed9376a45e03455b7",
+    "BTCUSD": "10e14672e6609d455087822d308747c24f20d6b75ca71844b59dbc0a8ef05a2a"
   },
   "dispatched": {
     "claude": {},
     "carbon": {
       "ok": true,
-      "latency_s": 245.161,
-      "cost_usd": 0.217026,
+      "latency_s": 131.804,
+      "cost_usd": 0.158942,
       "error": null,
       "thinking_level": "high"
     },
@@ -35,14 +35,16 @@
     "glow80": {
       "thinking_level": "low",
       "ok": true,
-      "latency_s": 20.565,
+      "latency_s": 16.426,
       "thinking_tokens": null,
       "error": null,
       "eval80": {
         "ok": true,
         "skipped": null,
         "error": null,
-        "queued": [],
+        "queued": [
+          "US100"
+        ],
         "eval_status": "ACTIVE"
       },
       "evalr4": {
@@ -51,9 +53,18 @@
         "error": null,
         "queued": [],
         "eval_status": "ACTIVE",
-        "r4": {}
+        "r4": {
+          "US100": {
+            "pass": false,
+            "reason": "H1 EMA20-EMA50 with the trade -1.13 ATR < 2.7; last 3 bars move +2.72 ATR >= 2.2",
+            "h1_trend": -1.131,
+            "m15_ema20": 2.751,
+            "chase": 2.72,
+            "vwap": 2.872
+          }
+        }
       }
     }
   },
-  "updated_at": "2026-11-13T14:34:39.034874+00:00"
+  "updated_at": "2026-11-13T14:48:01.024417+00:00"
 }

@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-13T16:04:18.865782+00:00",
+  "updated_at": "2026-11-13T16:06:06.864309+00:00",
   "paper_only": true,
   "model": "gemini-4-carbon",
   "entry_thinking": "high",
@@ -281,11 +281,11 @@
   "whatif": {
     "CB-BRACKET": {
       "all": {
-        "n": 11,
-        "r_avg": -0.108,
-        "r_total": -1.191,
-        "net_1c": -646.85,
-        "win_rate": 0.455
+        "n": 12,
+        "r_avg": -0.016,
+        "r_total": -0.197,
+        "net_1c": 1219.65,
+        "win_rate": 0.5
       },
       "conf>=min": {
         "n": 2,
@@ -295,11 +295,11 @@
         "win_rate": 1.0
       },
       "conf<min": {
-        "n": 9,
-        "r_avg": -0.353,
-        "r_total": -3.174,
-        "net_1c": -3514.85,
-        "win_rate": 0.333
+        "n": 10,
+        "r_avg": -0.218,
+        "r_total": -2.18,
+        "net_1c": -1648.35,
+        "win_rate": 0.4
       },
       "site_only": {
         "n": 0,
@@ -309,20 +309,20 @@
         "win_rate": null
       },
       "tradeable": {
-        "n": 11,
-        "r_avg": -0.108,
-        "r_total": -1.191,
-        "net_1c": -646.85,
-        "win_rate": 0.455
+        "n": 12,
+        "r_avg": -0.016,
+        "r_total": -0.197,
+        "net_1c": 1219.65,
+        "win_rate": 0.5
       }
     },
     "CB-RUNNER": {
       "all": {
-        "n": 11,
-        "r_avg": -0.163,
-        "r_total": -1.788,
-        "net_1c": -1831.85,
-        "win_rate": 0.455
+        "n": 12,
+        "r_avg": -0.066,
+        "r_total": -0.794,
+        "net_1c": 34.65,
+        "win_rate": 0.5
       },
       "conf>=min": {
         "n": 2,
@@ -332,11 +332,11 @@
         "win_rate": 1.0
       },
       "conf<min": {
-        "n": 9,
-        "r_avg": -0.419,
-        "r_total": -3.771,
-        "net_1c": -4699.85,
-        "win_rate": 0.333
+        "n": 10,
+        "r_avg": -0.278,
+        "r_total": -2.777,
+        "net_1c": -2833.35,
+        "win_rate": 0.4
       },
       "site_only": {
         "n": 0,
@@ -346,43 +346,15 @@
         "win_rate": null
       },
       "tradeable": {
-        "n": 11,
-        "r_avg": -0.163,
-        "r_total": -1.788,
-        "net_1c": -1831.85,
-        "win_rate": 0.455
+        "n": 12,
+        "r_avg": -0.066,
+        "r_total": -0.794,
+        "net_1c": 34.65,
+        "win_rate": 0.5
       }
     },
-    "open": 6,
+    "open": 4,
     "open_rows": [
-      {
-        "vid": 17,
-        "exit": "CB-BRACKET",
-        "symbol": "US100",
-        "side": "SHORT",
-        "entry": 27722.25,
-        "stop": 27816.0,
-        "target": 27628.5,
-        "confidence": 0.74,
-        "site_only": false,
-        "flag": null,
-        "unit": "1 NQ",
-        "thinking_level": "high"
-      },
-      {
-        "vid": 18,
-        "exit": "CB-RUNNER",
-        "symbol": "US100",
-        "side": "SHORT",
-        "entry": 27722.25,
-        "stop": 27816.0,
-        "target": 27628.5,
-        "confidence": 0.74,
-        "site_only": false,
-        "flag": null,
-        "unit": "1 NQ",
-        "thinking_level": "high"
-      },
       {
         "vid": 19,
         "exit": "CB-BRACKET",
@@ -441,6 +413,54 @@
       }
     ],
     "recent": [
+      {
+        "t_exit": "2026-11-13T16:05:48.864669+00:00",
+        "vid": 18,
+        "exit_rules": "CB-RUNNER",
+        "symbol": "US100",
+        "side": "SHORT",
+        "confidence": 0.74,
+        "passes_filter": false,
+        "kind": "entry",
+        "signal_at": "2026-11-13T15:17:49.015091+00:00",
+        "entry_time": "2026-11-13T15:18:36.776028+00:00",
+        "entry": 27722.25,
+        "exit": 27628.75,
+        "reason": "target",
+        "net_1c": 1866.5,
+        "R": 0.994,
+        "atr": 93.624,
+        "chase_atr": 0.06,
+        "mfe_atr": 0.987,
+        "site_only": false,
+        "flag": null,
+        "unit": "1 NQ",
+        "thinking_level": "high"
+      },
+      {
+        "t_exit": "2026-11-13T16:05:48.864669+00:00",
+        "vid": 17,
+        "exit_rules": "CB-BRACKET",
+        "symbol": "US100",
+        "side": "SHORT",
+        "confidence": 0.74,
+        "passes_filter": false,
+        "kind": "entry",
+        "signal_at": "2026-11-13T15:17:49.015091+00:00",
+        "entry_time": "2026-11-13T15:18:36.776028+00:00",
+        "entry": 27722.25,
+        "exit": 27628.75,
+        "reason": "target",
+        "net_1c": 1866.5,
+        "R": 0.994,
+        "atr": 93.624,
+        "chase_atr": 0.06,
+        "mfe_atr": 0.987,
+        "site_only": false,
+        "flag": null,
+        "unit": "1 NQ",
+        "thinking_level": "high"
+      },
       {
         "t_exit": "2026-11-13T15:10:55.921018+00:00",
         "vid": 16,

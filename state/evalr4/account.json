@@ -4,55 +4,14 @@
   "reset_token": "evalr4-v1",
   "created_at": "2026-11-13T06:54:31.184443+00:00",
   "start_balance": 100000.0,
-  "balance": 100087.0,
+  "balance": 99617.2,
   "peak_balance": 100510.6,
-  "max_drawdown": -423.6,
+  "max_drawdown": -893.4,
   "next_id": 4,
-  "positions": [
-    {
-      "symbol": "XAGUSD",
-      "side": -1,
-      "contract": "SIL",
-      "qty": 3,
-      "micro": true,
-      "atr": 0.1854,
-      "confidence": 0.8,
-      "signal_entry": 49.593,
-      "signal_at": "2026-11-13T14:15:35.771424+00:00",
-      "queued_at": "2026-11-13T14:15:20.001830+00:00",
-      "level_event": "breakdown below VAL 49.783 and Prev Low 49.688",
-      "session": "LONDON_NY_OVERLAP",
-      "rationale": "Price is trading below VAL (49.783) and below POC (50.001), indicating full value acceptance lower. CVD is BEARISH (-192.96) with steep negative slope (-50.18), aligning strongly with the selloff. Session is LONDON_NY_OVERLAP. Price is well below VWAP (50.111) and EMA50 (50.026). ATR channel is expa",
-      "r4": {
-        "pass": true,
-        "reason": null,
-        "h1_trend": 3.169,
-        "m15_ema20": 1.673,
-        "chase": 1.117,
-        "vwap": 2.795
-      },
-      "id": 3,
-      "book": "EVAL-R4",
-      "entry": 49.59,
-      "entry_time": "2026-11-13T14:16:00.014691+00:00",
-      "quote_price": 49.595,
-      "quote_source": "dukascopy:tick",
-      "quote_age_s": 10.51,
-      "stop": 49.74,
-      "target": 49.4,
-      "deadline": "2026-11-13T15:46:00.014691+00:00",
-      "risk_usd": 459.6,
-      "target_usd": 560.4,
-      "mfe": 0.1010000000000062,
-      "mae": 0.12899999999999778,
-      "scan_from": "2026-11-13T14:30:00+00:00",
-      "checks": 49,
-      "last_check_at": "2026-11-13T14:31:57.633229+00:00"
-    }
-  ],
+  "positions": [],
   "pending": [],
   "last_price": {
-    "XAGUSD": 49.713,
+    "XAGUSD": 49.742,
     "XAUUSD": 3889.61
   },
   "seen_cycles": [
@@ -80,17 +39,17 @@
     "2026-11-13T14:30:33.886709+00:00"
   ],
   "stats": {
-    "trades": 2,
+    "trades": 3,
     "wins": 1,
-    "losses": 1,
+    "losses": 2,
     "gross_win": 515.4,
-    "gross_loss": -423.6,
-    "net_pnl": 91.8,
-    "commissions": 24.0,
-    "hold_seconds": 1935,
+    "gross_loss": -898.2,
+    "net_pnl": -382.8,
+    "commissions": 28.8,
+    "hold_seconds": 2910,
     "exit_reasons": {
       "target_1atr": 1,
-      "stop_0.8atr": 1
+      "stop_0.8atr": 2
     },
     "signals_seen": 11,
     "signals_taken": 3,
@@ -115,7 +74,7 @@
   },
   "day": {
     "day": "2026-11-13",
-    "net": 91.8
+    "net": -382.8
   },
   "cycles": {
     "seen": 31,

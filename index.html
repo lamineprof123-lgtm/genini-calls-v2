@@ -80,6 +80,14 @@
   .mc-v.pos { color: var(--buy); } .mc-v.neg { color: var(--sell); }
   .mg { font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); margin: 16px 0 4px; }
   .mg:first-child { margin-top: 0; }
+  .ev { margin-top: 9px; padding: 9px 10px; border: 1px solid var(--line); border-radius: 10px; }
+  .ev-h { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+  .ev-bar { height: 6px; border-radius: 3px; background: var(--line); margin: 7px 0 2px; overflow: hidden; }
+  .ev-bar > i { display: block; height: 100%; background: var(--buy); }
+  .st.ACTIVE { color: #7DD3FC; border-color: rgba(125,211,252,.35); }
+  .st.PASSED { color: var(--buy); border-color: rgba(38,166,154,.4); }
+  .st.FAILED { color: var(--sell); border-color: rgba(239,83,80,.35); }
+  tr.evrow td { font-family: var(--sans); font-size: 12px; color: var(--muted); padding-top: 0; }
   @media (max-width: 699px) {
     body { padding: 16px 12px 24px; }
     .brand img { height: 44px; }
@@ -166,6 +174,22 @@
       return v === 'yes' ? 'Yes' : v === 'no' ? 'No' : v === '?' ? '?' : '—';
     };
     const wpfCls = v => v === 'Yes' ? 'pos' : (v === 'No' ? 'neg' : 'dim');
+    const kv = (k, v, c = '') => `<div><div class="mc-k">${k}</div><div class="mc-v ${c}">${v}</div></div>`;
+    const missedTxt = e => { const m = e.missed_scans || {}, ks = Object.keys(m).filter(k => m[k]);
+      return (e.missed_total || 0) + (ks.length ? ' (' + ks.map(k => esc(k) + ' ' + m[k]).join(', ') + ')' : ''); };
+    const evalLine = e => `Eval <span class="st ${esc(e.status)}">${esc(e.status)}</span> · profit ` +
+      `<span class="${cls(e.profit)}">${usd(e.profit)}</span> of ${usd(e.profit_target, false)} (${Number(e.progress_pct || 0).toFixed(0)}%)` +
+      ` · MLL floor ${bal(e.mll_floor)} ${e.mll_locked ? '(locked)' : '(trailing)'}` +
+      ` · DLL used ${usd(e.dll_used, false)} of ${usd(e.dll_limit, false)}${e.dll_paused ? ' (paused)' : ''}` +
+      ` · missed (G-LOW-80 held) ${missedTxt(e)}` +
+      `${e.reason && e.status !== 'ACTIVE' ? ' · ' + esc(e.reason) : ''}`;
+    const evalCard = e => `<div class="ev"><div class="ev-h"><span>Lucid eval</span><span class="st ${esc(e.status)}">${esc(e.status)}</span></div>
+      <div class="ev-bar"><i style="width:${Math.min(100, Math.max(0, Number(e.progress_pct || 0)))}%"></i></div>
+      <div class="mc-g">${kv('To $6,000', usd(e.profit) + ' · ' + Number(e.progress_pct || 0).toFixed(0) + '%', cls(e.profit))}
+      ${kv('MLL floor', bal(e.mll_floor) + (e.mll_locked ? ' 🔒' : ''))}
+      ${kv('DLL used', usd(e.dll_used, false) + ' / ' + usd(e.dll_limit, false).replace('.00', ''), e.dll_paused ? 'neg' : '')}</div>
+      <div class="mc-s">Missed (G-LOW-80 held the symbol): ${missedTxt(e)}</div>
+      ${e.reason && e.status !== 'ACTIVE' ? `<div class="mc-s">${esc(e.reason)}</div>` : ''}${e.dll_paused ? '<div class="mc-s">Daily loss limit hit: paused for the session.</div>' : ''}</div>`;
     let h = `<tr><th class="l">Book</th><th class="l">Venue</th><th>Balance</th><th>Net P&amp;L</th><th>Open P&amp;L</th>
       <th>Closed</th><th>W / L</th><th>Win rate</th><th>Went + first</th><th>Open</th></tr>`;
     let lastModel = null;
@@ -179,9 +203,9 @@
         <td>${p.trades}</td><td>${p.wins} / ${p.losses}</td>
         <td>${p.win_rate == null ? '—' : (100 * p.win_rate).toFixed(0) + '%'}</td>
         <td>${p.went_positive_first == null ? '—' : esc(p.went_positive_first)}</td><td>${p.open_positions}</td></tr>`;
+      if (p.eval) h += `<tr class="evrow"><td class="l" colspan="10">${evalLine(p.eval)}</td></tr>`;
     }
     $('perf').innerHTML = h;
-    const kv = (k, v, c = '') => `<div><div class="mc-k">${k}</div><div class="mc-v ${c}">${v}</div></div>`;
     let pc = '', lm = null;
     const perfs = P.performance || [];
     for (const p of perfs.filter(q => q.venue === 'LUCID')) {
@@ -195,6 +219,7 @@
         ${kv('Closed', p.trades)}${kv('W / L', p.wins + ' / ' + p.losses)}
         ${kv('Win rate', p.win_rate == null ? '—' : (100 * p.win_rate).toFixed(0) + '%')}
         ${kv('Went positive first', p.went_positive_first == null ? '—' : esc(p.went_positive_first))}</div>
+        ${p.eval ? evalCard(p.eval) : ''}
         ${o ? `<div class="mc-s" style="margin-top:8px">Other venue (BTC): ${bal(o.balance)} · net <span class="${cls(o.net_pnl_usd)}">${usd(o.net_pnl_usd)}</span>
           · ${o.trades} closed (${o.wins}/${o.losses})${o.open_positions ? ` · ${o.open_positions} open <span class="${cls(o.open_pnl_usd)}">${usd(o.open_pnl_usd)}</span>` : ''}
           · went positive first ${o.went_positive_first == null ? '—' : esc(o.went_positive_first)}</div>` : ''}</div>`;
@@ -239,7 +264,7 @@
           ${st === 'OPEN' ? kv('Open P&amp;L', usd(x.last_pnl_usd), cls(x.last_pnl_usd)) : kv('Close P&amp;L', usd(x.net_at_close_usd), cls(x.net_at_close_usd))}</div></div>`;
       }).join('');
     }
-    $('posNote').textContent = (P.pnl_note || '') + ' Status: OPEN, or CLOSED-stop / CLOSED-target / CLOSED-time by the mechanical 1 ATR bracket.';
+    $('posNote').textContent = (P.pnl_note || '') + ' Status: OPEN, or CLOSED-stop / CLOSED-target / CLOSED-time by the mechanical bracket (1 ATR stop / 1 ATR target; EVAL-80: 0.8 ATR stop / 1 ATR target). EVAL-80 can also show CLOSED-dll_1800 / CLOSED-mll_breach / CLOSED-eval_passed_flat from the Lucid eval rules.';
   }
 
   async function pollStatus() { const s = await getJSON('status.json'); if (s && newer(s, status)) status = s; }

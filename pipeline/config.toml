@@ -730,6 +730,39 @@ check_seconds = 18
 reset_token = "glow80-v1"
 
 # ---------------------------------------------------------------------------------------------------------------
+# EVAL-80 (signals/eval80.py, t284u). PAPER ONLY. Separate book; G-LOW-80 / MAIN / every other book unchanged.
+# NO own model call: reuses G-LOW-80's low-thinking gemini-3.8-flash response on the shared M15+20 s snapshot.
+# BUY/SELL with confidence >= 0.80 on the Lucid symbols (no BTC). Stop 0.8 ATR / target 1.0 ATR / 90-min cap,
+# no model exits, no trailing, 0.3 ATR fill check. ~$450 risk at the 0.8 ATR stop: minis when one fits, else
+# micros (MGC / MNQ / SIL / M6E / M6B, specs + fees in signals/eval80.py). Max 2 minis (20 micros) per position,
+# 6 minis / 60 micros total; overlapping trades downsize into the remaining room. Fresh $100k account with the
+# LucidPro 100K eval rules ENFORCED: DLL $1,800 soft pause; $3,000 EOD trailing MLL, locks at $100,100 after an EOD
+# close above $103,100; intraday MLL touch = FAILED; +$6,000 = PASSED; on pass/fail stop trading, keep the record,
+# no auto-reset. Flat 21:45 UTC + no new entries in the last 15 min (same as G-LOW-80).
+[eval80]
+enabled = true
+source_book = "G-LOW-80"
+min_confidence = 0.80
+symbols = ["XAUUSD", "EURUSD", "GBPUSD", "US100", "XAGUSD"]
+stop_atr = 0.8
+target_atr = 1.0
+max_hold_minutes = 90
+max_chase_atr = 0.3
+risk_usd = 450.0
+max_risk_usd = 1500.0
+max_minis_per_position = 2
+max_minis = 6
+micros_per_mini = 10
+start_balance = 100000.0
+profit_target = 6000.0
+mll = 3000.0
+initial_trail_balance = 103100.0
+locked_mll_balance = 100100.0
+dll = 1800.0
+check_seconds = 18
+reset_token = "eval80-v1"
+
+# ---------------------------------------------------------------------------------------------------------------
 # OTHER-VENUE (signals/other_venue.py). PAPER ONLY. Parallel $100k CFD/spot sub-account on every model's book
 # for symbols that are not Lucid products. BTCUSD trades here (no longer site-only/what-if). Silver stays on
 # Lucid as SI (fees file 2026-11-09 lists SI in the GC/SI/HG/PL group at $2.30/side). Sizing: ~$900 risk per

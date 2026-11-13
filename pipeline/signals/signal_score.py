@@ -44,9 +44,15 @@ def _dt(s) -> datetime | None:
     return d if d.tzinfo else d.replace(tzinfo=UTC)
 
 
+# Books that share another book's model call get their own score rows (EVAL-80 reuses G-LOW-80's response,
+# same model / symbol / signal_at). Older books keep their historical keys unchanged.
+OWN_KEY_BOOKS = ("EVAL-80",)
+
+
 def score_key(row: dict) -> str:
-    return "|".join(str(row.get(k) or "") for k in
-                    ("model", "symbol", "signal_at", "action", "side", "kind", "role"))
+    k = "|".join(str(row.get(k) or "") for k in
+                 ("model", "symbol", "signal_at", "action", "side", "kind", "role"))
+    return f"{k}|{row['book']}" if row.get("book") in OWN_KEY_BOOKS else k
 
 
 def conf_band(c) -> str:
@@ -345,6 +351,7 @@ class SignalScorer:
                                 thinking_default="medium")
         n += self._ingest_claude()
         n += self._ingest_glow80()
+        n += self._ingest_eval80()
         n += self._ingest_jsonl("deepseek_signals.jsonl", model="deepseek-flash",
                                 nested=True)
         self.save()
@@ -413,6 +420,26 @@ class SignalScorer:
                         **s, "model": s.get("model") or d.get("model") or "gemini-3.8-flash",
                         "thinking_level": s.get("thinking_level") or d.get("thinking_level") or "low",
                         "signal_at": d.get("t"), "kind": "entry", "book": "G-LOW-80",
+                        "entry": s.get("entry") or s.get("live_price"),
+                    }))
+        return n
+
+    def _ingest_eval80(self) -> int:
+        """EVAL-80 (t284u): one eval80_signals.jsonl line per M15 cycle on G-LOW-80's shared response."""
+        n = 0
+        for f in sorted(self.logs_dir.glob("*/eval80_signals.jsonl")):
+            for line in f.read_text().splitlines():
+                try:
+                    d = json.loads(line)
+                except Exception:
+                    continue
+                if not d.get("ok"):
+                    continue
+                for s in d.get("signals") or []:
+                    n += len(self.enqueue({
+                        **s, "model": s.get("model") or d.get("model") or "gemini-3.8-flash",
+                        "thinking_level": s.get("thinking_level") or d.get("thinking_level") or "low",
+                        "signal_at": d.get("t"), "kind": "entry", "book": "EVAL-80",
                         "entry": s.get("entry") or s.get("live_price"),
                     }))
         return n

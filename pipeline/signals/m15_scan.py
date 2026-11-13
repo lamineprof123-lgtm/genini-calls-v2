@@ -83,7 +83,7 @@ class M15Coordinator:
     """Owned by GhaLoop. Renders once per M15 close +20s and fans out to every close-bar model."""
 
     def __init__(self, cfg: dict, *, io_lock: asyncio.Lock | None = None,
-                 claude=None, carbon=None, deepseek=None, opus_b=None, scorer=None, glow80=None,
+                 claude=None, carbon=None, deepseek=None, opus_b=None, scorer=None, glow80=None, eval80=None,
                  snapshot=None, render=None, h1=None,
                  state_dir=None, logs_dir=None, site_dir=None):
         self.cfg = cfg
@@ -94,6 +94,7 @@ class M15Coordinator:
         self.deepseek = deepseek
         self.opus_b = opus_b
         self.glow80 = glow80
+        self.eval80 = eval80
         self.scorer = scorer
         self._snapshot = snapshot
         self._render = render
@@ -349,7 +350,31 @@ class M15Coordinator:
         except Exception:
             log.exception("m15_calls G-LOW-80 log failed")
         self.enqueue_signals(r.get("score_signals") or [])
+        if self.eval80 is not None:
+            r = {**r, "eval80": await self._run_eval80(snap, r)}
         return r
+
+    async def _run_eval80(self, snap: M15Snapshot, g: dict) -> dict:
+        """EVAL-80 (t284u): no model call; evaluates G-LOW-80's response for the same snapshot."""
+        call_start = datetime.now(UTC)
+        try:
+            e = await self.eval80.on_shared(g, snap, now=snap.now)
+        except Exception as ex:
+            log.exception("m15 EVAL-80 failed (other models unaffected)")
+            e = {"ok": False, "error": f"{type(ex).__name__}: {ex}"}
+        try:
+            e = e or {}
+            self.log_call(book="EVAL-80", model=e.get("model") or "gemini-3.8-flash", snap=snap,
+                          call_start=call_start, answer_ts=datetime.now(UTC), fill_ts=None,
+                          ok=bool(e.get("ok")), latency_s=0.0, cost_usd=0.0, thinking_tokens=None,
+                          error=e.get("error"),
+                          extra={"shared_from": "G-LOW-80", "skipped": e.get("skipped"),
+                                 "thinking_level": e.get("thinking_level"), "queued": e.get("queued"),
+                                 "signals": e.get("signals"), "eval_status": e.get("eval_status")})
+        except Exception:
+            log.exception("m15_calls EVAL-80 log failed")
+        self.enqueue_signals(e.get("score_signals") or [])
+        return {k: e.get(k) for k in ("ok", "skipped", "error", "queued", "eval_status")}
 
     async def _run_bracket(self, snap: M15Snapshot) -> dict:
         """C-OPUS-B and DS-FLASH get the identical bracket-v1 package (same bytes)."""
@@ -398,7 +423,7 @@ class M15Coordinator:
         dispatched = await self.dispatch(snap)
         rec = {**self.last, "dispatched": {k: {kk: vv for kk, vv in (v or {}).items()
                                                if kk in ("ok", "skipped", "error", "latency_s", "cost_usd",
-                                                         "thinking_tokens", "start_lag_s", "thinking_level")}
+                                                         "thinking_tokens", "start_lag_s", "thinking_level", "eval80")}
                                            if isinstance(v, dict) else v
                                            for k, v in dispatched.items()}}
         self.last = rec

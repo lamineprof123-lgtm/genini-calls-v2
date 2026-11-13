@@ -260,6 +260,8 @@ class GLow80Book(BracketBook):
                               "prompt_version": "system_prompt.j2", "book": BOOK,
                               "model_version": resp.get("model_version")})
             out["score_signals"] = score if ok else []
+            out["validated"] = validated        # in-memory only: shared with EVAL-80 (no extra Gemini call)
+            out["signal_at"] = sig_at
             out["signals"] = [{k: v.get(k) for k in ("symbol", "action", "confidence", "session", "atr",
                                                     "entry", "live_price")} for v in validated]
             self._jsonl("glow80_signals.jsonl", now, {

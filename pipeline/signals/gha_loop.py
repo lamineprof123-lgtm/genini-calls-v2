@@ -21,7 +21,7 @@ from .pipeline import next_boundary, run_once
 from .site import write_status
 
 log = logging.getLogger("signals.gha")
-SITE_JSON = ("status.json", "latest_signal.json", "history.json", "lucid.json", "claude.json", "bracket.json", "glow80.json",
+SITE_JSON = ("status.json", "latest_signal.json", "history.json", "lucid.json", "claude.json", "bracket.json", "glow80.json", "eval80.json",
              "carbon.json", "deepseek.json", "signal_scores.json", "opus_b.json", "m15_scan.json", "other_venue.json",
              "panel.json")
 DATA_JSON = ("books.json",)  # committed to the data branch only (not deployed to Pages)
@@ -72,6 +72,8 @@ class GhaLoop:
         self.m15_task: asyncio.Task | None = None
         self.glow80 = None                   # G-LOW-80 low-thinking Gemini side book (signals/glow80.py)
         self.glow80_task: asyncio.Task | None = None
+        self.eval80 = None                   # EVAL-80 Lucid eval book on G-LOW-80's call (signals/eval80.py)
+        self.eval80_task: asyncio.Task | None = None
         self.other_venue = None
         self.other_venue_task: asyncio.Task | None = None
         for sub in ("state", "logs"):
@@ -219,6 +221,7 @@ class GhaLoop:
         self.start_opus_b()
         self.start_scorer()
         self.start_glow80()
+        self.start_eval80()
         self.start_m15_scan()
         self.start_panel()
         while True:
@@ -518,7 +521,7 @@ class GhaLoop:
             self.m15 = M15Coordinator(
                 self.cfg, io_lock=self.io_lock,
                 claude=self.claude, carbon=self.carbon,
-                deepseek=self.deepseek, opus_b=self.opus_b, scorer=self.scorer, glow80=self.glow80,
+                deepseek=self.deepseek, opus_b=self.opus_b, scorer=self.scorer, glow80=self.glow80, eval80=self.eval80,
                 state_dir=self.data / "state", logs_dir=self.data / "logs", site_dir=self.data,
             )
             self.m15_task = asyncio.create_task(run_m15_scan_loop(self.m15), name="m15-scan")
@@ -547,6 +550,33 @@ class GhaLoop:
         except Exception:
             log.exception("G-LOW-80 failed to start (other books unaffected)")
             self.glow80 = None
+
+    def start_eval80(self) -> None:
+        """EVAL-80 (t284u): G-LOW-80's shared low-thinking call, conf >= 0.80, 0.8 / 1.0 ATR bracket, ~$450 risk
+        (minis else micros), fresh $100k account under ENFORCED LucidPro 100K eval rules. Needs G-LOW-80."""
+        from .eval80 import eval80_cfg
+        if self.dry_run or not eval80_cfg(self.cfg).get("enabled", False) or self.glow80 is None:
+            return
+        try:
+            from .eval80 import Eval80Book
+            from .bracket import run_bracket_loop
+            self.eval80 = Eval80Book(self.cfg, io_lock=self.io_lock, state_dir=self.data / "state",
+                                     logs_dir=self.data / "logs", site_dir=self.data)
+            self.eval80_task = asyncio.create_task(run_bracket_loop(self.eval80), name="eval80")
+            log.info("EVAL-80 on: min_conf=%s stop=%s target=%s risk=%s eval=%s", self.eval80.b["min_confidence"],
+                     self.eval80.b["stop_atr"], self.eval80.b["target_atr"], self.eval80.b["risk_usd"],
+                     self.eval80.ev.get("status"))
+        except Exception:
+            log.exception("EVAL-80 failed to start (other books unaffected)")
+            self.eval80 = None
+
+    async def stop_eval80(self) -> None:
+        t, self.eval80_task = self.eval80_task, None
+        if t:
+            t.cancel()
+            with contextlib.suppress(BaseException):
+                await asyncio.wait_for(t, 30)
+        self.eval80 = None
 
     async def stop_glow80(self) -> None:
         t, self.glow80_task = self.glow80_task, None
@@ -674,6 +704,7 @@ class GhaLoop:
         await self.stop_carbon()
         await self.stop_m15_scan()
         await self.stop_glow80()
+        await self.stop_eval80()
         await self.stop_deepseek()
         await self.stop_opus_b()
         await self.stop_other_venue()

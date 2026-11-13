@@ -16,6 +16,7 @@ from pathlib import Path
 
 from .risk import _atomic_write
 from . import first_cross as fc
+from .eval_pass import eval_pass_stats
 
 log = logging.getLogger("signals.panel")
 UTC = timezone.utc
@@ -572,6 +573,13 @@ class PanelLedger:
                     perf[-1]["eval"] = self.eval_status()
                 if book == "EVAL-R4" and venue == LUCID:
                     perf[-1]["eval"] = self.eval_status("evalr4.json")
+                if venue == LUCID:
+                    # Display-only LucidPro 100K replay (other-venue BTC is already out of this venue).
+                    perf[-1]["eval_pass"] = eval_pass_stats(
+                        [{"net": r.get("net_at_close_usd"), "t_exit": r.get("t_exit"),
+                          "entry_time": r.get("entry_time"), "symbol": r.get("symbol")}
+                         for r in closed],
+                        open_pnl=op, now=now)
         return {"updated_at": _iso(now), "paper_only": True,
                 "reset": {"token": self.reset.get("token"), "at": self.reset.get("at")},
                 "exit_rule": ("uniform-1atr-v1: 1 ATR stop · 1 ATR target · 90-min cap (all books, no model exits; "
@@ -590,6 +598,13 @@ class PanelLedger:
                              "otherwise from M1 bars; a bar that hits both sides with no 15s path is ?."),
                 "wpf_basis": ("net_usd = gross - round-trip fees; live_net_tick / tick_15s = 15s last-print path; "
                               "m1_ohlc = M1 fallback"),
+                "eval_pass_note": ("Eval passing replays each book's Lucid-only closed trades from $100,000 "
+                                   "(other-venue BTC excluded; prop firms do not offer BTC) against LucidPro 100K "
+                                   "rules: $6,000 profit target, $1,800 daily loss limit, $3,000 end-of-day trailing "
+                                   "max loss that locks at $100,100. A pass or a DLL/MLL fail ends the attempt and "
+                                   "the next trade starts a fresh $100,000 eval. Current eval progress is the "
+                                   "unfinished attempt, including open Lucid P&L, as profit / $6,000 (can be "
+                                   "negative), plus the remaining MLL buffer."),
                 "performance": perf, "positions": rows, "event_streams": self.event_streams()}
 
     def event_streams(self) -> dict:

@@ -87,7 +87,9 @@
   .st.ACTIVE { color: #7DD3FC; border-color: rgba(125,211,252,.35); }
   .st.PASSED { color: var(--buy); border-color: rgba(38,166,154,.4); }
   .st.FAILED { color: var(--sell); border-color: rgba(239,83,80,.35); }
-  tr.evrow td { font-family: var(--sans); font-size: 12px; color: var(--muted); padding-top: 0; }
+  tr.evrow td { font-family: var(--sans); font-size: 12px; color: var(--muted); padding-top: 0;
+                white-space: normal; overflow-wrap: anywhere; }
+  .ep { margin-top: 8px; }
   @media (max-width: 699px) {
     body { padding: 16px 12px 24px; }
     .brand img { height: 44px; }
@@ -113,6 +115,7 @@
     <h2><span>Performance since reset</span><small id="perfUpd"></small></h2>
     <div class="tw"><table id="perf"></table></div>
     <div class="cards" id="perfCards"></div>
+    <div class="note" id="perfNote"></div>
   </section>
 
   <section class="card" id="evtSec" aria-label="Event-triggered books" style="display:none">
@@ -211,6 +214,24 @@
       ` · missed (G-LOW-80 held) ${missedTxt(e)}` +
       `${e.filter ? ' · filtered out ' + filtTxt(e.filter) : ''}` +
       `${e.reason && e.status !== 'ACTIVE' ? ' · ' + esc(e.reason) : ''}`;
+    const passLine = e => {
+      if (!e) return '';
+      const pass = e.passing_label ? `${Number(e.passing_pct).toFixed(0)}% (${esc(e.passing_label)})` : '—';
+      const prog = Number(e.current_progress_pct);
+      const progTxt = Number.isFinite(prog) ? (prog > 0 ? '+' : '') + prog.toFixed(1) + '%' : '—';
+      return `Eval passing ${pass} · current attempt <span class="${cls(e.current_profit)}">${progTxt}</span> ` +
+        `(${usd(e.current_profit)} of ${usd(e.profit_target, false)}) · MLL buffer ${usd(e.mll_buffer, false)}`;
+    };
+    const passCard = e => {
+      if (!e) return '';
+      const pass = e.passing_label ? `${Number(e.passing_pct).toFixed(0)}% (${esc(e.passing_label)})` : '—';
+      const prog = Number(e.current_progress_pct);
+      const progTxt = Number.isFinite(prog) ? (prog > 0 ? '+' : '') + prog.toFixed(1) + '%' : '—';
+      return `<div class="ev ep"><div class="ev-h"><span>LucidPro 100K</span><span>replay</span></div>
+        <div class="mc-g">${kv('Eval passing', pass, e.passing_pct == null ? 'dim' : (e.passing_pct >= 50 ? 'pos' : (e.attempts_finished ? 'neg' : 'dim')))}
+        ${kv('Current eval', progTxt + ' · ' + usd(e.current_profit) + ' of ' + usd(e.profit_target, false), cls(e.current_profit))}
+        ${kv('MLL buffer', usd(e.mll_buffer, false), e.mll_buffer < 0 ? 'neg' : '')}</div></div>`;
+    };
     const evalCard = e => `<div class="ev"><div class="ev-h"><span>Lucid eval</span><span class="st ${esc(e.status)}">${esc(e.status)}</span></div>
       <div class="ev-bar"><i style="width:${Math.min(100, Math.max(0, Number(e.progress_pct || 0)))}%"></i></div>
       <div class="mc-g">${kv('To $6,000', usd(e.profit) + ' · ' + Number(e.progress_pct || 0).toFixed(0) + '%', cls(e.profit))}
@@ -232,6 +253,7 @@
         <td>${p.trades}</td><td>${p.wins} / ${p.losses}</td>
         <td>${p.win_rate == null ? '—' : (100 * p.win_rate).toFixed(0) + '%'}</td>
         <td>${p.went_positive_first == null ? '—' : esc(p.went_positive_first)}</td><td>${p.open_positions}</td></tr>`;
+      if (p.eval_pass) h += `<tr class="evrow"><td class="l" colspan="10">${passLine(p.eval_pass)}</td></tr>`;
       if (p.eval) h += `<tr class="evrow"><td class="l" colspan="10">${evalLine(p.eval)}</td></tr>`;
       if (p.trigger) h += `<tr class="evrow"><td class="l" colspan="10">${trigTxt(p.trigger)}</td></tr>`;
       if (p.evt) h += `<tr class="evrow"><td class="l" colspan="10">${evtTxt(p.evt)}</td></tr>`;
@@ -250,12 +272,13 @@
         ${kv('Closed', p.trades)}${kv('W / L', p.wins + ' / ' + p.losses)}
         ${kv('Win rate', p.win_rate == null ? '—' : (100 * p.win_rate).toFixed(0) + '%')}
         ${kv('Went positive first', p.went_positive_first == null ? '—' : esc(p.went_positive_first))}</div>
-        ${p.eval ? evalCard(p.eval) : ''}${p.trigger ? `<div class="mc-s" style="margin-top:8px">${trigTxt(p.trigger)}</div>` : ''}${p.evt ? `<div class="mc-s" style="margin-top:8px">${evtTxt(p.evt)}</div>` : ''}
+        ${p.eval_pass ? passCard(p.eval_pass) : ''}${p.eval ? evalCard(p.eval) : ''}${p.trigger ? `<div class="mc-s" style="margin-top:8px">${trigTxt(p.trigger)}</div>` : ''}${p.evt ? `<div class="mc-s" style="margin-top:8px">${evtTxt(p.evt)}</div>` : ''}
         ${o ? `<div class="mc-s" style="margin-top:8px">Other venue (BTC): ${bal(o.balance)} · net <span class="${cls(o.net_pnl_usd)}">${usd(o.net_pnl_usd)}</span>
           · ${o.trades} closed (${o.wins}/${o.losses})${o.open_positions ? ` · ${o.open_positions} open <span class="${cls(o.open_pnl_usd)}">${usd(o.open_pnl_usd)}</span>` : ''}
           · went positive first ${o.went_positive_first == null ? '—' : esc(o.went_positive_first)}</div>` : ''}</div>`;
     }
     $('perfCards').innerHTML = pc;
+    if ($('perfNote')) $('perfNote').textContent = P.eval_pass_note || '';
     // event-triggered streams: per-trigger tables (counts and what-if R; no signals)
     const ES = P.event_streams || {}; let eh = '';
     if (ES.ds_evt && ES.ds_evt.per_trigger) {

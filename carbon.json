@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-13T13:00:20.001598+00:00",
+  "updated_at": "2026-11-13T13:02:48.171635+00:00",
   "paper_only": true,
   "model": "gemini-4-carbon",
   "entry_thinking": "high",
@@ -18,11 +18,11 @@
   "min_confidence": 0.75,
   "spend": {
     "day_dubai": "2026-11-13",
-    "usd": 3.5218,
+    "usd": 3.6815,
     "soft_usd": 15,
     "hard_usd": 19,
     "state": "ok",
-    "calls": 51,
+    "calls": 52,
     "failed": 14,
     "by_kind": {
       "trigger": {
@@ -30,14 +30,14 @@
         "usd": 1.49255
       },
       "entry": {
-        "calls": 21,
-        "usd": 2.029276
+        "calls": 22,
+        "usd": 2.18899
       }
     },
     "tokens": {
-      "input": 313858,
-      "output": 45702,
-      "thoughts": 243709
+      "input": 327915,
+      "output": 45887,
+      "thoughts": 256684
     },
     "price_per_mtok": [
       2.0,
@@ -45,52 +45,47 @@
     ],
     "history": {
       "2026-11-12": 3.1289,
-      "2026-11-13": 3.5218
+      "2026-11-13": 3.6815
     }
   },
-  "triggers_today": 31,
+  "triggers_today": 32,
   "max_triggers_per_day": 40,
   "next_scan_at": "2026-11-13T13:15:20+00:00",
   "in_window": true,
   "last_call": {
-    "t": "2026-11-13T12:47:42.371537+00:00",
-    "t_dubai": "2026-11-13T16:47:42.371537+04:00",
-    "kind": "trigger",
+    "t": "2026-11-13T13:02:48.171635+00:00",
+    "t_dubai": "2026-11-13T17:02:48.171635+04:00",
+    "kind": "entry",
     "model": "gemini-4-carbon",
-    "model_version": null,
+    "model_version": "gemini-4-carbon",
     "thinking": "high",
-    "ok": false,
-    "error": "ClientError: 402 RESOURCE_EXHAUSTED. {'error': {'code': 402, 'message': 'Your prepayment credits are depleted. Please go to AI Studio at https://ai.studio/projects to manage your project and billing. Learn more at https://ai.google.dev/gemini-api/docs/billing#prepay. ', 'status': 'RESOURCE_EXHAUSTED'}}",
-    "latency_s": 0.196,
-    "finish_reason": null,
+    "ok": true,
+    "error": null,
+    "latency_s": 148.166,
+    "finish_reason": "FinishReason.STOP",
     "tokens": {
-      "input": 0,
-      "output": 0,
-      "thoughts": 0,
-      "total": 0
+      "input": 14057,
+      "output": 185,
+      "thoughts": 12975,
+      "total": 27217
     },
-    "thoughts_token_count": 0,
+    "thoughts_token_count": 12975,
     "price_per_mtok": [
       2.0,
       10.0
     ],
-    "cost_usd": 0.0,
-    "spend_today_usd": 3.5218,
+    "cost_usd": 0.159714,
+    "spend_today_usd": 3.6815,
     "symbols": [
-      "EURUSD"
+      "XAUUSD",
+      "EURUSD",
+      "US100",
+      "XAGUSD",
+      "BTCUSD"
     ],
-    "render_ms": 305,
-    "parse_error": "ClientError: 402 RESOURCE_EXHAUSTED. {'error': {'code': 402, 'message': 'Your prepayment credits are depleted. Please go to AI Studio at https://ai.studio/projects to manage your project and billing. Learn more at https://ai.google.dev/gemini-api/docs/billing#prepay. ', 'status': 'RESOURCE_EXHAUSTED'}}",
-    "trigger": {
-      "trigger": "level_cross",
-      "level": "Session Low",
-      "level_price": 1.10462,
-      "price": 1.10446,
-      "direction": "down",
-      "symbol": "EURUSD",
-      "bar": "2026-11-13T12:45:00+00:00",
-      "n_today": 31
-    }
+    "render_ms": 0,
+    "parse_error": null,
+    "trigger": null
   },
   "first_call": {
     "t": "2026-11-12T18:18:04.014172+00:00",
@@ -127,7 +122,7 @@
     "parse_error": null,
     "trigger": null
   },
-  "calls_total": 66,
+  "calls_total": 67,
   "last_scan": {
     "kind": "trigger",
     "t": "2026-11-13T12:47:41.870537+00:00",

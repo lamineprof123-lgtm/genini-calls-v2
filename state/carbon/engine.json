@@ -23,8 +23,8 @@
       }
     },
     "2026-11-13": {
-      "usd": 3.521826,
-      "calls": 51,
+      "usd": 3.68154,
+      "calls": 52,
       "failed": 14,
       "by_kind": {
         "trigger": {
@@ -32,34 +32,34 @@
           "usd": 1.49255
         },
         "entry": {
-          "calls": 21,
-          "usd": 2.029276
+          "calls": 22,
+          "usd": 2.18899
         }
       },
       "tokens": {
-        "input": 313858,
-        "output": 45702,
-        "thoughts": 243709
+        "input": 327915,
+        "output": 45887,
+        "thoughts": 256684
       }
     }
   },
-  "last_scan_bar": "2026-11-13T12:30:00+00:00",
+  "last_scan_bar": "2026-11-13T12:45:00+00:00",
   "triggers": {
     "day": "2026-11-13",
-    "n": 31,
+    "n": 32,
     "per_bar": {
       "US100": "2026-11-13T10:45:00+00:00",
       "XAUUSD": "2026-11-13T10:30:00+00:00",
       "BTCUSD": "2026-11-13T09:00:00+00:00",
       "EURUSD": "2026-11-13T12:45:00+00:00",
-      "XAGUSD": "2026-11-13T11:45:00+00:00"
+      "XAGUSD": "2026-11-13T13:00:00+00:00"
     }
   },
   "cache": {
     "XAUUSD": {
-      "bar": "2026-11-13T12:30:00+00:00",
-      "atr": 6.077,
-      "price": 3889.18,
+      "bar": "2026-11-13T12:45:00+00:00",
+      "atr": 5.989,
+      "price": 3889.91,
       "levels": [
         [
           "Session High",
@@ -68,7 +68,7 @@
         ],
         [
           "24h High",
-          3949.03,
+          3948.57,
           -1
         ],
         [
@@ -92,44 +92,44 @@
           1
         ]
       ],
-      "vol_avg": 0.475695,
+      "vol_avg": 0.475225,
       "blocked": false,
       "session": "LONDON_SESSION"
     },
     "EURUSD": {
-      "bar": "2026-11-13T12:30:00+00:00",
-      "atr": 0.000489,
-      "price": 1.10449,
+      "bar": "2026-11-13T12:45:00+00:00",
+      "atr": 0.000504,
+      "price": 1.10517,
       "levels": [
         [
           "Session Low",
-          1.10462,
-          -1
+          1.10442,
+          1
         ],
         [
           "POC",
-          1.10597,
+          1.10598,
           -1
         ],
         [
           "VAH",
-          1.10647,
+          1.10646,
           -1
         ],
         [
           "VAL",
-          1.10536,
+          1.10533,
           -1
         ]
       ],
-      "vol_avg": 2306.1705,
+      "vol_avg": 2338.0965,
       "blocked": false,
       "session": "LONDON_SESSION"
     },
     "US100": {
-      "bar": "2026-11-13T12:30:00+00:00",
-      "atr": 44.877,
-      "price": 28295.09,
+      "bar": "2026-11-13T12:45:00+00:00",
+      "atr": 44.487,
+      "price": 28298.33,
       "levels": [
         [
           "Session High",
@@ -162,14 +162,14 @@
           1
         ]
       ],
-      "vol_avg": 1.012355,
+      "vol_avg": 1.01789,
       "blocked": false,
       "session": "LONDON_SESSION"
     },
     "XAGUSD": {
-      "bar": "2026-11-13T12:30:00+00:00",
-      "atr": 0.1356,
-      "price": 49.942,
+      "bar": "2026-11-13T12:45:00+00:00",
+      "atr": 0.1321,
+      "price": 49.98,
       "levels": [
         [
           "Session High",
@@ -189,7 +189,7 @@
         [
           "POC",
           50.0,
-          -1
+          1
         ],
         [
           "VAH",
@@ -202,14 +202,14 @@
           1
         ]
       ],
-      "vol_avg": 21.403950000000002,
+      "vol_avg": 21.4125,
       "blocked": false,
       "session": "LONDON_SESSION"
     },
     "BTCUSD": {
-      "bar": "2026-11-13T12:30:00+00:00",
-      "atr": 268.371,
-      "price": 69211.1,
+      "bar": "2026-11-13T12:45:00+00:00",
+      "atr": 262.495,
+      "price": 69075.1,
       "levels": [
         [
           "Prev Low",
@@ -238,11 +238,11 @@
         ],
         [
           "VAL",
-          67782.9,
+          67860.57,
           1
         ]
       ],
-      "vol_avg": 0.00693,
+      "vol_avg": 0.006905,
       "blocked": false,
       "session": "LONDON_SESSION"
     }
@@ -250,44 +250,39 @@
   "whatif": [],
   "next_vid": 11,
   "last_call": {
-    "t": "2026-11-13T12:47:42.371537+00:00",
-    "t_dubai": "2026-11-13T16:47:42.371537+04:00",
-    "kind": "trigger",
+    "t": "2026-11-13T13:02:48.171635+00:00",
+    "t_dubai": "2026-11-13T17:02:48.171635+04:00",
+    "kind": "entry",
     "model": "gemini-4-carbon",
-    "model_version": null,
+    "model_version": "gemini-4-carbon",
     "thinking": "high",
-    "ok": false,
-    "error": "ClientError: 402 RESOURCE_EXHAUSTED. {'error': {'code': 402, 'message': 'Your prepayment credits are depleted. Please go to AI Studio at https://ai.studio/projects to manage your project and billing. Learn more at https://ai.google.dev/gemini-api/docs/billing#prepay. ', 'status': 'RESOURCE_EXHAUSTED'}}",
-    "latency_s": 0.196,
-    "finish_reason": null,
+    "ok": true,
+    "error": null,
+    "latency_s": 148.166,
+    "finish_reason": "FinishReason.STOP",
     "tokens": {
-      "input": 0,
-      "output": 0,
-      "thoughts": 0,
-      "total": 0
+      "input": 14057,
+      "output": 185,
+      "thoughts": 12975,
+      "total": 27217
     },
-    "thoughts_token_count": 0,
+    "thoughts_token_count": 12975,
     "price_per_mtok": [
       2.0,
       10.0
     ],
-    "cost_usd": 0.0,
-    "spend_today_usd": 3.5218,
+    "cost_usd": 0.159714,
+    "spend_today_usd": 3.6815,
     "symbols": [
-      "EURUSD"
+      "XAUUSD",
+      "EURUSD",
+      "US100",
+      "XAGUSD",
+      "BTCUSD"
     ],
-    "render_ms": 305,
-    "parse_error": "ClientError: 402 RESOURCE_EXHAUSTED. {'error': {'code': 402, 'message': 'Your prepayment credits are depleted. Please go to AI Studio at https://ai.studio/projects to manage your project and billing. Learn more at https://ai.google.dev/gemini-api/docs/billing#prepay. ', 'status': 'RESOURCE_EXHAUSTED'}}",
-    "trigger": {
-      "trigger": "level_cross",
-      "level": "Session Low",
-      "level_price": 1.10462,
-      "price": 1.10446,
-      "direction": "down",
-      "symbol": "EURUSD",
-      "bar": "2026-11-13T12:45:00+00:00",
-      "n_today": 31
-    }
+    "render_ms": 0,
+    "parse_error": null,
+    "trigger": null
   },
   "first_call": {
     "t": "2026-11-12T18:18:04.014172+00:00",
@@ -324,7 +319,7 @@
     "parse_error": null,
     "trigger": null
   },
-  "calls_total": 66,
+  "calls_total": 67,
   "last_scan": {
     "kind": "trigger",
     "t": "2026-11-13T12:47:41.870537+00:00",

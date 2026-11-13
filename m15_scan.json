@@ -1,11 +1,11 @@
 {
-  "snapshot_id": "m15-20261113204500-d4b488e0c8fc",
-  "snapshot_hash": "d4b488e0c8fcce9ac9c794de1b68300c842bb36f8dfb22b9a81ec068c01b460b",
-  "package_id": "m15-20261113T210000-03ef2b02eea9",
-  "bar_close_ts": "2026-11-13T21:00:00+00:00",
-  "snapshot_ts": "2026-11-13T21:00:42.102272+00:00",
-  "start_lag_s": 42.102,
-  "render_ms": 23119,
+  "snapshot_id": "m15-20261113210000-d3e1577d6f00",
+  "snapshot_hash": "d3e1577d6f0089bf46c0c409929cd0aeb4573feb1c6ddecd9abe533138a93c45",
+  "package_id": "m15-20261113T211500-795498946ab0",
+  "bar_close_ts": "2026-11-13T21:15:00+00:00",
+  "snapshot_ts": "2026-11-13T21:15:37.540161+00:00",
+  "start_lag_s": 37.54,
+  "render_ms": 18044,
   "symbols": [
     "XAUUSD",
     "EURUSD",
@@ -15,15 +15,17 @@
     "BTCUSD"
   ],
   "chart_sha256": {
-    "XAUUSD": "d7b4c125f22773d5e538b533fb9d34c461b09aa4250628eef2cdab3e5e54f7e4",
-    "EURUSD": "94ccf8505494a6a0156fa511931faa6549fcbb14283e75b2e9ec758728403682",
-    "GBPUSD": "d10bdffc31b8e4d80c78697377c7182716355f122ed7a9cc745441515c17394d",
-    "US100": "8b1821356ae7249c2ff9332f1fdecc83865a09217f331be890a3b1ce74b433e2",
-    "XAGUSD": "aa1f01d7cbfb3a5f6052838b97829ab7874752c2fa585be7ba2703196e7e45dd",
-    "BTCUSD": "150eaa87a76973ca07c73e04802d2da38ac531a800f18434152ebef79d8c7a46"
+    "XAUUSD": "474625e4898dcf044d4ac39d02d76825c1770cd65f84c46e5a8ff54bfb5cac2b",
+    "EURUSD": "db7f50f05a51d31b64a659d69c753adae60dd5158b1f4fc09cfaf94cc1c765a3",
+    "GBPUSD": "15aed1c3ff533edfd4ca237f20b8bea81d61545aaa4d6daf389bd140204b49ea",
+    "US100": "c18269388897e49652c21bb1ffe474a8d58ed1e224d5e3c3f79dc902f871fca5",
+    "XAGUSD": "8e35e39323879801eec3ad877b91173021076f4178b98bccd4bf3a80f08560ad",
+    "BTCUSD": "372b10bf7ba65217376436e84ede6561cf237d0a972b3e1e8220661fe23b2791"
   },
   "dispatched": {
-    "claude": {},
+    "claude": {
+      "skipped": "blocked_session"
+    },
     "carbon": {
       "skipped": "outside entry window / session"
     },
@@ -31,7 +33,7 @@
     "glow80": {
       "thinking_level": "low",
       "ok": true,
-      "latency_s": 15.456,
+      "latency_s": 15.882,
       "thinking_tokens": null,
       "error": null,
       "eval80": {
@@ -56,7 +58,7 @@
         "skipped": null,
         "error": null,
         "queued": [],
-        "latency_s": 15.289
+        "latency_s": 12.097
       },
       "gp5eval": {
         "ok": true,
@@ -73,11 +75,12 @@
         "fired": [
           "XAUUSD",
           "EURUSD",
-          "US100"
+          "US100",
+          "XAGUSD"
         ],
-        "shared_call": false
+        "shared_call": true
       }
     }
   },
-  "updated_at": "2026-11-13T21:01:29.515595+00:00"
+  "updated_at": "2026-11-13T21:15:53.984611+00:00"
 }

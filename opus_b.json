@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-13T21:04:06.701779+00:00",
+  "updated_at": "2026-11-13T21:15:52.912365+00:00",
   "paper_only": true,
   "plan": "LucidPro 100K (DLL on)",
   "exit_mode": "uniform-1atr-v1",
@@ -186,11 +186,11 @@
   "rules": "C-OPUS-B: claude-opus-5-5 entries, adaptive thinking, effort high, shared bracket-v1 package with DS-FLASH (same charts, facts, 3 symbols, M15 close +20s). Question: will price travel 1 ATR my way before 1 ATR against? Code-computed facts + hold gates (no trend >2 ATR from VWAP; \u22651 ATR room; US100 volume-free S2). 0.3 ATR fill check. Uniform 1 ATR / 1 ATR / 90-min exits, no model exits. Fresh $100k Lucid account.",
   "stop_txt": "1 ATR stop \u00b7 1 ATR target \u00b7 90 min",
   "last_call": {
-    "t": "2026-11-13T21:01:26.942628+00:00",
+    "t": "2026-11-13T21:15:52.908743+00:00",
     "ok": true,
-    "latency_ms": 23081,
-    "cost_usd": 0.119732,
-    "thinking_tokens": 1084,
+    "latency_ms": 14775,
+    "cost_usd": 0.101232,
+    "thinking_tokens": 286,
     "usage": {
       "cache_creation": {
         "ephemeral_1h_input_tokens": 0,
@@ -199,10 +199,10 @@
       "cache_creation_input_tokens": 0,
       "cache_read_input_tokens": 0,
       "inference_geo": "global",
-      "input_tokens": 16693,
-      "output_tokens": 2648,
+      "input_tokens": 16673,
+      "output_tokens": 1727,
       "output_tokens_details": {
-        "thinking_tokens": 1084
+        "thinking_tokens": 286
       },
       "service_tier": "standard",
       "speed": "standard"
@@ -210,14 +210,14 @@
     "error": null,
     "effort": "high",
     "prompt_version": "bracket-v1",
-    "snapshot_id": "m15-20261113204500-d4b488e0c8fc",
-    "snapshot_hash": "d4b488e0c8fcce9ac9c794de1b68300c842bb36f8dfb22b9a81ec068c01b460b",
-    "package_id": "m15-20261113T210000-03ef2b02eea9",
-    "package_hash": "03ef2b02eea997e7cb5fe103f87937f6d476a92362eaeff183d4bea12646e21a",
-    "bar_close_ts": "2026-11-13T21:00:00+00:00",
-    "snapshot_ts": "2026-11-13T21:00:42.102272+00:00",
-    "call_start": "2026-11-13T21:01:03.861616+00:00",
-    "answer_ts": "2026-11-13T21:01:26.942628+00:00",
+    "snapshot_id": "m15-20261113210000-d3e1577d6f00",
+    "snapshot_hash": "d3e1577d6f0089bf46c0c409929cd0aeb4573feb1c6ddecd9abe533138a93c45",
+    "package_id": "m15-20261113T211500-795498946ab0",
+    "package_hash": "795498946ab099925154529fab1c02de74985fa0db11fa15879e3f24b46a58ed",
+    "bar_close_ts": "2026-11-13T21:15:00+00:00",
+    "snapshot_ts": "2026-11-13T21:15:37.540161+00:00",
+    "call_start": "2026-11-13T21:15:38.134127+00:00",
+    "answer_ts": "2026-11-13T21:15:52.908743+00:00",
     "model": "claude-opus-5-5"
   },
   "last_signals": [
@@ -229,7 +229,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "Bullish VAL reclaim but T1 fails for a BUY: price is below VWAP and EMA50. Fade BUY fails S1: only 0.238 ATR room up to EMA20, which is the hard gate. POC magnet is 0.69 ATR away, under 1.0. A SELL has no bearish event and 0.446 ATR room do",
+      "rationale": "HOLD: automation is blocked in LOW_LIQUIDITY_DEADZONE. A trend sell would be chasing, with VWAP distance -2.886 ATR (over 2.0). Room down is only 0.097 ATR to S/R 3872.05, so S1 fails. RVOL 0.98, no S2.",
       "gate_reasons": [],
       "issues": []
     },
@@ -241,7 +241,19 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "Only a touch of Session Low, with no rejection or close-through. Room up is 0.61 ATR and room down is 0.588 ATR, so both fail the 1.0 ATR gate. A trend SELL is also chasing at -6.2 ATR from VWAP. HOLD.",
+      "rationale": "HOLD: automation is blocked in the deadzone session. A trend sell is far beyond the 2 ATR VWAP limit (-5.837). Room down is 0.622 ATR to Session Low 1.10202, under 1.0. A fade buy has room up of only 0.558 ATR. S1 fails both ways.",
+      "gate_reasons": [],
+      "issues": []
+    },
+    {
+      "symbol": "US100",
+      "action": "HOLD",
+      "confidence": 0.0,
+      "score": 0,
+      "setup_type": "none",
+      "gated": false,
+      "decision": "HOLD",
+      "rationale": "HOLD: automation is blocked in the deadzone. A trend sell has room down of 1.45 ATR but VWAP distance is -2.844 ATR, which is chasing. A fade buy has room up of only 0.55 ATR to EMA20. CVD is neutral.",
       "gate_reasons": [],
       "issues": []
     },
@@ -253,19 +265,19 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "Only a touch of S/R 48.905, with no rejection or close-through. Room up is 0.618 ATR and room down is 0.414 ATR to ATR Lower, so both fail the gate. A trend SELL is chasing at -6.56 ATR from VWAP. HOLD.",
+      "rationale": "HOLD: automation is blocked in the deadzone. VWAP distance of -7.087 ATR is extreme chasing. Room down is only 0.271 ATR to Session Low and room up is 0.189 ATR. S1 fails both ways.",
       "gate_reasons": [],
       "issues": []
     },
     {
       "symbol": "BTCUSD",
-      "action": "SELL",
-      "confidence": 0.55,
-      "score": 6,
-      "setup_type": "trend",
-      "gated": true,
-      "decision": "OPENED",
-      "rationale": "T1 yes: below VWAP 69160.84 and EMA50. T2 yes: pullback rejected EMA20 and POC. VWAP distance -1.41 is within 2.0, and live price has barely moved. S1 (1.606 ATR room to VAL), S3 (CVD bearish, slope down), S4 (NY), S5 (h1 down). S2 no (RVOL",
+      "action": "HOLD",
+      "confidence": 0.0,
+      "score": 0,
+      "setup_type": "none",
+      "gated": false,
+      "decision": "HOLD",
+      "rationale": "HOLD: automation is blocked in the deadzone. The EMA20 rejection sell has VWAP distance of -2.612 ATR, beyond the 2.0 limit. Room down is only 0.240 ATR to VAL 68404.25, so S1 fails. RVOL 1.08.",
       "gate_reasons": [],
       "issues": []
     }

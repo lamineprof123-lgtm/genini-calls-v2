@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-13T08:41:27.518142+00:00",
+  "updated_at": "2026-11-13T08:43:24.736807+00:00",
   "paper_only": true,
   "plan": "LucidPro 100K (DLL on)",
   "exit_mode": "gemini_only",
@@ -27,15 +27,15 @@
       "hard_stop_net_usd": 500.0,
       "stop_txt": "\u2212$500 net \u00b7 1 ATR tgt \u00b7 90 min",
       "exit_rule": "\u2212$500 net \u00b7 1 ATR tgt \u00b7 90 min",
-      "balance": 98082.1,
-      "equity": 97819.6,
-      "net_pnl": -1903.5,
-      "open_pnl": -262.5,
-      "trades": 1,
+      "balance": 97655.2,
+      "equity": 97655.2,
+      "net_pnl": -2344.8,
+      "open_pnl": 0.0,
+      "trades": 2,
       "wins": 0,
-      "losses": 1,
+      "losses": 2,
       "stopped": 0,
-      "open_positions": 1
+      "open_positions": 0
     },
     {
       "book": "1-strike",
@@ -43,15 +43,15 @@
       "hard_stop_net_usd": 500.0,
       "stop_txt": "\u2212$500 net \u00b7 1 ATR tgt \u00b7 90 min",
       "exit_rule": "\u2212$500 net \u00b7 1 ATR tgt \u00b7 90 min",
-      "balance": 98082.1,
-      "equity": 97857.1,
-      "net_pnl": -1903.5,
-      "open_pnl": -225.0,
-      "trades": 1,
+      "balance": 97655.2,
+      "equity": 97655.2,
+      "net_pnl": -2344.8,
+      "open_pnl": 0.0,
+      "trades": 2,
       "wins": 0,
-      "losses": 1,
+      "losses": 2,
       "stopped": 0,
-      "open_positions": 1,
+      "open_positions": 0,
       "overlap_trades": 0
     },
     {
@@ -60,15 +60,15 @@
       "hard_stop_net_usd": null,
       "stop_txt": "1 ATR stop \u00b7 1 ATR tgt \u00b7 90 min",
       "exit_rule": "1 ATR stop \u00b7 1 ATR tgt \u00b7 90 min",
-      "balance": 98082.1,
-      "equity": 97857.1,
-      "net_pnl": -1903.5,
-      "open_pnl": -225.0,
-      "trades": 1,
+      "balance": 97655.2,
+      "equity": 97655.2,
+      "net_pnl": -2344.8,
+      "open_pnl": 0.0,
+      "trades": 2,
       "wins": 0,
-      "losses": 1,
+      "losses": 2,
       "stopped": 0,
-      "open_positions": 1,
+      "open_positions": 0,
       "overlap_trades": 0
     }
   ],
@@ -93,41 +93,41 @@
     "no": 1,
     "phase": "eval",
     "start_balance": 100000.0,
-    "balance": 98082.1,
-    "equity": 97819.6,
-    "realized_pnl_since_reset": -1903.5,
-    "open_pnl": -262.5,
-    "commission_on_open": 14.4,
-    "trades_since_reset": 1,
+    "balance": 97655.2,
+    "equity": 97655.2,
+    "realized_pnl_since_reset": -2344.8,
+    "open_pnl": 0.0,
+    "commission_on_open": 0.0,
+    "trades_since_reset": 2,
     "wins": 0,
-    "losses": 1,
+    "losses": 2,
     "mll_floor": 97000.0,
-    "mll_room": 819.6,
+    "mll_room": 655.2,
     "dll": 1800.0,
-    "day_realized": 0.0,
+    "day_realized": -441.3,
     "day_locked": null,
-    "to_target": 7917.9
+    "to_target": 8344.8
   },
-  "open_positions": [
+  "open_positions": [],
+  "pending": 0,
+  "recent_trades": [
     {
+      "t_exit": "2026-11-13T08:42:00+00:00",
       "symbol": "EURUSD",
       "contract": "6E",
       "qty": 6,
       "side": "LONG",
       "entry_time": "2026-11-13T08:18:13.834423+00:00",
       "entry": 1.10655,
-      "stop": 1.10605,
-      "target": 1.10705,
-      "last": 1.1062,
-      "unrealized": -262.5,
-      "risk_usd": null,
-      "hard_stop_px": null,
-      "target_usd_net": null,
-      "target_source": "none (gemini_only)"
-    }
-  ],
-  "pending": 0,
-  "recent_trades": [
+      "exit": 1.106,
+      "reason": "stop_1atr",
+      "net": -441.3,
+      "balance_after": 97655.2,
+      "hold_seconds": 1426,
+      "held": "23m 46s",
+      "stopped": false,
+      "exit_prompt_version": "uniform-1atr-v1"
+    },
     {
       "t_exit": "2026-11-12T19:41:00+00:00",
       "symbol": "US100",
@@ -146,5 +146,5 @@
       "exit_prompt_version": "uniform-1atr-v1"
     }
   ],
-  "last_processed": "2026-11-13T08:41:00+00:00"
+  "last_processed": "2026-11-13T08:43:00+00:00"
 }

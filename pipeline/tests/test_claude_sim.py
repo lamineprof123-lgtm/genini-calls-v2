@@ -1,5 +1,6 @@
 """Claude parallel paper sims: prompts, schema, server rules, engine (fake API / data). No network."""
 import asyncio, json
+from contextlib import contextmanager
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
@@ -239,7 +240,38 @@ def _engine(tmp, answers, exit_answer=None, key=True, now=None):
     eng = ClaudeEngine(_cfg(tmp), entry_api=entry_api, exit_api=exit_api, render=render, h1_fetch=h1, m1_fetch=m1,
                        snapshot=snap, key_fn=lambda: key)
     eng.eng["created_at"] = "2026-01-01T00:00:00+00:00"
+    # Production stamps t_done / fill quotes with datetime.now() (then guard() checks Lucid session
+    # on that stamp). Freeze the clock to the test's in-session `now` so these tests don't depend
+    # on wall-clock weekend / after-hours. Production code is unchanged.
+    _real_on_cycle = eng.on_cycle
+
+    async def on_cycle(payloads, now=None, **kw):
+        with _frozen_now(now or T0):
+            return await _real_on_cycle(payloads, now=now, **kw)
+
+    eng.on_cycle = on_cycle
     return eng, calls
+
+
+@contextmanager
+def _frozen_now(clock):
+    """Replace signals.claude_sim.datetime (datetime itself is immutable on 3.13)."""
+    import signals.claude_sim as CS
+    clock = clock or T0
+    if clock.tzinfo is None:
+        clock = clock.replace(tzinfo=UTC)
+
+    class _DT(datetime):
+        @classmethod
+        def now(cls, tz=None):
+            return clock if tz is None else clock.astimezone(tz)
+
+    saved = CS.datetime
+    CS.datetime = _DT
+    try:
+        yield
+    finally:
+        CS.datetime = saved
 
 
 def _stamp_entry(eng, t=T0):

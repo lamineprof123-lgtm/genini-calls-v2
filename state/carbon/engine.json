@@ -43,13 +43,13 @@
       }
     },
     "2026-11-14": {
-      "usd": 0.487852,
-      "calls": 4,
+      "usd": 0.552138,
+      "calls": 5,
       "failed": 0,
       "by_kind": {
         "trigger": {
-          "calls": 2,
-          "usd": 0.12783
+          "calls": 3,
+          "usd": 0.192116
         },
         "entry": {
           "calls": 2,
@@ -57,9 +57,9 @@
         }
       },
       "tokens": {
-        "input": 40576,
-        "output": 7010,
-        "thoughts": 33660
+        "input": 46524,
+        "output": 7287,
+        "thoughts": 38622
       }
     }
   },
@@ -298,39 +298,44 @@
   "whatif": [],
   "next_vid": 31,
   "last_call": {
-    "t": "2026-11-13T20:18:26.334595+00:00",
-    "t_dubai": "2026-11-14T00:18:26.334595+04:00",
-    "kind": "entry",
+    "t": "2026-11-13T20:30:36.455558+00:00",
+    "t_dubai": "2026-11-14T00:30:36.455558+04:00",
+    "kind": "trigger",
     "model": "gemini-4-carbon",
     "model_version": "gemini-4-carbon",
     "thinking": "high",
     "ok": true,
     "error": null,
-    "latency_s": 186.33,
+    "latency_s": 50.841,
     "finish_reason": "FinishReason.STOP",
     "tokens": {
-      "input": 14330,
-      "output": 2510,
-      "thoughts": 14059,
-      "total": 30899
+      "input": 5948,
+      "output": 277,
+      "thoughts": 4962,
+      "total": 11187
     },
-    "thoughts_token_count": 14059,
+    "thoughts_token_count": 4962,
     "price_per_mtok": [
       2.0,
       10.0
     ],
-    "cost_usd": 0.19435,
-    "spend_today_usd": 0.4879,
+    "cost_usd": 0.064286,
+    "spend_today_usd": 0.5521,
     "symbols": [
-      "XAUUSD",
-      "EURUSD",
-      "US100",
-      "XAGUSD",
-      "BTCUSD"
+      "XAUUSD"
     ],
-    "render_ms": 0,
+    "render_ms": 217,
     "parse_error": null,
-    "trigger": null
+    "trigger": {
+      "trigger": "level_cross",
+      "level": "VAL",
+      "level_price": 3876.49,
+      "price": 3877.68,
+      "direction": "up",
+      "symbol": "XAUUSD",
+      "bar": "2026-11-13T20:15:00+00:00",
+      "n_today": 4
+    }
   },
   "first_call": {
     "t": "2026-11-12T18:18:04.014172+00:00",
@@ -367,7 +372,7 @@
     "parse_error": null,
     "trigger": null
   },
-  "calls_total": 105,
+  "calls_total": 106,
   "last_scan": {
     "kind": "entry",
     "t": "2026-11-13T20:15:20.004595+00:00",

@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-13T10:01:11.916400+00:00",
+  "updated_at": "2026-11-13T10:02:09.133198+00:00",
   "paper_only": true,
   "model": "gemini-4-carbon",
   "entry_thinking": "high",
@@ -18,11 +18,11 @@
   "min_confidence": 0.75,
   "spend": {
     "day_dubai": "2026-11-13",
-    "usd": 2.6762,
+    "usd": 2.8203,
     "soft_usd": 15,
     "hard_usd": 19,
     "state": "ok",
-    "calls": 29,
+    "calls": 30,
     "failed": 0,
     "by_kind": {
       "trigger": {
@@ -30,14 +30,14 @@
         "usd": 1.189474
       },
       "entry": {
-        "calls": 9,
-        "usd": 1.4867
+        "calls": 10,
+        "usd": 1.630826
       }
     },
     "tokens": {
-      "input": 242742,
-      "output": 34612,
-      "thoughts": 184457
+      "input": 256850,
+      "output": 36797,
+      "thoughts": 193863
     },
     "price_per_mtok": [
       2.0,
@@ -45,7 +45,7 @@
     ],
     "history": {
       "2026-11-12": 3.1289,
-      "2026-11-13": 2.6762
+      "2026-11-13": 2.8203
     }
   },
   "triggers_today": 21,
@@ -53,44 +53,39 @@
   "next_scan_at": "2026-11-13T10:15:20+00:00",
   "in_window": true,
   "last_call": {
-    "t": "2026-11-13T10:01:11.916400+00:00",
-    "t_dubai": "2026-11-13T14:01:11.916400+04:00",
-    "kind": "trigger",
+    "t": "2026-11-13T10:02:09.133198+00:00",
+    "t_dubai": "2026-11-13T14:02:09.133198+04:00",
+    "kind": "entry",
     "model": "gemini-4-carbon",
     "model_version": "gemini-4-carbon",
     "thinking": "high",
     "ok": true,
     "error": null,
-    "latency_s": 49.098,
+    "latency_s": 109.129,
     "finish_reason": "FinishReason.STOP",
     "tokens": {
-      "input": 5778,
-      "output": 786,
-      "thoughts": 4164,
-      "total": 10728
+      "input": 14108,
+      "output": 2185,
+      "thoughts": 9406,
+      "total": 25699
     },
-    "thoughts_token_count": 4164,
+    "thoughts_token_count": 9406,
     "price_per_mtok": [
       2.0,
       10.0
     ],
-    "cost_usd": 0.061056,
-    "spend_today_usd": 2.6762,
+    "cost_usd": 0.144126,
+    "spend_today_usd": 2.8203,
     "symbols": [
-      "EURUSD"
+      "XAUUSD",
+      "EURUSD",
+      "US100",
+      "XAGUSD",
+      "BTCUSD"
     ],
-    "render_ms": 183,
+    "render_ms": 0,
     "parse_error": null,
-    "trigger": {
-      "trigger": "level_cross",
-      "level": "VAL",
-      "level_price": 1.1056,
-      "price": 1.10578,
-      "direction": "up",
-      "symbol": "EURUSD",
-      "bar": "2026-11-13T10:00:00+00:00",
-      "n_today": 21
-    }
+    "trigger": null
   },
   "first_call": {
     "t": "2026-11-12T18:18:04.014172+00:00",
@@ -127,41 +122,41 @@
     "parse_error": null,
     "trigger": null
   },
-  "calls_total": 44,
+  "calls_total": 45,
   "last_scan": {
     "kind": "trigger",
-    "t": "2026-11-13T09:58:45.579797+00:00",
+    "t": "2026-11-13T10:00:22.635400+00:00",
     "trigger": {
       "trigger": "level_cross",
-      "level": "POC",
-      "level_price": 50.024,
-      "price": 50.05,
+      "level": "VAL",
+      "level_price": 1.1056,
+      "price": 1.10578,
       "direction": "up",
-      "symbol": "XAGUSD",
-      "bar": "2026-11-13T09:45:00+00:00",
-      "n_today": 20
+      "symbol": "EURUSD",
+      "bar": "2026-11-13T10:00:00+00:00",
+      "n_today": 21
     },
     "sent": [
-      "XAGUSD"
+      "EURUSD"
     ],
     "blocked_session": [],
     "ok": true,
-    "latency_s": 65.781,
-    "cost_usd": 0.063708,
+    "latency_s": 49.098,
+    "cost_usd": 0.061056,
     "tokens": {
-      "input": 5754,
-      "output": 750,
-      "thoughts": 4470,
-      "total": 10974
+      "input": 5778,
+      "output": 786,
+      "thoughts": 4164,
+      "total": 10728
     },
     "error": null,
     "finish_reason": "FinishReason.STOP",
-    "answer_ts": "2026-11-13T09:59:51.474797+00:00",
+    "answer_ts": "2026-11-13T10:01:11.916400+00:00",
     "signals": [
       {
-        "symbol": "XAGUSD",
+        "symbol": "EURUSD",
         "action": "HOLD",
-        "confidence": 0.68,
+        "confidence": 0.78,
         "thinking_level": "high"
       }
     ],

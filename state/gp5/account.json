@@ -4,43 +4,11 @@
   "reset_token": "p5-2026-11-13",
   "created_at": "2026-11-13T15:26:56.359168+00:00",
   "start_balance": 100000.0,
-  "balance": 99985.6,
-  "peak_balance": 100000.0,
+  "balance": 100196.2,
+  "peak_balance": 100196.2,
   "max_drawdown": 0.0,
   "next_id": 2,
-  "positions": [
-    {
-      "symbol": "EURUSD",
-      "side": -1,
-      "contract": "6E",
-      "qty": 6,
-      "atr": 0.000797,
-      "confidence": 0.73,
-      "signal_entry": 1.10326,
-      "signal_at": "2026-11-13T16:15:32.717078+00:00",
-      "queued_at": "2026-11-13T16:15:20.001258+00:00",
-      "level_event": "acceptance below VAL",
-      "session": "NEW_YORK_SESSION",
-      "rationale": "1) Value Area Context: Price broke decisively below VAL (1.10501) with expanding ATR. 2) Room to Wall: Nearest support is Session Low at 1.10257, offering 0.87 ATR of clear room, meeting the 0.85 ATR threshold. 3) CVD: Slope is strongly negative at -8309.31 despite neutral overall label. 4) Baseline",
-      "id": 1,
-      "book": "G-P5",
-      "entry": 1.1033,
-      "entry_time": "2026-11-13T16:15:46.704612+00:00",
-      "quote_price": 1.10337,
-      "quote_source": "dukascopy:tick",
-      "quote_age_s": 1.01,
-      "stop": 1.10395,
-      "target": 1.1025,
-      "deadline": "2026-11-13T17:45:46.704612+00:00",
-      "risk_usd": 516.3,
-      "target_usd": 571.2,
-      "mfe": 0.00046999999999997044,
-      "mae": 0.0003300000000001635,
-      "scan_from": "2026-11-13T17:44:00+00:00",
-      "checks": 252,
-      "last_check_at": "2026-11-13T17:45:08.953354+00:00"
-    }
-  ],
+  "positions": [],
   "pending": [],
   "last_price": {
     "EURUSD": 1.10295
@@ -54,18 +22,21 @@
     "2026-11-13T16:45:42.473390+00:00",
     "2026-11-13T17:01:07.242813+00:00",
     "2026-11-13T17:15:25.403908+00:00",
-    "2026-11-13T17:30:31.512180+00:00"
+    "2026-11-13T17:30:31.512180+00:00",
+    "2026-11-13T17:45:23.085643+00:00"
   ],
   "stats": {
-    "trades": 0,
-    "wins": 0,
+    "trades": 1,
+    "wins": 1,
     "losses": 0,
-    "gross_win": 0.0,
+    "gross_win": 196.2,
     "gross_loss": 0.0,
-    "net_pnl": 0.0,
-    "commissions": 14.4,
-    "hold_seconds": 0,
-    "exit_reasons": {},
+    "net_pnl": 196.2,
+    "commissions": 28.8,
+    "hold_seconds": 5416,
+    "exit_reasons": {
+      "time_90min": 1
+    },
     "signals_seen": 3,
     "signals_taken": 1,
     "skips": {
@@ -75,17 +46,17 @@
     "missed_scans": {}
   },
   "day": {
-    "day": null,
-    "net": 0.0
+    "day": "2026-11-13",
+    "net": 196.2
   },
   "calls": {
-    "ok": 9,
+    "ok": 10,
     "failed": 0,
     "skipped": 0,
     "tokens": {
-      "prompt_token_count": 107130,
-      "candidates_token_count": 14014,
-      "total_token_count": 121144
+      "prompt_token_count": 119068,
+      "candidates_token_count": 15367,
+      "total_token_count": 134435
     }
   }
 }

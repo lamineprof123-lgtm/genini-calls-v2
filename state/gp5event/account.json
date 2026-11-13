@@ -4,46 +4,14 @@
   "reset_token": "p5-2026-11-13",
   "created_at": "2026-11-13T15:26:56.359831+00:00",
   "start_balance": 100000.0,
-  "balance": 99985.6,
-  "peak_balance": 100000.0,
+  "balance": 100196.2,
+  "peak_balance": 100196.2,
   "max_drawdown": 0.0,
   "next_id": 2,
-  "positions": [
-    {
-      "symbol": "EURUSD",
-      "side": -1,
-      "contract": "6E",
-      "qty": 6,
-      "atr": 0.000797,
-      "confidence": 0.73,
-      "signal_entry": 1.10326,
-      "signal_at": "2026-11-13T16:15:46.708271+00:00",
-      "queued_at": "2026-11-13T16:15:20.001258+00:00",
-      "level_event": "acceptance below VAL",
-      "session": "NEW_YORK_SESSION",
-      "rationale": "1) Value Area Context: Price broke decisively below VAL (1.10501) with expanding ATR. 2) Room to Wall: Nearest support is Session Low at 1.10257, offering 0.87 ATR of clear room, meeting the 0.85 ATR threshold. 3) CVD: Slope is strongly negative at -8309.31 despite neutral overall label. 4) Baseline",
-      "id": 1,
-      "book": "G-P5-EVENT",
-      "entry": 1.1033,
-      "entry_time": "2026-11-13T16:15:57.071164+00:00",
-      "quote_price": 1.10336,
-      "quote_source": "dukascopy:tick",
-      "quote_age_s": 10.45,
-      "stop": 1.10395,
-      "target": 1.1025,
-      "deadline": "2026-11-13T17:45:57.071164+00:00",
-      "risk_usd": 516.3,
-      "target_usd": 571.2,
-      "mfe": 0.00046999999999997044,
-      "mae": 0.0003300000000001635,
-      "scan_from": "2026-11-13T17:44:00+00:00",
-      "checks": 260,
-      "last_check_at": "2026-11-13T17:45:26.953712+00:00"
-    }
-  ],
+  "positions": [],
   "pending": [],
   "last_price": {
-    "EURUSD": 1.10293
+    "EURUSD": 1.10295
   },
   "seen_cycles": [
     "2026-11-13T15:31:12.114923+00:00",
@@ -54,18 +22,21 @@
     "2026-11-13T16:45:57.006792+00:00",
     "2026-11-13T17:01:20.840566+00:00",
     "2026-11-13T17:15:38.206797+00:00",
-    "2026-11-13T17:30:45.674839+00:00"
+    "2026-11-13T17:30:45.674839+00:00",
+    "2026-11-13T17:45:37.163798+00:00"
   ],
   "stats": {
-    "trades": 0,
-    "wins": 0,
+    "trades": 1,
+    "wins": 1,
     "losses": 0,
-    "gross_win": 0.0,
+    "gross_win": 196.2,
     "gross_loss": 0.0,
-    "net_pnl": 0.0,
-    "commissions": 14.4,
-    "hold_seconds": 0,
-    "exit_reasons": {},
+    "net_pnl": 196.2,
+    "commissions": 28.8,
+    "hold_seconds": 5405,
+    "exit_reasons": {
+      "time_90min": 1
+    },
     "signals_seen": 3,
     "signals_taken": 1,
     "skips": {
@@ -75,35 +46,35 @@
     "missed_scans": {}
   },
   "day": {
-    "day": null,
-    "net": 0.0
+    "day": "2026-11-13",
+    "net": 196.2
   },
   "calls": {
-    "ok": 9,
+    "ok": 10,
     "failed": 0,
     "skipped": 0,
     "tokens": {
-      "prompt_token_count": 93820,
-      "candidates_token_count": 12098,
-      "total_token_count": 105918
+      "prompt_token_count": 99101,
+      "candidates_token_count": 12752,
+      "total_token_count": 111853
     }
   },
   "triggers": {
-    "closes": 9,
-    "evaluated": 36,
-    "fired": 30,
+    "closes": 10,
+    "evaluated": 40,
+    "fired": 31,
     "by": {
-      "level": 24,
+      "level": 25,
       "rvol": 0,
-      "atr_ratio": 21
+      "atr_ratio": 22
     },
-    "calls": 9,
+    "calls": 10,
     "shared_calls": 6,
-    "own_calls": 3,
-    "symbols_sent": 30,
+    "own_calls": 4,
+    "symbols_sent": 31,
     "no_call_closes": 0,
     "last": {
-      "t": "2026-11-13T17:30:20.010010+00:00",
+      "t": "2026-11-13T17:45:20.002643+00:00",
       "fired": [
         "US100"
       ],

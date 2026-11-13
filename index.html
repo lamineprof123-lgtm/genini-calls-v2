@@ -47,8 +47,10 @@
   .banner { font-size: 12px; color: var(--muted); line-height: 1.5; margin-bottom: 18px; text-align: center; }
   .banner b { color: var(--fg); font-weight: 600; }
   .tw { overflow-x: auto; }
-  table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 12.5px; font-variant-numeric: tabular-nums; }
-  th, td { padding: 7px 8px; border-top: 1px solid var(--line); text-align: right; white-space: nowrap; }
+  table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 12px; font-variant-numeric: tabular-nums; }
+  th, td { padding: 7px 6px; border-top: 1px solid var(--line); text-align: right; white-space: nowrap; }
+  #pos { font-size: 11.5px; }
+  #pos th, #pos td { padding: 7px 5px; }
   th { font-family: var(--sans); font-weight: 500; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--faint); border-top: 0; }
   td.l, th.l { text-align: left; }
   td.book { font-family: var(--sans); color: var(--fg); }
@@ -165,7 +167,7 @@
     };
     const wpfCls = v => v === 'Yes' ? 'pos' : (v === 'No' ? 'neg' : 'dim');
     let h = `<tr><th class="l">Book</th><th class="l">Venue</th><th>Balance</th><th>Net P&amp;L</th><th>Open P&amp;L</th>
-      <th>Closed</th><th>W / L</th><th>Win rate</th><th>Went positive first</th><th>Open</th></tr>`;
+      <th>Closed</th><th>W / L</th><th>Win rate</th><th>Went + first</th><th>Open</th></tr>`;
     let lastModel = null;
     for (const p of P.performance || []) {
       if (p.model !== lastModel) { lastModel = p.model; h += `<tr class="model"><td class="l" colspan="10">${esc(MODEL_NAME[p.model] || p.model)}</td></tr>`; }
@@ -207,8 +209,8 @@
     } else {
       let t = `<tr><th class="l">Book</th><th class="l">Model</th><th class="l">Symbol</th><th class="l">Side</th><th>Size</th>
         <th class="l">Entry (${TZL})</th><th>Entry px</th><th>Max $ P&amp;L</th><th>Lowest $ P&amp;L</th>
-        <th class="l">Went positive first</th><th class="l">Status</th>
-        <th>Now / exit px</th><th>P&amp;L at close</th></tr>`;
+        <th class="l">Went + first</th><th class="l">Status</th>
+        <th>Px now / exit</th><th>P&amp;L at close</th></tr>`;
       for (const x of rows) {
         const st = x.status || 'OPEN', k = st === 'OPEN' ? 'OPEN' : st.replace('CLOSED-', '');
         const label = st === 'OPEN' ? 'OPEN' : st;

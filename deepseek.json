@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-13T21:02:24.858342+00:00",
+  "updated_at": "2026-11-13T21:04:15.419721+00:00",
   "paper_only": true,
   "plan": "LucidPro 100K (DLL on)",
   "exit_mode": "mech",
@@ -10,7 +10,16 @@
   "card": "All books: 1 ATR / 1 ATR bracket, no model exits",
   "hard_stop_net_usd": 500.0,
   "comparison": null,
-  "breaches": [],
+  "breaches": [
+    {
+      "t": "2026-11-13T21:02:00+00:00",
+      "day": "2026-11-13",
+      "kind": "MLL",
+      "level": 97000.0,
+      "equity": 96627.3,
+      "note": "log-only (gemini_only): no block, no forced close"
+    }
+  ],
   "breach_note": "DLL / MLL / 3.5% breaker are log-only (no block, no forced close)",
   "sizing_rule": "full-size futures only (NQ, GC, 6E, 6B), 1-6 contracts sized as if risk were 0.8 ATR at $1500 (notional reference only); hard stop \u2212$500 NET, 1 ATR target, 90-min cap; Gemini exit calls paused \u2014 mechanical exits",
   "reset": {
@@ -22,45 +31,45 @@
     "no": 1,
     "phase": "eval",
     "start_balance": 100000.0,
-    "balance": 98329.05,
-    "equity": 97897.21,
-    "realized_pnl_since_reset": -1669.2,
-    "open_pnl": -431.84,
-    "commission_on_open": 1.75,
-    "trades_since_reset": 1,
+    "balance": 96627.3,
+    "equity": 96627.3,
+    "realized_pnl_since_reset": -3372.7,
+    "open_pnl": 0.0,
+    "commission_on_open": 0.0,
+    "trades_since_reset": 2,
     "wins": 0,
-    "losses": 1,
+    "losses": 2,
     "mll_floor": 97000.0,
-    "mll_room": 897.21,
+    "mll_room": -372.7,
     "dll": 1800.0,
-    "day_realized": 0.0,
+    "day_realized": -1703.5,
     "day_locked": null,
-    "to_target": 7670.95,
-    "net_pnl": -1669.2,
-    "trades": 1,
-    "open_positions": 1,
+    "to_target": 9372.7,
+    "net_pnl": -3372.7,
+    "trades": 2,
+    "open_positions": 0,
     "stopped": 0
   },
-  "open_positions": [
+  "open_positions": [],
+  "pending": 0,
+  "recent_trades": [
     {
+      "t_exit": "2026-11-13T21:02:00+00:00",
       "symbol": "US100",
       "contract": "NQ",
       "qty": 1,
       "side": "LONG",
       "entry_time": "2026-11-13T20:16:19.542103+00:00",
       "entry": 27936.5,
-      "stop": 27851.75,
-      "target": 28021.25,
-      "last": 27914.908,
-      "unrealized": -431.84,
-      "risk_usd": null,
-      "hard_stop_px": null,
-      "target_usd_net": null,
-      "target_source": "none (gemini_only)"
-    }
-  ],
-  "pending": 0,
-  "recent_trades": [
+      "exit": 27851.5,
+      "reason": "stop_1atr",
+      "net": -1703.5,
+      "balance_after": 96627.3,
+      "hold_seconds": 2740,
+      "held": "45m 40s",
+      "stopped": false,
+      "exit_prompt_version": "uniform-1atr-v1"
+    },
     {
       "t_exit": "2026-11-12T20:53:00+00:00",
       "symbol": "XAUUSD",
@@ -79,7 +88,7 @@
       "exit_prompt_version": "uniform-1atr-v1"
     }
   ],
-  "last_processed": "2026-11-13T21:01:00+00:00",
+  "last_processed": "2026-11-13T21:03:00+00:00",
   "stop_txt": "\u2212$500 net \u00b7 1 ATR tgt \u00b7 90 min",
   "book": "DS-FLASH",
   "label": "DS-FLASH (deepseek-flash entries, mechanical exits)",

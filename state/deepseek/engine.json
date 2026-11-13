@@ -27,33 +27,33 @@
       }
     },
     "2026-11-14": {
-      "usd": 0.011181,
-      "calls": 4,
+      "usd": 0.013778,
+      "calls": 5,
       "failed": 0,
       "tokens": {
-        "prompt": 46617,
-        "cache_hit": 7168,
-        "cache_miss": 39449,
-        "completion": 8738,
-        "reasoning": 4227
+        "prompt": 57809,
+        "cache_hit": 8960,
+        "cache_miss": 48849,
+        "completion": 10707,
+        "reasoning": 5249
       }
     }
   },
   "last_call": {
-    "t": "2026-11-13T20:45:20.010606+00:00",
+    "t": "2026-11-13T21:00:20.008051+00:00",
     "ok": true,
-    "cost_usd": 0.00282943,
-    "spend_today_usd": 0.0112,
+    "cost_usd": 0.00259678,
+    "spend_today_usd": 0.0138,
     "band": "off_peak",
     "tokens": {
-      "prompt": 11631,
+      "prompt": 11192,
       "cache_hit": 1792,
-      "cache_miss": 9839,
-      "completion": 2247,
-      "reasoning": 1206,
-      "total": 13878
+      "cache_miss": 9400,
+      "completion": 1969,
+      "reasoning": 1022,
+      "total": 13161
     },
-    "latency_s": 11.624,
+    "latency_s": 10.039,
     "error": null,
     "model": "deepseek-flash",
     "symbols": [
@@ -64,11 +64,11 @@
     ],
     "http_status": 200,
     "prompt_version": "bracket-v1",
-    "snapshot_id": "m15-20261113203000-e96363df2486",
-    "bar_close_ts": "2026-11-13T20:45:00+00:00",
-    "snapshot_ts": "2026-11-13T20:45:56.020193+00:00",
-    "call_start": "2026-11-13T20:45:56.570596+00:00",
-    "answer_ts": "2026-11-13T20:46:08.194773+00:00"
+    "snapshot_id": "m15-20261113204500-d4b488e0c8fc",
+    "bar_close_ts": "2026-11-13T21:00:00+00:00",
+    "snapshot_ts": "2026-11-13T21:00:42.102272+00:00",
+    "call_start": "2026-11-13T21:01:03.865453+00:00",
+    "answer_ts": "2026-11-13T21:01:13.904573+00:00"
   },
   "last_signals": [
     {
@@ -79,7 +79,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "T1 yes: below VWAP 3891.90 and EMA50 3885.53. T2 yes: closed_through VAL/Put Wall. HOLD: |vwap_distance_atr| -2.99 > 2.0 (chasing) and room_down only 0.17 ATR; fade barred by NEGATIVE_AMPLIFYING. S4 only."
+      "rationale": "T1 yes: below VWAP 3891.69 and EMA50 3885.25. T2 yes: closed_through VAL. But hard HOLD gates fail: vwap_distance_atr -2.14 exceeds 2.0 (chasing) and room_down_atr only 0.446 to VAL, far under the 1.0 ATR target. No trade."
     },
     {
       "symbol": "EURUSD",
@@ -89,7 +89,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "T1 yes (below VWAP and EMA50 1.10397) but T2 no: only a touch of Session Low, no closed_through or rejection. Also |vwap_distance_atr| -6.29 > 2.0 and room_down 0.21 ATR. S4 only."
+      "rationale": "T1 yes: below VWAP 1.10512 and EMA50 1.10390. T2 missing: only a touch of Session Low, no closed_through or rejection in the short direction. S1 also fails, room_down 0.588 ATR. Price -6.17 ATR from VWAP. HOLD."
     },
     {
       "symbol": "XAGUSD",
@@ -99,7 +99,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "Trend T1/T2 fail (no fresh break, price -6.72 ATR from VWAP). Fade F1 yes at ATR Lower rejection, F2 yes (VWAP magnet 6.7 ATR). HOLD: room_up 0.76 ATR < 1.0 hard gate; S4 only."
+      "rationale": "T1 yes: below VWAP 49.81 and EMA50 49.393. T2 missing: last closed bar only touched S/R 48.905, no closed_through or rejection in the trade direction. S1 fails (room_up 0.618), price -6.56 ATR from VWAP. HOLD."
     },
     {
       "symbol": "BTCUSD",
@@ -109,7 +109,7 @@
       "setup_type": "trend",
       "gated": true,
       "decision": "OPENED",
-      "rationale": "T1 yes: below VWAP 69163.98 and EMA50 69036.78. T2 yes: pullback rejected EMA20. S1 room_down 1.71 ATR, S3 CVD BEARISH/slope down, S4 NY session, S5 h1 down. S2 no (RVOL 0.77). Score 6."
+      "rationale": "T1 yes: below VWAP 69160.84 and EMA50 69028.20. T2 yes: last bar wicked above EMA20/POC and closed back below (rejection). S1 yes (room_down 1.606 ATR to VAL). S2 no (RVOL 0.94). S3 yes (CVD BEARISH, slope down). S4 yes NY. S5 yes h1 down."
     }
   ],
   "last_bars": {

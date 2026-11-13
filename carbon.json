@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-13T07:45:20.006326+00:00",
+  "updated_at": "2026-11-13T08:00:20.007899+00:00",
   "paper_only": true,
   "model": "gemini-4-carbon",
   "entry_thinking": "high",
@@ -48,10 +48,10 @@
       "2026-11-13": 0.4894
     }
   },
-  "triggers_today": 3,
+  "triggers_today": 4,
   "max_triggers_per_day": 40,
-  "next_scan_at": "2026-11-13T08:00:20+00:00",
-  "in_window": false,
+  "next_scan_at": "2026-11-13T08:15:20+00:00",
+  "in_window": true,
   "last_call": {
     "t": "2026-11-12T20:17:13.363230+00:00",
     "t_dubai": "2026-11-13T00:17:13.363230+04:00",
@@ -130,42 +130,22 @@
   "calls_total": 20,
   "last_scan": {
     "kind": "trigger",
-    "t": "2026-11-12T20:16:30.242230+00:00",
+    "t": "2026-11-13T08:00:01.745277+00:00",
     "trigger": {
       "trigger": "level_cross",
-      "level": "Call Wall #2",
-      "level_price": 3885.68,
-      "price": 3884.26,
+      "level": "Session Low",
+      "level_price": 71141.0,
+      "price": 68502.8,
       "direction": "down",
-      "symbol": "XAUUSD",
-      "bar": "2026-11-12T20:15:00+00:00",
-      "n_today": 3
+      "symbol": "BTCUSD",
+      "bar": "2026-11-13T08:00:00+00:00",
+      "n_today": 4
     },
-    "sent": [
-      "XAUUSD"
+    "sent": [],
+    "blocked_session": [
+      "BTCUSD"
     ],
-    "blocked_session": [],
-    "ok": true,
-    "latency_s": 42.992,
-    "cost_usd": 0.052792,
-    "tokens": {
-      "input": 5896,
-      "output": 732,
-      "thoughts": 3368,
-      "total": 9996
-    },
-    "error": null,
-    "finish_reason": "FinishReason.STOP",
-    "answer_ts": "2026-11-12T20:17:13.363230+00:00",
-    "signals": [
-      {
-        "symbol": "XAUUSD",
-        "action": "HOLD",
-        "confidence": 0.35,
-        "thinking_level": "high"
-      }
-    ],
-    "thinking_level": "high"
+    "skipped": "no symbol to send"
   },
   "books": [
     {

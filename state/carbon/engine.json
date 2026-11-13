@@ -316,7 +316,7 @@
       "queued_at": "2026-11-13T18:49:08.497622+00:00",
       "entry": 3879.4,
       "entry_time": "2026-11-13T18:49:22.099731+00:00",
-      "scan_from": "2026-11-13T20:02:00+00:00",
+      "scan_from": "2026-11-13T20:04:00+00:00",
       "best": 3872.349,
       "mfe": 7.050999999999931,
       "mae": 2.2390000000000327,
@@ -330,7 +330,7 @@
       "risk_usd": 754.6,
       "chase_atr": 0.127,
       "risk_1c_usd": 749.1,
-      "last_check_at": "2026-11-13T20:04:22.747759+00:00"
+      "last_check_at": "2026-11-13T20:06:28.748072+00:00"
     },
     {
       "vid": 30,
@@ -353,7 +353,7 @@
       "queued_at": "2026-11-13T18:49:08.497622+00:00",
       "entry": 3879.4,
       "entry_time": "2026-11-13T18:49:22.099731+00:00",
-      "scan_from": "2026-11-13T20:02:00+00:00",
+      "scan_from": "2026-11-13T20:04:00+00:00",
       "best": 3872.349,
       "mfe": 7.050999999999931,
       "mae": 2.2390000000000327,
@@ -367,7 +367,7 @@
       "risk_usd": 754.6,
       "chase_atr": 0.127,
       "risk_1c_usd": 749.1,
-      "last_check_at": "2026-11-13T20:04:22.747759+00:00"
+      "last_check_at": "2026-11-13T20:06:28.748072+00:00"
     }
   ],
   "next_vid": 31,
@@ -443,65 +443,20 @@
   },
   "calls_total": 103,
   "last_scan": {
-    "kind": "entry",
-    "t": "2026-11-13T20:00:20.001508+00:00",
-    "trigger": null,
-    "snapshot_id": "m15-20261113194500-f0ba94befb10",
-    "snapshot_hash": "f0ba94befb10c8268348882b2398683b797e016ae29254cd940ecbfa97331200",
-    "bar_close_ts": "2026-11-13T20:00:00+00:00",
-    "snapshot_ts": "2026-11-13T20:00:45.938322+00:00",
-    "sent": [
-      "XAUUSD",
-      "EURUSD",
-      "US100",
-      "XAGUSD",
-      "BTCUSD"
-    ],
-    "blocked_session": [],
-    "ok": true,
-    "latency_s": 143.971,
-    "cost_usd": 0.165672,
-    "tokens": {
-      "input": 14331,
-      "output": 2876,
-      "thoughts": 10825,
-      "total": 28032
+    "kind": "trigger",
+    "t": "2026-11-13T20:00:17.695388+00:00",
+    "trigger": {
+      "trigger": "level_cross",
+      "level": "Session Low",
+      "level_price": 48.886,
+      "price": 48.847,
+      "direction": "down",
+      "symbol": "XAGUSD",
+      "bar": "2026-11-13T20:00:00+00:00",
+      "n_today": 2
     },
-    "error": null,
-    "finish_reason": "FinishReason.STOP",
-    "answer_ts": "2026-11-13T20:02:43.972508+00:00",
-    "signals": [
-      {
-        "symbol": "XAUUSD",
-        "action": "HOLD",
-        "confidence": 0.35,
-        "thinking_level": "high"
-      },
-      {
-        "symbol": "EURUSD",
-        "action": "HOLD",
-        "confidence": 0.3,
-        "thinking_level": "high"
-      },
-      {
-        "symbol": "US100",
-        "action": "HOLD",
-        "confidence": 0.38,
-        "thinking_level": "high"
-      },
-      {
-        "symbol": "XAGUSD",
-        "action": "HOLD",
-        "confidence": 0.34,
-        "thinking_level": "high"
-      },
-      {
-        "symbol": "BTCUSD",
-        "action": "HOLD",
-        "confidence": 0.28,
-        "thinking_level": "high"
-      }
-    ],
-    "thinking_level": "high"
+    "sent": [],
+    "blocked_session": [],
+    "skipped": "no symbol to send"
   }
 }

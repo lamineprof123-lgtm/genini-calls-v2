@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-13T19:01:59.275213+00:00",
+  "updated_at": "2026-11-13T19:02:36.699322+00:00",
   "paper_only": true,
   "reset": {
     "token": "2026-11-12-uniform-reset",
@@ -8,6 +8,7 @@
   "exit_rule": "uniform-1atr-v1: 1 ATR stop \u00b7 1 ATR target \u00b7 90-min cap (all books, no model exits; EVAL-80 / EVAL-R4: 0.8 ATR stop \u00b7 1 ATR target \u00b7 90-min cap; new P5 books G-P5 / G-P5-EVAL / G-P5-EVENT: 0.8 ATR stop \u00b7 1 ATR target \u00b7 90-min cap \u00b7 30-min dead cut)",
   "pnl_note": "Max / lowest $ P&L: gross mark-to-market reached while open (live quote every 15 s, plus the book's own recorded excursion and the exit price). P&L at close is net of commissions/fees. Went positive first: net unrealized P&L (gross minus round-trip fees) rose above $0 before gross fell below $0. The fee cushion (gross between $0 and fees) is neither side; the entry fill is not a crossing. Open positions that have not yet done either show \u2014. If both sides occur in the same M1 bar and tick order is unavailable, the cell is ?. Going forward this uses the 15s live-quote poll (same path as the exit checks). Already-open / already-closed positions are backfilled from the same 15s last-print path reconstructed from Dukascopy or Binance ticks when available, otherwise from M1 bars; a bar that hits both sides with no 15s path is ?.",
   "wpf_basis": "net_usd = gross - round-trip fees; live_net_tick / tick_15s = 15s last-print path; m1_ohlc = M1 fallback",
+  "eval_pass_note": "Eval passing replays each book's Lucid-only closed trades from $100,000 (other-venue BTC excluded; prop firms do not offer BTC) against LucidPro 100K rules: $6,000 profit target, $1,800 daily loss limit, $3,000 end-of-day trailing max loss that locks at $100,100. A pass or a DLL/MLL fail ends the attempt and the next trade starts a fresh $100,000 eval. Current eval progress is the unfinished attempt, including open Lucid P&L, as profit / $6,000 (can be negative), plus the remaining MLL buffer.",
   "performance": [
     {
       "book": "MAIN",
@@ -26,7 +27,28 @@
       "went_positive_first": "11% (1/9)",
       "went_positive_first_yes": 1,
       "went_positive_first_n": 9,
-      "went_positive_first_pct": 11
+      "went_positive_first_pct": 11,
+      "eval_pass": {
+        "passes": 1,
+        "fails": 2,
+        "attempts_finished": 3,
+        "passing_pct": 33.3,
+        "passing_label": "1/3",
+        "current_profit": 0.0,
+        "current_progress_pct": 0.0,
+        "profit_target": 6000.0,
+        "mll_floor": 97000.0,
+        "mll_buffer": 3000.0,
+        "mll_locked": false,
+        "dll_used": 0.0,
+        "dll_limit": 1800.0,
+        "lucid_trades": 9,
+        "current_equity": 100000.0,
+        "start_balance": 100000.0,
+        "dll": 1800.0,
+        "mll": 3000.0,
+        "locked_mll_balance": 100100.0
+      }
     },
     {
       "book": "MAIN",
@@ -64,7 +86,28 @@
       "went_positive_first": "22% (2/9)",
       "went_positive_first_yes": 2,
       "went_positive_first_n": 9,
-      "went_positive_first_pct": 22
+      "went_positive_first_pct": 22,
+      "eval_pass": {
+        "passes": 1,
+        "fails": 2,
+        "attempts_finished": 3,
+        "passing_pct": 33.3,
+        "passing_label": "1/3",
+        "current_profit": 0.0,
+        "current_progress_pct": 0.0,
+        "profit_target": 6000.0,
+        "mll_floor": 97000.0,
+        "mll_buffer": 3000.0,
+        "mll_locked": false,
+        "dll_used": 0.0,
+        "dll_limit": 1800.0,
+        "lucid_trades": 9,
+        "current_equity": 100000.0,
+        "start_balance": 100000.0,
+        "dll": 1800.0,
+        "mll": 3000.0,
+        "locked_mll_balance": 100100.0
+      }
     },
     {
       "book": "1-strike",
@@ -102,7 +145,28 @@
       "went_positive_first": "22% (2/9)",
       "went_positive_first_yes": 2,
       "went_positive_first_n": 9,
-      "went_positive_first_pct": 22
+      "went_positive_first_pct": 22,
+      "eval_pass": {
+        "passes": 1,
+        "fails": 2,
+        "attempts_finished": 3,
+        "passing_pct": 33.3,
+        "passing_label": "1/3",
+        "current_profit": 0.0,
+        "current_progress_pct": 0.0,
+        "profit_target": 6000.0,
+        "mll_floor": 97000.0,
+        "mll_buffer": 3000.0,
+        "mll_locked": false,
+        "dll_used": 0.0,
+        "dll_limit": 1800.0,
+        "lucid_trades": 9,
+        "current_equity": 100000.0,
+        "start_balance": 100000.0,
+        "dll": 1800.0,
+        "mll": 3000.0,
+        "locked_mll_balance": 100100.0
+      }
     },
     {
       "book": "nostop",
@@ -140,7 +204,28 @@
       "went_positive_first": "50% (1/2)",
       "went_positive_first_yes": 1,
       "went_positive_first_n": 2,
-      "went_positive_first_pct": 50
+      "went_positive_first_pct": 50,
+      "eval_pass": {
+        "passes": 0,
+        "fails": 0,
+        "attempts_finished": 0,
+        "passing_pct": null,
+        "passing_label": null,
+        "current_profit": 2076.9,
+        "current_progress_pct": 34.6,
+        "profit_target": 6000.0,
+        "mll_floor": 97000.0,
+        "mll_buffer": 5076.9,
+        "mll_locked": false,
+        "dll_used": 0.0,
+        "dll_limit": 1800.0,
+        "lucid_trades": 2,
+        "current_equity": 102076.9,
+        "start_balance": 100000.0,
+        "dll": 1800.0,
+        "mll": 3000.0,
+        "locked_mll_balance": 100100.0
+      }
     },
     {
       "book": "bracket",
@@ -169,7 +254,7 @@
       "balance": 100458.4,
       "start_balance": 100000.0,
       "net_pnl_usd": 460.7,
-      "open_pnl_usd": 329.0,
+      "open_pnl_usd": 244.0,
       "trades": 6,
       "wins": 3,
       "losses": 3,
@@ -178,7 +263,28 @@
       "went_positive_first": "29% (2/7)",
       "went_positive_first_yes": 2,
       "went_positive_first_n": 7,
-      "went_positive_first_pct": 29
+      "went_positive_first_pct": 29,
+      "eval_pass": {
+        "passes": 0,
+        "fails": 0,
+        "attempts_finished": 0,
+        "passing_pct": null,
+        "passing_label": null,
+        "current_profit": 704.7,
+        "current_progress_pct": 11.7,
+        "profit_target": 6000.0,
+        "mll_floor": 97000.0,
+        "mll_buffer": 3704.7,
+        "mll_locked": false,
+        "dll_used": 0.0,
+        "dll_limit": 1800.0,
+        "lucid_trades": 6,
+        "current_equity": 100704.7,
+        "start_balance": 100000.0,
+        "dll": 1800.0,
+        "mll": 3000.0,
+        "locked_mll_balance": 100100.0
+      }
     },
     {
       "book": "G-LOW-80",
@@ -236,6 +342,27 @@
           "XAUUSD": 1
         },
         "missed_total": 2
+      },
+      "eval_pass": {
+        "passes": 0,
+        "fails": 0,
+        "attempts_finished": 0,
+        "passing_pct": null,
+        "passing_label": null,
+        "current_profit": 205.2,
+        "current_progress_pct": 3.4,
+        "profit_target": 6000.0,
+        "mll_floor": 97000.0,
+        "mll_buffer": 3205.2,
+        "mll_locked": false,
+        "dll_used": 0.0,
+        "dll_limit": 1800.0,
+        "lucid_trades": 6,
+        "current_equity": 100205.2,
+        "start_balance": 100000.0,
+        "dll": 1800.0,
+        "mll": 3000.0,
+        "locked_mll_balance": 100100.0
       }
     },
     {
@@ -287,6 +414,27 @@
             "vwap": 2
           }
         }
+      },
+      "eval_pass": {
+        "passes": 0,
+        "fails": 0,
+        "attempts_finished": 0,
+        "passing_pct": null,
+        "passing_label": null,
+        "current_profit": -382.8,
+        "current_progress_pct": -6.4,
+        "profit_target": 6000.0,
+        "mll_floor": 97000.0,
+        "mll_buffer": 2617.2,
+        "mll_locked": false,
+        "dll_used": 382.8,
+        "dll_limit": 1800.0,
+        "lucid_trades": 3,
+        "current_equity": 99617.2,
+        "start_balance": 100000.0,
+        "dll": 1800.0,
+        "mll": 3000.0,
+        "locked_mll_balance": 100100.0
       }
     },
     {
@@ -308,7 +456,28 @@
       "went_positive_first_n": 1,
       "went_positive_first_pct": 0,
       "since": "2026-11-13T15:26:56.359168+00:00",
-      "own_reset": true
+      "own_reset": true,
+      "eval_pass": {
+        "passes": 0,
+        "fails": 0,
+        "attempts_finished": 0,
+        "passing_pct": null,
+        "passing_label": null,
+        "current_profit": 196.2,
+        "current_progress_pct": 3.3,
+        "profit_target": 6000.0,
+        "mll_floor": 97000.0,
+        "mll_buffer": 3196.2,
+        "mll_locked": false,
+        "dll_used": 0.0,
+        "dll_limit": 1800.0,
+        "lucid_trades": 1,
+        "current_equity": 100196.2,
+        "start_balance": 100000.0,
+        "dll": 1800.0,
+        "mll": 3000.0,
+        "locked_mll_balance": 100100.0
+      }
     },
     {
       "book": "G-P5-EVAL",
@@ -346,6 +515,27 @@
         "highest_eod": 100000.0,
         "missed_scans": {},
         "missed_total": 0
+      },
+      "eval_pass": {
+        "passes": 0,
+        "fails": 0,
+        "attempts_finished": 0,
+        "passing_pct": null,
+        "passing_label": null,
+        "current_profit": 0.0,
+        "current_progress_pct": 0.0,
+        "profit_target": 6000.0,
+        "mll_floor": 97000.0,
+        "mll_buffer": 3000.0,
+        "mll_locked": false,
+        "dll_used": 0.0,
+        "dll_limit": 1800.0,
+        "lucid_trades": 0,
+        "current_equity": 100000.0,
+        "start_balance": 100000.0,
+        "dll": 1800.0,
+        "mll": 3000.0,
+        "locked_mll_balance": 100100.0
       }
     },
     {
@@ -382,6 +572,27 @@
         "own_calls": 9,
         "symbols_sent": 38,
         "no_call_closes": 0
+      },
+      "eval_pass": {
+        "passes": 0,
+        "fails": 0,
+        "attempts_finished": 0,
+        "passing_pct": null,
+        "passing_label": null,
+        "current_profit": 196.2,
+        "current_progress_pct": 3.3,
+        "profit_target": 6000.0,
+        "mll_floor": 97000.0,
+        "mll_buffer": 3196.2,
+        "mll_locked": false,
+        "dll_used": 0.0,
+        "dll_limit": 1800.0,
+        "lucid_trades": 1,
+        "current_equity": 100196.2,
+        "start_balance": 100000.0,
+        "dll": 1800.0,
+        "mll": 3000.0,
+        "locked_mll_balance": 100100.0
       }
     },
     {
@@ -401,7 +612,28 @@
       "went_positive_first": null,
       "went_positive_first_yes": 0,
       "went_positive_first_n": 0,
-      "went_positive_first_pct": null
+      "went_positive_first_pct": null,
+      "eval_pass": {
+        "passes": 0,
+        "fails": 0,
+        "attempts_finished": 0,
+        "passing_pct": null,
+        "passing_label": null,
+        "current_profit": 0.0,
+        "current_progress_pct": 0.0,
+        "profit_target": 6000.0,
+        "mll_floor": 97000.0,
+        "mll_buffer": 3000.0,
+        "mll_locked": false,
+        "dll_used": 0.0,
+        "dll_limit": 1800.0,
+        "lucid_trades": 0,
+        "current_equity": 100000.0,
+        "start_balance": 100000.0,
+        "dll": 1800.0,
+        "mll": 3000.0,
+        "locked_mll_balance": 100100.0
+      }
     },
     {
       "book": "CB-BRACKET",
@@ -439,7 +671,28 @@
       "went_positive_first": null,
       "went_positive_first_yes": 0,
       "went_positive_first_n": 0,
-      "went_positive_first_pct": null
+      "went_positive_first_pct": null,
+      "eval_pass": {
+        "passes": 0,
+        "fails": 0,
+        "attempts_finished": 0,
+        "passing_pct": null,
+        "passing_label": null,
+        "current_profit": 0.0,
+        "current_progress_pct": 0.0,
+        "profit_target": 6000.0,
+        "mll_floor": 97000.0,
+        "mll_buffer": 3000.0,
+        "mll_locked": false,
+        "dll_used": 0.0,
+        "dll_limit": 1800.0,
+        "lucid_trades": 0,
+        "current_equity": 100000.0,
+        "start_balance": 100000.0,
+        "dll": 1800.0,
+        "mll": 3000.0,
+        "locked_mll_balance": 100100.0
+      }
     },
     {
       "book": "CB-RUNNER",
@@ -477,7 +730,28 @@
       "went_positive_first": "25% (1/4)",
       "went_positive_first_yes": 1,
       "went_positive_first_n": 4,
-      "went_positive_first_pct": 25
+      "went_positive_first_pct": 25,
+      "eval_pass": {
+        "passes": 0,
+        "fails": 0,
+        "attempts_finished": 0,
+        "passing_pct": null,
+        "passing_label": null,
+        "current_profit": -1048.0,
+        "current_progress_pct": -17.5,
+        "profit_target": 6000.0,
+        "mll_floor": 97465.4,
+        "mll_buffer": 1486.6,
+        "mll_locked": false,
+        "dll_used": 1513.4,
+        "dll_limit": 1800.0,
+        "lucid_trades": 4,
+        "current_equity": 98952.0,
+        "start_balance": 100000.0,
+        "dll": 1800.0,
+        "mll": 3000.0,
+        "locked_mll_balance": 100100.0
+      }
     },
     {
       "book": "C-OPUS",
@@ -515,7 +789,28 @@
       "went_positive_first": "67% (2/3)",
       "went_positive_first_yes": 2,
       "went_positive_first_n": 3,
-      "went_positive_first_pct": 67
+      "went_positive_first_pct": 67,
+      "eval_pass": {
+        "passes": 0,
+        "fails": 0,
+        "attempts_finished": 0,
+        "passing_pct": null,
+        "passing_label": null,
+        "current_profit": -1118.5,
+        "current_progress_pct": -18.6,
+        "profit_target": 6000.0,
+        "mll_floor": 97000.0,
+        "mll_buffer": 1881.5,
+        "mll_locked": false,
+        "dll_used": 0.0,
+        "dll_limit": 1800.0,
+        "lucid_trades": 3,
+        "current_equity": 98881.5,
+        "start_balance": 100000.0,
+        "dll": 1800.0,
+        "mll": 3000.0,
+        "locked_mll_balance": 100100.0
+      }
     },
     {
       "book": "C-OPUS-B",
@@ -553,7 +848,28 @@
       "went_positive_first": null,
       "went_positive_first_yes": 0,
       "went_positive_first_n": 0,
-      "went_positive_first_pct": null
+      "went_positive_first_pct": null,
+      "eval_pass": {
+        "passes": 0,
+        "fails": 0,
+        "attempts_finished": 0,
+        "passing_pct": null,
+        "passing_label": null,
+        "current_profit": 0.0,
+        "current_progress_pct": 0.0,
+        "profit_target": 6000.0,
+        "mll_floor": 97000.0,
+        "mll_buffer": 3000.0,
+        "mll_locked": false,
+        "dll_used": 0.0,
+        "dll_limit": 1800.0,
+        "lucid_trades": 0,
+        "current_equity": 100000.0,
+        "start_balance": 100000.0,
+        "dll": 1800.0,
+        "mll": 3000.0,
+        "locked_mll_balance": 100100.0
+      }
     },
     {
       "book": "C-SONNET",
@@ -591,7 +907,28 @@
       "went_positive_first": "0% (0/1)",
       "went_positive_first_yes": 0,
       "went_positive_first_n": 1,
-      "went_positive_first_pct": 0
+      "went_positive_first_pct": 0,
+      "eval_pass": {
+        "passes": 0,
+        "fails": 0,
+        "attempts_finished": 0,
+        "passing_pct": null,
+        "passing_label": null,
+        "current_profit": -1669.2,
+        "current_progress_pct": -27.8,
+        "profit_target": 6000.0,
+        "mll_floor": 97000.0,
+        "mll_buffer": 1330.8,
+        "mll_locked": false,
+        "dll_used": 0.0,
+        "dll_limit": 1800.0,
+        "lucid_trades": 1,
+        "current_equity": 98330.8,
+        "start_balance": 100000.0,
+        "dll": 1800.0,
+        "mll": 3000.0,
+        "locked_mll_balance": 100100.0
+      }
     },
     {
       "book": "DS-FLASH",
@@ -650,6 +987,27 @@
         "dry_run_started_at": "2026-11-13T16:19:10.001752+00:00",
         "live_after_utc": "2026-11-17T08:00:00+00:00",
         "golive": null
+      },
+      "eval_pass": {
+        "passes": 0,
+        "fails": 0,
+        "attempts_finished": 0,
+        "passing_pct": null,
+        "passing_label": null,
+        "current_profit": 0.0,
+        "current_progress_pct": 0.0,
+        "profit_target": 6000.0,
+        "mll_floor": 97000.0,
+        "mll_buffer": 3000.0,
+        "mll_locked": false,
+        "dll_used": 0.0,
+        "dll_limit": 1800.0,
+        "lucid_trades": 0,
+        "current_equity": 100000.0,
+        "start_balance": 100000.0,
+        "dll": 1800.0,
+        "mll": 3000.0,
+        "locked_mll_balance": 100100.0
       }
     },
     {
@@ -690,6 +1048,27 @@
         "dry_run_started_at": "2026-11-13T16:19:10.001752+00:00",
         "live_after_utc": "2026-11-17T08:00:00+00:00",
         "golive": null
+      },
+      "eval_pass": {
+        "passes": 0,
+        "fails": 0,
+        "attempts_finished": 0,
+        "passing_pct": null,
+        "passing_label": null,
+        "current_profit": 0.0,
+        "current_progress_pct": 0.0,
+        "profit_target": 6000.0,
+        "mll_floor": 97000.0,
+        "mll_buffer": 3000.0,
+        "mll_locked": false,
+        "dll_used": 0.0,
+        "dll_limit": 1800.0,
+        "lucid_trades": 0,
+        "current_equity": 100000.0,
+        "start_balance": 100000.0,
+        "dll": 1800.0,
+        "mll": 3000.0,
+        "locked_mll_balance": 100100.0
       }
     },
     {
@@ -733,6 +1112,27 @@
         "dry_run_started_at": "2026-11-13T16:19:10.001752+00:00",
         "live_after_utc": "2026-11-17T08:00:00+00:00",
         "golive": null
+      },
+      "eval_pass": {
+        "passes": 0,
+        "fails": 0,
+        "attempts_finished": 0,
+        "passing_pct": null,
+        "passing_label": null,
+        "current_profit": 0.0,
+        "current_progress_pct": 0.0,
+        "profit_target": 6000.0,
+        "mll_floor": 97000.0,
+        "mll_buffer": 3000.0,
+        "mll_locked": false,
+        "dll_used": 0.0,
+        "dll_limit": 1800.0,
+        "lucid_trades": 0,
+        "current_equity": 100000.0,
+        "start_balance": 100000.0,
+        "dll": 1800.0,
+        "mll": 3000.0,
+        "locked_mll_balance": 100100.0
       }
     },
     {
@@ -776,6 +1176,27 @@
         "dry_run_started_at": "2026-11-13T16:19:10.001752+00:00",
         "live_after_utc": "2026-11-17T08:00:00+00:00",
         "golive": null
+      },
+      "eval_pass": {
+        "passes": 0,
+        "fails": 0,
+        "attempts_finished": 0,
+        "passing_pct": null,
+        "passing_label": null,
+        "current_profit": 0.0,
+        "current_progress_pct": 0.0,
+        "profit_target": 6000.0,
+        "mll_floor": 97000.0,
+        "mll_buffer": 3000.0,
+        "mll_locked": false,
+        "dll_used": 0.0,
+        "dll_limit": 1800.0,
+        "lucid_trades": 0,
+        "current_equity": 100000.0,
+        "start_balance": 100000.0,
+        "dll": 1800.0,
+        "mll": 3000.0,
+        "locked_mll_balance": 100100.0
       }
     }
   ],
@@ -797,8 +1218,8 @@
       "status": "OPEN",
       "max_pnl_usd": 329.0,
       "min_pnl_usd": -123.9,
-      "last_pnl_usd": 329.0,
-      "last_price": 3877.11,
+      "last_pnl_usd": 244.0,
+      "last_price": 3877.96,
       "close_reason": null,
       "exit": null,
       "t_exit": null,
@@ -809,7 +1230,7 @@
       "first_cross_at": "2026-11-13T18:45:48.041326+00:00",
       "first_cross_basis": "live_net_tick",
       "id": 7,
-      "last_at": "2026-11-13T19:01:59.275213+00:00",
+      "last_at": "2026-11-13T19:02:36.699322+00:00",
       "went_positive_first_label": "No"
     },
     {

@@ -23,13 +23,13 @@
       }
     },
     "2026-11-13": {
-      "usd": 1.601754,
-      "calls": 16,
+      "usd": 1.712786,
+      "calls": 18,
       "failed": 0,
       "by_kind": {
         "trigger": {
-          "calls": 10,
-          "usd": 0.600418
+          "calls": 12,
+          "usd": 0.71145
         },
         "entry": {
           "calls": 6,
@@ -37,21 +37,22 @@
         }
       },
       "tokens": {
-        "input": 142902,
-        "output": 19882,
-        "thoughts": 111713
+        "input": 154403,
+        "output": 21332,
+        "thoughts": 119066
       }
     }
   },
   "last_scan_bar": "2026-11-13T08:45:00+00:00",
   "triggers": {
     "day": "2026-11-13",
-    "n": 11,
+    "n": 13,
     "per_bar": {
       "US100": "2026-11-12T20:00:00+00:00",
       "XAUUSD": "2026-11-13T09:00:00+00:00",
       "BTCUSD": "2026-11-13T09:00:00+00:00",
-      "EURUSD": "2026-11-13T08:45:00+00:00"
+      "EURUSD": "2026-11-13T09:00:00+00:00",
+      "XAGUSD": "2026-11-13T09:00:00+00:00"
     }
   },
   "cache": {
@@ -98,7 +99,7 @@
     "EURUSD": {
       "bar": "2026-11-13T08:45:00+00:00",
       "atr": 0.000527,
-      "price": 1.10586,
+      "price": 1.10629,
       "levels": [
         [
           "Session High",
@@ -113,7 +114,7 @@
         [
           "POC",
           1.10598,
-          -1
+          1
         ],
         [
           "VAH",
@@ -168,7 +169,7 @@
     "XAGUSD": {
       "bar": "2026-11-13T08:45:00+00:00",
       "atr": 0.1785,
-      "price": 49.906,
+      "price": 50.025,
       "levels": [
         [
           "Session High",
@@ -188,7 +189,7 @@
         [
           "POC",
           49.928,
-          -1
+          1
         ],
         [
           "VAH",
@@ -249,43 +250,43 @@
   "whatif": [],
   "next_vid": 9,
   "last_call": {
-    "t": "2026-11-13T09:01:00.542161+00:00",
-    "t_dubai": "2026-11-13T13:01:00.542161+04:00",
+    "t": "2026-11-13T09:05:52.329271+00:00",
+    "t_dubai": "2026-11-13T13:05:52.329271+04:00",
     "kind": "trigger",
     "model": "gemini-4-carbon",
     "model_version": "gemini-4-carbon",
     "thinking": "high",
     "ok": true,
     "error": null,
-    "latency_s": 50.443,
+    "latency_s": 51.591,
     "finish_reason": "FinishReason.STOP",
     "tokens": {
-      "input": 5715,
-      "output": 722,
-      "thoughts": 3272,
-      "total": 9709
+      "input": 5752,
+      "output": 689,
+      "thoughts": 3128,
+      "total": 9569
     },
-    "thoughts_token_count": 3272,
+    "thoughts_token_count": 3128,
     "price_per_mtok": [
       2.0,
       10.0
     ],
-    "cost_usd": 0.05137,
-    "spend_today_usd": 1.6018,
+    "cost_usd": 0.049674,
+    "spend_today_usd": 1.7128,
     "symbols": [
-      "BTCUSD"
+      "XAGUSD"
     ],
-    "render_ms": 126,
+    "render_ms": 250,
     "parse_error": null,
     "trigger": {
       "trigger": "level_cross",
       "level": "POC",
-      "level_price": 68676.09,
-      "price": 68638.0,
-      "direction": "down",
-      "symbol": "BTCUSD",
+      "level_price": 49.928,
+      "price": 50.022,
+      "direction": "up",
+      "symbol": "XAGUSD",
       "bar": "2026-11-13T09:00:00+00:00",
-      "n_today": 11
+      "n_today": 13
     }
   },
   "first_call": {
@@ -323,64 +324,41 @@
     "parse_error": null,
     "trigger": null
   },
-  "calls_total": 31,
+  "calls_total": 33,
   "last_scan": {
-    "kind": "entry",
-    "t": "2026-11-13T09:00:20.006737+00:00",
-    "trigger": null,
-    "snapshot_id": "m15-20261113084500-7ab11c46372e",
-    "snapshot_hash": "7ab11c46372ef6b8381ef35918f70c3fbf15114e3db80822de433311bdd81c30",
-    "bar_close_ts": "2026-11-13T09:00:00+00:00",
-    "snapshot_ts": "2026-11-13T09:00:21.978185+00:00",
+    "kind": "trigger",
+    "t": "2026-11-13T09:05:00.488271+00:00",
+    "trigger": {
+      "trigger": "level_cross",
+      "level": "POC",
+      "level_price": 1.10598,
+      "price": 1.1063,
+      "direction": "up",
+      "symbol": "EURUSD",
+      "bar": "2026-11-13T09:00:00+00:00",
+      "n_today": 12
+    },
     "sent": [
-      "XAUUSD",
-      "EURUSD",
-      "US100",
-      "XAGUSD",
-      "BTCUSD"
+      "EURUSD"
     ],
     "blocked_session": [],
     "ok": true,
-    "latency_s": 163.815,
-    "cost_usd": 0.192868,
+    "latency_s": 64.703,
+    "cost_usd": 0.061358,
     "tokens": {
-      "input": 14079,
-      "output": 2701,
-      "thoughts": 13770,
-      "total": 30550
+      "input": 5749,
+      "output": 761,
+      "thoughts": 4225,
+      "total": 10735
     },
     "error": null,
     "finish_reason": "FinishReason.STOP",
-    "answer_ts": "2026-11-13T09:03:03.821737+00:00",
+    "answer_ts": "2026-11-13T09:06:05.293271+00:00",
     "signals": [
-      {
-        "symbol": "XAUUSD",
-        "action": "HOLD",
-        "confidence": 0.78,
-        "thinking_level": "high"
-      },
       {
         "symbol": "EURUSD",
         "action": "HOLD",
-        "confidence": 0.82,
-        "thinking_level": "high"
-      },
-      {
-        "symbol": "US100",
-        "action": "HOLD",
-        "confidence": 0.74,
-        "thinking_level": "high"
-      },
-      {
-        "symbol": "XAGUSD",
-        "action": "HOLD",
-        "confidence": 0.77,
-        "thinking_level": "high"
-      },
-      {
-        "symbol": "BTCUSD",
-        "action": "HOLD",
-        "confidence": 0.72,
+        "confidence": 0.76,
         "thinking_level": "high"
       }
     ],

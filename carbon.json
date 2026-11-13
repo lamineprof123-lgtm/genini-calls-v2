@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-13T13:49:03.392440+00:00",
+  "updated_at": "2026-11-13T14:03:05.695233+00:00",
   "paper_only": true,
   "model": "gemini-4-carbon",
   "entry_thinking": "high",
@@ -18,11 +18,11 @@
   "min_confidence": 0.75,
   "spend": {
     "day_dubai": "2026-11-13",
-    "usd": 4.8416,
+    "usd": 5.0307,
     "soft_usd": 15,
     "hard_usd": 19,
     "state": "ok",
-    "calls": 64,
+    "calls": 65,
     "failed": 14,
     "by_kind": {
       "trigger": {
@@ -30,14 +30,14 @@
         "usd": 2.070636
       },
       "entry": {
-        "calls": 25,
-        "usd": 2.771
+        "calls": 26,
+        "usd": 2.960048
       }
     },
     "tokens": {
-      "input": 422078,
-      "output": 61177,
-      "thoughts": 338571
+      "input": 436092,
+      "output": 64191,
+      "thoughts": 351659
     },
     "price_per_mtok": [
       2.0,
@@ -45,37 +45,37 @@
     ],
     "history": {
       "2026-11-12": 3.1289,
-      "2026-11-13": 4.8416
+      "2026-11-13": 5.0307
     }
   },
   "triggers_today": 40,
   "max_triggers_per_day": 40,
-  "next_scan_at": "2026-11-13T14:00:20+00:00",
+  "next_scan_at": "2026-11-13T14:15:20+00:00",
   "in_window": true,
   "last_call": {
-    "t": "2026-11-13T13:49:03.392440+00:00",
-    "t_dubai": "2026-11-13T17:49:03.392440+04:00",
+    "t": "2026-11-13T14:03:05.695233+00:00",
+    "t_dubai": "2026-11-13T18:03:05.695233+04:00",
     "kind": "entry",
     "model": "gemini-4-carbon",
     "model_version": "gemini-4-carbon",
     "thinking": "high",
     "ok": true,
     "error": null,
-    "latency_s": 223.383,
+    "latency_s": 165.69,
     "finish_reason": "FinishReason.STOP",
     "tokens": {
-      "input": 14096,
-      "output": 2567,
-      "thoughts": 16421,
-      "total": 33084
+      "input": 14014,
+      "output": 3014,
+      "thoughts": 13088,
+      "total": 30116
     },
-    "thoughts_token_count": 16421,
+    "thoughts_token_count": 13088,
     "price_per_mtok": [
       2.0,
       10.0
     ],
-    "cost_usd": 0.218072,
-    "spend_today_usd": 4.8416,
+    "cost_usd": 0.189048,
+    "spend_today_usd": 5.0307,
     "symbols": [
       "XAUUSD",
       "EURUSD",
@@ -122,39 +122,64 @@
     "parse_error": null,
     "trigger": null
   },
-  "calls_total": 79,
+  "calls_total": 80,
   "last_scan": {
-    "kind": "trigger",
-    "t": "2026-11-13T13:36:38.427967+00:00",
-    "trigger": {
-      "trigger": "bar_range",
-      "range_atr": 3.398,
-      "price": 28431.53,
-      "symbol": "US100",
-      "bar": "2026-11-13T13:30:00+00:00",
-      "n_today": 40
-    },
+    "kind": "entry",
+    "t": "2026-11-13T14:00:20.005233+00:00",
+    "trigger": null,
+    "snapshot_id": "m15-20261113134500-e5f79f12a78b",
+    "snapshot_hash": "e5f79f12a78b34d9fd4a47139fd9d598ad2856035c203ce24f1d0e1ed89059ed",
+    "bar_close_ts": "2026-11-13T14:00:00+00:00",
+    "snapshot_ts": "2026-11-13T14:00:35.847070+00:00",
     "sent": [
-      "US100"
+      "XAUUSD",
+      "EURUSD",
+      "US100",
+      "XAGUSD",
+      "BTCUSD"
     ],
     "blocked_session": [],
     "ok": true,
-    "latency_s": 75.519,
-    "cost_usd": 0.074178,
+    "latency_s": 165.69,
+    "cost_usd": 0.189048,
     "tokens": {
-      "input": 5804,
-      "output": 869,
-      "thoughts": 5388,
-      "total": 12061
+      "input": 14014,
+      "output": 3014,
+      "thoughts": 13088,
+      "total": 30116
     },
     "error": null,
     "finish_reason": "FinishReason.STOP",
-    "answer_ts": "2026-11-13T13:37:54.279967+00:00",
+    "answer_ts": "2026-11-13T14:03:05.695233+00:00",
     "signals": [
+      {
+        "symbol": "XAUUSD",
+        "action": "SELL",
+        "confidence": 0.74,
+        "thinking_level": "high"
+      },
+      {
+        "symbol": "EURUSD",
+        "action": "HOLD",
+        "confidence": 0.64,
+        "thinking_level": "high"
+      },
       {
         "symbol": "US100",
         "action": "HOLD",
-        "confidence": 0.8,
+        "confidence": 0.68,
+        "thinking_level": "high"
+      },
+      {
+        "symbol": "XAGUSD",
+        "action": "HOLD",
+        "confidence": 0.63,
+        "thinking_level": "high"
+      },
+      {
+        "symbol": "BTCUSD",
+        "action": "HOLD",
+        "confidence": 0.69,
         "thinking_level": "high"
       }
     ],
@@ -193,10 +218,10 @@
         "exit_reasons": {},
         "open_positions": 0,
         "pending": 0,
-        "signals_seen": 5,
+        "signals_seen": 6,
         "signals_taken": 0,
         "skips": {
-          "confidence<min": 5
+          "confidence<min": 6
         },
         "model_exit_checks": 0,
         "commissions": 0.0
@@ -239,10 +264,10 @@
         "exit_reasons": {},
         "open_positions": 0,
         "pending": 0,
-        "signals_seen": 5,
+        "signals_seen": 6,
         "signals_taken": 0,
         "skips": {
-          "confidence<min": 5
+          "confidence<min": 6
         },
         "model_exit_checks": 0,
         "commissions": 0.0
@@ -326,8 +351,37 @@
         "win_rate": 0.375
       }
     },
-    "open": 0,
-    "open_rows": [],
+    "open": 2,
+    "open_rows": [
+      {
+        "vid": 11,
+        "exit": "CB-BRACKET",
+        "symbol": "XAUUSD",
+        "side": "SHORT",
+        "entry": 3883.5,
+        "stop": 3892.0,
+        "target": 3875.0,
+        "confidence": 0.74,
+        "site_only": false,
+        "flag": null,
+        "unit": "1 GC",
+        "thinking_level": "high"
+      },
+      {
+        "vid": 12,
+        "exit": "CB-RUNNER",
+        "symbol": "XAUUSD",
+        "side": "SHORT",
+        "entry": 3883.5,
+        "stop": 3892.0,
+        "target": 3875.0,
+        "confidence": 0.74,
+        "site_only": false,
+        "flag": null,
+        "unit": "1 GC",
+        "thinking_level": "high"
+      }
+    ],
     "recent": [
       {
         "t_exit": "2026-11-13T11:25:00+00:00",

@@ -4,16 +4,80 @@
   "reset_token": "glow80-v1",
   "created_at": "2026-11-13T02:42:34.711453+00:00",
   "start_balance": 100000.0,
-  "balance": 100098.9,
+  "balance": 100084.6,
   "peak_balance": 100465.2,
   "max_drawdown": -441.3,
-  "next_id": 4,
-  "positions": [],
+  "next_id": 6,
+  "positions": [
+    {
+      "symbol": "XAUUSD",
+      "side": -1,
+      "contract": "GC",
+      "qty": 1,
+      "atr": 8.456,
+      "confidence": 0.83,
+      "signal_entry": 3881.21,
+      "signal_at": "2026-11-13T14:00:37.877286+00:00",
+      "queued_at": "2026-11-13T14:00:20.005233+00:00",
+      "level_event": "acceptance below VAL and testing Session Low",
+      "session": "LONDON_NY_OVERLAP",
+      "rationale": "Price is below VAL (3883.76) and below POC (3895.33). CVD is BEARISH (-5.40, slope -2.09) confirming aggressive selling pressure in LONDON_NY_OVERLAP. Price broke cleanly below VWAP (3898.76) and EMA50 (3895.20). ATR envelope is expanding with the signal bar piercing the lower ATR band (3873.67). Co",
+      "id": 4,
+      "book": "G-LOW-80",
+      "entry": 3881.8,
+      "entry_time": "2026-11-13T14:01:23.449628+00:00",
+      "quote_price": 3881.97,
+      "quote_source": "dukascopy:tick",
+      "quote_age_s": 19.92,
+      "stop": 3890.3,
+      "target": 3873.3,
+      "deadline": "2026-11-13T15:31:23.449628+00:00",
+      "risk_usd": 854.6,
+      "target_usd": 845.4,
+      "mfe": 0.08000000000038199,
+      "mae": 0.75,
+      "scan_from": "2026-11-13T14:01:00+00:00",
+      "checks": 6,
+      "last_check_at": "2026-11-13T14:03:04.273234+00:00"
+    },
+    {
+      "symbol": "EURUSD",
+      "side": -1,
+      "contract": "6E",
+      "qty": 5,
+      "atr": 0.000639,
+      "confidence": 0.79,
+      "signal_entry": 1.10502,
+      "signal_at": "2026-11-13T14:00:37.877286+00:00",
+      "queued_at": "2026-11-13T14:00:20.005233+00:00",
+      "level_event": "acceptance below VAL approaching S/R 1.10475",
+      "session": "LONDON_NY_OVERLAP",
+      "rationale": "Price is below VAL (1.10527) and below POC (1.10598). CVD is NEUTRAL (-2361.97) but shows strong negative slope (-5520.3) in LONDON_NY_OVERLAP. Price trades below both VWAP (1.10578) and EMA50 (1.10567). Price is pushing into the lower ATR envelope (1.10414). RVOL is elevated at 1.687 following a ye",
+      "id": 5,
+      "book": "G-LOW-80",
+      "entry": 1.10495,
+      "entry_time": "2026-11-13T14:01:23.449628+00:00",
+      "quote_price": 1.105,
+      "quote_source": "dukascopy:tick",
+      "quote_age_s": 19.96,
+      "stop": 1.1056,
+      "target": 1.1043,
+      "deadline": "2026-11-13T15:31:23.449628+00:00",
+      "risk_usd": 430.25,
+      "target_usd": 382.25,
+      "mfe": 0.0,
+      "mae": 0.00034999999999985043,
+      "scan_from": "2026-11-13T14:02:00+00:00",
+      "checks": 5,
+      "last_check_at": "2026-11-13T14:02:46.274609+00:00"
+    }
+  ],
   "pending": [],
   "last_price": {
-    "EURUSD": 1.10625,
+    "EURUSD": 1.10509,
     "US100": 28447.34,
-    "GBPUSD": 1.32324
+    "GBPUSD": 1.32324,
+    "XAUUSD": 3881.72
   },
   "seen_cycles": [
     "2026-11-13T02:45:23.592457+00:00",
@@ -51,7 +115,8 @@
     "2026-11-13T13:00:58.031391+00:00",
     "2026-11-13T13:15:33.269173+00:00",
     "2026-11-13T13:30:26.498737+00:00",
-    "2026-11-13T13:45:37.672697+00:00"
+    "2026-11-13T13:45:37.672697+00:00",
+    "2026-11-13T14:00:37.877286+00:00"
   ],
   "stats": {
     "trades": 3,
@@ -60,16 +125,16 @@
     "gross_win": 906.5,
     "gross_loss": -807.6,
     "net_pnl": 98.9,
-    "commissions": 61.1,
+    "commissions": 75.4,
     "hold_seconds": 972,
     "exit_reasons": {
       "stop_1atr": 2,
       "target_1atr": 1
     },
-    "signals_seen": 6,
-    "signals_taken": 4,
+    "signals_seen": 9,
+    "signals_taken": 6,
     "skips": {
-      "max_minis": 2
+      "max_minis": 3
     },
     "missed_scans": {}
   },
@@ -78,13 +143,13 @@
     "net": 98.9
   },
   "calls": {
-    "ok": 36,
+    "ok": 37,
     "failed": 9,
     "skipped": 0,
     "tokens": {
-      "prompt_token_count": 561804,
-      "candidates_token_count": 70328,
-      "total_token_count": 632132
+      "prompt_token_count": 577362,
+      "candidates_token_count": 72206,
+      "total_token_count": 649568
     }
   }
 }

@@ -1,14 +1,14 @@
 {
-  "updated_at": "2026-11-13T13:45:55.409926+00:00",
+  "updated_at": "2026-11-13T14:03:05.597864+00:00",
   "paper_only": true,
   "book": "EVAL-R4",
   "label": "Gemini flash \u00b7 EVAL-R4 (G-LOW-80's call, min 0.80, R4 trend filter, 0.8/1.0 ATR, Lucid eval rules)",
   "account": {
     "start_balance": 100000.0,
-    "balance": 100000.0,
-    "equity": 100000.0,
+    "balance": 99990.4,
+    "equity": 100080.4,
     "net_pnl": 0.0,
-    "open_pnl": 0.0,
+    "open_pnl": 90.0,
     "trades": 0,
     "wins": 0,
     "losses": 0,
@@ -17,19 +17,56 @@
     "avg_loss": null,
     "max_drawdown": 0.0,
     "peak_balance": 100000.0,
-    "commissions": 0.0,
+    "commissions": 9.6,
     "exit_reasons": {},
     "stopped": 0,
-    "open_positions": 0,
+    "open_positions": 2,
     "pending": 0,
-    "signals_seen": 5,
-    "signals_taken": 0,
+    "signals_seen": 8,
+    "signals_taken": 2,
     "skips": {
-      "confidence<min": 5
+      "confidence<min": 6
     },
     "missed_scans_glow80_held": {}
   },
-  "open_positions": [],
+  "open_positions": [
+    {
+      "id": 1,
+      "symbol": "XAGUSD",
+      "contract": "SIL",
+      "qty": 3,
+      "entry": 49.71,
+      "entry_time": "2026-11-13T14:01:48.880318+00:00",
+      "stop": 49.855,
+      "target": 49.53,
+      "deadline": "2026-11-13T15:31:48.880318+00:00",
+      "confidence": 0.81,
+      "risk_usd": 444.6,
+      "target_usd": 530.4,
+      "side": "SHORT",
+      "last_price": 49.69,
+      "unrealized": 60.0,
+      "micro": true
+    },
+    {
+      "id": 2,
+      "symbol": "XAUUSD",
+      "contract": "MGC",
+      "qty": 6,
+      "entry": 3882.2,
+      "entry_time": "2026-11-13T14:01:53.606582+00:00",
+      "stop": 3889.0,
+      "target": 3873.7,
+      "deadline": "2026-11-13T15:31:53.606582+00:00",
+      "confidence": 0.83,
+      "risk_usd": 417.6,
+      "target_usd": 500.4,
+      "side": "SHORT",
+      "last_price": 3881.7,
+      "unrealized": 30.0,
+      "micro": true
+    }
+  ],
   "recent_trades": [],
   "since": "2026-11-13T06:54:31.184443+00:00",
   "rules": "No own model call: G-LOW-80's low-thinking gemini-3.8-flash response on the shared M15 snapshot. BUY/SELL with confidence >= 0.8 on XAUUSD, EURUSD, GBPUSD, US100, XAGUSD (no BTC), entered ONLY when: H1 EMA20-EMA50 >= 2.7 ATR in the trade direction, price < 3 ATR past the M15 EMA20, last 3 M15 bars moved < 2.2 ATR with the trade, price < 3.5 ATR past the UTC-day VWAP (closed bars only). Stop 0.8 ATR, target 1 ATR, 90 min cap, 0.3 ATR fill check, ~$450 risk (minis if one fits, else micros; 2 minis per position, 6 minis / 60 micros total). LucidPro 100K eval: DLL $1,800, $3,000 EOD trailing MLL (locks at $100,100), pass at +$6,000, no auto-reset. Flat 21:45 UTC.",
@@ -41,13 +78,13 @@
     "status": "ACTIVE",
     "reason": null,
     "at": null,
-    "profit": 0.0,
+    "profit": -9.6,
     "profit_target": 6000.0,
     "progress_pct": 0.0,
-    "equity": 100000.0,
+    "equity": 100080.4,
     "mll_floor": 97000.0,
     "mll_locked": false,
-    "mll_room": 3000.0,
+    "mll_room": 3080.4,
     "highest_eod": 100000.0,
     "dll_limit": 1800.0,
     "dll_used": 0.0,
@@ -57,8 +94,8 @@
     "missed_total": 0,
     "eod_closes": [],
     "filter": {
-      "seen": 0,
-      "passed": 0,
+      "seen": 2,
+      "passed": 2,
       "filtered_out": 0,
       "no_data": 0,
       "fail_by": {
@@ -67,7 +104,26 @@
         "chase": 0,
         "vwap": 0
       },
-      "last": {},
+      "last": {
+        "XAUUSD": {
+          "t": "2026-11-13T14:00:20.005233+00:00",
+          "pass": true,
+          "reason": null,
+          "h1_trend": 4.324,
+          "m15_ema20": 1.108,
+          "chase": 0.717,
+          "vwap": 2.076
+        },
+        "XAGUSD": {
+          "t": "2026-11-13T14:00:20.005233+00:00",
+          "pass": true,
+          "reason": null,
+          "h1_trend": 3.301,
+          "m15_ema20": 0.996,
+          "chase": 1.147,
+          "vwap": 2.026
+        }
+      },
       "rules": {
         "h1_trend_min_atr": 2.7,
         "max_px_vs_ema20_atr": 3.0,
@@ -81,20 +137,23 @@
     "net": 0.0
   },
   "cycles": {
-    "seen": 28,
-    "with_signals": 19,
+    "seen": 29,
+    "with_signals": 20,
     "skipped": 9,
     "last": {
-      "t": "2026-11-13T13:45:37.672697+00:00",
+      "t": "2026-11-13T14:00:37.877286+00:00",
       "ok": true,
       "signals": 5,
-      "queued": [],
+      "queued": [
+        "XAGUSD",
+        "XAUUSD"
+      ],
       "eval_status": "ACTIVE"
     }
   },
   "r4": {
-    "seen": 0,
-    "passed": 0,
+    "seen": 2,
+    "passed": 2,
     "filtered_out": 0,
     "no_data": 0,
     "fail_by": {
@@ -103,7 +162,26 @@
       "chase": 0,
       "vwap": 0
     },
-    "last": {},
+    "last": {
+      "XAUUSD": {
+        "t": "2026-11-13T14:00:20.005233+00:00",
+        "pass": true,
+        "reason": null,
+        "h1_trend": 4.324,
+        "m15_ema20": 1.108,
+        "chase": 0.717,
+        "vwap": 2.076
+      },
+      "XAGUSD": {
+        "t": "2026-11-13T14:00:20.005233+00:00",
+        "pass": true,
+        "reason": null,
+        "h1_trend": 3.301,
+        "m15_ema20": 0.996,
+        "chase": 1.147,
+        "vwap": 2.026
+      }
+    },
     "rules": {
       "h1_trend_min_atr": 2.7,
       "max_px_vs_ema20_atr": 3.0,

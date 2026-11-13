@@ -1,14 +1,14 @@
 {
-  "updated_at": "2026-11-13T13:51:20.488289+00:00",
+  "updated_at": "2026-11-13T14:03:19.307362+00:00",
   "paper_only": true,
   "book": "G-LOW-80",
   "label": "Gemini flash \u00b7 G-LOW-80 (low thinking, min 0.70)",
   "account": {
     "start_balance": 100000.0,
-    "balance": 100098.9,
-    "equity": 100098.9,
+    "balance": 100084.6,
+    "equity": 100005.1,
     "net_pnl": 98.9,
-    "open_pnl": 0.0,
+    "open_pnl": -79.5,
     "trades": 3,
     "wins": 1,
     "losses": 2,
@@ -17,22 +17,57 @@
     "avg_loss": -403.8,
     "max_drawdown": -441.3,
     "peak_balance": 100465.2,
-    "commissions": 61.1,
+    "commissions": 75.4,
     "exit_reasons": {
       "stop_1atr": 2,
       "target_1atr": 1
     },
     "stopped": 2,
-    "open_positions": 0,
+    "open_positions": 2,
     "pending": 0,
-    "signals_seen": 6,
-    "signals_taken": 4,
+    "signals_seen": 9,
+    "signals_taken": 6,
     "skips": {
-      "max_minis": 2
+      "max_minis": 3
     },
     "missed_scans_main_held": {}
   },
-  "open_positions": [],
+  "open_positions": [
+    {
+      "id": 4,
+      "symbol": "XAUUSD",
+      "contract": "GC",
+      "qty": 1,
+      "entry": 3881.8,
+      "entry_time": "2026-11-13T14:01:23.449628+00:00",
+      "stop": 3890.3,
+      "target": 3873.3,
+      "deadline": "2026-11-13T15:31:23.449628+00:00",
+      "confidence": 0.83,
+      "risk_usd": 854.6,
+      "target_usd": 845.4,
+      "side": "SHORT",
+      "last_price": 3881.72,
+      "unrealized": 8.0
+    },
+    {
+      "id": 5,
+      "symbol": "EURUSD",
+      "contract": "6E",
+      "qty": 5,
+      "entry": 1.10495,
+      "entry_time": "2026-11-13T14:01:23.449628+00:00",
+      "stop": 1.1056,
+      "target": 1.1043,
+      "deadline": "2026-11-13T15:31:23.449628+00:00",
+      "confidence": 0.79,
+      "risk_usd": 430.25,
+      "target_usd": 382.25,
+      "side": "SHORT",
+      "last_price": 1.10509,
+      "unrealized": -87.5
+    }
+  ],
   "recent_trades": [
     {
       "event": "close",
@@ -146,13 +181,13 @@
   "model": "gemini-3.8-flash",
   "thinking_level": "low",
   "calls": {
-    "ok": 36,
+    "ok": 37,
     "failed": 9,
     "skipped": 0,
     "tokens": {
-      "prompt_token_count": 561804,
-      "candidates_token_count": 70328,
-      "total_token_count": 632132
+      "prompt_token_count": 577362,
+      "candidates_token_count": 72206,
+      "total_token_count": 649568
     }
   },
   "day": {

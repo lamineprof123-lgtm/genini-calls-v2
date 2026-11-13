@@ -1,11 +1,11 @@
 {
-  "snapshot_id": "m15-20261113133000-f1d0fa26d26c",
-  "snapshot_hash": "f1d0fa26d26cb590f33fae2aac9ecc8fb74ba01a468ee0ad1d66c101c6516384",
-  "package_id": "m15-20261113T134500-5278ed243733",
-  "bar_close_ts": "2026-11-13T13:45:00+00:00",
-  "snapshot_ts": "2026-11-13T13:45:35.803094+00:00",
-  "start_lag_s": 35.803,
-  "render_ms": 16941,
+  "snapshot_id": "m15-20261113134500-e5f79f12a78b",
+  "snapshot_hash": "e5f79f12a78b34d9fd4a47139fd9d598ad2856035c203ce24f1d0e1ed89059ed",
+  "package_id": "m15-20261113T140000-609c51cae29a",
+  "bar_close_ts": "2026-11-13T14:00:00+00:00",
+  "snapshot_ts": "2026-11-13T14:00:35.847070+00:00",
+  "start_lag_s": 35.847,
+  "render_ms": 17185,
   "symbols": [
     "XAUUSD",
     "EURUSD",
@@ -15,19 +15,19 @@
     "BTCUSD"
   ],
   "chart_sha256": {
-    "XAUUSD": "5829bb9388e835eeb5447919768bad14d6fcf72ae4ce92d47c97a7ab9d2f9e2e",
-    "EURUSD": "5bc319b16791e8fd93cf398f6adeb96f8c44939b1c03770521c582377b525dfa",
-    "GBPUSD": "f48da2bee4f3e01bed94d21f29d1f0ebe04e721b1523ae66d6fe4f8f08e9d349",
-    "US100": "87a4941eabe89c9383ac43d4f467f6f6b30fd528487143acbbf7e53d99bf25da",
-    "XAGUSD": "ed65a67ba5a3625b4a78fcbfbb680657595e2c910dcfc6a7d8f087d324933b02",
-    "BTCUSD": "5d6c1bfa6d62e9da1797b10baf43ded17e0f9163020fbea3eb89ec015eeff989"
+    "XAUUSD": "a623c618ff112097ea0969e5b2611f7865834d31eae55547ecf3fc0b19d8c0e7",
+    "EURUSD": "a71769bf994eac24076e203545579a43b3db66a335ffebb316f132ec230ae4d7",
+    "GBPUSD": "f4ede9379ff2e065fc785e4a6319d9fad2afc6d00fe9254520d211c8a7d4d2a7",
+    "US100": "203cb0244769ad669e44f13cb9488523b650dfcaff350c9681c27fb1be9df70d",
+    "XAGUSD": "515589b204bebbfd1df4511ea301245079e433db38a12f0c9a8eb7f8670928bc",
+    "BTCUSD": "1310faed9c0adb759dbcccc41eb017e5a723d22515740c9d0696226f4fdf9699"
   },
   "dispatched": {
     "claude": {},
     "carbon": {
       "ok": true,
-      "latency_s": 223.383,
-      "cost_usd": 0.218072,
+      "latency_s": 165.69,
+      "cost_usd": 0.189048,
       "error": null,
       "thinking_level": "high"
     },
@@ -35,25 +35,48 @@
     "glow80": {
       "thinking_level": "low",
       "ok": true,
-      "latency_s": 17.28,
+      "latency_s": 25.553,
       "thinking_tokens": null,
       "error": null,
       "eval80": {
         "ok": true,
         "skipped": null,
         "error": null,
-        "queued": [],
+        "queued": [
+          "XAGUSD",
+          "XAUUSD"
+        ],
         "eval_status": "ACTIVE"
       },
       "evalr4": {
         "ok": true,
         "skipped": null,
         "error": null,
-        "queued": [],
+        "queued": [
+          "XAGUSD",
+          "XAUUSD"
+        ],
         "eval_status": "ACTIVE",
-        "r4": {}
+        "r4": {
+          "XAUUSD": {
+            "pass": true,
+            "reason": null,
+            "h1_trend": 4.324,
+            "m15_ema20": 1.108,
+            "chase": 0.717,
+            "vwap": 2.076
+          },
+          "XAGUSD": {
+            "pass": true,
+            "reason": null,
+            "h1_trend": 3.301,
+            "m15_ema20": 0.996,
+            "chase": 1.147,
+            "vwap": 2.026
+          }
+        }
       }
     }
   },
-  "updated_at": "2026-11-13T13:49:21.059747+00:00"
+  "updated_at": "2026-11-13T14:03:24.030161+00:00"
 }

@@ -37,6 +37,8 @@ def _kick_deepseek(cfg: dict, payloads: list[dict] | None, pngs: dict | None = N
 # flash entries and traded on the parallel OTHER-VENUE account (t254u).
 _DEFAULT_LUCID_SYMBOLS = ("XAUUSD", "EURUSD", "GBPUSD", "US100", "XAGUSD")
 THROTTLE_SKIP = "blocked_session_throttle"
+MAIN_M15_SKIP = "main_m15_cadence"   # t296u: MAIN calls Gemini only once per M15 close (+20 s)
+MAIN_M15_STATE = "main_m15_last_call.json"
 ALL_IN_POS_SKIP = "all_symbols_in_position"
 
 
@@ -115,11 +117,44 @@ def should_throttle_gemini(payloads: list[dict], seen: dict, cfg: dict) -> bool:
     return session_blocked_for_scan(payloads, cfg) and not gemini_bar_changed(payloads, seen, cfg)
 
 
+def main_m15_only(cfg: dict) -> bool:
+    """t296u: MAIN's own Gemini entry call fires once per M15 close (+20 s, shared M15 snapshot) instead of
+    every 2-min cycle. Price / position / panel cycles keep their 2-min cadence. [gemini].main_entry_cadence."""
+    return str((cfg.get("gemini") or {}).get("main_entry_cadence") or "cycle").lower() == "m15"
+
+
+def main_m15_last_close(cfg: dict, state_dir: str | Path | None = None) -> str | None:
+    """bar_close_ts (ISO, UTC) of the last M15 close MAIN called Gemini for (survives restarts)."""
+    d = Path(state_dir or cfg["general"]["state_dir"])
+    return (_load_json(d / MAIN_M15_STATE, {}) or {}).get("bar_close_ts")
+
+
+def _iso_close(t) -> str | None:
+    if t is None:
+        return None
+    if isinstance(t, str):
+        t = datetime.fromisoformat(t.replace("Z", "+00:00"))
+    if t.tzinfo is None:
+        t = t.replace(tzinfo=timezone.utc)
+    return t.astimezone(timezone.utc).isoformat()
+
+
+def main_call_allowed(cfg: dict, m15_close, state_dir: str | Path | None = None) -> bool:
+    """True when MAIN may call Gemini this cycle. Always True in the legacy every-cycle mode; in M15 mode only
+    on the loop's M15-close cycle and only once per close (deduped on disk, so a restart cannot double-call)."""
+    if not main_m15_only(cfg):
+        return True
+    if m15_close is None:
+        return False
+    return main_m15_last_close(cfg, state_dir) != _iso_close(m15_close)
+
+
 def scan_interval_minutes(blocked: bool, cfg: dict) -> int:
-    """2 (or scheduler default) while sessions are active; 15 during blocked windows (M15 close)."""
+    """2 (or scheduler default) while sessions are active; 15 during blocked windows (M15 close).
+    15 whenever MAIN is on the M15 cadence (the countdown shows MAIN's next Gemini call)."""
     active = int(cfg["scheduler"]["interval_minutes"])
     tf = int(cfg["general"]["timeframe_minutes"])
-    return tf if blocked else active
+    return tf if (blocked or main_m15_only(cfg)) else active
 
 
 def _load_json(path: Path, default):
@@ -131,24 +166,47 @@ def _load_json(path: Path, default):
     return default
 
 
+def snapshot_payloads(snapshot, symbols: list[str]) -> tuple[list[dict], dict]:
+    """MAIN's copy of the shared M15 snapshot rows (context dict copied so other books never see edits)."""
+    want = list(symbols)
+    by = {p["symbol"]: p for p in (getattr(snapshot, "payloads", None) or [])}
+    out, errs = [], {}
+    for sym in want:
+        p = by.get(sym)
+        if p is None:
+            errs[sym] = "missing from shared M15 snapshot"
+            continue
+        out.append({**p, "context": dict(p.get("context") or {})})
+    return out, errs
+
+
 async def run_once(cfg: dict, dry_run: bool = False, force: bool = True, model: str | None = None,
-                   no_throttle: bool = False) -> dict:
+                   no_throttle: bool = False, m15_close=None, snapshot=None) -> dict:
+    """One MAIN cycle. `m15_close` = the M15 bar close this cycle serves (set only by the loop's M15-close wake);
+    `snapshot` = the shared M15Coordinator snapshot for that close (same payloads + chart bytes as every other
+    M15 book). In M15 cadence mode, cycles without m15_close refresh data / positions but never call Gemini."""
     g = cfg["general"]
     now = datetime.now(timezone.utc)
     tz = ZoneInfo(g["session_tz"])
     state_dir = Path(g["state_dir"]); state_dir.mkdir(parents=True, exist_ok=True)
+    use_snap = snapshot is not None and bool(getattr(snapshot, "payloads", None)) \
+        and bool(getattr(snapshot, "charts", None))
 
-    # 1. data (parallel, per-symbol provider fallback; v2 uses bar cache)
+    # 1. data (parallel, per-symbol provider fallback; v2 uses bar cache) — or the shared M15 snapshot
     t_fetch0 = time.monotonic()
-    results = await asyncio.gather(*[fetch_symbol(s, cfg) for s in g["symbols"]], return_exceptions=True)
+    if use_snap:
+        payloads, data_errors = snapshot_payloads(snapshot, g["symbols"])
+        fetch_per = {"shared_m15_snapshot": getattr(snapshot, "snapshot_id", None)}
+    else:
+        results = await asyncio.gather(*[fetch_symbol(s, cfg) for s in g["symbols"]], return_exceptions=True)
+        fetch_per = last_fetch_timings()
+        payloads, data_errors = [], {}
+        for sym, res in zip(g["symbols"], results):
+            if isinstance(res, Exception):
+                data_errors[sym] = str(res); log.error("data %s: %s", sym, res); continue
+            df, src, ticker = res
+            payloads.append(build_payload(sym, df, cfg, src, ticker))
     fetch_ms = round((time.monotonic() - t_fetch0) * 1000, 1)
-    fetch_per = last_fetch_timings()
-    payloads, data_errors = [], {}
-    for sym, res in zip(g["symbols"], results):
-        if isinstance(res, Exception):
-            data_errors[sym] = str(res); log.error("data %s: %s", sym, res); continue
-        df, src, ticker = res
-        payloads.append(build_payload(sym, df, cfg, src, ticker))
     if not payloads:
         raise RuntimeError(f"no data for any symbol: {data_errors}")
     price_stamp = {p["symbol"]: {"last_price": p["context"].get("last_price", p["context"].get("last_close")),
@@ -158,11 +216,12 @@ async def run_once(cfg: dict, dry_run: bool = False, force: bool = True, model: 
     log.info("timing fetch_total=%.1fms fetch_per_ms=%s prices=%s", fetch_ms, fetch_per, price_stamp)
 
     # 1b. live M1 / forming M15 (does not change signal_candle). Failure -> last close + live_price_stale.
-    t_live0 = time.monotonic()
-    live_info = await enrich_live_prices(payloads, cfg, now)
-    log.info("timing live_m1=%.1fms (fetch_total was %.1fms)", live_info.get("ms"), fetch_ms)
-    # 1c. FirmTape GEX (US100/XAUUSD, NY RTH only) + US100 live price from NQ + rolling basis. Never raises.
-    await enrich_firmtape(payloads, cfg, now)
+    # (shared snapshot rows already carry the same live / FirmTape enrichment: exit_manager.market_snapshot)
+    if not use_snap:
+        live_info = await enrich_live_prices(payloads, cfg, now)
+        log.info("timing live_m1=%.1fms (fetch_total was %.1fms)", live_info.get("ms"), fetch_ms)
+        # 1c. FirmTape GEX (US100/XAUUSD, NY RTH only) + US100 live price from NQ + rolling basis. Never raises.
+        await enrich_firmtape(payloads, cfg, now)
     price_stamp = {p["symbol"]: {"last_price": p["context"].get("live_price", p["context"].get("last_close")),
                                  "last_price_ts_utc": p["context"].get("live_price_ts_utc",
                                                                        p["context"].get("last_closed_bar_utc")),
@@ -202,6 +261,24 @@ async def run_once(cfg: dict, dry_run: bool = False, force: bool = True, model: 
                 "scan_interval_minutes": interval, "session_blocked": True, "record": record,
                 "payloads": payloads}
 
+    if not no_throttle and not main_call_allowed(cfg, m15_close, state_dir):
+        # t296u: mid-bar price / position cycle. No Gemini call; Lucid + bracket exits keep running.
+        record = _throttle_skip_record(cfg, payloads, data_errors, last_bars, now, tz, equity=None,
+                                       reason=MAIN_M15_SKIP, interval=interval)
+        record["in_position"] = sorted(busy)
+        record["session_blocked"] = blocked
+        if busy:
+            write_in_position_overlay(cfg, busy)
+        _atomic_write(seen_path, last_bars)
+        return {"skipped": True, "skipped_reason": MAIN_M15_SKIP, "last_bars": last_bars,
+                "scan_interval_minutes": interval, "session_blocked": blocked, "record": record,
+                "payloads": payloads}
+    if main_m15_only(cfg) and m15_close is not None:
+        # claim this close before the call: one MAIN Gemini call per M15 close, even if the call fails
+        _atomic_write(state_dir / MAIN_M15_STATE, {
+            "bar_close_ts": _iso_close(m15_close), "claimed_at": now.isoformat(),
+            "snapshot_id": getattr(snapshot, "snapshot_id", None) if use_snap else None})
+
     if not entry_payloads:
         log.info("all eligible symbols in a position - skipping Gemini (%s)", ALL_IN_POS_SKIP)
         record = _throttle_skip_record(cfg, payloads, data_errors, last_bars, now, tz, equity=None)
@@ -220,7 +297,12 @@ async def run_once(cfg: dict, dry_run: bool = False, force: bool = True, model: 
 
     # 3. render only the charts that will go to Gemini (v2: warm Playwright pool + JPEG)
     t_render0 = time.monotonic()
-    pngs = await render_all(entry_payloads)
+    if use_snap:
+        pngs = {p["symbol"]: snapshot.charts[p["symbol"]] for p in entry_payloads
+                if p["symbol"] in snapshot.charts}
+        entry_payloads = [p for p in entry_payloads if p["symbol"] in pngs]
+    else:
+        pngs = await render_all(entry_payloads)
     render_ms = round((time.monotonic() - t_render0) * 1000, 1)
     log.info("timing render_total=%.1fms ready_for_gemini=%.1fms bytes=%s",
              render_ms, fetch_ms + render_ms, {s: len(b) for s, b in pngs.items()})
@@ -317,6 +399,9 @@ async def run_once(cfg: dict, dry_run: bool = False, force: bool = True, model: 
         "entry_symbols": [p["symbol"] for p in entry_payloads],
         "thinking_level": (cfg.get("gemini") or {}).get("entry_thinking_level")
                           or (cfg.get("gemini") or {}).get("thinking_level"),
+        "main_cadence": "m15" if main_m15_only(cfg) else "cycle",
+        "m15_close": _iso_close(m15_close),
+        "snapshot_id": getattr(snapshot, "snapshot_id", None) if use_snap else None,
     }
     if record["thinking_level"]:
         for v in validated:
@@ -343,7 +428,8 @@ async def run_once(cfg: dict, dry_run: bool = False, force: bool = True, model: 
 
 
 def _throttle_skip_record(cfg: dict, payloads: list[dict], data_errors: dict,
-                          last_bars: dict, now: datetime, tz, equity=None) -> dict:
+                          last_bars: dict, now: datetime, tz, equity=None,
+                          reason: str = THROTTLE_SKIP, interval: int | None = None) -> dict:
     """Compact cycle log when Gemini is skipped during a blocked session. Does not touch latest_signal.json."""
     g = cfg["general"]
     local = now.astimezone(tz)
@@ -361,8 +447,8 @@ def _throttle_skip_record(cfg: dict, payloads: list[dict], data_errors: dict,
         "data": {p["symbol"]: {"source": p["source"], "ticker": p["ticker"], **p["context"]} for p in payloads},
         "data_errors": data_errors, "parse_error": None, "ai_error": None,
         "market_summary": None, "signals": [],
-        "skipped_reason": THROTTLE_SKIP,
-        "scan_interval_minutes": scan_interval_minutes(True, cfg),
+        "skipped_reason": reason,
+        "scan_interval_minutes": interval if interval is not None else scan_interval_minutes(True, cfg),
     }
     if compact:
         record["run_dir"] = str(run_dir / f"{local.strftime('%H%M%S')}.json")
@@ -412,7 +498,12 @@ async def run_loop(cfg: dict, dry_run: bool = False, model: str | None = None,
             t0 = time.monotonic()
             res = {}
             try:
-                res = await run_once(cfg, dry_run=dry_run, force=False, model=model)
+                # M15 cadence (local runner): the first cycle after each M15 close serves it (deduped on disk).
+                mc = None
+                if main_m15_only(cfg):
+                    n = datetime.now(timezone.utc)
+                    mc = datetime.fromtimestamp(int(n.timestamp()) // 900 * 900, timezone.utc)
+                res = await run_once(cfg, dry_run=dry_run, force=False, model=model, m15_close=mc)
             except Exception:
                 log.exception("cycle failed")
             scan_interval = int((res or {}).get("scan_interval_minutes") or scan_interval)

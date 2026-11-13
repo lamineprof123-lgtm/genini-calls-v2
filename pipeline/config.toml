@@ -111,7 +111,11 @@ exit_model = "gemini-3.8-flash"       # 18s exit checks (used only when exit_cal
 fallback_models = []                  # entry: no cross-model fallback
 exit_fallback_models = []             # exit: no cross-model fallback
 thinking_level = "low"                # exit-manager Gemini calls (currently paused); leave low
-entry_thinking_level = "high"         # flash 2-min entry scans only (t244u); tagged on each signal
+entry_thinking_level = "high"         # MAIN flash entry scans only (t244u); tagged on each signal
+# t296u: MAIN calls Gemini once per M15 close (+20 s) on the shared M15 snapshot (same charts as G-LOW-80 /
+# Carbon / Claude); the 2-min loop still refreshes prices, positions, bracket exits and the panel without a call.
+# "cycle" = legacy: one Gemini call every 2-min cycle (~720/day).
+main_entry_cadence = "m15"
 temperature = 0.2                     # sent ONLY to pre-3.x models (3.6+ deprecate sampling params)
 timeout_seconds = 110                 # per entry request; raised for thinking=high + XAGUSD/BTCUSD charts, inside 2-min cadence
 max_attempts_per_model = 2

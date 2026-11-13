@@ -107,6 +107,9 @@ class M15Coordinator:
         self.site_dir = Path(site_dir or (cfg.get("site") or {}).get("dir") or root)
         self.last: dict = {}
         self.task: asyncio.Task | None = None
+        # t296u: latest captured snapshot, so MAIN's M15-close cycle reuses the same payloads + chart bytes.
+        self.latest_snap: M15Snapshot | None = None
+        self._snap_cond: asyncio.Condition | None = None
         # When set, Carbon / Claude own scan loops skip their independent fetch+render.
         if self.claude is not None:
             self.claude.shared_m15 = True
@@ -444,8 +447,39 @@ class M15Coordinator:
         self.enqueue_signals((r or {}).get("score_signals") or [])
         return r
 
+    def _cond(self) -> asyncio.Condition:
+        if self._snap_cond is None:
+            self._snap_cond = asyncio.Condition()
+        return self._snap_cond
+
+    async def publish_snapshot(self, snap: M15Snapshot) -> None:
+        self.latest_snap = snap
+        c = self._cond()
+        async with c:
+            c.notify_all()
+
+    async def wait_snapshot(self, close: datetime, timeout: float = 90.0) -> M15Snapshot | None:
+        """The shared snapshot for M15 close `close` (MAIN's Gemini call input). None on timeout."""
+        def ready():
+            s = self.latest_snap
+            return s if (s is not None and s.bar_close_ts == close) else None
+        if ready() is not None:
+            return ready()
+        c = self._cond()
+        try:
+            async with c:
+                await asyncio.wait_for(c.wait_for(lambda: ready() is not None), timeout)
+        except asyncio.TimeoutError:
+            log.warning("MAIN: no shared M15 snapshot for %s within %.0fs (own fetch fallback)", iso(close), timeout)
+            return None
+        return ready()
+
     async def run_once(self, now: datetime | None = None) -> dict:
         snap = await self.capture(now)
+        try:
+            await self.publish_snapshot(snap)
+        except Exception:
+            log.exception("m15 snapshot publish for MAIN failed")
         dispatched = await self.dispatch(snap)
         rec = {**self.last, "dispatched": {k: {kk: vv for kk, vv in (v or {}).items()
                                                if kk in ("ok", "skipped", "error", "latency_s", "cost_usd",

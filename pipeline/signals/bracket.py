@@ -244,7 +244,7 @@ class BracketBook:
     def intake(self, record: dict | None, now: datetime) -> list[dict]:
         """Queue pendings from one entry-cycle record. Returns queued rows. Never touches main's state."""
         out = []
-        if not record or record.get("dry_run") or record.get("skipped_reason") in ("blocked_session_throttle",):
+        if not record or record.get("dry_run") or record.get("skipped_reason") in ("blocked_session_throttle", "main_m15_cadence"):
             if record and record.get("skipped_reason"):
                 self._missed(record, now)
             return out

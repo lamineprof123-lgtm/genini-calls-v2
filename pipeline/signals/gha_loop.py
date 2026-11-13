@@ -17,7 +17,7 @@ from . import gha_lock as L
 from .config import ROOT
 from .exit_manager import ExitManager, em_cfg, run_exit_loop
 from .lucid import lucid_replay, lucid_step
-from .pipeline import next_boundary, run_once
+from .pipeline import next_boundary, run_once, main_m15_only, main_m15_last_close
 from .site import write_status
 
 log = logging.getLogger("signals.gha")
@@ -41,6 +41,12 @@ class GhaLoop:
         self.interval = int(cfg["scheduler"]["interval_minutes"])
         self.scan_interval = self.interval  # published to status.json (2 active / 15 blocked)
         self.offset = int(cfg["scheduler"]["align_offset_seconds"])
+        # t296u: MAIN's Gemini entry call only on the M15 close +20 s (shared snapshot); 2-min cycles keep
+        # prices, positions, Lucid, bracket exits and the panel moving without a Gemini call.
+        self.main_m15 = main_m15_only(cfg)
+        self.m15_served: datetime | None = None   # last M15 close the loop ran a MAIN cycle for (in memory)
+        if self.main_m15:
+            self.scan_interval = int(cfg["general"]["timeframe_minutes"])
         self.t_start = datetime.now(timezone.utc)
         self.ends_at = self.t_start + timedelta(minutes=max_runtime_min)
         self.hard_cap = self.t_start + timedelta(minutes=hard_cap_min)
@@ -227,6 +233,42 @@ class GhaLoop:
                      next_run_at=nxt.isoformat() if nxt else None,
                      runner="github-actions", run_id=self.run_id, **self.last)
 
+    def m15_offset(self) -> int:
+        return int((self.cfg.get("m15_scan") or {}).get("offset_seconds", self.offset))
+
+    def next_wake(self, now: datetime) -> tuple[datetime, datetime | None]:
+        """(wake time, M15 close served by that wake or None). Legacy mode: the 2-min boundary only.
+        M15 mode: the earlier of the next 2-min boundary and the next M15 close + offset; if the current
+        close has not been served yet (a long cycle ran over close + offset), serve it right away (<= 5 min late)."""
+        wake = next_boundary(now, self.interval, self.offset)
+        if not self.main_m15:
+            return wake, None
+        off = self.m15_offset()
+        cur = datetime.fromtimestamp(int(now.timestamp()) // 900 * 900, timezone.utc)
+        done = self.m15_served == cur
+        if not done:
+            try:
+                done = main_m15_last_close(self.cfg) == cur.isoformat()
+            except Exception:
+                done = False
+        if not done and cur + timedelta(seconds=off) <= now < cur + timedelta(seconds=off + 300):
+            return now, cur
+        w15 = next_boundary(now, 15, off)
+        if w15 <= wake:
+            return w15, w15 - timedelta(seconds=off)
+        return wake, None
+
+    async def main_snapshot(self, close: datetime | None):
+        """Shared M15 snapshot for MAIN's call at `close` (None -> run_once fetches + renders itself)."""
+        if close is None or self.m15 is None:
+            return None
+        try:
+            return await self.m15.wait_snapshot(close, float((self.cfg.get("m15_scan") or {})
+                                                           .get("main_wait_seconds", 90)))
+        except Exception:
+            log.exception("MAIN: waiting for the shared M15 snapshot failed (own fetch fallback)")
+            return None
+
     # ---------- main loop ----------
     async def run(self) -> str:
         if not self.acquire():
@@ -253,8 +295,9 @@ class GhaLoop:
         while True:
             # The job still wakes every `self.interval` (2 min). The site countdown uses
             # scan_interval (2 active / 15 during ASIAN / DEADZONE) so it matches the next Gemini call.
-            wake = next_boundary(datetime.now(timezone.utc), self.interval, self.offset)
-            nxt = next_boundary(datetime.now(timezone.utc), self.scan_interval, self.offset)
+            wake, m15_close = self.next_wake(datetime.now(timezone.utc))
+            nxt = next_boundary(datetime.now(timezone.utc), self.scan_interval,
+                                self.m15_offset() if self.main_m15 else self.offset)
             self.status("running", nxt)
             await asyncio.sleep(max(0.0, (wake - datetime.now(timezone.utc)).total_seconds()))
             started = datetime.now(timezone.utc)
@@ -271,7 +314,15 @@ class GhaLoop:
                             log.info("lucid pre-scan fill: %s", rpl)
                     except Exception:
                         log.exception("lucid replay before entry scan failed")
-                res = await run_once(self.cfg, dry_run=self.dry_run, force=True, model=self.model)
+                if m15_close is not None:
+                    self.m15_served = m15_close
+                    snap = await self.main_snapshot(m15_close)
+                    log.info("MAIN M15 call for close %s (snapshot %s)", m15_close.isoformat(),
+                             getattr(snap, "snapshot_id", None) or "own fetch")
+                    res = await run_once(self.cfg, dry_run=self.dry_run, force=True, model=self.model,
+                                         m15_close=m15_close, snapshot=snap)
+                else:
+                    res = await run_once(self.cfg, dry_run=self.dry_run, force=True, model=self.model)
             except Exception:
                 log.exception("cycle failed")
             self.cycles += 1
@@ -280,7 +331,8 @@ class GhaLoop:
             if not (res or {}).get("skipped"):
                 self.last = {"last_cycle_started_at": started.isoformat(),
                              "last_cycle_finished_at": datetime.now(timezone.utc).isoformat()}
-            nxt2 = next_boundary(datetime.now(timezone.utc), self.scan_interval, self.offset)
+            nxt2 = next_boundary(datetime.now(timezone.utc), self.scan_interval,
+                                 self.m15_offset() if self.main_m15 else self.offset)
             self.status("running", nxt2)
             self.schedule_claude(res)
             self.schedule_bracket(res)

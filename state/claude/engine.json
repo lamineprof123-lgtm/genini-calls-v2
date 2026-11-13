@@ -1,23 +1,92 @@
 {
   "reset_token": "2026-11-12-uniform-reset",
   "created_at": "2026-11-12T18:11:32.204243+00:00",
-  "last_entry_bar": "2026-11-13T19:30:00+00:00",
-  "shadow": [],
+  "last_entry_bar": "2026-11-13T19:45:00+00:00",
+  "shadow": [
+    {
+      "vid": 51,
+      "book": "whatif",
+      "sim": "C-OPUS",
+      "symbol": "US100",
+      "contract": "NQ",
+      "qty": 1,
+      "side": 1,
+      "entry": 27932.41,
+      "stop": 27844.5,
+      "init_stop": 27865.0,
+      "atr": 87.806,
+      "entry_time": "2026-11-13T20:01:27.368240+00:00",
+      "scan_from": "2026-11-13T20:01:27.368240+00:00",
+      "tick": 0.25,
+      "comm_pts": 0.175,
+      "mfe_pts": 0.0,
+      "mae_pts": 0.0,
+      "floor": null,
+      "floor_label": null,
+      "reach_05": null,
+      "setup_type": "fade",
+      "score": 5,
+      "confidence": 0.54,
+      "session": "NEW_YORK_SESSION",
+      "gated": true,
+      "model": "claude-opus-5-5",
+      "bar": "2026-11-13T19:45:00+00:00",
+      "stop_note": "uniform_1atr",
+      "target": 28020.25,
+      "mech_target_atr": 1.0,
+      "uniform_exit": "uniform-1atr-v1",
+      "deadline": "2026-11-13T21:31:27.368240+00:00"
+    },
+    {
+      "vid": 52,
+      "book": "twin",
+      "sim": "C-OPUS",
+      "symbol": "US100",
+      "contract": "NQ",
+      "qty": 1,
+      "side": -1,
+      "entry": 27932.41,
+      "stop": 28020.25,
+      "init_stop": 27999.82,
+      "atr": 87.806,
+      "entry_time": "2026-11-13T20:01:27.368240+00:00",
+      "scan_from": "2026-11-13T20:01:27.368240+00:00",
+      "tick": 0.25,
+      "comm_pts": 0.175,
+      "mfe_pts": 0.0,
+      "mae_pts": 0.0,
+      "floor": null,
+      "floor_label": null,
+      "reach_05": null,
+      "setup_type": "fade",
+      "score": 5,
+      "confidence": 0.54,
+      "session": "NEW_YORK_SESSION",
+      "gated": true,
+      "model": "claude-opus-5-5",
+      "bar": "2026-11-13T19:45:00+00:00",
+      "stop_note": "uniform_1atr",
+      "target": 27844.5,
+      "mech_target_atr": 1.0,
+      "uniform_exit": "uniform-1atr-v1",
+      "deadline": "2026-11-13T21:31:27.368240+00:00"
+    }
+  ],
   "probes": [],
-  "next_vid": 51,
+  "next_vid": 53,
   "last_entry": {
-    "bar": "2026-11-13T19:30:00+00:00",
-    "t": "2026-11-13T19:45:20.005018+00:00",
+    "bar": "2026-11-13T19:45:00+00:00",
+    "t": "2026-11-13T20:00:20.001508+00:00",
     "render_ms": 0,
     "sims": {
       "C-OPUS": {
         "ok": true,
-        "latency_ms": 18318,
-        "cost_usd": 0.10592,
+        "latency_ms": 28533,
+        "cost_usd": 0.125792,
         "error": null,
         "model": "claude-opus-5-5",
-        "answer_ts": "2026-11-13T19:45:55.792061+00:00",
-        "thinking_tokens": 657,
+        "answer_ts": "2026-11-13T20:01:27.368240+00:00",
+        "thinking_tokens": 1350,
         "stop_reason": "end_turn",
         "signals": [
           {
@@ -46,11 +115,11 @@
           },
           {
             "symbol": "US100",
-            "action": "HOLD",
-            "setup_type": "none",
-            "score": 0,
-            "confidence": 0.0,
-            "decision": "HOLD"
+            "action": "BUY",
+            "setup_type": "fade",
+            "score": 5,
+            "confidence": 0.54,
+            "decision": "skip: 1 NQ would risk $1,058 > $900"
           },
           {
             "symbol": "XAGUSD",
@@ -72,11 +141,11 @@
       },
       "C-SONNET": {
         "ok": true,
-        "latency_ms": 10501,
-        "cost_usd": 0.04758,
+        "latency_ms": 10635,
+        "cost_usd": 0.048346,
         "error": null,
         "model": "claude-sonnet-5-5",
-        "answer_ts": "2026-11-13T19:45:55.792061+00:00",
+        "answer_ts": "2026-11-13T20:01:27.368240+00:00",
         "thinking_tokens": 0,
         "stop_reason": "end_turn",
         "signals": [
@@ -131,12 +200,24 @@
         ]
       }
     },
-    "snapshot_id": "m15-20261113193000-6efab450b334",
-    "snapshot_hash": "6efab450b334cde7b04c48c95f66e9de20de8dfdce333f3e1cd8012c11f1a958",
-    "bar_close_ts": "2026-11-13T19:45:00+00:00",
-    "snapshot_ts": "2026-11-13T19:45:36.771703+00:00"
+    "snapshot_id": "m15-20261113194500-f0ba94befb10",
+    "snapshot_hash": "f0ba94befb10c8268348882b2398683b797e016ae29254cd940ecbfa97331200",
+    "bar_close_ts": "2026-11-13T20:00:00+00:00",
+    "snapshot_ts": "2026-11-13T20:00:45.938322+00:00"
   },
-  "fill_quotes": {},
+  "fill_quotes": {
+    "US100": {
+      "symbol": "US100",
+      "price": 27910.62,
+      "ts": "2026-11-13T20:01:26+00:00",
+      "source": "firmtape:NQ",
+      "stale": false,
+      "fetched_at": "2026-11-13T20:01:27.366805+00:00",
+      "age_s": 1.37,
+      "firmtape_status": "ok",
+      "at": "2026-11-13T20:01:27.366805+00:00"
+    }
+  },
   "live": {
     "XAUUSD": {
       "price": 3875.299,
@@ -151,8 +232,8 @@
       "t": "2026-11-13T16:51:13.555346+00:00"
     },
     "US100": {
-      "price": 27892.531,
-      "t": "2026-11-13T18:45:07.856797+00:00"
+      "price": 27921.621,
+      "t": "2026-11-13T20:01:58.745430+00:00"
     },
     "EURUSD": {
       "price": 1.1047,

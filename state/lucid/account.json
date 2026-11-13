@@ -1,13 +1,13 @@
 {
   "version": 1,
   "created_at": "2026-11-12T18:11:32.231856+00:00",
-  "last_processed": "2026-11-13T13:29:00+00:00",
+  "last_processed": "2026-11-13T13:31:00+00:00",
   "account": {
     "no": 1,
     "phase": "eval",
     "started_at": "2026-11-12T18:11:32.231856+00:00",
     "start_balance": 100000.0,
-    "balance": 96588.2,
+    "balance": 98354.7,
     "highest_close": 100000.0,
     "mll_floor": 97000.0,
     "mll_locked": false,
@@ -18,223 +18,22 @@
     "cycle_day_pnl": {},
     "payouts": [],
     "trading_days": 1,
-    "realized_pnl": -3408.3,
-    "trades": 3
+    "realized_pnl": -1645.3,
+    "trades": 4
   },
-  "positions": [
-    {
-      "id": 4,
-      "symbol": "US100",
-      "contract": "NQ",
-      "qty": 2,
-      "side": 1,
-      "entry": 28316.75,
-      "stop": 28272.25,
-      "notional_risk_usd": 1430.0,
-      "target": 28361.25,
-      "entry_time": "2026-11-13T13:06:02.176124+00:00",
-      "exit_mode": "gemini_only",
-      "fill_source": "live_quote:dukascopy:tick",
-      "fill_check": {
-        "fill_minute": "2026-11-13T13:06:00+00:00",
-        "fill_t": "2026-11-13T13:06:02.176124+00:00",
-        "ref_price": 28316.51,
-        "booked": 28316.75,
-        "slippage_ticks": 1,
-        "tick": 0.25,
-        "signal_entry": 28319.61,
-        "adverse_ticks_vs_quote": 0.96,
-        "m1_bar_open": 28316.51,
-        "quote_price": 28316.51,
-        "quote_ts": "2026-11-13T13:06:01.902000+00:00",
-        "quote_source": "dukascopy:tick",
-        "quote_age_s": 0.27,
-        "quote_fetched_at": "2026-11-13T13:06:02.176124+00:00",
-        "bar_open_minus_quote": 0.0,
-        "tolerance_ticks": 1.5,
-        "within_slippage": true
-      },
-      "risk_usd": null,
-      "target_usd": null,
-      "target_source": "none (gemini_only)",
-      "sizing": "gemini_only: notional 0.8 ATR = 35.75 x 20/pt = $715 per NQ; 2 NQ ~ $1,430 notional <= $1500 (reference only; NO stop, NO target, exit = Gemini CLOSE)",
-      "target_usd_gross": null,
-      "commission_rt": 7.0,
-      "atr": 44.487,
-      "gemini": {
-        "action": "BUY",
-        "entry": 28319.61,
-        "stop_loss": 28262.37,
-        "take_profit": 28357.36,
-        "confidence": 0.72,
-        "rr": 0.66,
-        "shown_on_site": true,
-        "basis": "site signal",
-        "run_at_utc": "2026-11-13T13:04:20.009612+00:00",
-        "session": "LONDON_SESSION",
-        "rationale": "1) VP context: Price is inside Value Area (VAL 28166.30 to VAH 28369.12) and trading above POC 28264.08. 2) CVD: Neutral at +0.65 with slope -0.79. 3) Session: LONDON_SESSION (automation allowed). 4) Trend/baselines: Price maintains bullish structural posture above upward-sloping EMA50 baseline (28285.77) and EMA20 (28290.64), with the forming bar reclaiming session VWAP (28310.31). 5) ATR bands: Mid-channel, advancing toward upper ATR band (28379.61). 6) RVOL: 1.014 on normal volume (Dukascopy index CFD tick volume caveat applies, where yellow RVOL > 2.0 rarely prints). 7) S/R: Signal bar printed a clean lower rejection wick exactly at confluent POC 28264.08 and S/R support 28265.71; GEX is null. Strong setup for a momentum continuation scalp targeting VAH.",
-        "model": "gemini-3.8-flash"
-      },
-      "scalp": {
-        "action": "BUY",
-        "side": 1,
-        "entry": 28316.51,
-        "stop_loss": 28262.37,
-        "take_profit": 28321.51,
-        "sdist": 54.14434999999867,
-        "tdist": 5.0,
-        "stop_source": "structure",
-        "target_source": "fixed",
-        "rr": 0.092,
-        "structure_stop": 28262.36565,
-        "atr_stop": 28280.9204,
-        "fixed_tp": 28321.51,
-        "structure_tp": 28368.87,
-        "structure_label": "VAH",
-        "candle": {
-          "high": 28304.0,
-          "low": 28264.59
-        },
-        "levels": [
-          {
-            "price": 28513.99,
-            "label": "Session High"
-          },
-          {
-            "price": 28550.97,
-            "label": "Prev High"
-          },
-          {
-            "price": 28596.5,
-            "label": "S/R"
-          },
-          {
-            "price": 28265.71,
-            "label": "S/R"
-          },
-          {
-            "price": 28209.17,
-            "label": "S/R"
-          },
-          {
-            "price": 28151.81,
-            "label": "Session Low"
-          }
-        ],
-        "vp": {
-          "poc": 28264.08,
-          "vah": 28369.12,
-          "val": 28166.3
-        },
-        "target_scalp": 28324.61,
-        "lucid_plan": {
-          "contract": "NQ",
-          "qty": 1,
-          "tdist": 37.75,
-          "target_usd": 751.5,
-          "risk_usd": 1145.0,
-          "target_source": "extended:aim_net",
-          "sizing": "fixed target 5 cannot reach $381 net within $1500 risk; extended:aim_net: 1 NQ (fewest that fit) target 37.75 -> $752 net, risk $1145"
-        }
-      },
-      "telemetry": {
-        "symbol": "US100",
-        "session": "LONDON_SESSION",
-        "last_close": 28298.33,
-        "atr": 44.487,
-        "vwap": 28310.31,
-        "ema20": 28290.64,
-        "ema50": 28285.77,
-        "price_vs_vwap": {
-          "side": "below",
-          "dist_atr": -0.2693
-        },
-        "price_vs_ema50": {
-          "side": "above",
-          "dist_atr": 0.2823
-        },
-        "vwap_aligned_with_side": false,
-        "ema50_aligned_with_side": true,
-        "poc": 28264.08,
-        "vah": 28369.12,
-        "val": 28166.3,
-        "price_vs_value_area": "inside",
-        "dist_to_poc_atr": 0.7699,
-        "cvd": 0.65,
-        "cvd_label": "NEUTRAL",
-        "cvd_slope": -0.79,
-        "cvd_agrees_with_side": false,
-        "rvol": 1.014,
-        "rvol_spike": false,
-        "rvol_bars_since_spike": 80,
-        "atr_band_z": 0.1729,
-        "atr_upper": 28379.61,
-        "atr_lower": 28201.66,
-        "nearest_sr": {
-          "above": {
-            "price": 28513.99,
-            "label": "Session High",
-            "dist_atr": 4.8477
-          },
-          "below": {
-            "price": 28265.71,
-            "label": "S/R",
-            "dist_atr": 0.7332
-          }
-        },
-        "gemini": {
-          "action": "BUY",
-          "confidence": 0.72,
-          "confidence_band": "0.7-0.8",
-          "rationale": "1) VP context: Price is inside Value Area (VAL 28166.30 to VAH 28369.12) and trading above POC 28264.08. 2) CVD: Neutral at +0.65 with slope -0.79. 3) Session: LONDON_SESSION (automation allowed). 4) Trend/baselines: Price maintains bullish structural posture above upward-sloping EMA50 baseline (28285.77) and EMA20 (28290.64), with the forming bar reclaiming session VWAP (28310.31). 5) ATR bands: Mid-channel, advancing toward upper ATR band (28379.61). 6) RVOL: 1.014 on normal volume (Dukascopy index CFD tick volume caveat applies, where yellow RVOL > 2.0 rarely prints). 7) S/R: Signal bar printed a clean lower rejection wick exactly at confluent POC 28264.08 and S/R support 28265.71; GEX is null. Strong setup for a momentum continuation scalp targeting VAH.",
-          "model": "gemini-3.8-flash",
-          "model_action": "BUY"
-        },
-        "scalp": {
-          "stop_basis": "structure",
-          "target_basis": "fixed",
-          "tdist": null,
-          "sdist": null,
-          "structure_label": "VAH",
-          "target_source": "none (gemini_only)"
-        },
-        "planned": {
-          "tdist": null,
-          "sdist": null,
-          "qty": 2,
-          "contract": "NQ",
-          "target_usd_net": null,
-          "risk_usd": null,
-          "target_source": "none (gemini_only)",
-          "sizing": "gemini_only: notional 0.8 ATR = 35.75 x 20/pt = $715 per NQ; 2 NQ ~ $1,430 notional <= $1500 (reference only; NO stop, NO target, exit = Gemini CLOSE)"
-        },
-        "run_at_utc": "2026-11-13T13:04:20.009612+00:00",
-        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-13/cycles/170420.json/US100.png"
-      },
-      "mfe": 36.57099999999991,
-      "mae": 26.552999999999884,
-      "mfe_min": 0.0,
-      "time_cut_deadline": null,
-      "time_cut_candles": 0,
-      "time_cut_rule": "none: exit = Gemini CLOSE (1-strike) or hard stop -$500 NET; no target, no max hold, no 16:45 flat; DLL/MLL/breaker log-only",
-      "stop_note": "uniform_1atr",
-      "mech_target_atr": 1.0,
-      "uniform_exit": "uniform-1atr-v1",
-      "deadline": "2026-11-13T14:36:02.176124+00:00"
-    }
-  ],
+  "positions": [],
   "pending": [],
   "next_pos_id": 5,
   "day": {
     "id": "2026-11-13",
     "start_balance": 98096.5,
-    "realized": -1504.8,
+    "realized": 258.2,
     "locked": null,
     "eod_done": null,
     "traded": true
   },
   "last_price": {
-    "US100": 28344.565,
+    "US100": 28395.81,
     "EURUSD": 1.10605
   },
   "history": [],
@@ -257,13 +56,13 @@
     "payouts_gross": 0.0,
     "payouts_received": 0.0,
     "payout_count": 0,
-    "trades": 3,
-    "wins": 0,
+    "trades": 4,
+    "wins": 1,
     "losses": 3,
-    "gross_win": 0.0,
+    "gross_win": 1763.0,
     "gross_loss": -3408.3,
-    "commissions": 39.3,
-    "net_trade_pnl": -3408.3,
+    "commissions": 42.8,
+    "net_trade_pnl": -1645.3,
     "skipped_signals": 2,
     "accepted_signals": 6
   },
@@ -361,7 +160,8 @@
     }
   ],
   "close_done": [
-    1
+    1,
+    4
   ],
   "breaches": [
     {

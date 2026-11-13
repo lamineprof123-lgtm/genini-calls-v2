@@ -1,14 +1,14 @@
 {
-  "updated_at": "2026-11-13T13:16:35.466444+00:00",
+  "updated_at": "2026-11-13T13:30:49.531428+00:00",
   "paper_only": true,
   "book": "G-LOW-80",
   "label": "Gemini flash \u00b7 G-LOW-80 (low thinking, min 0.70)",
   "account": {
     "start_balance": 100000.0,
-    "balance": 99558.7,
-    "equity": 99558.7,
+    "balance": 99556.95,
+    "equity": 99707.15,
     "net_pnl": -441.3,
-    "open_pnl": 0.0,
+    "open_pnl": 150.2,
     "trades": 1,
     "wins": 0,
     "losses": 1,
@@ -17,19 +17,37 @@
     "avg_loss": -441.3,
     "max_drawdown": -441.3,
     "peak_balance": 100000.0,
-    "commissions": 28.8,
+    "commissions": 30.55,
     "exit_reasons": {
       "stop_1atr": 1
     },
     "stopped": 1,
-    "open_positions": 0,
+    "open_positions": 1,
     "pending": 0,
-    "signals_seen": 2,
-    "signals_taken": 2,
+    "signals_seen": 3,
+    "signals_taken": 3,
     "skips": {},
     "missed_scans_main_held": {}
   },
-  "open_positions": [],
+  "open_positions": [
+    {
+      "id": 2,
+      "symbol": "US100",
+      "contract": "NQ",
+      "qty": 1,
+      "entry": 28399.0,
+      "entry_time": "2026-11-13T13:30:46.469418+00:00",
+      "stop": 28353.25,
+      "target": 28444.75,
+      "deadline": "2026-11-13T15:00:46.469418+00:00",
+      "confidence": 0.76,
+      "risk_usd": 918.5,
+      "target_usd": 911.5,
+      "side": "LONG",
+      "last_price": 28406.51,
+      "unrealized": 150.2
+    }
+  ],
   "recent_trades": [
     {
       "event": "close",
@@ -73,13 +91,13 @@
   "model": "gemini-3.8-flash",
   "thinking_level": "low",
   "calls": {
-    "ok": 34,
+    "ok": 35,
     "failed": 9,
     "skipped": 0,
     "tokens": {
-      "prompt_token_count": 530474,
-      "candidates_token_count": 66053,
-      "total_token_count": 596527
+      "prompt_token_count": 546133,
+      "candidates_token_count": 68312,
+      "total_token_count": 614445
     }
   },
   "day": {

@@ -10,6 +10,7 @@ import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { buildVersion } from './pages-version.mjs';
 
 const [, , siteDir, name] = process.argv;
 const repo = process.env.GITHUB_REPOSITORY;
@@ -40,12 +41,13 @@ try {
   const oidc = await core.getIDToken();
   const cr = await api(`/repos/${repo}/pages/deployments`, {
     method: 'POST',
-    body: JSON.stringify({ artifact_id: up.id, pages_build_version: process.env.GITHUB_SHA, oidc_token: oidc }),
+    body: JSON.stringify({ artifact_id: up.id, pages_build_version: buildVersion(process.env.GITHUB_SHA, name), oidc_token: oidc }),
   });
   if (cr.status >= 300) done({ stage: 'create', http: cr.status, error: JSON.stringify(cr.body).slice(0, 300) });
   const dep = cr.body;
   const id = dep.id || String(dep.status_url || '').split('/').pop();
   out.deployment_id = id;
+  out.build_version = buildVersion(process.env.GITHUB_SHA, name);
   const failed = new Set(['deployment_failed', 'deployment_content_failed', 'deployment_cancelled', 'deployment_lost',
                           'deployment_perms_error']);
   for (let i = 0; i < 40; i++) {

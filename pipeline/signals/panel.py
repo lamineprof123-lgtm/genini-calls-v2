@@ -39,14 +39,22 @@ BOOKS = [
     ("C-OPUS-B", "claude-opus-5-5", "Claude Opus · C-OPUS-B (bracket-v1)"),
     ("C-SONNET", "claude-sonnet-5-5", "Claude Sonnet · C-SONNET"),
     ("DS-FLASH", "deepseek-flash", "DeepSeek · DS-FLASH"),
+    ("DS-IMG-E", "deepseek-flash", "DeepSeek · chart · event (NEW ds-evt-v1: called only when a T1–T8 trigger fires)"),
+    ("DS-TXT-E", "deepseek-flash", "DeepSeek · text · event (NEW ds-evt-v1: CSV table instead of the chart)"),
+    ("EV-FABLE", "claude-fable-5-2", "Event · Claude Fable 5.2 xhigh (NEW ev-v1: called on M5 events)"),
+    ("EV-OPUS", "claude-opus-5-5", "Event · Claude Opus 5.5 high (NEW ev-v1: called on M5 events)"),
 ]
 MODEL_OF = {b: m for b, m, _ in BOOKS}
 LABEL_OF = {b: l for b, _, l in BOOKS}
 LUCID, OV = "LUCID", "OTHER-VENUE"
-LUCID_ONLY = {"EVAL-80", "EVAL-R4", "G-P5", "G-P5-EVAL", "G-P5-EVENT"}   # no other-venue (BTC) account
+LUCID_ONLY = {"EVAL-80", "EVAL-R4", "G-P5", "G-P5-EVAL", "G-P5-EVENT", "DS-IMG-E", "DS-TXT-E", "EV-FABLE", "EV-OPUS"}   # no other-venue (BTC) account
 # New P5 books (13 Nov) start after the shared reset: the panel shows them since their own account's created_at.
 # book -> (state subdir, site file with an "eval" block or None)
-OWN_RESET = {"G-P5": ("gp5", None), "G-P5-EVAL": ("gp5eval", "gp5eval.json"), "G-P5-EVENT": ("gp5event", None)}
+OWN_RESET = {"G-P5": ("gp5", None), "G-P5-EVAL": ("gp5eval", "gp5eval.json"), "G-P5-EVENT": ("gp5event", None),
+             "DS-IMG-E": ("ds_img_e", None), "DS-TXT-E": ("ds_txt_e", None),
+             "EV-FABLE": ("ev_fable", None), "EV-OPUS": ("ev_opus", None)}
+# event-stream books -> the engine site file whose "cards" entry is shown under the book (ds-evt-v1 / ev-v1)
+EVENT_SITE = {"DS-IMG-E": "ds_evt.json", "DS-TXT-E": "ds_evt.json", "EV-FABLE": "ev_evt.json", "EV-OPUS": "ev_evt.json"}
 
 
 def _dt(s) -> datetime | None:
@@ -548,6 +556,12 @@ class PanelLedger:
                     perf[-1].update({"since": _iso(self.book_since(book)), "own_reset": True})
                     if OWN_RESET[book][1] and venue == LUCID:
                         perf[-1]["eval"] = self.eval_status(OWN_RESET[book][1])
+                    if book in EVENT_SITE:
+                        ev = _read(self.site / EVENT_SITE[book]) or {}
+                        card = next((c for c in ev.get("cards") or [] if c.get("book") == book), None)
+                        if card:
+                            perf[-1]["evt"] = {**card, "mode": ev.get("mode"), "live": ev.get("live"),
+                                               "dry_run_started_at": ev.get("dry_run_started_at")}
                     if book == "G-P5-EVENT":
                         tv = (_read(self.site / "gp5event.json") or {}).get("trigger")
                         if tv:
@@ -574,7 +588,20 @@ class PanelLedger:
                              "otherwise from M1 bars; a bar that hits both sides with no 15s path is ?."),
                 "wpf_basis": ("net_usd = gross - round-trip fees; live_net_tick / tick_15s = 15s last-print path; "
                               "m1_ohlc = M1 fallback"),
-                "performance": perf, "positions": rows}
+                "performance": perf, "positions": rows, "event_streams": self.event_streams()}
+
+    def event_streams(self) -> dict:
+        """Per-trigger tables of the event-triggered streams (ds_evt.json / ev_evt.json), no signals."""
+        out = {}
+        ds = _read(self.site / "ds_evt.json")
+        if ds:
+            out["ds_evt"] = {k: ds.get(k) for k in ("tag", "mode", "live", "dry_run_started_at", "updated_at",
+                                                    "per_trigger")}
+        ev = _read(self.site / "ev_evt.json")
+        if ev:
+            out["ev_evt"] = {k: ev.get(k) for k in ("tag", "mode", "live", "dry_run_started_at", "updated_at",
+                                                    "triggers", "controls", "q3")}
+        return out
 
 
 def _accepts_want_ticks(fn) -> bool:

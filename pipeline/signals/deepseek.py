@@ -240,8 +240,10 @@ def build_messages(cfg: dict, payloads: list[dict], pngs: dict[str, bytes],
     return pkg["openai_messages"]
 
 
-async def call_deepseek(cc: dict, *, messages: list[dict]) -> dict:
-    """ONE request, hard timeout, no retry. Never raises. Never logs the key."""
+async def call_deepseek(cc: dict, *, messages: list[dict], body_overrides: dict | None = None,
+                        drop_keys: tuple = ()) -> dict:
+    """ONE request, hard timeout, no retry. Never raises. Never logs the key.
+    body_overrides / drop_keys: used only by the ds-evt-v1 books (signals/ds_evt.py); DS-FLASH passes neither."""
     t0 = time.monotonic()
     key = os.environ.get("DEEPSEEK_API_KEY") or ""
     if not key:
@@ -262,6 +264,9 @@ async def call_deepseek(cc: dict, *, messages: list[dict]) -> dict:
         "response_format": {"type": "json_object"},
         "thinking": {"type": "enabled"},
     }
+    for k in drop_keys:
+        body.pop(k, None)
+    body.update(body_overrides or {})
     timeout = float(cc.get("timeout_seconds") or 60)
     try:
         async with httpx.AsyncClient(timeout=timeout) as client:

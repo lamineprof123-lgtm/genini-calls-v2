@@ -115,6 +115,11 @@
     <div class="cards" id="perfCards"></div>
   </section>
 
+  <section class="card" id="evtSec" aria-label="Event-triggered books" style="display:none">
+    <h2><span>Event-triggered books · per trigger</span><small>counts since each book started</small></h2>
+    <div id="evtTables"></div>
+  </section>
+
   <section class="card" aria-label="Positions since reset">
     <h2><span>Every position since reset</span><small id="posCount"></small></h2>
     <div class="tw"><table id="pos"></table></div>
@@ -160,7 +165,7 @@
 
   // ---- panel.json ----
   const MODEL_NAME = { 'gemini-3.8-flash': 'Gemini 3.8 Flash', 'gemini-4-carbon': 'Gemini 4 Carbon',
-    'claude-opus-5-5': 'Claude Opus', 'claude-sonnet-5-5': 'Claude Sonnet', 'deepseek-flash': 'DeepSeek Flash' };
+    'claude-opus-5-5': 'Claude Opus', 'claude-sonnet-5-5': 'Claude Sonnet', 'deepseek-flash': 'DeepSeek Flash', 'claude-fable-5-2': 'Claude Fable 5.2' };
   function renderPanel() {
     const P = panel; if (!P) return;
     const r = P.reset || {};
@@ -186,6 +191,16 @@
       return `Something happened on ${t.fired || 0} of ${t.evaluated || 0} symbol-bars` +
         (ks.length ? ' (' + ks.map(k => esc(TRIG_NAME[k] || k) + ' ' + b[k]).join(', ') + ')' : '') +
         ` · Gemini called on ${t.calls || 0} of ${t.closes || 0} closes (${t.shared_calls || 0} shared with G-P5), ${t.symbols_sent || 0} charts sent`; };
+    const num = (v, d = 2) => v == null ? '—' : Number(v).toFixed(d);
+    const pct0 = v => v == null ? '—' : (100 * v).toFixed(0) + '%';
+    const evtTxt = e => {
+      const dry = !e.live ? `<b>Dry run</b> since ${esc(dhm(e.dry_run_started_at))} ${TZL} (no API calls, no fills) · ` : '';
+      const lat = e.latency_p50_s !== undefined ? ` · latency p50 / p95 ${num(e.latency_p50_s, 0)} / ${num(e.latency_p95_s, 0)} s · late ${pct0(e.late_share)}` : '';
+      const pf = e.profit_factor !== undefined ? ` · PF ${num(e.profit_factor)}` : '';
+      const hr = e.calls_this_hour !== undefined ? ` · ${e.calls_this_hour} this hour` : '';
+      const sig = e.signals !== undefined ? ` · ${e.signals} signals scored` : '';
+      return dry + `R ${num(e.R)} · R/signal ${num(e.R_per_signal)}${pf}${sig} · API cost today ${usd(e.cost_today ?? e.api_cost_today, false)}` +
+        ` · calls today ${e.calls_today ?? 0}${hr}${lat}`; };
     const sinceTxt = p => p.own_reset && p.since ? `<div class="mc-s">New book: started at $100,000 on ${esc(dhms(p.since))} ${TZL} · results since then</div>` : '';
     const evalLine = e => `Eval <span class="st ${esc(e.status)}">${esc(e.status)}</span> · profit ` +
       `<span class="${cls(e.profit)}">${usd(e.profit)}</span> of ${usd(e.profit_target, false)} (${Number(e.progress_pct || 0).toFixed(0)}%)` +
@@ -217,6 +232,7 @@
         <td>${p.went_positive_first == null ? '—' : esc(p.went_positive_first)}</td><td>${p.open_positions}</td></tr>`;
       if (p.eval) h += `<tr class="evrow"><td class="l" colspan="10">${evalLine(p.eval)}</td></tr>`;
       if (p.trigger) h += `<tr class="evrow"><td class="l" colspan="10">${trigTxt(p.trigger)}</td></tr>`;
+      if (p.evt) h += `<tr class="evrow"><td class="l" colspan="10">${evtTxt(p.evt)}</td></tr>`;
     }
     $('perf').innerHTML = h;
     let pc = '', lm = null;
@@ -232,12 +248,35 @@
         ${kv('Closed', p.trades)}${kv('W / L', p.wins + ' / ' + p.losses)}
         ${kv('Win rate', p.win_rate == null ? '—' : (100 * p.win_rate).toFixed(0) + '%')}
         ${kv('Went positive first', p.went_positive_first == null ? '—' : esc(p.went_positive_first))}</div>
-        ${p.eval ? evalCard(p.eval) : ''}${p.trigger ? `<div class="mc-s" style="margin-top:8px">${trigTxt(p.trigger)}</div>` : ''}
+        ${p.eval ? evalCard(p.eval) : ''}${p.trigger ? `<div class="mc-s" style="margin-top:8px">${trigTxt(p.trigger)}</div>` : ''}${p.evt ? `<div class="mc-s" style="margin-top:8px">${evtTxt(p.evt)}</div>` : ''}
         ${o ? `<div class="mc-s" style="margin-top:8px">Other venue (BTC): ${bal(o.balance)} · net <span class="${cls(o.net_pnl_usd)}">${usd(o.net_pnl_usd)}</span>
           · ${o.trades} closed (${o.wins}/${o.losses})${o.open_positions ? ` · ${o.open_positions} open <span class="${cls(o.open_pnl_usd)}">${usd(o.open_pnl_usd)}</span>` : ''}
           · went positive first ${o.went_positive_first == null ? '—' : esc(o.went_positive_first)}</div>` : ''}</div>`;
     }
     $('perfCards').innerHTML = pc;
+    // event-triggered streams: per-trigger tables (counts and what-if R; no signals)
+    const ES = P.event_streams || {}; let eh = '';
+    if (ES.ds_evt && ES.ds_evt.per_trigger) {
+      const d = ES.ds_evt;
+      eh += `<div class="mc-s" style="margin:4px 0 6px">DeepSeek ds-evt-v1 · ${esc(d.mode || '')}</div><div class="tw"><table>
+        <tr><th class="l">Trigger</th><th>Fired</th><th>Calls chart / text</th><th>Gate passed</th><th>R/signal chart / text</th><th>Win rate chart / text</th></tr>`;
+      for (const r of d.per_trigger) { const a = r['DS-IMG-E'] || {}, b = r['DS-TXT-E'] || {};
+        eh += `<tr><td class="l">${esc(r.trigger)}</td><td>${a.fired || 0}</td><td>${a.calls || 0} / ${b.calls || 0}</td>
+          <td>${a.gate_passed || 0} / ${b.gate_passed || 0}</td><td>${num(a.R_per_signal)} / ${num(b.R_per_signal)}</td>
+          <td>${pct0(a.win_rate)} / ${pct0(b.win_rate)}</td></tr>`; }
+      eh += `</table></div>`;
+    }
+    if (ES.ev_evt && ES.ev_evt.triggers) {
+      const d = ES.ev_evt;
+      eh += `<div class="mc-s" style="margin:14px 0 6px">Claude ev-v1 · ${esc(d.mode || '')}</div><div class="tw"><table>
+        <tr><th class="l">Trigger</th><th>Count</th><th>Gold / EUR / NQ</th><th>EV-CONT R/sig</th><th>EV-REV R/sig</th><th>EV-TWIN R/sig</th></tr>`;
+      for (const r of d.triggers) { const ps = r.per_symbol || {};
+        eh += `<tr><td class="l">${esc(r.trigger)}</td><td>${r.n || 0}</td><td>${ps.XAUUSD || 0} / ${ps.EURUSD || 0} / ${ps.US100 || 0}</td>
+          <td>${num(r['EV-CONT'])}</td><td>${num(r['EV-REV'])}</td><td>${num(r['EV-TWIN'])}</td></tr>`; }
+      eh += `</table></div>`;
+    }
+    $('evtSec').style.display = eh ? '' : 'none';
+    $('evtTables').innerHTML = eh;
     // positions
     const rows = P.positions || [];
     $('posCount').textContent = `${rows.length} position${rows.length === 1 ? '' : 's'} · ${rows.filter(x => x.status === 'OPEN').length} open`;

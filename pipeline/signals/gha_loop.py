@@ -22,6 +22,7 @@ from .site import write_status
 
 log = logging.getLogger("signals.gha")
 SITE_JSON = ("status.json", "latest_signal.json", "history.json", "lucid.json", "claude.json", "bracket.json", "glow80.json", "eval80.json", "evalr4.json", "gp5.json", "gp5eval.json", "gp5event.json",
+             "ds_evt.json", "ds_img_e.json", "ds_txt_e.json", "ev_evt.json", "ev_fable.json", "ev_opus.json",
              "carbon.json", "deepseek.json", "signal_scores.json", "opus_b.json", "m15_scan.json", "other_venue.json",
              "panel.json")
 DATA_JSON = ("books.json",)  # committed to the data branch only (not deployed to Pages)
@@ -94,6 +95,8 @@ class GhaLoop:
         self.gp5eval = None
         self.gp5event = None
         self.gp5_tasks: list[asyncio.Task] = []
+        self.event_engines: list = []          # ds-evt-v1 (signals/ds_evt.py) + ev-v1 (signals/ev_evt.py): NEW books
+        self.event_tasks: list[asyncio.Task] = []
         self.other_venue = None
         self.other_venue_task: asyncio.Task | None = None
         for sub in ("state", "logs"):
@@ -345,6 +348,7 @@ class GhaLoop:
         self.start_eval80()
         self.start_evalr4()
         self.start_gp5()
+        self.start_events()
         self.start_m15_scan()
         self.start_panel()
         while True:
@@ -783,6 +787,44 @@ class GhaLoop:
                 log.exception("%s failed to start (other books unaffected)", attr)
                 setattr(self, attr, None)
 
+    def start_events(self) -> None:
+        """ds-evt-v1 (DS-IMG-E / DS-TXT-E) and ev-v1 (EV-FABLE / EV-OPUS + controls) on ONE shared EventFeed
+        (M1 close +10 s). New books only; `live = false` in config = dry run (no API call, no fill)."""
+        if self.dry_run:
+            return
+        from .bracket import run_bracket_loop
+        from .event_feed import EventFeed
+        kw = dict(state_dir=self.data / "state", logs_dir=self.data / "logs", site_dir=self.data)
+        engines = []
+        for name, mod, cls in (("ds_evt", "ds_evt", "DsEvtEngine"), ("ev_evt", "ev_evt", "EvEngine")):
+            sec = self.cfg.get(name) or {}
+            if not sec.get("enabled", False):
+                continue
+            try:
+                import importlib
+                m = importlib.import_module(f".{mod}", __package__)
+                eng = getattr(m, cls)(self.cfg, self.io_lock, **kw)
+                engines.append(eng)
+                books = eng.books.values() if isinstance(eng.books, dict) else eng.books
+                for b in books:
+                    self.event_tasks.append(asyncio.create_task(run_bracket_loop(b), name=b.BOOK_NAME))
+                log.info("%s on (%s): books %s", name, "LIVE" if eng.live else "DRY RUN - no API calls, no fills",
+                         ", ".join(b.BOOK_NAME for b in books))
+            except Exception:
+                log.exception("%s failed to start (other books unaffected)", name)
+        if engines:
+            self.event_engines = engines
+            feed = EventFeed(self.cfg, engines)
+            self.event_tasks.append(asyncio.create_task(feed.run(), name="event-feed"))
+
+    async def stop_events(self) -> None:
+        ts, self.event_tasks = self.event_tasks, []
+        for t in ts:
+            t.cancel()
+            with contextlib.suppress(BaseException):
+                await asyncio.wait_for(t, 30)
+        self.event_engines = []
+
     async def stop_gp5(self) -> None:
         ts, self.gp5_tasks = self.gp5_tasks, []
         for t in ts:
@@ -938,6 +980,7 @@ class GhaLoop:
         await self.stop_eval80()
         await self.stop_evalr4()
         await self.stop_gp5()
+        await self.stop_events()
         await self.stop_deepseek()
         await self.stop_opus_b()
         await self.stop_other_venue()

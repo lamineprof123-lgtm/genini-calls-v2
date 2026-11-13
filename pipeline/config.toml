@@ -900,3 +900,34 @@ tick = 5.0
 point_value = 1.0
 digits = 2
 qty_step = 0.001
+
+# ---------------------------------------------------------------------------------------------------------------
+# ds-evt-v1 (signals/ds_evt.py, spec /workspace/specs/ds_evt_v1.md): DeepSeek event-triggered paper books
+# DS-IMG-E (chart image + text) and DS-TXT-E (CSV + text), new $100k each. NEW books; no existing book changes.
+# live = false -> one-full-day DRY RUN: triggers / guards / would-be calls logged, NO API call, NO fill.
+# DEEPSEEK_API_KEY comes from env / repo secret only.
+[ds_evt]
+enabled = true
+live = false
+model = "deepseek-flash"
+model_assert = "V4.1-Flash"
+window_utc = ["08:00", "20:30"]
+calls_per_hour = 4
+usd_per_day = 3.0
+min_score = 5
+
+# ev-v1 (signals/ev_evt.py, spec /workspace/specs/claude_ev_v1.md): event-driven Claude entries EV-FABLE
+# (claude-fable-5-2, xhigh) and EV-OPUS (claude-opus-5-5, high) + code-only controls EV-CONT / EV-REV / EV-TWIN.
+# NEW books; timed books unchanged. live = false -> one-day TRIGGER-ONLY dry run (no API call, no fill).
+# Model IDs + efforts verified 13 Nov 2026 (verify-claude-models.yml). ANTHROPIC_API_KEY from env / secret only.
+[ev_evt]
+enabled = true
+live = false
+window_utc = ["08:00", "20:30"]
+calls_per_day = 50
+
+[ev_evt.ev_fable]
+usd_per_day = 20.0
+
+[ev_evt.ev_opus]
+usd_per_day = 8.0

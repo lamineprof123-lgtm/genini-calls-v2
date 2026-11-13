@@ -1,0 +1,5 @@
+<inputs>
+Per symbol: text block (symbol, numeric context JSON with "trigger", facts JSON), then CSV of last 100 closed M15 bars oldest first, with a final FORMING row. Columns: t_utc, o, h, l, c, vol, vwap, ema20, ema50, rvol.
+- Read swings and structure from the table. facts JSON lists main swings and level events; use it as primary summary, check against the table.
+- Last non-FORMING row is the last CLOSED bar.
+</inputs>

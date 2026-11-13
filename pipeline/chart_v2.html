@@ -131,7 +131,7 @@ function _applyMeta(p) {
     + sw(R.support_color, 'dashed', 2) + 'Support'
     + sw('#FACC15', 'solid', 3) + 'RVOL&gt;2'
     + (p.forming_candle ? sw('#7AF7FF', 'solid', 3) + 'Forming' : '')
-    + (p.entry_line ? sw(p.entry_line.color || '#FFFFFF', 'solid', 2) + 'ENTRY' : '')
+    + (p.entry_line ? sw(p.entry_line.color || '#FFFFFF', 'solid', 2) + (p.event_marker ? (p.entry_line.title || 'EVENT') : 'ENTRY') : '')
     + ((p.gex_lines || []).length ? sw('#FFB300', 'dashed', 2) + 'Call Wall' + sw('#00BFA5', 'dashed', 2) + 'Put Wall'
        + sw('#E5E7EB', 'dotted', 1) + 'Flip' : '');
 }
@@ -184,6 +184,14 @@ function _setAllData(st, p) {
       lineStyle: LightweightCharts.LineStyle.Solid, axisLabelVisible: true, title: p.entry_line.title || 'ENTRY'
     }));
   }
+  // ev-v1: optional small white triangle on the event bar (additive; absent = no markers, as before)
+  try {
+    if (p.event_marker && typeof p.event_marker.time === 'number') {
+      const mk = [{ time: p.event_marker.time, position: p.event_marker.position || 'aboveBar',
+                    color: p.event_marker.color || '#FFFFFF', shape: p.event_marker.shape || 'arrowDown', size: 1 }];
+      if (st.markers) { st.markers.setMarkers(mk); } else { st.markers = LightweightCharts.createSeriesMarkers(st.cs, mk); }
+    } else if (st.markers) { st.markers.setMarkers([]); }
+  } catch (e) {}
   const n = p.candles.length, vis = Math.max(80, Math.min(120, p.visible || 100));
   const extra = p.forming_candle ? 1 : 0;
   st.chart.timeScale().setVisibleLogicalRange({ from: n - vis - 0.5, to: n - 0.5 + extra });

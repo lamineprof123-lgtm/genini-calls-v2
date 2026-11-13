@@ -1,14 +1,14 @@
 {
-  "updated_at": "2026-11-13T13:45:31.269022+00:00",
+  "updated_at": "2026-11-13T13:49:41.985161+00:00",
   "paper_only": true,
   "book": "bracket",
   "label": "Bracket shadow (conf>=0.75, 1 ATR / 1 ATR)",
   "account": {
     "start_balance": 100000.0,
-    "balance": 100000.0,
-    "equity": 100000.0,
+    "balance": 99997.7,
+    "equity": 100245.7,
     "net_pnl": 0.0,
-    "open_pnl": 0.0,
+    "open_pnl": 248.0,
     "trades": 0,
     "wins": 0,
     "losses": 0,
@@ -17,23 +17,42 @@
     "avg_loss": null,
     "max_drawdown": 0.0,
     "peak_balance": 100000.0,
-    "commissions": 0.0,
+    "commissions": 2.3,
     "exit_reasons": {},
     "stopped": 0,
-    "open_positions": 0,
+    "open_positions": 1,
     "pending": 0,
-    "signals_seen": 6,
-    "signals_taken": 0,
+    "signals_seen": 8,
+    "signals_taken": 1,
     "skips": {
       "risk>max": 1,
-      "confidence<min": 5
+      "confidence<min": 6
     },
     "missed_scans_main_held": {
       "US100": 34,
-      "EURUSD": 12
+      "EURUSD": 12,
+      "XAGUSD": 1
     }
   },
-  "open_positions": [],
+  "open_positions": [
+    {
+      "id": 1,
+      "symbol": "XAUUSD",
+      "contract": "GC",
+      "qty": 1,
+      "entry": 3887.8,
+      "entry_time": "2026-11-13T13:48:12.110742+00:00",
+      "stop": 3895.5,
+      "target": 3880.1,
+      "deadline": "2026-11-13T15:18:12.110742+00:00",
+      "confidence": 0.75,
+      "risk_usd": 774.6,
+      "target_usd": 765.4,
+      "side": "SHORT",
+      "last_price": 3885.32,
+      "unrealized": 248.0
+    }
+  ],
   "recent_trades": [],
   "since": "2026-11-12T18:11:32.206508+00:00",
   "rules": "Same Gemini entry signals as main (no extra Gemini call); conf >= 0.75; XAUUSD, EURUSD, US100, XAGUSD only. Fixed bracket at entry: stop 1 M15 ATR, target 1 ATR, 90 min max hold, flat by 21:45 UTC; Gemini CLOSEs ignored. Fill = live quote + 1 tick; exits 1 tick slippage; real commission. Size = floor($900 / 1-ATR risk per contract), max 6 full-size open, one per symbol.",

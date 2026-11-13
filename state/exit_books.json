@@ -5,16 +5,87 @@
     1,
     2,
     3,
-    4
+    4,
+    5,
+    6
   ],
   "last_price": {
     "US100": 28416.45,
-    "EURUSD": 1.10602
+    "EURUSD": 1.10602,
+    "XAGUSD": 49.784,
+    "XAUUSD": 3881.85
   },
   "books": {
     "1-strike": {
-      "balance": 98354.7,
-      "positions": [],
+      "balance": 98345.5,
+      "positions": [
+        {
+          "id": 5,
+          "symbol": "XAUUSD",
+          "contract": "GC",
+          "qty": 2,
+          "side": -1,
+          "entry": 3884.4,
+          "stop": 3892.1,
+          "target": 3876.7,
+          "entry_time": "2026-11-13T13:49:03.734263+00:00",
+          "risk_usd": null,
+          "atr": 7.626,
+          "candle": {
+            "high": 3905.66,
+            "low": 3879.25
+          },
+          "gemini_run_at_utc": "2026-11-13T13:46:20.010134+00:00",
+          "gemini_confidence": 0.75,
+          "hard_stop_px": null,
+          "hard_stop_armed_at": null,
+          "fill_source": "live_quote:dukascopy:tick",
+          "book": "1-strike",
+          "strikes": 0,
+          "mfe": 0.0,
+          "mae": 0.0,
+          "scan_from": "2026-11-13T13:49:03.734263+00:00",
+          "checks": 0,
+          "opened_at": "2026-11-13T13:49:03.783322+00:00",
+          "stop_note": "uniform_1atr",
+          "mech_target_atr": 1.0,
+          "uniform_exit": "uniform-1atr-v1",
+          "deadline": "2026-11-13T15:19:03.734263+00:00"
+        },
+        {
+          "id": 6,
+          "symbol": "XAGUSD",
+          "contract": "SI",
+          "qty": 2,
+          "side": -1,
+          "entry": 49.825,
+          "stop": 49.995,
+          "target": 49.655,
+          "entry_time": "2026-11-13T13:49:03.734263+00:00",
+          "risk_usd": null,
+          "atr": 0.1676,
+          "candle": {
+            "high": 50.284,
+            "low": 49.758
+          },
+          "gemini_run_at_utc": "2026-11-13T13:46:20.010134+00:00",
+          "gemini_confidence": 0.74,
+          "hard_stop_px": null,
+          "hard_stop_armed_at": null,
+          "fill_source": "live_quote:dukascopy:tick",
+          "book": "1-strike",
+          "strikes": 0,
+          "mfe": 0.0,
+          "mae": 0.0,
+          "scan_from": "2026-11-13T13:49:03.734263+00:00",
+          "checks": 0,
+          "opened_at": "2026-11-13T13:49:03.783322+00:00",
+          "stop_note": "uniform_1atr",
+          "mech_target_atr": 1.0,
+          "uniform_exit": "uniform-1atr-v1",
+          "deadline": "2026-11-13T15:19:03.734263+00:00"
+        }
+      ],
       "day": {
         "id": "2026-11-13",
         "start_balance": 98096.5,
@@ -28,7 +99,7 @@
         "gross_win": 1763.0,
         "gross_loss": -3408.3,
         "net_pnl": -1645.3,
-        "commissions": 42.8,
+        "commissions": 52.0,
         "hold_seconds": 5023,
         "exit_reasons": {
           "stop_1atr": 3,
@@ -37,8 +108,71 @@
       }
     },
     "nostop": {
-      "balance": 98354.7,
-      "positions": [],
+      "balance": 98345.5,
+      "positions": [
+        {
+          "id": 5,
+          "symbol": "XAUUSD",
+          "contract": "GC",
+          "qty": 2,
+          "side": -1,
+          "entry": 3884.4,
+          "stop": 3892.1,
+          "target": 3876.7,
+          "entry_time": "2026-11-13T13:49:03.734263+00:00",
+          "risk_usd": null,
+          "atr": 7.626,
+          "candle": {
+            "high": 3905.66,
+            "low": 3879.25
+          },
+          "gemini_run_at_utc": "2026-11-13T13:46:20.010134+00:00",
+          "gemini_confidence": 0.75,
+          "fill_source": "live_quote:dukascopy:tick",
+          "book": "nostop",
+          "strikes": 0,
+          "mfe": 0.0,
+          "mae": 0.0,
+          "scan_from": "2026-11-13T13:49:03.734263+00:00",
+          "checks": 0,
+          "opened_at": "2026-11-13T13:49:03.783322+00:00",
+          "stop_note": "uniform_1atr",
+          "mech_target_atr": 1.0,
+          "uniform_exit": "uniform-1atr-v1",
+          "deadline": "2026-11-13T15:19:03.734263+00:00"
+        },
+        {
+          "id": 6,
+          "symbol": "XAGUSD",
+          "contract": "SI",
+          "qty": 2,
+          "side": -1,
+          "entry": 49.825,
+          "stop": 49.995,
+          "target": 49.655,
+          "entry_time": "2026-11-13T13:49:03.734263+00:00",
+          "risk_usd": null,
+          "atr": 0.1676,
+          "candle": {
+            "high": 50.284,
+            "low": 49.758
+          },
+          "gemini_run_at_utc": "2026-11-13T13:46:20.010134+00:00",
+          "gemini_confidence": 0.74,
+          "fill_source": "live_quote:dukascopy:tick",
+          "book": "nostop",
+          "strikes": 0,
+          "mfe": 0.0,
+          "mae": 0.0,
+          "scan_from": "2026-11-13T13:49:03.734263+00:00",
+          "checks": 0,
+          "opened_at": "2026-11-13T13:49:03.783322+00:00",
+          "stop_note": "uniform_1atr",
+          "mech_target_atr": 1.0,
+          "uniform_exit": "uniform-1atr-v1",
+          "deadline": "2026-11-13T15:19:03.734263+00:00"
+        }
+      ],
       "day": {
         "id": "2026-11-13",
         "start_balance": 98096.5,
@@ -52,7 +186,7 @@
         "gross_win": 1763.0,
         "gross_loss": -3408.3,
         "net_pnl": -1645.3,
-        "commissions": 42.8,
+        "commissions": 52.0,
         "hold_seconds": 5023,
         "exit_reasons": {
           "stop_1atr": 3,

@@ -14,8 +14,8 @@
   },
   "last_bar": {
     "XAUUSD": "2026-11-13T17:00:00+00:00",
-    "EURUSD": "2026-11-13T17:00:00+00:00",
-    "US100": "2026-11-13T17:00:00+00:00"
+    "EURUSD": "2026-11-13T17:05:00+00:00",
+    "US100": "2026-11-13T17:05:00+00:00"
   },
   "whatif": [
     {
@@ -69,6 +69,19 @@
       "types": [
         "LVL-SWEEP"
       ]
+    },
+    {
+      "book": "EV-REV",
+      "trigger_id": "US100|2026-11-13T17:10:00+00:00",
+      "symbol": "US100",
+      "side": -1,
+      "entry": null,
+      "t0": "2026-11-13T17:10:15+00:00",
+      "atr": 108.328,
+      "primary": "VOL-BURST",
+      "types": [
+        "VOL-BURST"
+      ]
     }
   ],
   "stats": {
@@ -84,8 +97,8 @@
         "n_XAUUSD": 1
       },
       "VOL-BURST": {
-        "n_US100": 1,
-        "n": 1
+        "n_US100": 2,
+        "n": 2
       }
     },
     "EV-CONT": {
@@ -93,7 +106,7 @@
         "room_skip": 2
       },
       "VOL-BURST": {
-        "room_skip": 1
+        "room_skip": 2
       },
       "LVL-SWEEP": {
         "n": 1,
@@ -111,7 +124,7 @@
         "room_skip": 1
       },
       "VOL-BURST": {
-        "room_skip": 1
+        "room_skip": 2
       },
       "LVL-SWEEP": {
         "room_skip": 1,
@@ -161,6 +174,10 @@
     {
       "t": "2026-11-13T17:05:00+00:00",
       "symbol": "XAUUSD"
+    },
+    {
+      "t": "2026-11-13T17:10:00+00:00",
+      "symbol": "US100"
     }
   ],
   "ai_signals": [],

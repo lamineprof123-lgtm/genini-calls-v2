@@ -1,25 +1,5 @@
 [
   {
-    "signal_at": "2026-11-13T11:58:20.010974+00:00",
-    "tz": "Asia/Dubai",
-    "model": null,
-    "dry_run": false,
-    "trades": [],
-    "no_trade": [
-      "XAUUSD",
-      "EURUSD",
-      "GBPUSD",
-      "US100",
-      "XAGUSD",
-      "BTCUSD"
-    ],
-    "in_position": [],
-    "analysis_failed": true,
-    "error": "Gemini quota exhausted (free key)",
-    "breaker_halted": false,
-    "written_at": "2026-11-13T11:58:21.714302+00:00"
-  },
-  {
     "signal_at": "2026-11-13T12:00:20.046442+00:00",
     "tz": "Asia/Dubai",
     "model": null,
@@ -1000,5 +980,53 @@
     "analysis_failed": false,
     "breaker_halted": false,
     "written_at": "2026-11-13T13:45:31.265755+00:00"
+  },
+  {
+    "signal_at": "2026-11-13T13:46:20.010134+00:00",
+    "tz": "Asia/Dubai",
+    "model": "gemini-3.8-flash",
+    "dry_run": false,
+    "trades": [
+      {
+        "symbol": "XAUUSD",
+        "name": "GOLD",
+        "action": "SELL",
+        "entry": 3887.2,
+        "stop_loss": null,
+        "take_profit": null,
+        "rr": null,
+        "confidence": 0.75,
+        "digits": 2,
+        "exit": "Gemini",
+        "card": "Hard stop \u2212$500 net \u00b7 TP: none \u00b7 exit: Gemini",
+        "session": "LONDON_NY_OVERLAP",
+        "cvd_label": "BEARISH"
+      },
+      {
+        "symbol": "XAGUSD",
+        "name": "SILVER",
+        "action": "SELL",
+        "entry": 49.896,
+        "stop_loss": null,
+        "take_profit": null,
+        "rr": null,
+        "confidence": 0.74,
+        "digits": 3,
+        "exit": "Gemini",
+        "card": "Hard stop \u2212$500 net \u00b7 TP: none \u00b7 exit: Gemini",
+        "session": "LONDON_NY_OVERLAP",
+        "cvd_label": "BEARISH"
+      }
+    ],
+    "no_trade": [
+      "EURUSD",
+      "GBPUSD",
+      "US100",
+      "BTCUSD"
+    ],
+    "in_position": [],
+    "analysis_failed": false,
+    "breaker_halted": false,
+    "written_at": "2026-11-13T13:48:09.322798+00:00"
   }
 ]

@@ -1,14 +1,14 @@
 {
-  "updated_at": "2026-11-13T13:32:56.434904+00:00",
+  "updated_at": "2026-11-13T13:47:52.515297+00:00",
   "paper_only": true,
   "book": "G-LOW-80",
   "label": "Gemini flash \u00b7 G-LOW-80 (low thinking, min 0.70)",
   "account": {
     "start_balance": 100000.0,
-    "balance": 100465.2,
-    "equity": 100465.2,
+    "balance": 100450.8,
+    "equity": 100398.3,
     "net_pnl": 465.2,
-    "open_pnl": 0.0,
+    "open_pnl": -52.5,
     "trades": 2,
     "wins": 1,
     "losses": 1,
@@ -17,20 +17,40 @@
     "avg_loss": -441.3,
     "max_drawdown": -441.3,
     "peak_balance": 100465.2,
-    "commissions": 32.3,
+    "commissions": 46.7,
     "exit_reasons": {
       "stop_1atr": 1,
       "target_1atr": 1
     },
     "stopped": 1,
-    "open_positions": 0,
+    "open_positions": 1,
     "pending": 0,
-    "signals_seen": 3,
-    "signals_taken": 3,
-    "skips": {},
+    "signals_seen": 6,
+    "signals_taken": 4,
+    "skips": {
+      "max_minis": 2
+    },
     "missed_scans_main_held": {}
   },
-  "open_positions": [],
+  "open_positions": [
+    {
+      "id": 3,
+      "symbol": "GBPUSD",
+      "contract": "6B",
+      "qty": 6,
+      "entry": 1.3241,
+      "entry_time": "2026-11-13T13:45:55.393079+00:00",
+      "stop": 1.3233,
+      "target": 1.3249,
+      "deadline": "2026-11-13T15:15:55.393079+00:00",
+      "confidence": 0.76,
+      "risk_usd": 328.8,
+      "target_usd": 271.2,
+      "side": "LONG",
+      "last_price": 1.32396,
+      "unrealized": -52.5
+    }
+  ],
   "recent_trades": [
     {
       "event": "close",
@@ -109,13 +129,13 @@
   "model": "gemini-3.8-flash",
   "thinking_level": "low",
   "calls": {
-    "ok": 35,
+    "ok": 36,
     "failed": 9,
     "skipped": 0,
     "tokens": {
-      "prompt_token_count": 546133,
-      "candidates_token_count": 68312,
-      "total_token_count": 614445
+      "prompt_token_count": 561804,
+      "candidates_token_count": 70328,
+      "total_token_count": 632132
     }
   },
   "day": {

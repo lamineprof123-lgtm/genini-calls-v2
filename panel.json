@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-13T16:18:26.813192+00:00",
+  "updated_at": "2026-11-13T16:20:14.820628+00:00",
   "paper_only": true,
   "reset": {
     "token": "2026-11-12-uniform-reset",
@@ -295,7 +295,7 @@
       "balance": 99985.6,
       "start_balance": 100000.0,
       "net_pnl_usd": 0,
-      "open_pnl_usd": -30.0,
+      "open_pnl_usd": 90.0,
       "trades": 0,
       "wins": 0,
       "losses": 0,
@@ -354,7 +354,7 @@
       "balance": 99985.6,
       "start_balance": 100000.0,
       "net_pnl_usd": 0,
-      "open_pnl_usd": -30.0,
+      "open_pnl_usd": 90.0,
       "trades": 0,
       "wins": 0,
       "losses": 0,
@@ -609,6 +609,164 @@
       "went_positive_first_yes": 0,
       "went_positive_first_n": 0,
       "went_positive_first_pct": null
+    },
+    {
+      "book": "DS-IMG-E",
+      "venue": "LUCID",
+      "model": "deepseek-flash",
+      "label": "DeepSeek \u00b7 chart \u00b7 event (NEW ds-evt-v1: called only when a T1\u2013T8 trigger fires)",
+      "balance": 100000.0,
+      "start_balance": 100000.0,
+      "net_pnl_usd": 0,
+      "open_pnl_usd": 0,
+      "trades": 0,
+      "wins": 0,
+      "losses": 0,
+      "win_rate": null,
+      "open_positions": 0,
+      "went_positive_first": null,
+      "went_positive_first_yes": 0,
+      "went_positive_first_n": 0,
+      "went_positive_first_pct": null,
+      "since": "2026-11-13T16:18:50.566428+00:00",
+      "own_reset": true,
+      "evt": {
+        "book": "DS-IMG-E",
+        "label": "DeepSeek \u00b7 chart \u00b7 event",
+        "balance": 100000.0,
+        "trades": 0,
+        "R": 0,
+        "R_per_signal": null,
+        "win_rate": null,
+        "profit_factor": null,
+        "api_cost_today": 0.0,
+        "calls_today": 0,
+        "calls_this_hour": 0,
+        "open_positions": 0,
+        "mode": "dry_run (triggers logged, no API calls, no fills)",
+        "live": false,
+        "dry_run_started_at": "2026-11-13T16:19:10.001752+00:00"
+      }
+    },
+    {
+      "book": "DS-TXT-E",
+      "venue": "LUCID",
+      "model": "deepseek-flash",
+      "label": "DeepSeek \u00b7 text \u00b7 event (NEW ds-evt-v1: CSV table instead of the chart)",
+      "balance": 100000.0,
+      "start_balance": 100000.0,
+      "net_pnl_usd": 0,
+      "open_pnl_usd": 0,
+      "trades": 0,
+      "wins": 0,
+      "losses": 0,
+      "win_rate": null,
+      "open_positions": 0,
+      "went_positive_first": null,
+      "went_positive_first_yes": 0,
+      "went_positive_first_n": 0,
+      "went_positive_first_pct": null,
+      "since": "2026-11-13T16:18:50.566700+00:00",
+      "own_reset": true,
+      "evt": {
+        "book": "DS-TXT-E",
+        "label": "DeepSeek \u00b7 text \u00b7 event",
+        "balance": 100000.0,
+        "trades": 0,
+        "R": 0,
+        "R_per_signal": null,
+        "win_rate": null,
+        "profit_factor": null,
+        "api_cost_today": 0.0,
+        "calls_today": 0,
+        "calls_this_hour": 0,
+        "open_positions": 0,
+        "mode": "dry_run (triggers logged, no API calls, no fills)",
+        "live": false,
+        "dry_run_started_at": "2026-11-13T16:19:10.001752+00:00"
+      }
+    },
+    {
+      "book": "EV-FABLE",
+      "venue": "LUCID",
+      "model": "claude-fable-5-2",
+      "label": "Event \u00b7 Claude Fable 5.2 xhigh (NEW ev-v1: called on M5 events)",
+      "balance": 100000.0,
+      "start_balance": 100000.0,
+      "net_pnl_usd": 0,
+      "open_pnl_usd": 0,
+      "trades": 0,
+      "wins": 0,
+      "losses": 0,
+      "win_rate": null,
+      "open_positions": 0,
+      "went_positive_first": null,
+      "went_positive_first_yes": 0,
+      "went_positive_first_n": 0,
+      "went_positive_first_pct": null,
+      "since": "2026-11-13T16:18:50.567642+00:00",
+      "own_reset": true,
+      "evt": {
+        "book": "EV-FABLE",
+        "label": "Event \u00b7 Claude Fable 5.2 (xhigh)",
+        "model": "claude-fable-5-2",
+        "effort": "xhigh",
+        "balance": 100000.0,
+        "trades": 0,
+        "signals": 0,
+        "R": 0.0,
+        "R_per_signal": null,
+        "latency_p50_s": null,
+        "latency_p95_s": null,
+        "late_share": null,
+        "cost_today": 0.0,
+        "calls_today": 0,
+        "open_positions": 0,
+        "mode": "dry_run (trigger-only, no API calls, no fills)",
+        "live": false,
+        "dry_run_started_at": "2026-11-13T16:19:10.001752+00:00"
+      }
+    },
+    {
+      "book": "EV-OPUS",
+      "venue": "LUCID",
+      "model": "claude-opus-5-5",
+      "label": "Event \u00b7 Claude Opus 5.5 high (NEW ev-v1: called on M5 events)",
+      "balance": 100000.0,
+      "start_balance": 100000.0,
+      "net_pnl_usd": 0,
+      "open_pnl_usd": 0,
+      "trades": 0,
+      "wins": 0,
+      "losses": 0,
+      "win_rate": null,
+      "open_positions": 0,
+      "went_positive_first": null,
+      "went_positive_first_yes": 0,
+      "went_positive_first_n": 0,
+      "went_positive_first_pct": null,
+      "since": "2026-11-13T16:18:50.567859+00:00",
+      "own_reset": true,
+      "evt": {
+        "book": "EV-OPUS",
+        "label": "Event \u00b7 Claude Opus 5.5 (high)",
+        "model": "claude-opus-5-5",
+        "effort": "high",
+        "balance": 100000.0,
+        "trades": 0,
+        "signals": 0,
+        "R": 0.0,
+        "R_per_signal": null,
+        "latency_p50_s": null,
+        "latency_p95_s": null,
+        "late_share": null,
+        "cost_today": 0.0,
+        "calls_today": 0,
+        "open_positions": 0,
+        "mode": "dry_run (trigger-only, no API calls, no fills)",
+        "live": false,
+        "dry_run_started_at": "2026-11-13T16:19:10.001752+00:00"
+      }
     }
   ],
   "positions": [
@@ -627,10 +785,10 @@
       "target": 1.1025,
       "atr": 0.000797,
       "status": "OPEN",
-      "max_pnl_usd": 52.5,
+      "max_pnl_usd": 127.5,
       "min_pnl_usd": -82.5,
-      "last_pnl_usd": -30.0,
-      "last_price": 1.10334,
+      "last_pnl_usd": 90.0,
+      "last_price": 1.10318,
       "close_reason": null,
       "exit": null,
       "t_exit": null,
@@ -641,7 +799,7 @@
       "first_cross_at": "2026-11-13T16:15:59.874337+00:00",
       "first_cross_basis": "live_net_tick",
       "id": 1,
-      "last_at": "2026-11-13T16:18:26.813192+00:00",
+      "last_at": "2026-11-13T16:20:14.820628+00:00",
       "went_positive_first_label": "No"
     },
     {
@@ -659,10 +817,10 @@
       "target": 1.1025,
       "atr": 0.000797,
       "status": "OPEN",
-      "max_pnl_usd": 52.5,
+      "max_pnl_usd": 127.5,
       "min_pnl_usd": -82.5,
-      "last_pnl_usd": -30.0,
-      "last_price": 1.10334,
+      "last_pnl_usd": 90.0,
+      "last_price": 1.10318,
       "close_reason": null,
       "exit": null,
       "t_exit": null,
@@ -673,7 +831,7 @@
       "first_cross_at": "2026-11-13T16:15:59.874337+00:00",
       "first_cross_basis": "live_net_tick",
       "id": 1,
-      "last_at": "2026-11-13T16:18:26.813192+00:00",
+      "last_at": "2026-11-13T16:20:14.820628+00:00",
       "went_positive_first_label": "No"
     },
     {
@@ -2700,5 +2858,232 @@
       "first_cross_backfill": "done",
       "went_positive_first_label": "No"
     }
-  ]
+  ],
+  "event_streams": {
+    "ds_evt": {
+      "tag": "ds-evt-v1",
+      "mode": "dry_run (triggers logged, no API calls, no fills)",
+      "live": false,
+      "dry_run_started_at": "2026-11-13T16:19:10.001752+00:00",
+      "updated_at": "2026-11-13T16:19:10.001752+00:00",
+      "per_trigger": [
+        {
+          "trigger": "T1",
+          "DS-IMG-E": {
+            "fired": 0,
+            "calls": 0,
+            "gate_passed": 0,
+            "R_per_signal": null,
+            "win_rate": null
+          },
+          "DS-TXT-E": {
+            "fired": 0,
+            "calls": 0,
+            "gate_passed": 0,
+            "R_per_signal": null,
+            "win_rate": null
+          }
+        },
+        {
+          "trigger": "T2",
+          "DS-IMG-E": {
+            "fired": 0,
+            "calls": 0,
+            "gate_passed": 0,
+            "R_per_signal": null,
+            "win_rate": null
+          },
+          "DS-TXT-E": {
+            "fired": 0,
+            "calls": 0,
+            "gate_passed": 0,
+            "R_per_signal": null,
+            "win_rate": null
+          }
+        },
+        {
+          "trigger": "T3",
+          "DS-IMG-E": {
+            "fired": 0,
+            "calls": 0,
+            "gate_passed": 0,
+            "R_per_signal": null,
+            "win_rate": null
+          },
+          "DS-TXT-E": {
+            "fired": 0,
+            "calls": 0,
+            "gate_passed": 0,
+            "R_per_signal": null,
+            "win_rate": null
+          }
+        },
+        {
+          "trigger": "T4",
+          "DS-IMG-E": {
+            "fired": 0,
+            "calls": 0,
+            "gate_passed": 0,
+            "R_per_signal": null,
+            "win_rate": null
+          },
+          "DS-TXT-E": {
+            "fired": 0,
+            "calls": 0,
+            "gate_passed": 0,
+            "R_per_signal": null,
+            "win_rate": null
+          }
+        },
+        {
+          "trigger": "T5",
+          "DS-IMG-E": {
+            "fired": 0,
+            "calls": 0,
+            "gate_passed": 0,
+            "R_per_signal": null,
+            "win_rate": null
+          },
+          "DS-TXT-E": {
+            "fired": 0,
+            "calls": 0,
+            "gate_passed": 0,
+            "R_per_signal": null,
+            "win_rate": null
+          }
+        },
+        {
+          "trigger": "T6",
+          "DS-IMG-E": {
+            "fired": 0,
+            "calls": 0,
+            "gate_passed": 0,
+            "R_per_signal": null,
+            "win_rate": null
+          },
+          "DS-TXT-E": {
+            "fired": 0,
+            "calls": 0,
+            "gate_passed": 0,
+            "R_per_signal": null,
+            "win_rate": null
+          }
+        },
+        {
+          "trigger": "T7",
+          "DS-IMG-E": {
+            "fired": 0,
+            "calls": 0,
+            "gate_passed": 0,
+            "R_per_signal": null,
+            "win_rate": null
+          },
+          "DS-TXT-E": {
+            "fired": 0,
+            "calls": 0,
+            "gate_passed": 0,
+            "R_per_signal": null,
+            "win_rate": null
+          }
+        },
+        {
+          "trigger": "T8",
+          "DS-IMG-E": {
+            "fired": 0,
+            "calls": 0,
+            "gate_passed": 0,
+            "R_per_signal": null,
+            "win_rate": null
+          },
+          "DS-TXT-E": {
+            "fired": 0,
+            "calls": 0,
+            "gate_passed": 0,
+            "R_per_signal": null,
+            "win_rate": null
+          }
+        }
+      ]
+    },
+    "ev_evt": {
+      "tag": "ev-v1",
+      "mode": "dry_run (trigger-only, no API calls, no fills)",
+      "live": false,
+      "dry_run_started_at": "2026-11-13T16:19:10.001752+00:00",
+      "updated_at": "2026-11-13T16:19:10.001752+00:00",
+      "triggers": [
+        {
+          "trigger": "LVL-SWEEP",
+          "n": 0,
+          "per_symbol": {
+            "XAUUSD": 0,
+            "EURUSD": 0,
+            "US100": 0
+          },
+          "EV-CONT": null,
+          "EV-REV": null,
+          "EV-TWIN": null
+        },
+        {
+          "trigger": "LVL-BREAK",
+          "n": 0,
+          "per_symbol": {
+            "XAUUSD": 0,
+            "EURUSD": 0,
+            "US100": 0
+          },
+          "EV-CONT": null,
+          "EV-REV": null,
+          "EV-TWIN": null
+        },
+        {
+          "trigger": "VOL-BURST",
+          "n": 0,
+          "per_symbol": {
+            "XAUUSD": 0,
+            "EURUSD": 0,
+            "US100": 0
+          },
+          "EV-CONT": null,
+          "EV-REV": null,
+          "EV-TWIN": null
+        },
+        {
+          "trigger": "RVOL-SPIKE",
+          "n": 0,
+          "per_symbol": {
+            "XAUUSD": 0,
+            "EURUSD": 0,
+            "US100": 0
+          },
+          "EV-CONT": null,
+          "EV-REV": null,
+          "EV-TWIN": null
+        },
+        {
+          "trigger": "VWAP-STRETCH",
+          "n": 0,
+          "per_symbol": {
+            "XAUUSD": 0,
+            "EURUSD": 0,
+            "US100": 0
+          },
+          "EV-CONT": null,
+          "EV-REV": null,
+          "EV-TWIN": null
+        }
+      ],
+      "controls": {
+        "EV-CONT": {},
+        "EV-REV": {},
+        "EV-TWIN": {}
+      },
+      "q3": {
+        "pairs": 0,
+        "mean_R_diff": null,
+        "unique_catches": 0,
+        "missed_by_triggers_24h": 26
+      }
+    }
+  }
 }

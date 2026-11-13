@@ -1,25 +1,5 @@
 [
   {
-    "signal_at": "2026-11-13T12:22:20.014738+00:00",
-    "tz": "Asia/Dubai",
-    "model": null,
-    "dry_run": false,
-    "trades": [],
-    "no_trade": [
-      "XAUUSD",
-      "EURUSD",
-      "GBPUSD",
-      "US100",
-      "XAGUSD",
-      "BTCUSD"
-    ],
-    "in_position": [],
-    "analysis_failed": true,
-    "error": "Gemini quota exhausted (free key)",
-    "breaker_halted": false,
-    "written_at": "2026-11-13T12:22:22.175245+00:00"
-  },
-  {
     "signal_at": "2026-11-13T12:24:20.010914+00:00",
     "tz": "Asia/Dubai",
     "model": null,
@@ -1027,5 +1007,37 @@
     "analysis_failed": false,
     "breaker_halted": false,
     "written_at": "2026-11-13T14:16:52.463261+00:00"
+  },
+  {
+    "signal_at": "2026-11-13T14:30:33.845543+00:00",
+    "tz": "Asia/Dubai",
+    "model": "gemini-3.8-flash",
+    "dry_run": false,
+    "trades": [
+      {
+        "symbol": "BTCUSD",
+        "name": "BITCOIN",
+        "action": "SELL",
+        "entry": 69138.6,
+        "stop_loss": 69308.24,
+        "take_profit": 69038.6,
+        "rr": 0.589,
+        "confidence": 0.74,
+        "digits": 2,
+        "session": "LONDON_NY_OVERLAP",
+        "cvd_label": "BEARISH"
+      }
+    ],
+    "no_trade": [
+      "XAUUSD",
+      "EURUSD",
+      "GBPUSD",
+      "US100",
+      "XAGUSD"
+    ],
+    "in_position": [],
+    "analysis_failed": false,
+    "breaker_halted": false,
+    "written_at": "2026-11-13T14:32:10.137768+00:00"
   }
 ]

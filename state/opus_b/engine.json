@@ -2,11 +2,11 @@
   "reset_token": "c-opus-b-v1",
   "created_at": "2026-11-12T17:19:59.566947+00:00",
   "last_call": {
-    "t": "2026-11-13T15:45:49.441017+00:00",
+    "t": "2026-11-13T16:01:02.639585+00:00",
     "ok": true,
-    "latency_ms": 14968,
-    "cost_usd": 0.101484,
-    "thinking_tokens": 297,
+    "latency_ms": 15464,
+    "cost_usd": 0.104156,
+    "thinking_tokens": 416,
     "usage": {
       "cache_creation": {
         "ephemeral_1h_input_tokens": 0,
@@ -15,10 +15,10 @@
       "cache_creation_input_tokens": 0,
       "cache_read_input_tokens": 0,
       "inference_geo": "global",
-      "input_tokens": 17216,
-      "output_tokens": 1631,
+      "input_tokens": 17209,
+      "output_tokens": 1766,
       "output_tokens_details": {
-        "thinking_tokens": 297
+        "thinking_tokens": 416
       },
       "service_tier": "standard",
       "speed": "standard"
@@ -26,14 +26,14 @@
     "error": null,
     "effort": "high",
     "prompt_version": "bracket-v1",
-    "snapshot_id": "m15-20261113153000-3a5beacf66f0",
-    "snapshot_hash": "3a5beacf66f01131f65cc9e98a1819ac3b1caa7f86e857c1e73fe809a5c6bf91",
-    "package_id": "m15-20261113T154500-d4d0f8b42d51",
-    "package_hash": "d4d0f8b42d51596b1749e5634840c0109d532debf7826638cbb94cfcb2f563db",
-    "bar_close_ts": "2026-11-13T15:45:00+00:00",
-    "snapshot_ts": "2026-11-13T15:45:32.435370+00:00",
-    "call_start": "2026-11-13T15:45:34.472654+00:00",
-    "answer_ts": "2026-11-13T15:45:49.441017+00:00",
+    "snapshot_id": "m15-20261113154500-fc19b4249724",
+    "snapshot_hash": "fc19b4249724d140473086a6cb3aac0c86a16cf149f2d110fae5bcc3c8d7a161",
+    "package_id": "m15-20261113T160000-c198a891bd67",
+    "package_hash": "c198a891bd67a8c3cef7d7fb452c11f31828ebce964277efc60c9b5d34b525fc",
+    "bar_close_ts": "2026-11-13T16:00:00+00:00",
+    "snapshot_ts": "2026-11-13T16:00:36.140171+00:00",
+    "call_start": "2026-11-13T16:00:47.175310+00:00",
+    "answer_ts": "2026-11-13T16:01:02.639585+00:00",
     "model": "claude-opus-5-5"
   },
   "last_signals": [
@@ -41,11 +41,11 @@
       "symbol": "XAUUSD",
       "action": "HOLD",
       "confidence": 0.0,
-      "score": 0,
+      "score": 2,
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "Trend SELL is blocked: |vwap_distance| 2.066 > 2.0. Fade BUY off the Put Wall is blocked by NEGATIVE_AMPLIFYING GEX. S1 fails both ways: room up 0.18 ATR, room down 0.194 ATR.",
+      "rationale": "SELL trend blocked: |vwap_distance| 2.61 > 2.0 and room_down 0.012 ATR to Put Wall #1. BUY fade blocked: room_up 0.759 < 1.0 ATR and GEX NEGATIVE_AMPLIFYING forbids fades. S1 fails both ways.",
       "gate_reasons": [],
       "issues": []
     },
@@ -57,7 +57,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "T1 and T2 are met for a SELL, but it is a chase: vwap distance 2.935 > 2.0. Room down is only 0.111 ATR to Session Low. Fade BUY has only 0.21 ATR of room. HOLD.",
+      "rationale": "Touches only, no rejection or close-through. SELL trend blocked: 3.35 ATR from VWAP and room_down 0.334 ATR. Fade blocked: no rejection event and room_up 0.446 ATR. S1 fails.",
       "gate_reasons": [],
       "issues": []
     },
@@ -69,7 +69,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "No level event on the last closed bar; every level is untouched. VWAP distance 5.19 ATR is an extreme chase. Room down is 0.841 ATR, below 1.0. HOLD.",
+      "rationale": "No level event on the last closed bar; every level is untouched. SELL trend blocked: 5.0 ATR from VWAP and room_down 0.842 ATR. No T2 or F1 event.",
       "gate_reasons": [],
       "issues": []
     },
@@ -77,11 +77,11 @@
       "symbol": "XAGUSD",
       "action": "HOLD",
       "confidence": 0.0,
-      "score": 0,
+      "score": 2,
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "A touch only, with no closed_through or rejection, so T2/F1 are not met. VWAP distance 4.05 > 2.0. S1 fails: room down 0.525 ATR, room up 0.578 ATR. HOLD.",
+      "rationale": "BUY fade F1 met at ATR Lower, but room_up is 0.680 ATR (< 1.0), so S1 fails. SELL trend blocked: 4.35 ATR from VWAP and room_down 0.346 ATR.",
       "gate_reasons": [],
       "issues": []
     },
@@ -89,11 +89,11 @@
       "symbol": "BTCUSD",
       "action": "HOLD",
       "confidence": 0.0,
-      "score": 0,
+      "score": 2,
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "T1 yes, T2 yes (SELL, closed_through VAL). Room down 1.70 ATR. But vwap distance 2.985 > 2.0 is a hard chase block. Fade BUY has only 0.15 ATR of room. HOLD.",
+      "rationale": "BUY event fails T1 (price is below VWAP and EMA50). As a fade, room_up is 0.605 ATR to EMA20 (< 1.0), so S1 fails. No SELL event on the last bar.",
       "gate_reasons": [],
       "issues": []
     }

@@ -2,11 +2,11 @@
   "reset_token": "c-opus-b-v1",
   "created_at": "2026-11-12T17:19:59.566947+00:00",
   "last_call": {
-    "t": "2026-11-13T20:01:16.202231+00:00",
+    "t": "2026-11-13T20:15:59.616662+00:00",
     "ok": true,
-    "latency_ms": 17807,
-    "cost_usd": 0.110632,
-    "thinking_tokens": 561,
+    "latency_ms": 21955,
+    "cost_usd": 0.116592,
+    "thinking_tokens": 948,
     "usage": {
       "cache_creation": {
         "ephemeral_1h_input_tokens": 0,
@@ -16,9 +16,9 @@
       "cache_read_input_tokens": 0,
       "inference_geo": "global",
       "input_tokens": 17313,
-      "output_tokens": 2069,
+      "output_tokens": 2367,
       "output_tokens_details": {
-        "thinking_tokens": 561
+        "thinking_tokens": 948
       },
       "service_tier": "standard",
       "speed": "standard"
@@ -26,14 +26,14 @@
     "error": null,
     "effort": "high",
     "prompt_version": "bracket-v1",
-    "snapshot_id": "m15-20261113194500-f0ba94befb10",
-    "snapshot_hash": "f0ba94befb10c8268348882b2398683b797e016ae29254cd940ecbfa97331200",
-    "package_id": "m15-20261113T200000-04b07cf1b5e4",
-    "package_hash": "04b07cf1b5e40d950c7cb6ed5c3bf53b23a0ac3169ffa80d029489cee0296576",
-    "bar_close_ts": "2026-11-13T20:00:00+00:00",
-    "snapshot_ts": "2026-11-13T20:00:45.938322+00:00",
-    "call_start": "2026-11-13T20:00:58.394875+00:00",
-    "answer_ts": "2026-11-13T20:01:16.202231+00:00",
+    "snapshot_id": "m15-20261113200000-2c06c2d7424b",
+    "snapshot_hash": "2c06c2d7424bb70c28cf52224b144b4297766a8886962df54b8ba710f334d70c",
+    "package_id": "m15-20261113T201500-6970d7a673ca",
+    "package_hash": "6970d7a673ca77f003ee80119856cea30da6ae5c9942c8014cd5d074c14987ec",
+    "bar_close_ts": "2026-11-13T20:15:00+00:00",
+    "snapshot_ts": "2026-11-13T20:15:37.012059+00:00",
+    "call_start": "2026-11-13T20:15:37.661747+00:00",
+    "answer_ts": "2026-11-13T20:15:59.616662+00:00",
     "model": "claude-opus-5-5"
   },
   "last_signals": [
@@ -45,7 +45,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "Possible F1 (Put Wall #1 rejected), but fading is barred because GEX is NEGATIVE_AMPLIFYING. S1 fails: only 0.277 ATR of room up to VAL 3876.49. A trend SELL fails the VWAP-distance gate (-2.84 ATR) and has 0.053 ATR of room down. HOLD.",
+      "rationale": "Trend SELL: T1 and T2 (VAL rejected from below) are met, but VWAP distance is -2.74 ATR (over 2.0, chasing) and room_down is 0.105 ATR to Put Wall #1. Fade BUY is barred by NEGATIVE_AMPLIFYING GEX, and room_up is only 0.2 ATR. HOLD.",
       "gate_reasons": [],
       "issues": []
     },
@@ -57,19 +57,19 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "Touches only; no rejection or close-through, so F1 and T2 are missing. A trend SELL is blocked: -5.82 ATR from VWAP and 0.019 ATR of room down. A fade BUY has only 0.716 ATR to S/R 1.10257, so S1 fails. HOLD.",
+      "rationale": "No level event on the last closed bar; every level is untouched. Room is 0.636 ATR up and 0.159 ATR down, so both directions fail the 1 ATR room gate. VWAP distance is extreme. HOLD.",
       "gate_reasons": [],
       "issues": []
     },
     {
       "symbol": "US100",
-      "action": "HOLD",
-      "confidence": 0.0,
-      "score": 0,
-      "setup_type": "none",
-      "gated": false,
-      "decision": "HOLD",
-      "rationale": "A BUY fails T1 because price is below VWAP and EMA50. Room up is 0.021 ATR and room down is 0.224 ATR, so S1 fails both ways. A SELL fade has no clean extreme rejection on the close. HOLD.",
+      "action": "BUY",
+      "confidence": 0.53,
+      "score": 6,
+      "setup_type": "fade",
+      "gated": true,
+      "decision": "OPENED",
+      "rationale": "Fade BUY. F1 yes: Prev Low/VAL swept and closed back above. F2 yes: VWAP/POC magnet over 1 ATR up, level not accepted, GEX POSITIVE_DAMPENING. S1 (1.035 ATR to EMA50), S2 (US100 awarded), S3 (cvd_slope turned up), S4 NY. S5 no: h1 down.",
       "gate_reasons": [],
       "issues": []
     },
@@ -81,7 +81,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "F1 is possible (ATR Lower rejected), but S1 fails with 0.186 ATR of room up to S/R 48.905. A trend SELL is blocked: -6.0 ATR from VWAP and 0.267 ATR of room down. HOLD.",
+      "rationale": "Only a touch at S/R 48.905; no rejection and no closed_through. Room is 0.264 ATR up and 0.309 ATR down, so both directions fail the room gate. Trend SELL would also be chasing at -6.25 ATR from VWAP. HOLD.",
       "gate_reasons": [],
       "issues": []
     },
@@ -93,7 +93,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "A BUY fails T1 because price is below VWAP and EMA50. A SELL lacks a bearish event. Room is 0.346 ATR up and 0.325 ATR down, so S1 fails both ways; price is compressed between the EMAs. HOLD.",
+      "rationale": "EMA50 was only touched; there is no rejection or closed_through event. Room is 0.31 ATR up and 0.34 ATR down, so the 1 ATR target is unreachable either way. Chop inside value. HOLD.",
       "gate_reasons": [],
       "issues": []
     }

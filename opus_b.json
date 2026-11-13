@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-13T20:01:16.205683+00:00",
+  "updated_at": "2026-11-13T20:16:27.991872+00:00",
   "paper_only": true,
   "plan": "LucidPro 100K (DLL on)",
   "exit_mode": "uniform-1atr-v1",
@@ -27,15 +27,15 @@
       "hard_stop_net_usd": 500.0,
       "stop_txt": "\u2212$500 net \u00b7 1 ATR tgt \u00b7 90 min",
       "exit_rule": "\u2212$500 net \u00b7 1 ATR tgt \u00b7 90 min",
-      "balance": 98881.5,
-      "equity": 98881.5,
+      "balance": 98879.75,
+      "equity": 98875.75,
       "net_pnl": -1118.5,
-      "open_pnl": 0.0,
+      "open_pnl": -4.0,
       "trades": 3,
       "wins": 1,
       "losses": 2,
       "stopped": 0,
-      "open_positions": 0
+      "open_positions": 1
     },
     {
       "book": "1-strike",
@@ -84,26 +84,43 @@
     "no": 1,
     "phase": "eval",
     "start_balance": 100000.0,
-    "balance": 98881.5,
-    "equity": 98881.5,
+    "balance": 98879.75,
+    "equity": 98875.75,
     "realized_pnl_since_reset": -1118.5,
-    "open_pnl": 0.0,
-    "commission_on_open": 0.0,
+    "open_pnl": -4.0,
+    "commission_on_open": 1.75,
     "trades_since_reset": 3,
     "wins": 1,
     "losses": 2,
     "mll_floor": 97000.0,
-    "mll_room": 1881.5,
+    "mll_room": 1875.75,
     "dll": 1800.0,
     "day_realized": 550.7,
     "day_locked": null,
-    "to_target": 7118.5,
+    "to_target": 7120.25,
     "net_pnl": -1118.5,
     "trades": 3,
-    "open_positions": 0,
+    "open_positions": 1,
     "stopped": 0
   },
-  "open_positions": [],
+  "open_positions": [
+    {
+      "symbol": "US100",
+      "contract": "NQ",
+      "qty": 1,
+      "side": "LONG",
+      "entry_time": "2026-11-13T20:16:09.717561+00:00",
+      "entry": 27937.5,
+      "stop": 27852.75,
+      "target": 28022.25,
+      "last": 27937.3,
+      "unrealized": -4.0,
+      "risk_usd": null,
+      "hard_stop_px": null,
+      "target_usd_net": null,
+      "target_source": "none (gemini_only)"
+    }
+  ],
   "pending": 0,
   "recent_trades": [
     {
@@ -158,7 +175,7 @@
       "exit_prompt_version": "uniform-1atr-v1"
     }
   ],
-  "last_processed": "2026-11-13T18:19:00+00:00",
+  "last_processed": "2026-11-13T20:17:00+00:00",
   "book": "C-OPUS-B",
   "label": "C-OPUS-B (claude-opus-5-5, bracket-v1, effort high)",
   "model": "claude-opus-5-5",
@@ -169,11 +186,11 @@
   "rules": "C-OPUS-B: claude-opus-5-5 entries, adaptive thinking, effort high, shared bracket-v1 package with DS-FLASH (same charts, facts, 3 symbols, M15 close +20s). Question: will price travel 1 ATR my way before 1 ATR against? Code-computed facts + hold gates (no trend >2 ATR from VWAP; \u22651 ATR room; US100 volume-free S2). 0.3 ATR fill check. Uniform 1 ATR / 1 ATR / 90-min exits, no model exits. Fresh $100k Lucid account.",
   "stop_txt": "1 ATR stop \u00b7 1 ATR target \u00b7 90 min",
   "last_call": {
-    "t": "2026-11-13T20:01:16.202231+00:00",
+    "t": "2026-11-13T20:15:59.616662+00:00",
     "ok": true,
-    "latency_ms": 17807,
-    "cost_usd": 0.110632,
-    "thinking_tokens": 561,
+    "latency_ms": 21955,
+    "cost_usd": 0.116592,
+    "thinking_tokens": 948,
     "usage": {
       "cache_creation": {
         "ephemeral_1h_input_tokens": 0,
@@ -183,9 +200,9 @@
       "cache_read_input_tokens": 0,
       "inference_geo": "global",
       "input_tokens": 17313,
-      "output_tokens": 2069,
+      "output_tokens": 2367,
       "output_tokens_details": {
-        "thinking_tokens": 561
+        "thinking_tokens": 948
       },
       "service_tier": "standard",
       "speed": "standard"
@@ -193,14 +210,14 @@
     "error": null,
     "effort": "high",
     "prompt_version": "bracket-v1",
-    "snapshot_id": "m15-20261113194500-f0ba94befb10",
-    "snapshot_hash": "f0ba94befb10c8268348882b2398683b797e016ae29254cd940ecbfa97331200",
-    "package_id": "m15-20261113T200000-04b07cf1b5e4",
-    "package_hash": "04b07cf1b5e40d950c7cb6ed5c3bf53b23a0ac3169ffa80d029489cee0296576",
-    "bar_close_ts": "2026-11-13T20:00:00+00:00",
-    "snapshot_ts": "2026-11-13T20:00:45.938322+00:00",
-    "call_start": "2026-11-13T20:00:58.394875+00:00",
-    "answer_ts": "2026-11-13T20:01:16.202231+00:00",
+    "snapshot_id": "m15-20261113200000-2c06c2d7424b",
+    "snapshot_hash": "2c06c2d7424bb70c28cf52224b144b4297766a8886962df54b8ba710f334d70c",
+    "package_id": "m15-20261113T201500-6970d7a673ca",
+    "package_hash": "6970d7a673ca77f003ee80119856cea30da6ae5c9942c8014cd5d074c14987ec",
+    "bar_close_ts": "2026-11-13T20:15:00+00:00",
+    "snapshot_ts": "2026-11-13T20:15:37.012059+00:00",
+    "call_start": "2026-11-13T20:15:37.661747+00:00",
+    "answer_ts": "2026-11-13T20:15:59.616662+00:00",
     "model": "claude-opus-5-5"
   },
   "last_signals": [
@@ -212,7 +229,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "Possible F1 (Put Wall #1 rejected), but fading is barred because GEX is NEGATIVE_AMPLIFYING. S1 fails: only 0.277 ATR of room up to VAL 3876.49. A trend SELL fails the VWAP-distance gate (-2.84 ATR) and has 0.053 ATR of room down. HOLD.",
+      "rationale": "Trend SELL: T1 and T2 (VAL rejected from below) are met, but VWAP distance is -2.74 ATR (over 2.0, chasing) and room_down is 0.105 ATR to Put Wall #1. Fade BUY is barred by NEGATIVE_AMPLIFYING GEX, and room_up is only 0.2 ATR. HOLD.",
       "gate_reasons": [],
       "issues": []
     },
@@ -224,19 +241,19 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "Touches only; no rejection or close-through, so F1 and T2 are missing. A trend SELL is blocked: -5.82 ATR from VWAP and 0.019 ATR of room down. A fade BUY has only 0.716 ATR to S/R 1.10257, so S1 fails. HOLD.",
+      "rationale": "No level event on the last closed bar; every level is untouched. Room is 0.636 ATR up and 0.159 ATR down, so both directions fail the 1 ATR room gate. VWAP distance is extreme. HOLD.",
       "gate_reasons": [],
       "issues": []
     },
     {
       "symbol": "US100",
-      "action": "HOLD",
-      "confidence": 0.0,
-      "score": 0,
-      "setup_type": "none",
-      "gated": false,
-      "decision": "HOLD",
-      "rationale": "A BUY fails T1 because price is below VWAP and EMA50. Room up is 0.021 ATR and room down is 0.224 ATR, so S1 fails both ways. A SELL fade has no clean extreme rejection on the close. HOLD.",
+      "action": "BUY",
+      "confidence": 0.53,
+      "score": 6,
+      "setup_type": "fade",
+      "gated": true,
+      "decision": "OPENED",
+      "rationale": "Fade BUY. F1 yes: Prev Low/VAL swept and closed back above. F2 yes: VWAP/POC magnet over 1 ATR up, level not accepted, GEX POSITIVE_DAMPENING. S1 (1.035 ATR to EMA50), S2 (US100 awarded), S3 (cvd_slope turned up), S4 NY. S5 no: h1 down.",
       "gate_reasons": [],
       "issues": []
     },
@@ -248,7 +265,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "F1 is possible (ATR Lower rejected), but S1 fails with 0.186 ATR of room up to S/R 48.905. A trend SELL is blocked: -6.0 ATR from VWAP and 0.267 ATR of room down. HOLD.",
+      "rationale": "Only a touch at S/R 48.905; no rejection and no closed_through. Room is 0.264 ATR up and 0.309 ATR down, so both directions fail the room gate. Trend SELL would also be chasing at -6.25 ATR from VWAP. HOLD.",
       "gate_reasons": [],
       "issues": []
     },
@@ -260,7 +277,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "A BUY fails T1 because price is below VWAP and EMA50. A SELL lacks a bearish event. Room is 0.346 ATR up and 0.325 ATR down, so S1 fails both ways; price is compressed between the EMAs. HOLD.",
+      "rationale": "EMA50 was only touched; there is no rejection or closed_through event. Room is 0.31 ATR up and 0.34 ATR down, so the 1 ATR target is unreachable either way. Chop inside value. HOLD.",
       "gate_reasons": [],
       "issues": []
     }

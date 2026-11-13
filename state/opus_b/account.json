@@ -1,13 +1,13 @@
 {
   "version": 1,
   "created_at": "2026-11-12T18:11:32.213024+00:00",
-  "last_processed": "2026-11-13T18:19:00+00:00",
+  "last_processed": "2026-11-13T20:17:00+00:00",
   "account": {
     "no": 1,
     "phase": "eval",
     "started_at": "2026-11-12T18:11:32.213024+00:00",
     "start_balance": 100000.0,
-    "balance": 98881.5,
+    "balance": 98879.75,
     "highest_close": 100000.0,
     "mll_floor": 97000.0,
     "mll_locked": false,
@@ -21,9 +21,199 @@
     "realized_pnl": -1118.5,
     "trades": 3
   },
-  "positions": [],
+  "positions": [
+    {
+      "id": 4,
+      "symbol": "US100",
+      "contract": "NQ",
+      "qty": 1,
+      "side": 1,
+      "entry": 27937.5,
+      "stop": 27852.75,
+      "notional_risk_usd": 1355.0,
+      "target": 28022.25,
+      "entry_time": "2026-11-13T20:16:09.717561+00:00",
+      "exit_mode": "uniform-1atr-v1",
+      "fill_source": "live_quote:firmtape:NQ",
+      "fill_check": {
+        "fill_minute": "2026-11-13T20:16:00+00:00",
+        "fill_t": "2026-11-13T20:16:09.717561+00:00",
+        "ref_price": 27937.3,
+        "booked": 27937.5,
+        "slippage_ticks": 1,
+        "tick": 0.25,
+        "signal_entry": 27941.1,
+        "adverse_ticks_vs_quote": 0.8,
+        "m1_bar_open": 27937.3,
+        "quote_price": 27937.3,
+        "quote_ts": "2026-11-13T20:16:08+00:00",
+        "quote_source": "firmtape:NQ",
+        "quote_age_s": 1.72,
+        "quote_fetched_at": "2026-11-13T20:16:09.717561+00:00",
+        "bar_open_minus_quote": 0.0,
+        "tolerance_ticks": 1.5,
+        "within_slippage": true
+      },
+      "risk_usd": null,
+      "target_usd": null,
+      "target_source": "none (gemini_only)",
+      "sizing": "gemini_only: notional 0.8 ATR = 67.75 x 20/pt = $1,355 per NQ; 1 NQ ~ $1,355 notional <= $1500 (reference only; NO stop, NO target, exit = Gemini CLOSE)",
+      "target_usd_gross": null,
+      "commission_rt": 3.5,
+      "atr": 84.674,
+      "gemini": {
+        "action": "BUY",
+        "entry": 27941.1,
+        "stop_loss": 27856.43,
+        "take_profit": 28025.77,
+        "confidence": 0.53,
+        "rr": null,
+        "shown_on_site": true,
+        "basis": "site signal",
+        "run_at_utc": "2026-11-13T20:15:20.004595+00:00",
+        "session": "NEW_YORK_SESSION",
+        "rationale": "Fade BUY. F1 yes: Prev Low/VAL swept and closed back above. F2 yes: VWAP/POC magnet over 1 ATR up, level not accepted, GEX POSITIVE_DAMPENING. S1 (1.035 ATR to EMA50), S2 (US100 awarded), S3 (cvd_slope turned up), S4 NY. S5 no: h1 down.",
+        "model": "claude-opus-5-5"
+      },
+      "scalp": {
+        "action": "BUY",
+        "side": 1,
+        "entry": 27937.3,
+        "stop_loss": 27901.41,
+        "take_profit": 27942.3,
+        "sdist": 35.893700000000536,
+        "tdist": 5.0,
+        "stop_source": "structure",
+        "target_source": "fixed",
+        "rr": 0.139,
+        "structure_stop": 27901.4063,
+        "atr_stop": 27869.5608,
+        "fixed_tp": 27942.3,
+        "structure_tp": 28031.31,
+        "structure_label": "S/R",
+        "candle": {
+          "high": 27949.6,
+          "low": 27905.64
+        },
+        "levels": [
+          {
+            "price": 28031.56,
+            "label": "S/R"
+          },
+          {
+            "price": 28151.81,
+            "label": "S/R"
+          },
+          {
+            "price": 28209.17,
+            "label": "S/R"
+          },
+          {
+            "price": 27912.13,
+            "label": "Prev Low"
+          },
+          {
+            "price": 27608.11,
+            "label": "Session Low"
+          }
+        ],
+        "vp": {
+          "poc": 28269.4,
+          "vah": 28513.99,
+          "val": 27916.11
+        }
+      },
+      "telemetry": {
+        "symbol": "US100",
+        "session": "NEW_YORK_SESSION",
+        "last_close": 27940.43,
+        "atr": 84.674,
+        "vwap": 28134.59,
+        "ema20": 27915.35,
+        "ema50": 28028.72,
+        "price_vs_vwap": {
+          "side": "below",
+          "dist_atr": -2.293
+        },
+        "price_vs_ema50": {
+          "side": "below",
+          "dist_atr": -1.0427
+        },
+        "vwap_aligned_with_side": false,
+        "ema50_aligned_with_side": false,
+        "poc": 28269.4,
+        "vah": 28513.99,
+        "val": 27916.11,
+        "price_vs_value_area": "inside",
+        "dist_to_poc_atr": -3.8851,
+        "cvd": -0.14,
+        "cvd_label": "NEUTRAL",
+        "cvd_slope": 1.43,
+        "cvd_agrees_with_side": true,
+        "rvol": 0.809,
+        "rvol_spike": false,
+        "rvol_bars_since_spike": 21,
+        "atr_band_z": 0.2962,
+        "atr_upper": 28084.7,
+        "atr_lower": 27746.01,
+        "nearest_sr": {
+          "above": {
+            "price": 28031.56,
+            "label": "S/R",
+            "dist_atr": 1.0762
+          },
+          "below": {
+            "price": 27912.13,
+            "label": "Prev Low",
+            "dist_atr": 0.3342
+          }
+        },
+        "gemini": {
+          "action": "BUY",
+          "confidence": 0.53,
+          "confidence_band": "<0.6",
+          "rationale": "Fade BUY. F1 yes: Prev Low/VAL swept and closed back above. F2 yes: VWAP/POC magnet over 1 ATR up, level not accepted, GEX POSITIVE_DAMPENING. S1 (1.035 ATR to EMA50), S2 (US100 awarded), S3 (cvd_slope turned up), S4 NY. S5 no: h1 down.",
+          "model": "claude-opus-5-5",
+          "model_action": "BUY"
+        },
+        "scalp": {
+          "stop_basis": "structure",
+          "target_basis": "fixed",
+          "tdist": null,
+          "sdist": null,
+          "structure_label": "S/R",
+          "target_source": "none (gemini_only)"
+        },
+        "planned": {
+          "tdist": null,
+          "sdist": null,
+          "qty": 1,
+          "contract": "NQ",
+          "target_usd_net": null,
+          "risk_usd": null,
+          "target_source": "none (gemini_only)",
+          "sizing": "gemini_only: notional 0.8 ATR = 67.75 x 20/pt = $1,355 per NQ; 1 NQ ~ $1,355 notional <= $1500 (reference only; NO stop, NO target, exit = Gemini CLOSE)"
+        },
+        "run_at_utc": "2026-11-13T20:15:20.004595+00:00",
+        "chart_path": null
+      },
+      "mfe": 0.0,
+      "mae": 0.0,
+      "mfe_min": 0.0,
+      "time_cut_deadline": null,
+      "time_cut_candles": 0,
+      "time_cut_rule": "none: exit = Gemini CLOSE (1-strike) or hard stop -$500 NET; no target, no max hold, no 16:45 flat; DLL/MLL/breaker log-only",
+      "stop_note": "uniform_1atr",
+      "mech_target_atr": 1.0,
+      "uniform_exit": "uniform-1atr-v1",
+      "deadline": "2026-11-13T21:46:09.717561+00:00",
+      "model": "claude-opus-5-5",
+      "book": "C-OPUS-B",
+      "prompt_version": "bracket-v1"
+    }
+  ],
   "pending": [],
-  "next_pos_id": 4,
+  "next_pos_id": 5,
   "day": {
     "id": "2026-11-13",
     "start_balance": 98330.8,
@@ -34,7 +224,7 @@
   },
   "last_price": {
     "XAUUSD": 3885.275,
-    "US100": 28350.42
+    "US100": 27937.3
   },
   "history": [],
   "ledger": {
@@ -61,10 +251,10 @@
     "losses": 2,
     "gross_win": 1061.5,
     "gross_loss": -2180.0,
-    "commissions": 21.9,
+    "commissions": 23.65,
     "net_trade_pnl": -1118.5,
     "skipped_signals": 0,
-    "accepted_signals": 4
+    "accepted_signals": 5
   },
   "reset_token": "2026-11-12-uniform-reset",
   "reset_at": "2026-11-12T18:11:32.213024+00:00",
@@ -135,6 +325,28 @@
       "hard_stop_px": null,
       "hard_stop_armed_at": null,
       "fill_source": "live_quote:dukascopy:tick"
+    },
+    {
+      "id": 4,
+      "symbol": "US100",
+      "contract": "NQ",
+      "qty": 1,
+      "side": 1,
+      "entry": 27937.5,
+      "stop": 27852.75,
+      "target": 28022.25,
+      "entry_time": "2026-11-13T20:16:09.717561+00:00",
+      "risk_usd": null,
+      "atr": 84.674,
+      "candle": {
+        "high": 27949.6,
+        "low": 27905.64
+      },
+      "gemini_run_at_utc": "2026-11-13T20:15:20.004595+00:00",
+      "gemini_confidence": 0.53,
+      "hard_stop_px": null,
+      "hard_stop_armed_at": null,
+      "fill_source": "live_quote:firmtape:NQ"
     }
   ]
 }

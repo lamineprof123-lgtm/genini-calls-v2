@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-13T10:15:12.499644+00:00",
+  "updated_at": "2026-11-13T10:17:31.344923+00:00",
   "venue": "OTHER-VENUE",
   "version": "other-venue-v1",
   "banner": "All books: 1 ATR / 1 ATR bracket, no model exits",
@@ -189,10 +189,10 @@
       "venue": "OTHER-VENUE",
       "label": "C-OPUS-B \u00b7 Other venue",
       "account": {
-        "balance": 100000.0,
-        "equity": 100000.0,
+        "balance": 99905.0006,
+        "equity": 99950.26,
         "start_balance": 100000.0,
-        "open_pnl": 0.0,
+        "open_pnl": 45.26,
         "net_pnl": 0.0,
         "realized_pnl": 0.0,
         "wins": 0,
@@ -200,7 +200,33 @@
         "trades": 0,
         "stopped": 0
       },
-      "open_positions": [],
+      "open_positions": [
+        {
+          "id": 1,
+          "venue": "OTHER-VENUE",
+          "book": "C-OPUS-B",
+          "symbol": "BTCUSD",
+          "side": -1,
+          "qty": 2.743,
+          "entry": 69266.8,
+          "raw_quote": 69271.8,
+          "atr": 328.089,
+          "entry_time": "2026-11-13T10:15:20.002320+00:00",
+          "entry_fee": 94.9994,
+          "confidence": 0.52,
+          "model": "claude-opus-5-5",
+          "thinking_level": null,
+          "exit_mode": "uniform-1atr-v1",
+          "prompt_version": "bracket-v1",
+          "stop": 69595.0,
+          "target": 68935.0,
+          "stop_note": "uniform_1atr",
+          "mech_target_atr": 1.0,
+          "uniform_exit": "uniform-1atr-v1",
+          "deadline": "2026-11-13T11:45:20.002320+00:00",
+          "mark": 69250.3
+        }
+      ],
       "pending": [],
       "symbols": [
         "BTCUSD"
@@ -233,10 +259,10 @@
       "venue": "OTHER-VENUE",
       "label": "G-LOW-80 \u00b7 Other venue",
       "account": {
-        "balance": 100000.0,
-        "equity": 100000.0,
+        "balance": 99905.0041,
+        "equity": 99943.13,
         "start_balance": 100000.0,
-        "open_pnl": 0.0,
+        "open_pnl": 38.13,
         "net_pnl": 0.0,
         "realized_pnl": 0.0,
         "wins": 0,
@@ -244,7 +270,33 @@
         "trades": 0,
         "stopped": 0
       },
-      "open_positions": [],
+      "open_positions": [
+        {
+          "id": 1,
+          "venue": "OTHER-VENUE",
+          "book": "G-LOW-80",
+          "symbol": "BTCUSD",
+          "side": -1,
+          "qty": 2.743,
+          "entry": 69264.2,
+          "raw_quote": 69269.2,
+          "atr": 328.089,
+          "entry_time": "2026-11-13T10:15:20.002320+00:00",
+          "entry_fee": 94.9959,
+          "confidence": 0.72,
+          "model": "gemini-3.8-flash",
+          "thinking_level": "low",
+          "exit_mode": "uniform-1atr-v1",
+          "prompt_version": null,
+          "stop": 69595.0,
+          "target": 68935.0,
+          "stop_note": "uniform_1atr",
+          "mech_target_atr": 1.0,
+          "uniform_exit": "uniform-1atr-v1",
+          "deadline": "2026-11-13T11:45:20.002320+00:00",
+          "mark": 69250.3
+        }
+      ],
       "pending": [],
       "symbols": [
         "BTCUSD"

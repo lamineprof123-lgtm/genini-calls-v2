@@ -1,11 +1,11 @@
 {
-  "snapshot_id": "m15-20261113101500-c4b65ecf254b",
-  "snapshot_hash": "c4b65ecf254bde22f2757895bb704867027f584c823a7ea000a28db1161a5d34",
-  "package_id": "m15-20261113T103000-d0ae5e5f0292",
-  "bar_close_ts": "2026-11-13T10:30:00+00:00",
-  "snapshot_ts": "2026-11-13T10:30:22.349877+00:00",
-  "start_lag_s": 22.35,
-  "render_ms": 2634,
+  "snapshot_id": "m15-20261113103000-f7f8f1c43d44",
+  "snapshot_hash": "f7f8f1c43d4444e91f39ccff918768f25de7ef1b08f60b281557d57303ee552c",
+  "package_id": "m15-20261113T104500-894fa341c953",
+  "bar_close_ts": "2026-11-13T10:45:00+00:00",
+  "snapshot_ts": "2026-11-13T10:45:22.814679+00:00",
+  "start_lag_s": 22.815,
+  "render_ms": 3167,
   "symbols": [
     "XAUUSD",
     "EURUSD",
@@ -15,39 +15,39 @@
     "BTCUSD"
   ],
   "chart_sha256": {
-    "XAUUSD": "45eaa0b18cf2b89da2d884e5fff1beba49c68b0d76d76d75e46e329059abafdc",
-    "EURUSD": "6beb4c19539f0e0a9c48af8c2025201ea6bd7d15e579b4437981ddc93a3ceb24",
-    "GBPUSD": "24e42690059075d7dabad871e06bc33585e54f2fe9e55d0e025302926b79c9bf",
-    "US100": "6160772b65b1ffd7badc85e54ab21bc7d27931872ff8006d3ed8a751a8f7a79b",
-    "XAGUSD": "8cd036ce376e76d08a2397b2bf5a0c67b3cb858d2c370f7f23d7e189a1b536c7",
-    "BTCUSD": "06780b62a3ba91a442901234961b1dad94e1849d1a8c58b615f0924d0caf09dc"
+    "XAUUSD": "2957d8674e54baafc5194bca940ba9d78dc850de3e831d2a5e27c81fe1b39d85",
+    "EURUSD": "52492b961edcd8d3d5e63de2ef6c9ebdf5416c566297d015a39c0da4e35b7fb8",
+    "GBPUSD": "189ead67fef7ad71d29522d593b14a6b5fe593a257102efd436822209012cad5",
+    "US100": "b57aa5db59d0ac32259da9f873af51a0d9489f13208149e5d0dbbf2e48539732",
+    "XAGUSD": "58bf29b295e497168041047f5ca8347f615023e7a084cc7fe25fb98b5c4b89f6",
+    "BTCUSD": "7e56bca1bfff7ea35a98b36b41d22485f418a350668694b5264c3570885d234c"
   },
   "dispatched": {
     "claude": {},
     "carbon": {
-      "ok": true,
-      "latency_s": 177.068,
-      "cost_usd": 0.219242,
-      "error": null,
+      "ok": false,
+      "latency_s": 0.384,
+      "cost_usd": 0.0,
+      "error": "ClientError: 402 RESOURCE_EXHAUSTED. {'error': {'code': 402, 'message': 'Your prepayment credits are depleted. Please go to AI Studio at https://ai.studio/projects to manage your project and billing. Learn more at https://ai.google.dev/gemini-api/docs/billing#prepay. ', 'status': 'RESOURCE_EXHAUSTED'}}",
       "thinking_level": "high"
     },
     "bracket": {},
     "glow80": {
       "thinking_level": "low",
-      "ok": true,
-      "latency_s": 15.736,
+      "ok": false,
+      "latency_s": 0.444,
       "thinking_tokens": null,
-      "error": null,
+      "error": "GeminiFailed: all models failed (1 attempts); last: ClientError: 402 RESOURCE_EXHAUSTED. {'error': {'code': 402, 'message': 'Your prepayment credits are depleted. Please go to AI Studio at https://ai.studio/projects to manage your project and billing. Learn more at https://ai.google.dev/gemini-api/docs/billing#pr",
       "eval80": {
-        "ok": true,
-        "skipped": null,
+        "ok": false,
+        "skipped": "G-LOW-80 call not ok: GeminiFailed: all models failed (1 attempts); last: ClientError: 402 RESOURCE_EXHAUSTED. {'error': {'code': 402, 'message': 'Your prepayment credits are depleted. Please go to AI Studio at https://ai.studio/projects to manage your project and billing. Learn more at https://ai.google.dev/gemini-api/docs/billing#pr",
         "error": null,
         "queued": [],
         "eval_status": "ACTIVE"
       },
       "evalr4": {
-        "ok": true,
-        "skipped": null,
+        "ok": false,
+        "skipped": "G-LOW-80 call not ok: GeminiFailed: all models failed (1 attempts); last: ClientError: 402 RESOURCE_EXHAUSTED. {'error': {'code': 402, 'message': 'Your prepayment credits are depleted. Please go to AI Studio at https://ai.studio/projects to manage your project and billing. Learn more at https://ai.google.dev/gemini-api/docs/billing#pr",
         "error": null,
         "queued": [],
         "eval_status": "ACTIVE",
@@ -55,5 +55,5 @@
       }
     }
   },
-  "updated_at": "2026-11-13T10:33:19.722809+00:00"
+  "updated_at": "2026-11-13T10:45:42.739009+00:00"
 }

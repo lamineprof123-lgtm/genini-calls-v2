@@ -1,13 +1,13 @@
 {
   "version": 1,
   "created_at": "2026-11-12T18:11:32.231856+00:00",
-  "last_processed": "2026-11-13T08:17:00+00:00",
+  "last_processed": "2026-11-13T08:19:00+00:00",
   "account": {
     "no": 1,
     "phase": "eval",
     "started_at": "2026-11-12T18:11:32.231856+00:00",
     "start_balance": 100000.0,
-    "balance": 98096.5,
+    "balance": 98082.1,
     "highest_close": 100000.0,
     "mll_floor": 97000.0,
     "mll_locked": false,
@@ -21,38 +21,75 @@
     "realized_pnl": -1903.5,
     "trades": 1
   },
-  "positions": [],
-  "pending": [
+  "positions": [
     {
+      "id": 2,
       "symbol": "EURUSD",
+      "contract": "6E",
+      "qty": 6,
       "side": 1,
-      "created": "2026-11-13T08:17:32.324880+00:00",
-      "fill_after": "2026-11-13T08:18:00+00:00",
-      "reserved_risk": 0.0,
-      "planned": {
-        "contract": "6E",
-        "qty": 6,
-        "risk_usd": null,
-        "tdist": null,
-        "target_source": "none (gemini_only)"
+      "entry": 1.10655,
+      "stop": 1.10605,
+      "notional_risk_usd": 300.0,
+      "target": 1.10705,
+      "entry_time": "2026-11-13T08:18:13.834423+00:00",
+      "exit_mode": "gemini_only",
+      "fill_source": "live_quote:dukascopy:tick",
+      "fill_check": {
+        "fill_minute": "2026-11-13T08:18:00+00:00",
+        "fill_t": "2026-11-13T08:18:13.834423+00:00",
+        "ref_price": 1.10649,
+        "booked": 1.10655,
+        "slippage_ticks": 1,
+        "tick": 5e-05,
+        "signal_entry": 1.1065,
+        "adverse_ticks_vs_quote": 1.2,
+        "m1_bar_open": 1.10649,
+        "quote_price": 1.10649,
+        "quote_ts": "2026-11-13T08:18:11.862000+00:00",
+        "quote_source": "dukascopy:tick",
+        "quote_age_s": 1.97,
+        "quote_fetched_at": "2026-11-13T08:18:13.834423+00:00",
+        "bar_open_minus_quote": 0.0,
+        "tolerance_ticks": 1.5,
+        "within_slippage": true
       },
-      "expires": "2026-11-13T08:28:00+00:00",
+      "risk_usd": null,
+      "target_usd": null,
+      "target_source": "none (gemini_only)",
+      "sizing": "gemini_only: notional 0.8 ATR = 0.0004 x 125000/pt = $50 per 6E; 6 6E ~ $300 notional <= $1500 (reference only; NO stop, NO target, exit = Gemini CLOSE)",
+      "target_usd_gross": null,
+      "commission_rt": 28.8,
       "atr": 0.00048,
-      "scalp": {
+      "gemini": {
         "action": "BUY",
-        "side": 1,
         "entry": 1.1065,
         "stop_loss": 1.10566,
         "take_profit": 1.10659,
-        "sdist": 0.0008440000000000669,
-        "tdist": 9.499999999995623e-05,
+        "confidence": 0.72,
+        "rr": 0.107,
+        "shown_on_site": true,
+        "basis": "site signal",
+        "run_at_utc": "2026-11-13T08:16:20.016692+00:00",
+        "session": "LONDON_SESSION",
+        "rationale": "Price at 1.10650 is breaking above VAH (1.10636) and holds above POC (1.10598) following a solid reclaim candle. CVD is BULLISH (+5,136) with an accelerating positive slope (+1,108.21), strongly confirming upside momentum. In LONDON_SESSION, price has cleanly reclaimed upward-curling VWAP (1.10591) and EMA50 (1.10606). Volatility is expanding with ATR at 0.00048 pushing toward upper band 1.10701. RVOL is solid at 1.781 following an earlier yellow spike, validating demand off support at 1.10574 toward S/R 1.10662 and Session High 1.10726.",
+        "model": "gemini-3.8-flash"
+      },
+      "scalp": {
+        "action": "BUY",
+        "side": 1,
+        "entry": 1.10649,
+        "stop_loss": 1.10566,
+        "take_profit": 1.10657,
+        "sdist": 0.0008340000000000014,
+        "tdist": 7.999999999985796e-05,
         "stop_source": "structure",
         "target_source": "structure:S/R",
-        "rr": 0.113,
+        "rr": 0.096,
         "structure_stop": 1.105656,
-        "atr_stop": 1.106116,
-        "fixed_tp": 1.10775,
-        "structure_tp": 1.106595,
+        "atr_stop": 1.106106,
+        "fixed_tp": 1.10774,
+        "structure_tp": 1.1065699999999998,
         "structure_label": "S/R",
         "candle": {
           "high": 1.10636,
@@ -90,7 +127,6 @@
           "val": 1.10565
         }
       },
-      "session": "LONDON_SESSION",
       "telemetry": {
         "symbol": "EURUSD",
         "session": "LONDON_SESSION",
@@ -147,48 +183,49 @@
         "scalp": {
           "stop_basis": "structure",
           "target_basis": "structure:S/R",
-          "tdist": 9.499999999995623e-05,
-          "sdist": 0.0008440000000000669,
-          "structure_label": "S/R"
+          "tdist": null,
+          "sdist": null,
+          "structure_label": "S/R",
+          "target_source": "none (gemini_only)"
         },
         "planned": {
-          "tdist": 9.499999999995623e-05,
-          "sdist": 0.0008440000000000669,
-          "qty": null,
-          "contract": null,
+          "tdist": null,
+          "sdist": null,
+          "qty": 6,
+          "contract": "6E",
           "target_usd_net": null,
-          "risk_usd": null
+          "risk_usd": null,
+          "target_source": "none (gemini_only)",
+          "sizing": "gemini_only: notional 0.8 ATR = 0.0004 x 125000/pt = $50 per 6E; 6 6E ~ $300 notional <= $1500 (reference only; NO stop, NO target, exit = Gemini CLOSE)"
         },
         "run_at_utc": "2026-11-13T08:16:20.016692+00:00",
         "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-13/cycles/121620.json/EURUSD.png"
       },
-      "gemini": {
-        "action": "BUY",
-        "entry": 1.1065,
-        "stop_loss": 1.10566,
-        "take_profit": 1.10659,
-        "confidence": 0.72,
-        "rr": 0.107,
-        "shown_on_site": true,
-        "basis": "site signal",
-        "run_at_utc": "2026-11-13T08:16:20.016692+00:00",
-        "session": "LONDON_SESSION",
-        "rationale": "Price at 1.10650 is breaking above VAH (1.10636) and holds above POC (1.10598) following a solid reclaim candle. CVD is BULLISH (+5,136) with an accelerating positive slope (+1,108.21), strongly confirming upside momentum. In LONDON_SESSION, price has cleanly reclaimed upward-curling VWAP (1.10591) and EMA50 (1.10606). Volatility is expanding with ATR at 0.00048 pushing toward upper band 1.10701. RVOL is solid at 1.781 following an earlier yellow spike, validating demand off support at 1.10574 toward S/R 1.10662 and Session High 1.10726.",
-        "model": "gemini-3.8-flash"
-      }
+      "mfe": 0.0,
+      "mae": 0.0,
+      "mfe_min": 0.0,
+      "time_cut_deadline": null,
+      "time_cut_candles": 0,
+      "time_cut_rule": "none: exit = Gemini CLOSE (1-strike) or hard stop -$500 NET; no target, no max hold, no 16:45 flat; DLL/MLL/breaker log-only",
+      "stop_note": "uniform_1atr",
+      "mech_target_atr": 1.0,
+      "uniform_exit": "uniform-1atr-v1",
+      "deadline": "2026-11-13T09:48:13.834423+00:00"
     }
   ],
-  "next_pos_id": 2,
+  "pending": [],
+  "next_pos_id": 3,
   "day": {
     "id": "2026-11-13",
     "start_balance": 98096.5,
     "realized": 0.0,
     "locked": null,
     "eod_done": null,
-    "traded": false
+    "traded": true
   },
   "last_price": {
-    "US100": 28342.99
+    "US100": 28342.99,
+    "EURUSD": 1.10649
   },
   "history": [],
   "ledger": {
@@ -215,7 +252,7 @@
     "losses": 1,
     "gross_win": 0.0,
     "gross_loss": -1903.5,
-    "commissions": 3.5,
+    "commissions": 17.9,
     "net_trade_pnl": -1903.5,
     "skipped_signals": 2,
     "accepted_signals": 4
@@ -245,6 +282,28 @@
       "hard_stop_px": null,
       "hard_stop_armed_at": null,
       "fill_source": "live_quote:firmtape:NQ"
+    },
+    {
+      "id": 2,
+      "symbol": "EURUSD",
+      "contract": "6E",
+      "qty": 6,
+      "side": 1,
+      "entry": 1.10655,
+      "stop": 1.10605,
+      "target": 1.10705,
+      "entry_time": "2026-11-13T08:18:13.834423+00:00",
+      "risk_usd": null,
+      "atr": 0.00048,
+      "candle": {
+        "high": 1.10636,
+        "low": 1.10568
+      },
+      "gemini_run_at_utc": "2026-11-13T08:16:20.016692+00:00",
+      "gemini_confidence": 0.72,
+      "hard_stop_px": null,
+      "hard_stop_armed_at": null,
+      "fill_source": "live_quote:dukascopy:tick"
     }
   ],
   "close_done": [

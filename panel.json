@@ -1,11 +1,11 @@
 {
-  "updated_at": "2026-11-13T06:54:23.013301+00:00",
+  "updated_at": "2026-11-13T06:56:17.460132+00:00",
   "paper_only": true,
   "reset": {
     "token": "2026-11-12-uniform-reset",
     "at": "2026-11-12T18:11:32.195858+00:00"
   },
-  "exit_rule": "uniform-1atr-v1: 1 ATR stop \u00b7 1 ATR target \u00b7 90-min cap (all books, no model exits; EVAL-80: 0.8 ATR stop \u00b7 1 ATR target \u00b7 90-min cap)",
+  "exit_rule": "uniform-1atr-v1: 1 ATR stop \u00b7 1 ATR target \u00b7 90-min cap (all books, no model exits; EVAL-80 / EVAL-R4: 0.8 ATR stop \u00b7 1 ATR target \u00b7 90-min cap)",
   "pnl_note": "Max / lowest $ P&L: gross mark-to-market reached while open (live quote every 15 s, plus the book's own recorded excursion and the exit price). P&L at close is net of commissions/fees. Went positive first: net unrealized P&L (gross minus round-trip fees) rose above $0 before gross fell below $0. The fee cushion (gross between $0 and fees) is neither side; the entry fill is not a crossing. Open positions that have not yet done either show \u2014. If both sides occur in the same M1 bar and tick order is unavailable, the cell is ?. Going forward this uses the 15s live-quote poll (same path as the exit checks). Already-open / already-closed positions are backfilled from the same 15s last-print path reconstructed from Dukascopy or Binance ticks when available, otherwise from M1 bars; a bar that hits both sides with no 15s path is ?.",
   "wpf_basis": "net_usd = gross - round-trip fees; live_net_tick / tick_15s = 15s last-print path; m1_ohlc = M1 fallback",
   "performance": [
@@ -233,6 +233,54 @@
         "highest_eod": 100000.0,
         "missed_scans": {},
         "missed_total": 0
+      }
+    },
+    {
+      "book": "EVAL-R4",
+      "venue": "LUCID",
+      "model": "gemini-3.8-flash",
+      "label": "Gemini flash \u00b7 EVAL-R4 (EVAL-80 + R4 trend filter: H1 trend \u22652.7 ATR, <3 ATR from EMA20, no chase, <3.5 ATR from VWAP)",
+      "balance": 100000.0,
+      "start_balance": 100000.0,
+      "net_pnl_usd": 0,
+      "open_pnl_usd": 0,
+      "trades": 0,
+      "wins": 0,
+      "losses": 0,
+      "win_rate": null,
+      "open_positions": 0,
+      "went_positive_first": null,
+      "went_positive_first_yes": 0,
+      "went_positive_first_n": 0,
+      "went_positive_first_pct": null,
+      "eval": {
+        "status": "ACTIVE",
+        "reason": null,
+        "at": null,
+        "profit": 0.0,
+        "profit_target": 6000.0,
+        "progress_pct": 0.0,
+        "mll_floor": 97000.0,
+        "mll_locked": false,
+        "mll_room": 3000.0,
+        "dll_used": 0.0,
+        "dll_limit": 1800.0,
+        "dll_paused": false,
+        "highest_eod": 100000.0,
+        "missed_scans": {},
+        "missed_total": 0,
+        "filter": {
+          "seen": 0,
+          "passed": 0,
+          "filtered_out": 0,
+          "no_data": 0,
+          "fail_by": {
+            "h1_trend": 0,
+            "m15_ema20": 0,
+            "chase": 0,
+            "vwap": 0
+          }
+        }
       }
     },
     {

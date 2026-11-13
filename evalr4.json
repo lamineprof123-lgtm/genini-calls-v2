@@ -1,0 +1,106 @@
+{
+  "updated_at": "2026-11-13T06:54:32.228758+00:00",
+  "paper_only": true,
+  "book": "EVAL-R4",
+  "label": "Gemini flash \u00b7 EVAL-R4 (G-LOW-80's call, min 0.80, R4 trend filter, 0.8/1.0 ATR, Lucid eval rules)",
+  "account": {
+    "start_balance": 100000.0,
+    "balance": 100000.0,
+    "equity": 100000.0,
+    "net_pnl": 0.0,
+    "open_pnl": 0.0,
+    "trades": 0,
+    "wins": 0,
+    "losses": 0,
+    "win_rate": null,
+    "avg_win": null,
+    "avg_loss": null,
+    "max_drawdown": 0.0,
+    "peak_balance": 100000.0,
+    "commissions": 0.0,
+    "exit_reasons": {},
+    "stopped": 0,
+    "open_positions": 0,
+    "pending": 0,
+    "signals_seen": 0,
+    "signals_taken": 0,
+    "skips": {},
+    "missed_scans_glow80_held": {}
+  },
+  "open_positions": [],
+  "recent_trades": [],
+  "since": "2026-11-13T06:54:31.184443+00:00",
+  "rules": "No own model call: G-LOW-80's low-thinking gemini-3.8-flash response on the shared M15 snapshot. BUY/SELL with confidence >= 0.8 on XAUUSD, EURUSD, GBPUSD, US100, XAGUSD (no BTC), entered ONLY when: H1 EMA20-EMA50 >= 2.7 ATR in the trade direction, price < 3 ATR past the M15 EMA20, last 3 M15 bars moved < 2.2 ATR with the trade, price < 3.5 ATR past the UTC-day VWAP (closed bars only). Stop 0.8 ATR, target 1 ATR, 90 min cap, 0.3 ATR fill check, ~$450 risk (minis if one fits, else micros; 2 minis per position, 6 minis / 60 micros total). LucidPro 100K eval: DLL $1,800, $3,000 EOD trailing MLL (locks at $100,100), pass at +$6,000, no auto-reset. Flat 21:45 UTC.",
+  "limitation": "G-LOW-80 does not re-send a symbol it already holds, so EVAL-R4 gets no signal for that symbol that close (counted per symbol as missed scans).",
+  "model": "gemini-3.8-flash",
+  "thinking_level": "low",
+  "source_book": "G-LOW-80",
+  "eval": {
+    "status": "ACTIVE",
+    "reason": null,
+    "at": null,
+    "profit": 0.0,
+    "profit_target": 6000.0,
+    "progress_pct": 0.0,
+    "equity": 100000.0,
+    "mll_floor": 97000.0,
+    "mll_locked": false,
+    "mll_room": 3000.0,
+    "highest_eod": 100000.0,
+    "dll_limit": 1800.0,
+    "dll_used": 0.0,
+    "dll_paused": false,
+    "lucid_day": "2026-11-13",
+    "missed_scans": {},
+    "missed_total": 0,
+    "eod_closes": [],
+    "filter": {
+      "seen": 0,
+      "passed": 0,
+      "filtered_out": 0,
+      "no_data": 0,
+      "fail_by": {
+        "h1_trend": 0,
+        "m15_ema20": 0,
+        "chase": 0,
+        "vwap": 0
+      },
+      "last": {},
+      "rules": {
+        "h1_trend_min_atr": 2.7,
+        "max_px_vs_ema20_atr": 3.0,
+        "max_last3_atr": 2.2,
+        "max_vwap_dist_atr": 3.5
+      }
+    }
+  },
+  "day": {
+    "day": null,
+    "net": 0.0
+  },
+  "cycles": {
+    "seen": 0,
+    "with_signals": 0,
+    "skipped": 0,
+    "last": null
+  },
+  "r4": {
+    "seen": 0,
+    "passed": 0,
+    "filtered_out": 0,
+    "no_data": 0,
+    "fail_by": {
+      "h1_trend": 0,
+      "m15_ema20": 0,
+      "chase": 0,
+      "vwap": 0
+    },
+    "last": {},
+    "rules": {
+      "h1_trend_min_atr": 2.7,
+      "max_px_vs_ema20_atr": 3.0,
+      "max_last3_atr": 2.2,
+      "max_vwap_dist_atr": 3.5
+    }
+  }
+}

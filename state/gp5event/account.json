@@ -36,20 +36,21 @@
       "target_usd": 571.2,
       "mfe": 0.00017000000000000348,
       "mae": 0.00031000000000003247,
-      "scan_from": "2026-11-13T16:27:00+00:00",
-      "checks": 43,
-      "last_check_at": "2026-11-13T16:29:57.307304+00:00"
+      "scan_from": "2026-11-13T16:29:00+00:00",
+      "checks": 49,
+      "last_check_at": "2026-11-13T16:31:45.306444+00:00"
     }
   ],
   "pending": [],
   "last_price": {
-    "EURUSD": 1.10357
+    "EURUSD": 1.10351
   },
   "seen_cycles": [
     "2026-11-13T15:31:12.114923+00:00",
     "2026-11-13T15:45:49.160826+00:00",
     "2026-11-13T16:00:59.127751+00:00",
-    "2026-11-13T16:15:46.708271+00:00"
+    "2026-11-13T16:15:46.708271+00:00",
+    "2026-11-13T16:30:55.373866+00:00"
   ],
   "stats": {
     "trades": 0,
@@ -61,9 +62,12 @@
     "commissions": 14.4,
     "hold_seconds": 0,
     "exit_reasons": {},
-    "signals_seen": 1,
+    "signals_seen": 3,
     "signals_taken": 1,
-    "skips": {},
+    "skips": {
+      "held_in_bracket": 1,
+      "P5 gate: stretched_vs_vwap (3.68 ATR >= ": 1
+    },
     "missed_scans": {}
   },
   "day": {
@@ -71,31 +75,31 @@
     "net": 0.0
   },
   "calls": {
-    "ok": 4,
+    "ok": 5,
     "failed": 0,
     "skipped": 0,
     "tokens": {
-      "prompt_token_count": 47467,
-      "candidates_token_count": 6136,
-      "total_token_count": 53603
+      "prompt_token_count": 59376,
+      "candidates_token_count": 7721,
+      "total_token_count": 67097
     }
   },
   "triggers": {
-    "closes": 4,
-    "evaluated": 16,
-    "fired": 16,
+    "closes": 5,
+    "evaluated": 20,
+    "fired": 20,
     "by": {
-      "level": 14,
+      "level": 17,
       "rvol": 0,
-      "atr_ratio": 12
+      "atr_ratio": 15
     },
-    "calls": 4,
-    "shared_calls": 4,
+    "calls": 5,
+    "shared_calls": 5,
     "own_calls": 0,
-    "symbols_sent": 16,
+    "symbols_sent": 20,
     "no_call_closes": 0,
     "last": {
-      "t": "2026-11-13T16:15:20.001258+00:00",
+      "t": "2026-11-13T16:30:20.002780+00:00",
       "fired": [
         "XAUUSD",
         "EURUSD",

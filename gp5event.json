@@ -1,14 +1,14 @@
 {
-  "updated_at": "2026-11-13T16:29:57.831830+00:00",
+  "updated_at": "2026-11-13T16:31:55.926938+00:00",
   "paper_only": true,
   "book": "G-P5-EVENT",
   "label": "Gemini flash \u00b7 G-P5-EVENT (G-P5, Gemini called only when something happened: level touch \u22640.25 ATR, RVOL \u22652, ATR ratio \u22651.3)",
   "account": {
     "start_balance": 100000.0,
     "balance": 99985.6,
-    "equity": 99783.1,
+    "equity": 99828.1,
     "net_pnl": 0.0,
-    "open_pnl": -202.5,
+    "open_pnl": -157.5,
     "trades": 0,
     "wins": 0,
     "losses": 0,
@@ -22,9 +22,12 @@
     "stopped": 0,
     "open_positions": 1,
     "pending": 0,
-    "signals_seen": 1,
+    "signals_seen": 3,
     "signals_taken": 1,
-    "skips": {},
+    "skips": {
+      "held_in_bracket": 1,
+      "P5 gate: stretched_vs_vwap (3.68 ATR >= ": 1
+    },
     "missed_scans_main_held": {}
   },
   "open_positions": [
@@ -42,8 +45,8 @@
       "risk_usd": 516.3,
       "target_usd": 571.2,
       "side": "SHORT",
-      "last_price": 1.10357,
-      "unrealized": -202.5
+      "last_price": 1.10351,
+      "unrealized": -157.5
     }
   ],
   "recent_trades": [],
@@ -53,13 +56,13 @@
   "model": "gemini-3.8-flash",
   "thinking_level": "low",
   "calls": {
-    "ok": 4,
+    "ok": 5,
     "failed": 0,
     "skipped": 0,
     "tokens": {
-      "prompt_token_count": 47467,
-      "candidates_token_count": 6136,
-      "total_token_count": 53603
+      "prompt_token_count": 59376,
+      "candidates_token_count": 7721,
+      "total_token_count": 67097
     }
   },
   "day": {
@@ -68,21 +71,21 @@
   },
   "prompt_version": "p5",
   "trigger": {
-    "closes": 4,
-    "evaluated": 16,
-    "fired": 16,
+    "closes": 5,
+    "evaluated": 20,
+    "fired": 20,
     "by": {
-      "level": 14,
+      "level": 17,
       "rvol": 0,
-      "atr_ratio": 12
+      "atr_ratio": 15
     },
-    "calls": 4,
-    "shared_calls": 4,
+    "calls": 5,
+    "shared_calls": 5,
     "own_calls": 0,
-    "symbols_sent": 16,
+    "symbols_sent": 20,
     "no_call_closes": 0,
     "last": {
-      "t": "2026-11-13T16:15:20.001258+00:00",
+      "t": "2026-11-13T16:30:20.002780+00:00",
       "fired": [
         "XAUUSD",
         "EURUSD",

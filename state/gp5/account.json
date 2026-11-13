@@ -35,21 +35,22 @@
       "risk_usd": 516.3,
       "target_usd": 571.2,
       "mfe": 0.00017000000000000348,
-      "mae": 0.00031000000000003247,
-      "scan_from": "2026-11-13T16:27:00+00:00",
-      "checks": 40,
-      "last_check_at": "2026-11-13T16:29:39.306126+00:00"
+      "mae": 0.0003300000000001635,
+      "scan_from": "2026-11-13T16:30:00+00:00",
+      "checks": 47,
+      "last_check_at": "2026-11-13T16:32:03.306917+00:00"
     }
   ],
   "pending": [],
   "last_price": {
-    "EURUSD": 1.10353
+    "EURUSD": 1.1035
   },
   "seen_cycles": [
     "2026-11-13T15:30:58.139692+00:00",
     "2026-11-13T15:45:34.423648+00:00",
     "2026-11-13T16:00:47.148656+00:00",
-    "2026-11-13T16:15:32.717078+00:00"
+    "2026-11-13T16:15:32.717078+00:00",
+    "2026-11-13T16:30:38.892604+00:00"
   ],
   "stats": {
     "trades": 0,
@@ -61,9 +62,12 @@
     "commissions": 14.4,
     "hold_seconds": 0,
     "exit_reasons": {},
-    "signals_seen": 1,
+    "signals_seen": 3,
     "signals_taken": 1,
-    "skips": {},
+    "skips": {
+      "held_in_bracket": 1,
+      "P5 gate: stretched_vs_vwap (3.68 ATR >= ": 1
+    },
     "missed_scans": {}
   },
   "day": {
@@ -71,13 +75,13 @@
     "net": 0.0
   },
   "calls": {
-    "ok": 4,
+    "ok": 5,
     "failed": 0,
     "skipped": 0,
     "tokens": {
-      "prompt_token_count": 47467,
-      "candidates_token_count": 6136,
-      "total_token_count": 53603
+      "prompt_token_count": 59376,
+      "candidates_token_count": 7721,
+      "total_token_count": 67097
     }
   }
 }

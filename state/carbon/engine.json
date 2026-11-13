@@ -46,12 +46,12 @@
   "last_scan_bar": "2026-11-13T09:15:00+00:00",
   "triggers": {
     "day": "2026-11-13",
-    "n": 17,
+    "n": 18,
     "per_bar": {
       "US100": "2026-11-12T20:00:00+00:00",
       "XAUUSD": "2026-11-13T09:30:00+00:00",
       "BTCUSD": "2026-11-13T09:00:00+00:00",
-      "EURUSD": "2026-11-13T09:30:00+00:00",
+      "EURUSD": "2026-11-13T09:45:00+00:00",
       "XAGUSD": "2026-11-13T09:30:00+00:00"
     }
   },
@@ -97,9 +97,9 @@
       "session": "LONDON_SESSION"
     },
     "EURUSD": {
-      "bar": "2026-11-13T09:15:00+00:00",
-      "atr": 0.000524,
-      "price": 1.10568,
+      "bar": "2026-11-13T09:30:00+00:00",
+      "atr": 0.000531,
+      "price": 1.1055,
       "levels": [
         [
           "Session High",
@@ -124,10 +124,10 @@
         [
           "VAL",
           1.1056,
-          1
+          -1
         ]
       ],
-      "vol_avg": 2578.3900000000003,
+      "vol_avg": 2627.264,
       "blocked": false,
       "session": "LONDON_SESSION"
     },
@@ -332,38 +332,38 @@
   "calls_total": 39,
   "last_scan": {
     "kind": "trigger",
-    "t": "2026-11-13T09:35:45.010679+00:00",
+    "t": "2026-11-13T09:37:09.106963+00:00",
     "trigger": {
       "trigger": "level_cross",
       "level": "POC",
-      "level_price": 50.024,
-      "price": 50.058,
+      "level_price": 3896.98,
+      "price": 3900.28,
       "direction": "up",
-      "symbol": "XAGUSD",
+      "symbol": "XAUUSD",
       "bar": "2026-11-13T09:30:00+00:00",
-      "n_today": 16
+      "n_today": 17
     },
     "sent": [
-      "XAGUSD"
+      "XAUUSD"
     ],
     "blocked_session": [],
     "ok": true,
-    "latency_s": 52.645,
-    "cost_usd": 0.048754,
+    "latency_s": 63.74,
+    "cost_usd": 0.061592,
     "tokens": {
-      "input": 5752,
-      "output": 699,
-      "thoughts": 3026,
-      "total": 9477
+      "input": 5776,
+      "output": 686,
+      "thoughts": 4318,
+      "total": 10780
     },
     "error": null,
     "finish_reason": "FinishReason.STOP",
-    "answer_ts": "2026-11-13T09:36:37.791679+00:00",
+    "answer_ts": "2026-11-13T09:38:12.954963+00:00",
     "signals": [
       {
-        "symbol": "XAGUSD",
+        "symbol": "XAUUSD",
         "action": "HOLD",
-        "confidence": 0.78,
+        "confidence": 0.3,
         "thinking_level": "high"
       }
     ],

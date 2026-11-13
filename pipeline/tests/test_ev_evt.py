@@ -85,6 +85,9 @@ def test_vol_burst_rvol_spike_not_us100(cfg):
 def test_vwap_stretch_fires_once_and_rearms(cfg):
     d = det(cfg)
     p = pay(vwap=97.0)
+    assert d.detect("EURUSD", p, m5([(99.4, 99.6, 99.4, 99.6)])) is None           # already stretched at start
+    d = det(cfg)
+    assert d.detect("EURUSD", p, m5([(98.0, 98.1, 97.9, 98.0)])) is None           # first bar: inside -> armed
     assert types(d.detect("EURUSD", p, m5([(99.4, 99.6, 99.4, 99.6)]))) == ["VWAP-STRETCH"]
     assert d.detect("EURUSD", p, m5([(99.6, 99.8, 99.6, 99.7)])) is None           # still stretched -> no refire
     assert d.detect("EURUSD", p, m5([(98.5, 98.5, 98.4, 98.4)])) is None           # back within 1.5 ATR -> re-arm

@@ -200,9 +200,12 @@ class EvTriggerDetector:
         if sym != "US100" and avg > 0 and v >= cc["rvol_mult"] * avg and rng >= cc["rvol_range_atr"] * atr and bdir:
             trig.append({"type": "RVOL-SPIKE", "dir": bdir, "detail": f"volume {v / avg:.1f}x the 20-bar average"})
         vwap = _f(ctx.get("vwap"))
-        s = self.st.setdefault(sym, {"stretch_armed": True})
+        s = self.st.setdefault(sym, {})
         if vwap is not None:
             dist = (c - vwap) / atr
+            if "stretch_armed" not in s:
+                # first bar seen (start / restart): a stretch already in progress is not a new one
+                s["stretch_armed"] = abs(dist) < cc["stretch_atr"]
             if abs(dist) <= cc["rearm_atr"]:
                 s["stretch_armed"] = True
             elif abs(dist) >= cc["stretch_atr"] and s.get("stretch_armed", True):

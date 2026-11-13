@@ -15,33 +15,33 @@
       }
     },
     "2026-11-13": {
-      "usd": 0.099774,
-      "calls": 34,
+      "usd": 0.102215,
+      "calls": 35,
       "failed": 0,
       "tokens": {
-        "prompt": 383684,
-        "cache_hit": 62208,
-        "cache_miss": 321476,
-        "completion": 42051,
-        "reasoning": 8233
+        "prompt": 395019,
+        "cache_hit": 64000,
+        "cache_miss": 331019,
+        "completion": 43724,
+        "reasoning": 8635
       }
     }
   },
   "last_call": {
-    "t": "2026-11-13T04:15:20.003532+00:00",
+    "t": "2026-11-13T04:30:20.110183+00:00",
     "ok": true,
-    "cost_usd": 0.00235963,
-    "spend_today_usd": 0.0998,
+    "cost_usd": 0.00244063,
+    "spend_today_usd": 0.1022,
     "band": "off_peak",
     "tokens": {
-      "prompt": 11351,
+      "prompt": 11335,
       "cache_hit": 1792,
-      "cache_miss": 9559,
-      "completion": 1534,
-      "reasoning": 425,
-      "total": 12885
+      "cache_miss": 9543,
+      "completion": 1673,
+      "reasoning": 402,
+      "total": 13008
     },
-    "latency_s": 7.478,
+    "latency_s": 9.197,
     "error": null,
     "model": "deepseek-flash",
     "symbols": [
@@ -53,22 +53,22 @@
     ],
     "http_status": 200,
     "prompt_version": "bracket-v1",
-    "snapshot_id": "m15-20261113040000-9cea746c5375",
-    "bar_close_ts": "2026-11-13T04:15:00+00:00",
-    "snapshot_ts": "2026-11-13T04:15:21.828727+00:00",
-    "call_start": "2026-11-13T04:15:22.305822+00:00",
-    "answer_ts": "2026-11-13T04:15:29.783968+00:00"
+    "snapshot_id": "m15-20261113041500-ee579f679a02",
+    "bar_close_ts": "2026-11-13T04:30:00+00:00",
+    "snapshot_ts": "2026-11-13T04:30:23.731029+00:00",
+    "call_start": "2026-11-13T04:30:24.550677+00:00",
+    "answer_ts": "2026-11-13T04:30:33.748197+00:00"
   },
   "last_signals": [
     {
       "symbol": "XAUUSD",
       "action": "HOLD",
       "confidence": 0.0,
-      "score": 2,
+      "score": 0,
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "T1 yes: above VWAP 3904.27 and EMA50 3901.29. T2 marginal: only ATR Upper closed_through, no labelled level. S1 fails: just 0.70 ATR room up. Session ASIAN_CHOP blocks automation. HOLD."
+      "rationale": "T1 yes (above VWAP/EMA50). T2 no: only POC rejection, all labelled levels untouched; rejected bar closed above POC anyway. S2 no (RVOL 0.65), S3 no (CVD bearish), S4 no (Asian chop). Hard gate: session_blocks_automation true. HOLD."
     },
     {
       "symbol": "EURUSD",
@@ -78,7 +78,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "T1 fails: price below EMA50 1.10605. No labelled-level close in trend direction. Room 0.08/0.16 ATR, far below 1 ATR. Session ASIAN_CHOP blocks automation. HOLD."
+      "rationale": "T1 no: price above VWAP but below EMA50, h1 down. T2 marginal (VWAP rejection) but HOLD gates fire: session_blocks_automation true and room 0.34/0.24 ATR both under 1.0 ATR. S2 no (0.62), S3 no (CVD slope down), S4 no. HOLD."
     },
     {
       "symbol": "US100",
@@ -88,17 +88,17 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "Short trend would need 2.33 ATR distance to VWAP (chasing, hard HOLD). Room down 0.30 ATR only. Fade has no extreme rejection with 1 ATR magnet. Session ASIAN_CHOP blocks automation. HOLD."
+      "rationale": "T1 yes for a SELL, T2 yes (closed_through S/R). But trend gate fails: vwap_distance -2.03 ATR exceeds 2.0 (chasing), room_down only 0.10 ATR, session_blocks_automation true. S1 no, S2 awarded, S3 no (h1 up), S4 no. HOLD."
     },
     {
       "symbol": "XAGUSD",
       "action": "HOLD",
       "confidence": 0.0,
-      "score": 6,
+      "score": 0,
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "T1 yes: below VWAP 50.420 and EMA50 50.364. T2 yes: closed_through VAL and S/R. S1 yes (1.69 ATR down), S3 yes (CVD bearish, slope down), S5 yes (h1 down). S2/S4 no. Score 6 but session ASIAN_CHOP blocks automation. HOLD."
+      "rationale": "T1 yes (below VWAP/EMA50, h1 down), T2 yes (closed_through VAL), room_down 1.34 ATR. Yet session_blocks_automation true blocks trading; S2 no (0.68), S3 yes (CVD bearish/slope down), S4 no. Setup valid in structure but untradable now. HOLD."
     },
     {
       "symbol": "BTCUSD",
@@ -108,7 +108,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "Short trend disqualified: 3.34 ATR below VWAP (chasing) and no level event on last closed bar. Room down only 0.80 ATR to Session Low. Session ASIAN_CHOP blocks automation. HOLD."
+      "rationale": "No level event on last closed bar, so no setup (T2 fails). Trend gate also fails at -3.02 ATR from VWAP, room_down 0.97 ATR under 1.0, and session_blocks_automation true. S2 no, S3 marginal bearish, S4 no. HOLD."
     }
   ],
   "last_bars": {

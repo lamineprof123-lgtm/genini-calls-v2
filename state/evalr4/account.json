@@ -38,7 +38,8 @@
     "2026-11-13T14:15:35.771424+00:00",
     "2026-11-13T14:30:33.886709+00:00",
     "2026-11-13T14:45:37.354411+00:00",
-    "2026-11-13T15:00:58.210867+00:00"
+    "2026-11-13T15:00:58.210867+00:00",
+    "2026-11-13T15:15:33.831958+00:00"
   ],
   "stats": {
     "trades": 3,
@@ -53,11 +54,11 @@
       "target_1atr": 1,
       "stop_0.8atr": 2
     },
-    "signals_seen": 14,
+    "signals_seen": 16,
     "signals_taken": 3,
     "skips": {
-      "confidence<min": 9,
-      "r4_filter": 2
+      "confidence<min": 10,
+      "r4_filter": 3
     },
     "missed_scans": {
       "EURUSD": 1
@@ -80,11 +81,11 @@
     "net": -382.8
   },
   "cycles": {
-    "seen": 33,
-    "with_signals": 24,
+    "seen": 34,
+    "with_signals": 25,
     "skipped": 9,
     "last": {
-      "t": "2026-11-13T15:00:58.210867+00:00",
+      "t": "2026-11-13T15:15:33.831958+00:00",
       "ok": true,
       "signals": 5,
       "queued": [],
@@ -92,15 +93,15 @@
     }
   },
   "r4": {
-    "seen": 5,
+    "seen": 6,
     "passed": 3,
-    "filtered_out": 2,
+    "filtered_out": 3,
     "no_data": 0,
     "fail_by": {
-      "h1_trend": 2,
-      "m15_ema20": 1,
-      "chase": 2,
-      "vwap": 1
+      "h1_trend": 3,
+      "m15_ema20": 2,
+      "chase": 3,
+      "vwap": 2
     },
     "last": {
       "XAUUSD": {
@@ -122,13 +123,13 @@
         "vwap": 2.795
       },
       "US100": {
-        "t": "2026-11-13T15:00:20.007683+00:00",
+        "t": "2026-11-13T15:15:20.011091+00:00",
         "pass": false,
-        "reason": "H1 EMA20-EMA50 with the trade -0.71 ATR < 2.7; price vs M15 EMA20 +3.93 ATR >= 3; last 3 bars move +4.74 ATR >= 2.2; distance from VWAP +4.34 ATR >= 3.5",
-        "h1_trend": -0.71,
-        "m15_ema20": 3.933,
-        "chase": 4.739,
-        "vwap": 4.34
+        "reason": "H1 EMA20-EMA50 with the trade -0.60 ATR < 2.7; price vs M15 EMA20 +5.15 ATR >= 3; last 3 bars move +6.35 ATR >= 2.2; distance from VWAP +5.86 ATR >= 3.5",
+        "h1_trend": -0.597,
+        "m15_ema20": 5.154,
+        "chase": 6.346,
+        "vwap": 5.861
       }
     }
   }

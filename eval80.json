@@ -1,14 +1,14 @@
 {
-  "updated_at": "2026-11-13T15:02:34.228061+00:00",
+  "updated_at": "2026-11-13T15:16:22.942324+00:00",
   "paper_only": true,
   "book": "EVAL-80",
   "label": "Gemini flash \u00b7 EVAL-80 (G-LOW-80's call, min 0.80, 0.8/1.0 ATR, Lucid eval rules)",
   "account": {
     "start_balance": 100000.0,
-    "balance": 99647.2,
-    "equity": 99647.2,
+    "balance": 99645.7,
+    "equity": 99668.5,
     "net_pnl": -352.8,
-    "open_pnl": 0.0,
+    "open_pnl": 22.8,
     "trades": 5,
     "wins": 2,
     "losses": 3,
@@ -17,24 +17,43 @@
     "avg_loss": -443.4,
     "max_drawdown": -1325.4,
     "peak_balance": 100510.6,
-    "commissions": 35.8,
+    "commissions": 37.3,
     "exit_reasons": {
       "target_1atr": 2,
       "stop_0.8atr": 3
     },
     "stopped": 3,
-    "open_positions": 0,
+    "open_positions": 1,
     "pending": 0,
-    "signals_seen": 14,
-    "signals_taken": 5,
+    "signals_seen": 16,
+    "signals_taken": 6,
     "skips": {
-      "confidence<min": 9
+      "confidence<min": 10
     },
     "missed_scans_glow80_held": {
       "EURUSD": 1
     }
   },
-  "open_positions": [],
+  "open_positions": [
+    {
+      "id": 6,
+      "symbol": "US100",
+      "contract": "MNQ",
+      "qty": 3,
+      "entry": 27781.5,
+      "entry_time": "2026-11-13T15:16:01.626307+00:00",
+      "stop": 27856.5,
+      "target": 27687.75,
+      "deadline": "2026-11-13T16:46:01.626307+00:00",
+      "confidence": 0.81,
+      "risk_usd": 453.0,
+      "target_usd": 559.5,
+      "side": "SHORT",
+      "last_price": 27777.7,
+      "unrealized": 22.8,
+      "micro": true
+    }
+  ],
   "recent_trades": [
     {
       "event": "close",
@@ -220,16 +239,16 @@
     "status": "ACTIVE",
     "reason": null,
     "at": null,
-    "profit": -352.8,
+    "profit": -354.3,
     "profit_target": 6000.0,
     "progress_pct": 0.0,
-    "equity": 99647.2,
+    "equity": 99668.5,
     "mll_floor": 97000.0,
     "mll_locked": false,
-    "mll_room": 2647.2,
+    "mll_room": 2668.5,
     "highest_eod": 100000.0,
     "dll_limit": 1800.0,
-    "dll_used": 352.8,
+    "dll_used": 330.0,
     "dll_paused": false,
     "lucid_day": "2026-11-13",
     "missed_scans": {
@@ -243,11 +262,11 @@
     "net": -352.8
   },
   "cycles": {
-    "seen": 35,
-    "with_signals": 26,
+    "seen": 36,
+    "with_signals": 27,
     "skipped": 9,
     "last": {
-      "t": "2026-11-13T15:00:58.210867+00:00",
+      "t": "2026-11-13T15:15:33.831958+00:00",
       "ok": true,
       "signals": 5,
       "queued": [

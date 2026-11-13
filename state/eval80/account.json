@@ -4,16 +4,49 @@
   "reset_token": "eval80-v1",
   "created_at": "2026-11-13T06:18:34.249336+00:00",
   "start_balance": 100000.0,
-  "balance": 99647.2,
+  "balance": 99645.7,
   "peak_balance": 100510.6,
   "max_drawdown": -1325.4,
-  "next_id": 6,
-  "positions": [],
+  "next_id": 7,
+  "positions": [
+    {
+      "symbol": "US100",
+      "side": -1,
+      "contract": "MNQ",
+      "qty": 3,
+      "micro": true,
+      "atr": 93.624,
+      "confidence": 0.81,
+      "signal_entry": 27727.9,
+      "signal_at": "2026-11-13T15:15:33.831958+00:00",
+      "queued_at": "2026-11-13T15:15:20.011091+00:00",
+      "level_event": "breakdown acceptance below Put Wall #1 28000.45 and VAL 28173.18",
+      "session": "LONDON_NY_OVERLAP",
+      "rationale": "Price is firmly below VAL 28173.18 and deep below POC 28262.44. CVD is -6.61 (BEARISH) with aggressive negative slope -7.95, completely aligned with the downward flush. Session is LONDON_NY_OVERLAP. Price is heavily displaced below VWAP 28283.34 and EMA50 28255.28, piercing the lower ATR band 28023.",
+      "id": 6,
+      "book": "EVAL-80",
+      "entry": 27781.5,
+      "entry_time": "2026-11-13T15:16:01.626307+00:00",
+      "quote_price": 27781.92,
+      "quote_source": "dukascopy:tick",
+      "quote_age_s": 10.61,
+      "stop": 27856.5,
+      "target": 27687.75,
+      "deadline": "2026-11-13T16:46:01.626307+00:00",
+      "risk_usd": 453.0,
+      "target_usd": 559.5,
+      "mfe": 14.290000000000873,
+      "mae": 0.41999999999825377,
+      "scan_from": "2026-11-13T15:16:01.626307+00:00",
+      "checks": 3,
+      "last_check_at": "2026-11-13T15:16:21.633996+00:00"
+    }
+  ],
   "pending": [],
   "last_price": {
     "XAUUSD": 3889.62,
     "XAGUSD": 49.691,
-    "US100": 27911.5
+    "US100": 27777.7
   },
   "seen_cycles": [
     "2026-11-13T06:30:24.363946+00:00",
@@ -41,7 +74,8 @@
     "2026-11-13T14:15:35.771424+00:00",
     "2026-11-13T14:30:33.886709+00:00",
     "2026-11-13T14:45:37.354411+00:00",
-    "2026-11-13T15:00:58.210867+00:00"
+    "2026-11-13T15:00:58.210867+00:00",
+    "2026-11-13T15:15:33.831958+00:00"
   ],
   "stats": {
     "trades": 5,
@@ -50,16 +84,16 @@
     "gross_win": 977.4,
     "gross_loss": -1330.2,
     "net_pnl": -352.8,
-    "commissions": 35.8,
+    "commissions": 37.3,
     "hold_seconds": 2116,
     "exit_reasons": {
       "target_1atr": 2,
       "stop_0.8atr": 3
     },
-    "signals_seen": 14,
-    "signals_taken": 5,
+    "signals_seen": 16,
+    "signals_taken": 6,
     "skips": {
-      "confidence<min": 9
+      "confidence<min": 10
     },
     "missed_scans": {
       "EURUSD": 1
@@ -82,11 +116,11 @@
     "net": -352.8
   },
   "cycles": {
-    "seen": 35,
-    "with_signals": 26,
+    "seen": 36,
+    "with_signals": 27,
     "skipped": 9,
     "last": {
-      "t": "2026-11-13T15:00:58.210867+00:00",
+      "t": "2026-11-13T15:15:33.831958+00:00",
       "ok": true,
       "signals": 5,
       "queued": [

@@ -1,7 +1,7 @@
 {
   "version": 1,
   "created_at": "2026-11-12T18:11:32.231856+00:00",
-  "last_processed": "2026-11-13T08:14:00+00:00",
+  "last_processed": "2026-11-13T08:17:00+00:00",
   "account": {
     "no": 1,
     "phase": "eval",
@@ -22,7 +22,162 @@
     "trades": 1
   },
   "positions": [],
-  "pending": [],
+  "pending": [
+    {
+      "symbol": "EURUSD",
+      "side": 1,
+      "created": "2026-11-13T08:17:32.324880+00:00",
+      "fill_after": "2026-11-13T08:18:00+00:00",
+      "reserved_risk": 0.0,
+      "planned": {
+        "contract": "6E",
+        "qty": 6,
+        "risk_usd": null,
+        "tdist": null,
+        "target_source": "none (gemini_only)"
+      },
+      "expires": "2026-11-13T08:28:00+00:00",
+      "atr": 0.00048,
+      "scalp": {
+        "action": "BUY",
+        "side": 1,
+        "entry": 1.1065,
+        "stop_loss": 1.10566,
+        "take_profit": 1.10659,
+        "sdist": 0.0008440000000000669,
+        "tdist": 9.499999999995623e-05,
+        "stop_source": "structure",
+        "target_source": "structure:S/R",
+        "rr": 0.113,
+        "structure_stop": 1.105656,
+        "atr_stop": 1.106116,
+        "fixed_tp": 1.10775,
+        "structure_tp": 1.106595,
+        "structure_label": "S/R",
+        "candle": {
+          "high": 1.10636,
+          "low": 1.10568
+        },
+        "levels": [
+          {
+            "price": 1.10662,
+            "label": "S/R"
+          },
+          {
+            "price": 1.10726,
+            "label": "Session High"
+          },
+          {
+            "price": 1.10824,
+            "label": "S/R"
+          },
+          {
+            "price": 1.10574,
+            "label": "S/R"
+          },
+          {
+            "price": 1.10475,
+            "label": "Session Low"
+          },
+          {
+            "price": 1.10457,
+            "label": "Prev Low"
+          }
+        ],
+        "vp": {
+          "poc": 1.10598,
+          "vah": 1.10636,
+          "val": 1.10565
+        }
+      },
+      "session": "LONDON_SESSION",
+      "telemetry": {
+        "symbol": "EURUSD",
+        "session": "LONDON_SESSION",
+        "last_close": 1.10634,
+        "atr": 0.00048,
+        "vwap": 1.10591,
+        "ema20": 1.10606,
+        "ema50": 1.10606,
+        "price_vs_vwap": {
+          "side": "above",
+          "dist_atr": 0.8958
+        },
+        "price_vs_ema50": {
+          "side": "above",
+          "dist_atr": 0.5833
+        },
+        "vwap_aligned_with_side": true,
+        "ema50_aligned_with_side": true,
+        "poc": 1.10598,
+        "vah": 1.10636,
+        "val": 1.10565,
+        "price_vs_value_area": "inside",
+        "dist_to_poc_atr": 0.75,
+        "cvd": 5136.21,
+        "cvd_label": "BULLISH",
+        "cvd_slope": 1108.21,
+        "cvd_agrees_with_side": true,
+        "rvol": 1.781,
+        "rvol_spike": false,
+        "rvol_bars_since_spike": 5,
+        "atr_band_z": 0.5833,
+        "atr_upper": 1.10701,
+        "atr_lower": 1.1051,
+        "nearest_sr": {
+          "above": {
+            "price": 1.10662,
+            "label": "S/R",
+            "dist_atr": 0.5833
+          },
+          "below": {
+            "price": 1.10574,
+            "label": "S/R",
+            "dist_atr": 1.25
+          }
+        },
+        "gemini": {
+          "action": "BUY",
+          "confidence": 0.72,
+          "confidence_band": "0.7-0.8",
+          "rationale": "Price at 1.10650 is breaking above VAH (1.10636) and holds above POC (1.10598) following a solid reclaim candle. CVD is BULLISH (+5,136) with an accelerating positive slope (+1,108.21), strongly confirming upside momentum. In LONDON_SESSION, price has cleanly reclaimed upward-curling VWAP (1.10591) and EMA50 (1.10606). Volatility is expanding with ATR at 0.00048 pushing toward upper band 1.10701. RVOL is solid at 1.781 following an earlier yellow spike, validating demand off support at 1.10574 toward S/R 1.10662 and Session High 1.10726.",
+          "model": "gemini-3.8-flash",
+          "model_action": "BUY"
+        },
+        "scalp": {
+          "stop_basis": "structure",
+          "target_basis": "structure:S/R",
+          "tdist": 9.499999999995623e-05,
+          "sdist": 0.0008440000000000669,
+          "structure_label": "S/R"
+        },
+        "planned": {
+          "tdist": 9.499999999995623e-05,
+          "sdist": 0.0008440000000000669,
+          "qty": null,
+          "contract": null,
+          "target_usd_net": null,
+          "risk_usd": null
+        },
+        "run_at_utc": "2026-11-13T08:16:20.016692+00:00",
+        "chart_path": "/home/runner/work/genini-calls-v2/genini-calls-v2/data/logs/2026-11-13/cycles/121620.json/EURUSD.png"
+      },
+      "gemini": {
+        "action": "BUY",
+        "entry": 1.1065,
+        "stop_loss": 1.10566,
+        "take_profit": 1.10659,
+        "confidence": 0.72,
+        "rr": 0.107,
+        "shown_on_site": true,
+        "basis": "site signal",
+        "run_at_utc": "2026-11-13T08:16:20.016692+00:00",
+        "session": "LONDON_SESSION",
+        "rationale": "Price at 1.10650 is breaking above VAH (1.10636) and holds above POC (1.10598) following a solid reclaim candle. CVD is BULLISH (+5,136) with an accelerating positive slope (+1,108.21), strongly confirming upside momentum. In LONDON_SESSION, price has cleanly reclaimed upward-curling VWAP (1.10591) and EMA50 (1.10606). Volatility is expanding with ATR at 0.00048 pushing toward upper band 1.10701. RVOL is solid at 1.781 following an earlier yellow spike, validating demand off support at 1.10574 toward S/R 1.10662 and Session High 1.10726.",
+        "model": "gemini-3.8-flash"
+      }
+    }
+  ],
   "next_pos_id": 2,
   "day": {
     "id": "2026-11-13",
@@ -63,7 +218,7 @@
     "commissions": 3.5,
     "net_trade_pnl": -1903.5,
     "skipped_signals": 2,
-    "accepted_signals": 3
+    "accepted_signals": 4
   },
   "reset_token": "2026-11-12-uniform-reset",
   "reset_at": "2026-11-12T18:11:32.231856+00:00",

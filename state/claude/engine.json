@@ -1,27 +1,142 @@
 {
   "reset_token": "2026-11-12-uniform-reset",
   "created_at": "2026-11-12T18:11:32.204243+00:00",
-  "last_entry_bar": "2026-11-12T22:45:00+00:00",
+  "last_entry_bar": "2026-11-13T08:00:00+00:00",
   "shadow": [],
   "probes": [],
   "next_vid": 13,
   "last_entry": {
-    "bar": "2026-11-12T22:45:00+00:00",
-    "t": "2026-11-12T23:00:20.010730+00:00",
-    "skipped": "all symbols in a blocked session (ASIAN_SESSION_CHOP / LOW_LIQUIDITY_DEADZONE): the v2 prompt would HOLD every one"
+    "bar": "2026-11-13T08:00:00+00:00",
+    "t": "2026-11-13T08:15:20.009554+00:00",
+    "render_ms": 0,
+    "sims": {
+      "C-OPUS": {
+        "ok": true,
+        "latency_ms": 20414,
+        "cost_usd": 0.109444,
+        "error": null,
+        "model": "claude-opus-5-5",
+        "answer_ts": "2026-11-13T08:15:42.558584+00:00",
+        "thinking_tokens": 744,
+        "stop_reason": "end_turn",
+        "signals": [
+          {
+            "symbol": "XAUUSD",
+            "action": "HOLD",
+            "setup_type": "none",
+            "score": 3,
+            "confidence": 0.0,
+            "decision": "HOLD"
+          },
+          {
+            "symbol": "EURUSD",
+            "action": "HOLD",
+            "setup_type": "none",
+            "score": 3,
+            "confidence": 0.0,
+            "decision": "HOLD"
+          },
+          {
+            "symbol": "GBPUSD",
+            "action": "HOLD",
+            "setup_type": "none",
+            "score": 2,
+            "confidence": 0.0,
+            "decision": "HOLD"
+          },
+          {
+            "symbol": "US100",
+            "action": "HOLD",
+            "setup_type": "none",
+            "score": 2,
+            "confidence": 0.0,
+            "decision": "HOLD"
+          },
+          {
+            "symbol": "XAGUSD",
+            "action": "HOLD",
+            "setup_type": "none",
+            "score": 2,
+            "confidence": 0.0,
+            "decision": "HOLD"
+          },
+          {
+            "symbol": "BTCUSD",
+            "action": "HOLD",
+            "setup_type": "none",
+            "score": 1,
+            "confidence": 0.0,
+            "decision": "HOLD"
+          }
+        ]
+      },
+      "C-SONNET": {
+        "ok": true,
+        "latency_ms": 10319,
+        "cost_usd": 0.047522,
+        "error": null,
+        "model": "claude-sonnet-5-5",
+        "answer_ts": "2026-11-13T08:15:42.558584+00:00",
+        "thinking_tokens": 0,
+        "stop_reason": "end_turn",
+        "signals": [
+          {
+            "symbol": "XAUUSD",
+            "action": "HOLD",
+            "setup_type": "none",
+            "score": 0,
+            "confidence": 0.0,
+            "decision": "HOLD"
+          },
+          {
+            "symbol": "EURUSD",
+            "action": "HOLD",
+            "setup_type": "none",
+            "score": 0,
+            "confidence": 0.0,
+            "decision": "HOLD"
+          },
+          {
+            "symbol": "GBPUSD",
+            "action": "HOLD",
+            "setup_type": "none",
+            "score": 0,
+            "confidence": 0.0,
+            "decision": "HOLD"
+          },
+          {
+            "symbol": "US100",
+            "action": "HOLD",
+            "setup_type": "none",
+            "score": 0,
+            "confidence": 0.0,
+            "decision": "HOLD"
+          },
+          {
+            "symbol": "XAGUSD",
+            "action": "HOLD",
+            "setup_type": "none",
+            "score": 0,
+            "confidence": 0.0,
+            "decision": "HOLD"
+          },
+          {
+            "symbol": "BTCUSD",
+            "action": "HOLD",
+            "setup_type": "none",
+            "score": 0,
+            "confidence": 0.0,
+            "decision": "HOLD"
+          }
+        ]
+      }
+    },
+    "snapshot_id": "m15-20261113080000-362c4af7dc48",
+    "snapshot_hash": "362c4af7dc486893aa790129b15ea7c8e991db6fefe776c6bb61ef63e6fe2c89",
+    "bar_close_ts": "2026-11-13T08:15:00+00:00",
+    "snapshot_ts": "2026-11-13T08:15:21.813759+00:00"
   },
-  "fill_quotes": {
-    "US100": {
-      "symbol": "US100",
-      "price": 28304.01,
-      "ts": "2026-11-12T21:00:47.949000+00:00",
-      "source": "dukascopy:tick",
-      "stale": false,
-      "fetched_at": "2026-11-12T21:00:48.323068+00:00",
-      "age_s": 0.37,
-      "at": "2026-11-12T21:00:48.323068+00:00"
-    }
-  },
+  "fill_quotes": {},
   "live": {
     "XAUUSD": {
       "price": 3873.64,

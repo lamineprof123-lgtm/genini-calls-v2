@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-13T08:00:20.007899+00:00",
+  "updated_at": "2026-11-13T08:17:23.150554+00:00",
   "paper_only": true,
   "model": "gemini-4-carbon",
   "entry_thinking": "high",
@@ -18,11 +18,11 @@
   "min_confidence": 0.75,
   "spend": {
     "day_dubai": "2026-11-13",
-    "usd": 0.4894,
+    "usd": 0.641,
     "soft_usd": 15,
     "hard_usd": 19,
     "state": "ok",
-    "calls": 5,
+    "calls": 6,
     "failed": 0,
     "by_kind": {
       "trigger": {
@@ -30,14 +30,14 @@
         "usd": 0.179292
       },
       "entry": {
-        "calls": 2,
-        "usd": 0.31012
+        "calls": 3,
+        "usd": 0.46169
       }
     },
     "tokens": {
-      "input": 46311,
-      "output": 4806,
-      "thoughts": 34873
+      "input": 60421,
+      "output": 7099,
+      "thoughts": 44915
     },
     "price_per_mtok": [
       2.0,
@@ -45,52 +45,47 @@
     ],
     "history": {
       "2026-11-12": 3.1289,
-      "2026-11-13": 0.4894
+      "2026-11-13": 0.641
     }
   },
   "triggers_today": 4,
   "max_triggers_per_day": 40,
-  "next_scan_at": "2026-11-13T08:15:20+00:00",
+  "next_scan_at": "2026-11-13T08:30:20+00:00",
   "in_window": true,
   "last_call": {
-    "t": "2026-11-12T20:17:13.363230+00:00",
-    "t_dubai": "2026-11-13T00:17:13.363230+04:00",
-    "kind": "trigger",
+    "t": "2026-11-13T08:17:23.150554+00:00",
+    "t_dubai": "2026-11-13T12:17:23.150554+04:00",
+    "kind": "entry",
     "model": "gemini-4-carbon",
     "model_version": "gemini-4-carbon",
     "thinking": "high",
     "ok": true,
     "error": null,
-    "latency_s": 42.992,
+    "latency_s": 123.141,
     "finish_reason": "FinishReason.STOP",
     "tokens": {
-      "input": 5896,
-      "output": 732,
-      "thoughts": 3368,
-      "total": 9996
+      "input": 14110,
+      "output": 2293,
+      "thoughts": 10042,
+      "total": 26445
     },
-    "thoughts_token_count": 3368,
+    "thoughts_token_count": 10042,
     "price_per_mtok": [
       2.0,
       10.0
     ],
-    "cost_usd": 0.052792,
-    "spend_today_usd": 0.4894,
+    "cost_usd": 0.15157,
+    "spend_today_usd": 0.641,
     "symbols": [
-      "XAUUSD"
+      "XAUUSD",
+      "EURUSD",
+      "US100",
+      "XAGUSD",
+      "BTCUSD"
     ],
-    "render_ms": 129,
+    "render_ms": 0,
     "parse_error": null,
-    "trigger": {
-      "trigger": "level_cross",
-      "level": "Call Wall #2",
-      "level_price": 3885.68,
-      "price": 3884.26,
-      "direction": "down",
-      "symbol": "XAUUSD",
-      "bar": "2026-11-12T20:15:00+00:00",
-      "n_today": 3
-    }
+    "trigger": null
   },
   "first_call": {
     "t": "2026-11-12T18:18:04.014172+00:00",
@@ -127,22 +122,21 @@
     "parse_error": null,
     "trigger": null
   },
-  "calls_total": 20,
+  "calls_total": 21,
   "last_scan": {
-    "kind": "trigger",
-    "t": "2026-11-13T08:00:01.745277+00:00",
-    "trigger": {
-      "trigger": "level_cross",
-      "level": "Session Low",
-      "level_price": 71141.0,
-      "price": 68502.8,
-      "direction": "down",
-      "symbol": "BTCUSD",
-      "bar": "2026-11-13T08:00:00+00:00",
-      "n_today": 4
-    },
+    "kind": "entry",
+    "t": "2026-11-13T08:00:20.006242+00:00",
+    "trigger": null,
+    "snapshot_id": "m15-20261113074500-987bb6215f51",
+    "snapshot_hash": "987bb6215f51dd22c586fd4860634449bb749bcfedf34014f986ecde4c9f87f2",
+    "bar_close_ts": "2026-11-13T08:00:00+00:00",
+    "snapshot_ts": "2026-11-13T08:00:22.493315+00:00",
     "sent": [],
     "blocked_session": [
+      "XAUUSD",
+      "EURUSD",
+      "US100",
+      "XAGUSD",
       "BTCUSD"
     ],
     "skipped": "no symbol to send"

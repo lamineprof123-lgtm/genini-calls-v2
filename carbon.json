@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-13T16:20:02.574789+00:00",
+  "updated_at": "2026-11-13T16:22:26.575162+00:00",
   "paper_only": true,
   "model": "gemini-4-carbon",
   "entry_thinking": "high",
@@ -281,17 +281,17 @@
   "whatif": {
     "CB-BRACKET": {
       "all": {
-        "n": 12,
-        "r_avg": -0.016,
-        "r_total": -0.197,
-        "net_1c": 1219.65,
-        "win_rate": 0.5
+        "n": 13,
+        "r_avg": 0.061,
+        "r_total": 0.797,
+        "net_1c": 3261.15,
+        "win_rate": 0.538
       },
       "conf>=min": {
-        "n": 2,
+        "n": 3,
         "r_avg": 0.992,
-        "r_total": 1.983,
-        "net_1c": 2868.0,
+        "r_total": 2.977,
+        "net_1c": 4909.5,
         "win_rate": 1.0
       },
       "conf<min": {
@@ -309,26 +309,26 @@
         "win_rate": null
       },
       "tradeable": {
-        "n": 12,
-        "r_avg": -0.016,
-        "r_total": -0.197,
-        "net_1c": 1219.65,
-        "win_rate": 0.5
+        "n": 13,
+        "r_avg": 0.061,
+        "r_total": 0.797,
+        "net_1c": 3261.15,
+        "win_rate": 0.538
       }
     },
     "CB-RUNNER": {
       "all": {
-        "n": 12,
-        "r_avg": -0.066,
-        "r_total": -0.794,
-        "net_1c": 34.65,
-        "win_rate": 0.5
+        "n": 13,
+        "r_avg": 0.015,
+        "r_total": 0.2,
+        "net_1c": 2076.15,
+        "win_rate": 0.538
       },
       "conf>=min": {
-        "n": 2,
+        "n": 3,
         "r_avg": 0.992,
-        "r_total": 1.983,
-        "net_1c": 2868.0,
+        "r_total": 2.977,
+        "net_1c": 4909.5,
         "win_rate": 1.0
       },
       "conf<min": {
@@ -346,43 +346,15 @@
         "win_rate": null
       },
       "tradeable": {
-        "n": 12,
-        "r_avg": -0.066,
-        "r_total": -0.794,
-        "net_1c": 34.65,
-        "win_rate": 0.5
+        "n": 13,
+        "r_avg": 0.015,
+        "r_total": 0.2,
+        "net_1c": 2076.15,
+        "win_rate": 0.538
       }
     },
-    "open": 6,
+    "open": 4,
     "open_rows": [
-      {
-        "vid": 19,
-        "exit": "CB-BRACKET",
-        "symbol": "US100",
-        "side": "SHORT",
-        "entry": 27720.25,
-        "stop": 27822.75,
-        "target": 27617.75,
-        "confidence": 0.75,
-        "site_only": false,
-        "flag": null,
-        "unit": "1 NQ",
-        "thinking_level": "high"
-      },
-      {
-        "vid": 20,
-        "exit": "CB-RUNNER",
-        "symbol": "US100",
-        "side": "SHORT",
-        "entry": 27720.25,
-        "stop": 27822.75,
-        "target": 27617.75,
-        "confidence": 0.75,
-        "site_only": false,
-        "flag": null,
-        "unit": "1 NQ",
-        "thinking_level": "high"
-      },
       {
         "vid": 21,
         "exit": "CB-BRACKET",
@@ -441,6 +413,54 @@
       }
     ],
     "recent": [
+      {
+        "t_exit": "2026-11-13T16:21:00+00:00",
+        "vid": 20,
+        "exit_rules": "CB-RUNNER",
+        "symbol": "US100",
+        "side": "SHORT",
+        "confidence": 0.75,
+        "passes_filter": true,
+        "kind": "entry",
+        "signal_at": "2026-11-13T15:47:28.612354+00:00",
+        "entry_time": "2026-11-13T15:47:43.788515+00:00",
+        "entry": 27720.25,
+        "exit": 27618.0,
+        "reason": "target",
+        "net_1c": 2041.5,
+        "R": 0.994,
+        "atr": 102.267,
+        "chase_atr": -0.043,
+        "mfe_atr": 0.988,
+        "site_only": false,
+        "flag": null,
+        "unit": "1 NQ",
+        "thinking_level": "high"
+      },
+      {
+        "t_exit": "2026-11-13T16:21:00+00:00",
+        "vid": 19,
+        "exit_rules": "CB-BRACKET",
+        "symbol": "US100",
+        "side": "SHORT",
+        "confidence": 0.75,
+        "passes_filter": true,
+        "kind": "entry",
+        "signal_at": "2026-11-13T15:47:28.612354+00:00",
+        "entry_time": "2026-11-13T15:47:43.788515+00:00",
+        "entry": 27720.25,
+        "exit": 27618.0,
+        "reason": "target",
+        "net_1c": 2041.5,
+        "R": 0.994,
+        "atr": 102.267,
+        "chase_atr": -0.043,
+        "mfe_atr": 0.988,
+        "site_only": false,
+        "flag": null,
+        "unit": "1 NQ",
+        "thinking_level": "high"
+      },
       {
         "t_exit": "2026-11-13T16:05:48.864669+00:00",
         "vid": 18,

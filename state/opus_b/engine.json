@@ -2,11 +2,11 @@
   "reset_token": "c-opus-b-v1",
   "created_at": "2026-11-12T17:19:59.566947+00:00",
   "last_call": {
-    "t": "2026-11-13T04:00:39.666892+00:00",
+    "t": "2026-11-13T04:15:37.385298+00:00",
     "ok": true,
-    "latency_ms": 15022,
-    "cost_usd": 0.101508,
-    "thinking_tokens": 287,
+    "latency_ms": 15083,
+    "cost_usd": 0.103256,
+    "thinking_tokens": 395,
     "usage": {
       "cache_creation": {
         "ephemeral_1h_input_tokens": 0,
@@ -15,10 +15,10 @@
       "cache_creation_input_tokens": 0,
       "cache_read_input_tokens": 0,
       "inference_geo": "global",
-      "input_tokens": 16892,
-      "output_tokens": 1697,
+      "input_tokens": 16854,
+      "output_tokens": 1792,
       "output_tokens_details": {
-        "thinking_tokens": 287
+        "thinking_tokens": 395
       },
       "service_tier": "standard",
       "speed": "standard"
@@ -26,14 +26,14 @@
     "error": null,
     "effort": "high",
     "prompt_version": "bracket-v1",
-    "snapshot_id": "m15-20261113034500-45ddf417d406",
-    "snapshot_hash": "45ddf417d40645e1c3c17a7c15c968924343e7c805fbeea2b75a00f1d3b0eb7e",
-    "package_id": "m15-20261113T040000-4960b67df80f",
-    "package_hash": "4960b67df80fd593bd34cdb5c5b22790cbc596e941855835dd47addd22460a55",
-    "bar_close_ts": "2026-11-13T04:00:00+00:00",
-    "snapshot_ts": "2026-11-13T04:00:22.870599+00:00",
-    "call_start": "2026-11-13T04:00:24.644627+00:00",
-    "answer_ts": "2026-11-13T04:00:39.666892+00:00",
+    "snapshot_id": "m15-20261113040000-9cea746c5375",
+    "snapshot_hash": "9cea746c5375dcb13261d72a8b6d9cbc7f57061cba03719344cc3ff080f6cb03",
+    "package_id": "m15-20261113T041500-6ed2a8c9c764",
+    "package_hash": "6ed2a8c9c7644917fcc3b29d752cff05724442382c05513200d609bda91ed4a8",
+    "bar_close_ts": "2026-11-13T04:15:00+00:00",
+    "snapshot_ts": "2026-11-13T04:15:21.828727+00:00",
+    "call_start": "2026-11-13T04:15:22.301902+00:00",
+    "answer_ts": "2026-11-13T04:15:37.385298+00:00",
     "model": "claude-opus-5-5"
   },
   "last_signals": [
@@ -45,7 +45,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "HOLD: session_blocks_automation is true (Asian chop). A trend trade fails the VWAP-distance gate (+2.218 > 2.0). Room is under 1 ATR both ways (up 0.359, down 0.274), so S1 is missing. A fade has no magnet 1 ATR clear. RVOL 0.604.",
+      "rationale": "Hard gates fail: session_blocks_automation true (ASIAN_SESSION_CHOP). room_up_atr 0.698 < 1.0, so no S1. h1_trend down conflicts with a long. CVD BEARISH, RVOL 0.62, no S2. HOLD.",
       "gate_reasons": [],
       "issues": []
     },
@@ -57,7 +57,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "HOLD: session_blocks_automation is true. T1 and T2 are met for a long, but room up is only 0.187 ATR to VAH/Session High 1.10636 (S1 fails). h1_trend is down. RVOL 1.069 gives no S2.",
+      "rationale": "session_blocks_automation true. For a short, T1 fails because price is still above VWAP. room_down_atr 0.155 < 1.0, so no S1. RVOL 0.775. HOLD.",
       "gate_reasons": [],
       "issues": []
     },
@@ -69,7 +69,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "HOLD: session_blocks_automation is true. A trend short fails the VWAP-distance gate (-2.642). Room down is 0.584 ATR to S/R 28209.17 (<1). A touch is not a rejection, so no fade F1. h1_trend is up.",
+      "rationale": "session_blocks_automation true. For a fade long, F2 is not met: room_up_atr 0.145 to S/R 28265.71, which blocks the VWAP/POC magnet. A trend short is blocked because |vwap_dist| > 2.0. HOLD.",
       "gate_reasons": [],
       "issues": []
     },
@@ -77,11 +77,11 @@
       "symbol": "XAGUSD",
       "action": "HOLD",
       "confidence": 0.0,
-      "score": 0,
+      "score": 5,
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "HOLD: session_blocks_automation is true. Rejections at both VWAP and POC give a conflicting inside-value bar. Room is 0.324 ATR up and 0.235 ATR down, so S1 fails. CVD is bearish and h1 is down. RVOL 0.624.",
+      "rationale": "T1 yes: closed below VWAP and EMA50. T2 yes: closed_through VAL and S/R. S1 (room_down 1.689), S3 (CVD bearish), S5 (h1 down); no S2 or S4. This would score 5, but session_blocks_automation is true, so HOLD.",
       "gate_reasons": [],
       "issues": []
     },
@@ -93,7 +93,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "HOLD: session_blocks_automation is true. A trend short fails the VWAP-distance gate (-3.502) and has only 0.811 ATR of room down. A touch is not a rejection or sweep-close, so no fade F1. RVOL 1.437.",
+      "rationale": "session_blocks_automation true. Every level is untouched on the last closed bar, so there is no T2/F1 event. A trend short is blocked by |vwap_dist| 3.336 > 2.0, and room_down is 0.796 < 1.0 to Session Low. HOLD.",
       "gate_reasons": [],
       "issues": []
     }

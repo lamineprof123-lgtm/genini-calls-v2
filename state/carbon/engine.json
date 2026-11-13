@@ -330,38 +330,36 @@
   "calls_total": 78,
   "last_scan": {
     "kind": "trigger",
-    "t": "2026-11-13T13:30:13.671876+00:00",
+    "t": "2026-11-13T13:36:38.427967+00:00",
     "trigger": {
-      "trigger": "level_cross",
-      "level": "POC",
-      "level_price": 1.10598,
-      "price": 1.1061,
-      "direction": "up",
-      "symbol": "EURUSD",
+      "trigger": "bar_range",
+      "range_atr": 3.398,
+      "price": 28431.53,
+      "symbol": "US100",
       "bar": "2026-11-13T13:30:00+00:00",
-      "n_today": 38
+      "n_today": 40
     },
     "sent": [
-      "EURUSD"
+      "US100"
     ],
     "blocked_session": [],
     "ok": true,
-    "latency_s": 57.988,
-    "cost_usd": 0.05595,
+    "latency_s": 75.519,
+    "cost_usd": 0.074178,
     "tokens": {
-      "input": 5785,
-      "output": 711,
-      "thoughts": 3727,
-      "total": 10223
+      "input": 5804,
+      "output": 869,
+      "thoughts": 5388,
+      "total": 12061
     },
     "error": null,
     "finish_reason": "FinishReason.STOP",
-    "answer_ts": "2026-11-13T13:31:12.011876+00:00",
+    "answer_ts": "2026-11-13T13:37:54.279967+00:00",
     "signals": [
       {
-        "symbol": "EURUSD",
+        "symbol": "US100",
         "action": "HOLD",
-        "confidence": 0.75,
+        "confidence": 0.8,
         "thinking_level": "high"
       }
     ],

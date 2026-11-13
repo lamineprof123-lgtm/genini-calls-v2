@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-13T21:15:50.253027+00:00",
+  "updated_at": "2026-11-13T21:30:34.207246+00:00",
   "paper_only": true,
   "book": "G-P5-EVENT",
   "label": "Gemini flash \u00b7 G-P5-EVENT (G-P5, Gemini called only when something happened: level touch \u22640.25 ATR, RVOL \u22652, ATR ratio \u22651.3)",
@@ -78,7 +78,7 @@
   "calls": {
     "ok": 24,
     "failed": 0,
-    "skipped": 0,
+    "skipped": 1,
     "tokens": {
       "prompt_token_count": 230043,
       "candidates_token_count": 29410,
@@ -91,11 +91,11 @@
   },
   "prompt_version": "p5",
   "trigger": {
-    "closes": 24,
-    "evaluated": 96,
-    "fired": 71,
+    "closes": 25,
+    "evaluated": 100,
+    "fired": 74,
     "by": {
-      "level": 63,
+      "level": 66,
       "rvol": 1,
       "atr_ratio": 25
     },
@@ -103,17 +103,12 @@
     "shared_calls": 12,
     "own_calls": 12,
     "symbols_sent": 71,
-    "no_call_closes": 0,
+    "no_call_closes": 1,
     "last": {
-      "t": "2026-11-13T21:15:20.006359+00:00",
-      "fired": [
-        "XAUUSD",
-        "EURUSD",
-        "US100",
-        "XAGUSD"
-      ],
-      "called": true,
-      "shared": true
+      "t": "2026-11-13T21:30:20.009700+00:00",
+      "fired": [],
+      "called": false,
+      "shared": null
     }
   },
   "trigger_params": {

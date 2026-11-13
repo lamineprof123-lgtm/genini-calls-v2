@@ -2,11 +2,11 @@
   "reset_token": "c-opus-b-v1",
   "created_at": "2026-11-12T17:19:59.566947+00:00",
   "last_call": {
-    "t": "2026-11-13T16:46:03.011121+00:00",
+    "t": "2026-11-13T17:01:21.807490+00:00",
     "ok": true,
-    "latency_ms": 20495,
-    "cost_usd": 0.114756,
-    "thinking_tokens": 975,
+    "latency_ms": 14525,
+    "cost_usd": 0.102816,
+    "thinking_tokens": 286,
     "usage": {
       "cache_creation": {
         "ephemeral_1h_input_tokens": 0,
@@ -16,9 +16,9 @@
       "cache_read_input_tokens": 0,
       "inference_geo": "global",
       "input_tokens": 17239,
-      "output_tokens": 2290,
+      "output_tokens": 1693,
       "output_tokens_details": {
-        "thinking_tokens": 975
+        "thinking_tokens": 286
       },
       "service_tier": "standard",
       "speed": "standard"
@@ -26,29 +26,17 @@
     "error": null,
     "effort": "high",
     "prompt_version": "bracket-v1",
-    "snapshot_id": "m15-20261113163000-a2fa028126cf",
-    "snapshot_hash": "a2fa028126cf84e774a58a23acc44e8c0b96cb86f118e25d125de29328da348d",
-    "package_id": "m15-20261113T164500-58db75c56623",
-    "package_hash": "58db75c5662348af3b362041bae643309ad9916482b6e67e4f5d0373be1cef5c",
-    "bar_close_ts": "2026-11-13T16:45:00+00:00",
-    "snapshot_ts": "2026-11-13T16:45:41.839295+00:00",
-    "call_start": "2026-11-13T16:45:42.515728+00:00",
-    "answer_ts": "2026-11-13T16:46:03.011121+00:00",
+    "snapshot_id": "m15-20261113164500-15d3f8fdaa5d",
+    "snapshot_hash": "15d3f8fdaa5de4fe2d870a17088a9200fd021afcfecd1fe7acf71ca3136093ed",
+    "package_id": "m15-20261113T170000-2b7230a8d912",
+    "package_hash": "2b7230a8d91284a94cddd72dd2a7b25bcb916d3871266f4b1bcbf9f557fb4d40",
+    "bar_close_ts": "2026-11-13T17:00:00+00:00",
+    "snapshot_ts": "2026-11-13T17:00:45.904474+00:00",
+    "call_start": "2026-11-13T17:01:07.282653+00:00",
+    "answer_ts": "2026-11-13T17:01:21.807490+00:00",
     "model": "claude-opus-5-5"
   },
   "last_signals": [
-    {
-      "symbol": "XAUUSD",
-      "action": "SELL",
-      "confidence": 0.52,
-      "score": 5,
-      "setup_type": "trend",
-      "gated": true,
-      "decision": "OPENED",
-      "rationale": "T1 yes: below VWAP and EMA50. T2 yes: pullback rejected EMA20. VWAP distance 1.12 ATR is OK; room down 1.056 ATR to VAL. Points: S1, S3 (CVD bearish), S4 (NY). No S2 (RVOL 0.93). No S5: GEX dampening and Put Wall near target. Score 5.",
-      "gate_reasons": [],
-      "issues": []
-    },
     {
       "symbol": "EURUSD",
       "action": "HOLD",
@@ -57,7 +45,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "No level event on the last closed bar. VWAP distance 2.82 ATR is beyond the 2.0 limit for a trend. Room down is 0.53 ATR. HOLD.",
+      "rationale": "T1 yes for sell, but T2 no: every level untouched on last closed bar. F1 no. |vwap_dist| 2.81 > 2.0 blocks trend; room_down 0.686 ATR < 1.0. HOLD.",
       "gate_reasons": [],
       "issues": []
     },
@@ -65,11 +53,11 @@
       "symbol": "US100",
       "action": "HOLD",
       "confidence": 0.0,
-      "score": 2,
+      "score": 0,
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "Trend SELL is blocked: VWAP distance 4.39 ATR is over 2.0, and room down is 0.11 ATR. Fade is barred because GEX is NEGATIVE_AMPLIFYING, and room up is only 0.47 ATR. HOLD.",
+      "rationale": "F1 yes (Put Wall #2 rejected) but fade barred: GEX NEGATIVE_AMPLIFYING. Room_up 0.333 ATR to ATR Lower, under 1.0. Trend sell: no T2, |vwap_dist| 4.41 > 2.0, room_down 0.132. HOLD.",
       "gate_reasons": [],
       "issues": []
     },
@@ -81,7 +69,7 @@
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "Fade F1 is not met: ATR Lower was only touched, not rejected or swept. Trend SELL is blocked: VWAP distance 3.95 ATR and room down 0.14 ATR. H1 is down. HOLD.",
+      "rationale": "T1 yes, T2 yes (closed_through ATR Lower) for sell, but hard gates fail: |vwap_dist| 4.67 > 2.0 and room_down 0.090 ATR to Session Low. Fade buy: room_up 0.399 ATR, no rejection close. HOLD.",
       "gate_reasons": [],
       "issues": []
     },
@@ -89,11 +77,11 @@
       "symbol": "BTCUSD",
       "action": "HOLD",
       "confidence": 0.0,
-      "score": 2,
+      "score": 0,
       "setup_type": "none",
       "gated": false,
       "decision": "HOLD",
-      "rationale": "T1 yes: below VWAP and EMA50, and POC was rejected. Room down is only 0.68 ATR to VAL 68248.91, under the 1.0 hard gate. HOLD.",
+      "rationale": "T1 yes for sell; T2 no: POC only touched, not a rejection of VWAP/EMA20 or closed_through. F1 no: POC is not an extreme. Room_up 0.101 ATR. No fresh event. HOLD.",
       "gate_reasons": [],
       "issues": []
     }

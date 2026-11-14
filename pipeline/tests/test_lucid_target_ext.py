@@ -271,3 +271,19 @@ def test_panel_open_positions_show_live_held():
     assert "latest_signal.json" not in html and "v-signal" not in html
     assert "Max $ P&amp;L" in html and "Lowest $ P&amp;L" in html and "P&amp;L at close" in html
     assert "Went positive first" in html
+
+
+def test_index_html_table_sort_filters():
+    """Table UI (no mobile card layout): sortable headers, persistable filters, no countdown/signals."""
+    html = Path(__file__).resolve().parents[2].joinpath("index.html").read_text()
+    for needle in ("id=\"books\"", "id=\"open\"", "id=\"trades\"", "id=\"sum\"",
+                   "data-sort", "bb-panel-filters-v1", "localStorage", "location.hash",
+                   "Search books", "Search trades", "All dates", "Last 7 days",
+                   "Went + first: Yes", "bGroupChips", "bTypeChips"):
+        assert needle in html, needle
+    assert 'id="perfCards"' not in html and 'id="posCards"' not in html
+    assert 'id="count"' not in html and "Next scan in" not in html and 'id="countAt"' not in html
+    assert "latest_signal.json" not in html and "v-signal" not in html
+    assert "UI preview" not in html
+    # card-layout CSS hook from the previous mobile view must stay gone
+    assert ".cards { display: none; }" not in html and 'id="perfCards"' not in html

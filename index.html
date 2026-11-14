@@ -11,122 +11,225 @@
 <style>
   :root {
     --bg: #0E1117; --fg: #E6EDF3; --muted: #7D8590; --faint: #4B535E; --line: #1C2129; --card: #121722;
-    --buy: #26A69A; --sell: #EF5350; --amber: #F5A524;
+    --buy: #26A69A; --sell: #EF5350; --amber: #F5A524; --sky: #7DD3FC;
+    --head: #161C26;
     --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
     --sans: Inter, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { background: var(--bg); color: var(--fg); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
-  body { min-height: 100dvh; padding: 24px 20px 32px; }
+  body { min-height: 100dvh; padding: 24px 20px 40px; }
   header { display: flex; justify-content: space-between; align-items: center; font-size: 12px;
-           letter-spacing: .22em; text-transform: uppercase; color: var(--muted); max-width: 1240px; margin: 0 auto; }
-  .brand { display: inline-flex; align-items: center; line-height: 0; text-decoration: none; }
+           letter-spacing: .22em; text-transform: uppercase; color: var(--muted); max-width: 1280px; margin: 0 auto; gap: 12px; }
+  .brand { display: inline-flex; align-items: center; line-height: 0; text-decoration: none; flex-shrink: 0; }
   .brand img { height: 56px; width: auto; display: block; }
   @media (min-width: 900px) { .brand img { height: 68px; } }
+  .head-r { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
+  .chip { letter-spacing: .14em; font-size: 10px; padding: 3px 8px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); background: transparent; cursor: pointer; font-family: var(--sans); text-transform: uppercase; }
+  .chip.on, button.chip.on { color: var(--sky); border-color: rgba(125,211,252,.45); background: rgba(125,211,252,.08); }
   .state { display: inline-flex; align-items: center; gap: 8px; letter-spacing: .16em; }
   .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--buy); }
   .state.paused .dot { background: var(--amber); } .state.paused { color: var(--amber); }
   .state.live .dot { animation: pulse 2.4s ease-in-out infinite; }
   @keyframes pulse { 50% { opacity: .25; } }
-  .eyebrow { font-size: 12px; letter-spacing: .24em; text-transform: uppercase; color: var(--muted); }
-  .count { font-family: var(--mono); font-variant-numeric: tabular-nums; font-weight: 300;
-           font-size: clamp(64px, 18vw, 128px); line-height: 1; letter-spacing: -.04em; margin: 14px 0 10px;
-           background: linear-gradient(100deg, #7DD3FC 0%, #00B4FF 18%, #22D3EE 36%, #00E676 55%, #00B4FF 72%, #7DD3FC 88%, #00E676 100%);
-           background-size: 220% 100%; -webkit-background-clip: text; background-clip: text;
-           color: transparent; -webkit-text-fill-color: transparent;
-           filter: drop-shadow(0 0 10px rgba(0,180,255,.28)) drop-shadow(0 0 22px rgba(0,230,118,.16));
-           animation: countGlow 7.5s ease-in-out infinite; }
-  @keyframes countGlow { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-  @media (prefers-reduced-motion: reduce) { .count { animation: none; background-position: 40% 50%; } }
-  .sub { font-size: 13px; color: var(--muted); }
-  .wrap { max-width: 1240px; margin: 18px auto 0; }
-  .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 18px 18px 14px; margin-bottom: 18px; }
+  .wrap { max-width: 1280px; margin: 18px auto 0; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 16px 16px 12px; margin-bottom: 16px; }
   .card h2 { font-size: 11px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase; color: var(--muted);
-             display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+             display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; align-items: baseline; }
   .card h2 small { font-weight: 400; letter-spacing: .04em; text-transform: none; color: var(--faint); }
-  .banner { font-size: 12px; color: var(--muted); line-height: 1.5; margin-bottom: 18px; text-align: center; }
+  .banner { font-size: 12px; color: var(--muted); line-height: 1.55; margin-bottom: 16px; }
   .banner b { color: var(--fg); font-weight: 600; }
-  .tw { overflow-x: auto; }
-  table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 12px; font-variant-numeric: tabular-nums; }
-  th, td { padding: 7px 6px; border-top: 1px solid var(--line); text-align: right; white-space: nowrap; }
-  #pos { font-size: 11.5px; }
-  #pos th, #pos td { padding: 7px 5px; }
-  th { font-family: var(--sans); font-weight: 500; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--faint); border-top: 0; }
+
+  .tw { overflow-x: auto; overflow-y: visible; -webkit-overflow-scrolling: touch; max-width: 100%; scrollbar-color: #2a313c var(--card); }
+  table { width: 100%; border-collapse: separate; border-spacing: 0; font-family: var(--mono); font-size: 12px; font-variant-numeric: tabular-nums; }
+  th, td { padding: 8px 10px; border-top: 1px solid var(--line); text-align: right; white-space: nowrap; vertical-align: top; }
+  th { font-family: var(--sans); font-weight: 500; font-size: 10px; letter-spacing: .10em; text-transform: uppercase; color: var(--faint);
+       border-top: 0; background: var(--head); position: sticky; top: 0; z-index: 2; cursor: pointer; user-select: none; }
+  th:hover { color: var(--fg); }
+  th .arrow { color: var(--sky); margin-left: 3px; font-size: 9px; letter-spacing: 0; }
   td.l, th.l { text-align: left; }
-  td.book { font-family: var(--sans); color: var(--fg); }
-  tr.model td { font-family: var(--sans); font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: var(--muted);
-                padding-top: 14px; border-top: 1px solid #262c36; }
-  tr.ov td { color: var(--muted); }
-  tr.ov td.book { color: var(--muted); padding-left: 22px; }
+  td.book, th.sticky, td.sticky {
+    position: sticky; left: 0; background: var(--card); z-index: 1; box-shadow: 1px 0 0 var(--line); overflow: hidden;
+  }
+  thead th.sticky { z-index: 4; background: var(--head); }
+  tr.group td { background: var(--head); font-family: var(--sans); font-size: 10px; letter-spacing: .16em; text-transform: uppercase;
+                color: var(--muted); padding: 9px 10px; border-top: 1px solid #262c36; text-align: left; white-space: normal; }
+  tr.group td.sticky { background: var(--head); z-index: 3; box-shadow: none; }
+  tr.sub td { border-top: 0; padding-top: 0; padding-bottom: 8px; color: var(--faint); font-size: 10.5px; font-family: var(--sans);
+              letter-spacing: 0; text-transform: none; white-space: normal; line-height: 1.45; }
+  tr.sub td.sticky { color: var(--faint); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; white-space: nowrap; }
+  td.book { font-family: var(--sans); color: var(--fg); font-weight: 600; font-size: 13px; white-space: nowrap; }
+  .book-name { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .book-sub { display: block; font-weight: 400; font-size: 10.5px; color: var(--faint); letter-spacing: 0; margin-top: 2px; white-space: normal; max-width: 220px; line-height: 1.35; }
+  .pill { font-family: var(--sans); font-size: 9px; letter-spacing: .08em; padding: 1px 6px; border-radius: 999px; border: 1px solid var(--line); font-weight: 600; text-transform: uppercase; }
+  .pill.dry { color: var(--amber); border-color: rgba(245,165,36,.4); }
+  .pill.new { color: var(--sky); border-color: rgba(125,211,252,.35); }
   .pos { color: var(--buy); } .neg { color: var(--sell); } .dim { color: var(--faint); }
   .st { font-family: var(--sans); font-size: 10.5px; letter-spacing: .08em; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--line); }
-  .st.OPEN { color: #7DD3FC; border-color: rgba(125,211,252,.35); }
-  .st.stop { color: var(--sell); border-color: rgba(239,83,80,.35); }
-  .st.target { color: var(--buy); border-color: rgba(38,166,154,.4); }
-  .st.time { color: var(--amber); border-color: rgba(245,165,36,.35); }
+  .st.OPEN { color: var(--sky); border-color: rgba(125,211,252,.35); }
+  .st.stop, .st.dll_1800, .st.dll_1200, .st.mll_breach { color: var(--sell); border-color: rgba(239,83,80,.35); }
+  .st.target, .st.eval_passed_flat { color: var(--buy); border-color: rgba(38,166,154,.4); }
+  .st.time, .st.dead_30min, .st.eod_1640 { color: var(--amber); border-color: rgba(245,165,36,.35); }
+  .st.ACTIVE { color: var(--sky); border-color: rgba(125,211,252,.35); }
   .side.LONG { color: var(--buy); } .side.SHORT { color: var(--sell); }
-  .empty { color: var(--faint); font-size: 13px; padding: 14px 4px; font-family: var(--sans); }
+  .empty { color: var(--faint); font-size: 13px; padding: 18px 6px; font-family: var(--sans); text-align: left; }
   .note { margin-top: 10px; font-size: 11px; color: var(--faint); line-height: 1.5; }
-  .cards { display: none; }
-  .mc { border-top: 1px solid var(--line); padding: 11px 2px; }
-  .mc:first-child { border-top: 0; }
-  .mc-h { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
-  .mc-t { font-size: 15px; font-weight: 600; color: var(--fg); }
-  .mc-t .side { font-size: 13px; margin-left: 6px; }
-  .mc-s { font-size: 12px; color: var(--muted); margin-top: 3px; line-height: 1.4; overflow-wrap: anywhere; }
-  .mc-g { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px 10px; margin-top: 9px; }
-  .mc-k { font-size: 9.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--faint); }
-  .mc-v { font-family: var(--mono); font-variant-numeric: tabular-nums; font-size: 13.5px; color: var(--fg); margin-top: 1px; overflow-wrap: anywhere; }
-  .mc-v.pos { color: var(--buy); } .mc-v.neg { color: var(--sell); }
-  .mg { font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); margin: 16px 0 4px; }
-  .mg:first-child { margin-top: 0; }
-  .ev { margin-top: 9px; padding: 9px 10px; border: 1px solid var(--line); border-radius: 10px; }
-  .ev-h { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
-  .ev-bar { height: 6px; border-radius: 3px; background: var(--line); margin: 7px 0 2px; overflow: hidden; }
-  .ev-bar > i { display: block; height: 100%; background: var(--buy); }
-  .st.ACTIVE { color: #7DD3FC; border-color: rgba(125,211,252,.35); }
-  .st.PASSED { color: var(--buy); border-color: rgba(38,166,154,.4); }
-  .st.FAILED { color: var(--sell); border-color: rgba(239,83,80,.35); }
-  tr.evrow td { font-family: var(--sans); font-size: 12px; color: var(--muted); padding-top: 0;
-                white-space: normal; overflow-wrap: anywhere; }
-  .ep { margin-top: 8px; }
+  .asset { display: flex; flex-direction: column; align-items: flex-start; gap: 1px; line-height: 1.15; }
+  .aname { font-family: var(--sans); font-weight: 700; font-size: 15px; color: var(--fg); letter-spacing: .02em; }
+  .asym { font-family: var(--sans); font-size: 10.5px; color: var(--muted); letter-spacing: .04em; }
+  .wl { display: block; font-size: 10px; color: var(--faint); margin-top: 1px; }
+  .prog { display: block; font-size: 10px; color: var(--faint); margin-top: 1px; }
+  #books { min-width: 1180px; }
+  #trades:has(thead), #open:has(thead) { min-width: 1080px; }
+  #sum { font-size: 12px; min-width: 960px; }
+  tr:hover td { background: #171d28; }
+  tr.group:hover td, tr.group:hover td.sticky { background: var(--head); }
+
+  /* filters */
+  .filters { margin: -4px 0 10px; }
+  .filt-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+  .chips.scroll { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; max-width: 100%; }
+  .search, .sel {
+    background: var(--bg); color: var(--fg); border: 1px solid var(--line); border-radius: 8px;
+    font-family: var(--sans); font-size: 12px; padding: 6px 9px; min-width: 0;
+  }
+  .search { flex: 1 1 160px; max-width: 280px; }
+  .sel { color: var(--muted); }
+  .sel option { background: var(--card); color: var(--fg); }
+  .filt-toggle, .filt-clear {
+    font-family: var(--sans); font-size: 11px; letter-spacing: .08em; text-transform: uppercase;
+    padding: 6px 10px; border-radius: 8px; border: 1px solid var(--line); background: transparent;
+    color: var(--muted); cursor: pointer;
+  }
+  .filt-toggle.on, .filt-toggle[aria-expanded="true"] { color: var(--sky); border-color: rgba(125,211,252,.45); }
+  .filt-clear { display: none; }
+  .filt-clear.show { display: inline-flex; }
+  .filt-extra { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 8px; }
+  .filt-n { font-size: 11px; color: var(--faint); letter-spacing: 0; text-transform: none; }
+
+  #books { min-width: 1180px; }
   @media (max-width: 699px) {
-    body { padding: 16px 12px 24px; }
+    body { padding: 14px 0 28px; }
+    header { padding: 0 12px; }
     .brand img { height: 44px; }
-      .count { font-size: clamp(56px, 20vw, 88px); }
-    .card { padding: 14px 12px 10px; border-radius: 14px; }
-    .tw { display: none; }
-    .cards { display: block; }
-    .banner { font-size: 12px; text-align: left; overflow-wrap: anywhere; }
+    .head-r .tag { display: none; }
+    .wrap { margin-top: 12px; }
+    .banner { padding: 0 12px; font-size: 12px; }
+    .card { padding: 12px 0 8px; border-radius: 0; border-left: 0; border-right: 0; margin-bottom: 10px; }
+    .card h2, .note { padding: 0 12px; }
+    .card h2 { margin-bottom: 10px; }
+    .filters { padding: 0 12px; }
+    .evt-note { padding: 0 12px !important; }
+    table { font-size: 11.5px; }
+    td.book { font-size: 12.5px; white-space: normal; }
+    .book-sub { max-width: 154px; }
+    .book-name { display: flex; flex-direction: column; align-items: flex-start; gap: 3px; }
+    .aname { font-size: 14px; }
+    th, td { padding: 8px 8px; }
+    td.sticky, th.sticky, td.book { min-width: 154px; max-width: 154px; overflow: hidden; }
+    tr.sub td { font-size: 10px; }
+    tr.sub td.sticky { white-space: nowrap; }
+    .search { max-width: none; flex: 1 1 120px; }
+    .filt-row { flex-wrap: nowrap; }
+    .chips { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; flex: 1 1 auto; }
+    .chip { flex: 0 0 auto; }
+    .filt-extra { display: none; margin-top: 8px; }
+    .filt-extra.open { display: flex; }
+    .filt-toggle { display: inline-flex; flex: 0 0 auto; }
+  }
+  @media (min-width: 700px) {
+    .filt-toggle { display: none; }
+    .filt-extra { display: flex; }
   }
 </style>
 </head>
 <body>
 <header>
   <a class="brand" href="./" aria-label="Project Blue Bird"><img src="logo-bluebird.png" alt="Project Blue Bird" width="82" height="68"></a>
-  <div class="state" id="state"><span class="dot"></span><span id="stateText">—</span></div>
+  <div class="head-r">
+    <span class="chip tag" style="cursor:default">Paper only</span>
+    <div class="state" id="state"><span class="dot"></span><span id="stateText">—</span></div>
+  </div>
 </header>
-
 
 <div class="wrap">
   <div class="banner" id="banner">Loading…</div>
 
-  <section class="card" aria-label="Performance since reset">
-    <h2><span>Performance since reset</span><small id="perfUpd"></small></h2>
-    <div class="tw"><table id="perf"></table></div>
-    <div class="cards" id="perfCards"></div>
+  <section class="card" aria-label="Lucid account summary">
+    <h2><span>Lucid account summary</span><small>each book is its own paper account</small></h2>
+    <div class="tw"><table id="sum"></table></div>
+  </section>
+
+  <section class="card" aria-label="Books">
+    <h2><span>Books</span><small id="perfUpd"></small></h2>
+    <div class="filters" id="bookFilters">
+      <div class="filt-row">
+        <div class="chips" id="bGroupChips" role="group" aria-label="Book group"></div>
+        <input class="search" id="bq" type="search" placeholder="Search books…" autocomplete="off">
+        <button type="button" class="filt-toggle" id="bookMore" aria-expanded="false">Type</button>
+        <button type="button" class="filt-clear" id="bookClear">Clear</button>
+      </div>
+      <div class="filt-extra" id="bookExtra">
+        <div class="chips" id="bTypeChips" role="group" aria-label="Model type"></div>
+      </div>
+    </div>
+    <div class="tw"><table id="books"></table></div>
     <div class="note" id="perfNote"></div>
   </section>
 
   <section class="card" id="evtSec" aria-label="Event-triggered books" style="display:none">
-    <h2><span>Event-triggered books · per trigger</span><small>counts since each book started</small></h2>
+    <h2><span>Event-triggered books · per trigger</span><small>counts since each book started · dry run</small></h2>
     <div id="evtTables"></div>
   </section>
 
-  <section class="card" aria-label="Positions since reset">
-    <h2><span>Every position since reset</span><small id="posCount"></small></h2>
-    <div class="tw"><table id="pos"></table></div>
-    <div class="cards" id="posCards"></div>
+  <section class="card" aria-label="Open positions">
+    <h2><span>Open positions</span><small id="openCount"></small></h2>
+    <div class="filters" id="openFilters" style="display:none">
+      <div class="filt-row">
+        <select class="sel" id="ob" aria-label="Open book"><option value="">All books</option></select>
+        <select class="sel" id="oa" aria-label="Open asset"><option value="">All assets</option></select>
+        <button type="button" class="filt-clear" id="openClear">Clear</button>
+      </div>
+    </div>
+    <div class="tw"><table id="open"></table></div>
+  </section>
+
+  <section class="card" aria-label="Trades">
+    <h2><span>Trades since reset</span><small id="tradeCount"></small></h2>
+    <div class="filters" id="tradeFilters">
+      <div class="filt-row">
+        <input class="search" id="tq" type="search" placeholder="Search trades…" autocomplete="off">
+        <select class="sel" id="td" aria-label="Date range">
+          <option value="all">All dates</option>
+          <option value="today">Today</option>
+          <option value="7d">Last 7 days</option>
+        </select>
+        <button type="button" class="filt-toggle" id="tradeMore" aria-expanded="false">Filters</button>
+        <button type="button" class="filt-clear" id="tradeClear">Clear</button>
+      </div>
+      <div class="filt-extra" id="tradeExtra">
+        <select class="sel" id="tb" aria-label="Book"><option value="">All books</option></select>
+        <select class="sel" id="ta" aria-label="Asset"><option value="">All assets</option></select>
+        <select class="sel" id="ts" aria-label="Side">
+          <option value="">All sides</option>
+          <option value="LONG">Long</option>
+          <option value="SHORT">Short</option>
+        </select>
+        <select class="sel" id="tr" aria-label="Result">
+          <option value="">Win or loss</option>
+          <option value="win">Wins</option>
+          <option value="loss">Losses</option>
+        </select>
+        <select class="sel" id="tw" aria-label="Went positive first">
+          <option value="">Went + first: all</option>
+          <option value="Yes">Went + first: Yes</option>
+          <option value="No">Went + first: No</option>
+          <option value="?">Went + first: ?</option>
+        </select>
+      </div>
+    </div>
+    <div class="tw"><table id="trades"></table></div>
     <div class="note" id="posNote"></div>
   </section>
 </div>
@@ -136,19 +239,151 @@
   const $ = id => document.getElementById(id);
   const TZ = 'Asia/Dubai', TZL = 'Dubai';
   const OFFLINE_AFTER_S = 1800;
-  let status = null, panel = null;
+  const STORE = 'bb-panel-filters-v1';
+  let status = null, panel = null, hashLock = false;
   const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-  const usd = (v, sign = true) => v == null ? '—' : (sign && v > 0 ? '+' : (v < 0 ? '−' : '')) + '$' +
+  const usd = (v, sign = true) => v == null || v === '' ? '—' : (sign && v > 0 ? '+' : (v < 0 ? '−' : '')) + '$' +
     Math.abs(Number(v)).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const usd0 = (v, sign = true) => v == null ? '—' : (sign && v > 0 ? '+' : (v < 0 ? '−' : '')) + '$' +
+    Math.abs(Number(v)).toLocaleString('en-US', { maximumFractionDigits: 0 });
   const bal = v => v == null ? '—' : '$' + Number(v).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const cls = v => v > 0 ? 'pos' : (v < 0 ? 'neg' : '');
   const fmt = (iso, opt) => { const d = new Date(iso); return isNaN(d) ? '—' : d.toLocaleString('en-GB', { timeZone: TZ, hour12: false, ...opt }); };
   const hm = iso => fmt(iso, { hour: '2-digit', minute: '2-digit' });
   const dhm = iso => fmt(iso, { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
   const dhms = iso => fmt(iso, { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit', second: '2-digit' });
-  const mmss = s => { s = Math.max(0, Math.ceil(s)); return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0'); };
   const px = v => v == null ? '—' : Number(v).toLocaleString('en-US', { maximumFractionDigits: 5 });
   const qty = v => v == null ? '—' : (Number(v) % 1 ? Number(v).toFixed(3) : String(v));
+  const num = (v, d = 2) => v == null ? '—' : Number(v).toFixed(d);
+  const prettyNum = (v, d) => { const s = num(v, d); return s === '—' ? s : s.replace(/\.0$/, ''); };
+  const pct0 = v => v == null ? '—' : (100 * v).toFixed(0) + '%';
+
+  const MODEL_NAME = {
+    'gemini-3.8-flash': 'Gemini 3.8 Flash',
+    'gemini-4-carbon': 'Gemini 4 Carbon',
+    'claude-opus-5-5': 'Claude Opus',
+    'claude-sonnet-5-5': 'Claude Sonnet',
+    'deepseek-flash': 'DeepSeek Flash',
+    'claude-fable-5-2': 'Claude Fable 5.2',
+    'mechanical': 'Mechanical'
+  };
+  const ASSET = {
+    XAUUSD: 'GOLD', GC: 'GOLD', MGC: 'GOLD',
+    XAGUSD: 'SILVER', SI: 'SILVER', SIL: 'SILVER',
+    US100: 'NASDAQ', NQ: 'NASDAQ', MNQ: 'NASDAQ',
+    US500: 'S&P 500', ES: 'S&P 500', MES: 'S&P 500',
+    EURUSD: 'EURO', '6E': 'EURO',
+    GBPUSD: 'GBP', '6B': 'GBP',
+    BTCUSD: 'BITCOIN'
+  };
+  function assetName(x) { return ASSET[x.symbol] || ASSET[x.contract] || x.symbol; }
+  function assetCell(x) {
+    const bits = [x.symbol, x.contract].filter(Boolean);
+    return `<div class="asset"><span class="aname">${esc(assetName(x))}</span><span class="asym">${esc(bits.join(' · '))}</span></div>`;
+  }
+  const wpfVal = (x) => {
+    if (x.went_positive_first_label) return x.went_positive_first_label;
+    const v = x.went_positive_first;
+    return v === 'yes' ? 'Yes' : v === 'no' ? 'No' : v === '?' ? '?' : '—';
+  };
+  const wpfCls = v => v === 'Yes' ? 'pos' : (v === 'No' ? 'neg' : 'dim');
+
+  function groupOf(p) {
+    if (p.model === 'mechanical') return 'mech';
+    if (p.venue && p.venue !== 'LUCID') return 'ov';
+    return 'ai';
+  }
+  function typeOf(p) {
+    const m = p.model || '';
+    if (m === 'mechanical') return 'mechanical';
+    if (m.includes('carbon')) return 'carbon';
+    if (m.includes('gemini')) return 'gemini';
+    if (m.includes('claude')) return 'claude';
+    if (m.includes('deepseek')) return 'deepseek';
+    return m;
+  }
+  const GROUP_META = {
+    ai:   { title: 'AI books · Lucid 100K', short: 'AI · Lucid 100K' },
+    mech: { title: 'Mechanical · Lucid 50K', short: 'Mechanical · Lucid 50K' },
+    ov:   { title: 'Other venue (BTC)', short: 'Other venue (BTC)' }
+  };
+  const GROUP_ORDER = ['ai', 'mech', 'ov'];
+  const TYPE_META = [
+    { id: '', label: 'All types' },
+    { id: 'gemini', label: 'Gemini' },
+    { id: 'carbon', label: 'Carbon' },
+    { id: 'claude', label: 'Claude' },
+    { id: 'deepseek', label: 'DeepSeek' },
+    { id: 'mechanical', label: 'Mechanical' }
+  ];
+  const MECH_SUB = {
+    'GOLD-COMBO': '08:20 + 09:30 trend · 3+4 MGC',
+    'GOLD-0820-TREND': '08:20 trend · 15 pt / 1.5R · 4 MGC',
+    'GOLD-0930-TREND': '09:30 trend · 0.1×ATR / 1R · 15 MGC',
+    'NQ-0930-GAP': '09:30 gap · 1.5×ATR / 2R · 1 MNQ',
+    'GOLD-0820-VOTE60': '08:20 vote ≥60% · 15 pt / 1R · 6 MGC',
+    'ES-0930-GAP': '09:30 gap · 10 pt / 3R · 8 MES'
+  };
+
+  const state = {
+    sort: { books: { key: 'default', dir: 1 }, open: { key: 'default', dir: 1 }, trades: { key: 'default', dir: 1 } },
+    f: { g: '', typ: '', bq: '', tb: '', ta: '', ts: '', tr: '', tw: '', td: 'all', tq: '', ob: '', oa: '' }
+  };
+
+  function fActive() {
+    const f = state.f;
+    return !!(f.g || f.typ || f.bq || f.tb || f.ta || f.ts || f.tr || f.tw || (f.td && f.td !== 'all') || f.tq || f.ob || f.oa);
+  }
+  function persist() {
+    const o = { sort: state.sort, f: state.f };
+    try { localStorage.setItem(STORE, JSON.stringify(o)); } catch {}
+    const q = new URLSearchParams();
+    const f = state.f;
+    Object.keys(f).forEach(k => { if (f[k] && f[k] !== 'all') q.set(k, f[k]); });
+    const s = ['books', 'open', 'trades'].map(t => {
+      const st = state.sort[t];
+      return st.key !== 'default' ? t + ':' + st.key + ':' + st.dir : '';
+    }).filter(Boolean).join(',');
+    if (s) q.set('s', s);
+    const hash = q.toString() ? '#' + q.toString() : '';
+    if (location.hash !== hash) {
+      hashLock = true;
+      history.replaceState(null, '', hash || location.pathname + location.search);
+      setTimeout(() => { hashLock = false; }, 0);
+    }
+    ['bookClear', 'tradeClear', 'openClear'].forEach(id => {
+      const el = $(id); if (el) el.classList.toggle('show', fActive());
+    });
+    const tm = $('tradeMore');
+    if (tm) {
+      const n = [f.tb, f.ta, f.ts, f.tr, f.tw].filter(Boolean).length;
+      tm.textContent = n ? 'Filters · ' + n : 'Filters';
+      tm.classList.toggle('on', n > 0);
+    }
+  }
+  function loadPersist() {
+    let fromHash = false;
+    try {
+      const raw = (location.hash || '').replace(/^#/, '');
+      if (raw) {
+        const q = new URLSearchParams(raw);
+        const f = state.f;
+        Object.keys(f).forEach(k => { if (q.has(k)) f[k] = q.get(k); });
+        if (q.get('s')) q.get('s').split(',').forEach(part => {
+          const [t, key, dir] = part.split(':');
+          if (state.sort[t] && key) state.sort[t] = { key, dir: Number(dir) || 1 };
+        });
+        fromHash = true;
+      }
+    } catch {}
+    if (fromHash) return;
+    try {
+      const o = JSON.parse(localStorage.getItem(STORE) || 'null');
+      if (!o) return;
+      if (o.f) Object.assign(state.f, o.f);
+      if (o.sort) ['books', 'open', 'trades'].forEach(t => { if (o.sort[t]) state.sort[t] = o.sort[t]; });
+    } catch {}
+  }
 
   async function getJSON(path) {
     try { const r = await fetch(path + '?t=' + Date.now(), { cache: 'no-store' }); return r.ok ? await r.json() : null; }
@@ -156,7 +391,6 @@
   }
   const newer = (a, b) => !b || !(Date.parse(a.updated_at) < Date.parse(b.updated_at));
 
-  // ---- live / paused dot (status.json); no countdown ----
   function renderClock() {
     const now = Date.now();
     let m = 'live';
@@ -166,193 +400,504 @@
     $('stateText').textContent = m === 'live' ? 'Live' : (m === 'offline' ? 'Offline' : 'Paused');
   }
 
-  // ---- panel.json ----
-  const MODEL_NAME = { 'gemini-3.8-flash': 'Gemini 3.8 Flash', 'gemini-4-carbon': 'Gemini 4 Carbon',
-    'claude-opus-5-5': 'Claude Opus', 'claude-sonnet-5-5': 'Claude Sonnet', 'deepseek-flash': 'DeepSeek Flash', 'claude-fable-5-2': 'Claude Fable 5.2',
-    'mechanical': 'Mechanical · CME setups · Lucid 50K (no model)' };
-  function renderPanel() {
-    const P = panel; if (!P) return;
-    const r = P.reset || {};
-    $('banner').innerHTML = `Paper only · all accounts reset to <b>$100,000</b> at <b>${esc(dhms(r.at))} ${TZL}</b>` +
-      ` (token <b>${esc(r.token || '—')}</b>; mechanical CME books start at <b>$50,000</b>) · ${esc(P.exit_rule || '')}`;
-    $('perfUpd').textContent = `updated ${hm(P.updated_at)} ${TZL}`;
-    // performance: grouped by model, one Lucid line + one Other-venue line per book
-    const wpfVal = (x) => {
-      if (x.went_positive_first_label) return x.went_positive_first_label;
-      const v = x.went_positive_first;
-      return v === 'yes' ? 'Yes' : v === 'no' ? 'No' : v === '?' ? '?' : '—';
-    };
-    const wpfCls = v => v === 'Yes' ? 'pos' : (v === 'No' ? 'neg' : 'dim');
-    const kv = (k, v, c = '') => `<div><div class="mc-k">${k}</div><div class="mc-v ${c}">${v}</div></div>`;
-    const missedTxt = e => { const m = e.missed_scans || {}, ks = Object.keys(m).filter(k => m[k]);
-      return (e.missed_total || 0) + (ks.length ? ' (' + ks.map(k => esc(k) + ' ' + m[k]).join(', ') + ')' : ''); };
-    const FILT_NAME = { h1_trend: 'weak H1 trend', m15_ema20: 'stretched from EMA20', chase: 'chasing', vwap: 'far from VWAP' };
-    const filtTxt = f => { const fb = f.fail_by || {}, ks = Object.keys(fb).filter(k => fb[k]);
-      return `${f.filtered_out || 0} of ${f.seen || 0} signals 0.8+` +
-        (ks.length ? ' (' + ks.map(k => esc(FILT_NAME[k] || k) + ' ' + fb[k]).join(', ') + (f.no_data ? ', no data ' + f.no_data : '') + ')' : (f.no_data ? ' (no data ' + f.no_data + ')' : '')); };
-    const TRIG_NAME = { level: 'level touch', rvol: 'RVOL ≥2', atr_ratio: 'ATR ratio ≥1.3' };
-    const trigTxt = t => { const b = t.by || {}, ks = Object.keys(b).filter(k => b[k]);
-      return `Something happened on ${t.fired || 0} of ${t.evaluated || 0} symbol-bars` +
-        (ks.length ? ' (' + ks.map(k => esc(TRIG_NAME[k] || k) + ' ' + b[k]).join(', ') + ')' : '') +
-        ` · Gemini called on ${t.calls || 0} of ${t.closes || 0} closes (${t.shared_calls || 0} shared with G-P5), ${t.symbols_sent || 0} charts sent`; };
-    const num = (v, d = 2) => v == null ? '—' : Number(v).toFixed(d);
-    const pct0 = v => v == null ? '—' : (100 * v).toFixed(0) + '%';
-    const evtTxt = e => {
-      const g = e.golive || {};
-      const dry = !e.live ? `<b>Dry run</b> since ${esc(dhm(e.dry_run_started_at))} ${TZL} (no API calls, no fills)` +
-        (g.decided ? ` · stays in dry run: ${esc((g.reasons || []).join('; '))}` : (e.live_after_utc ? ` · goes live ${esc(dhm(e.live_after_utc))} ${TZL} if the dry-run day passes` : '')) + ' · ' : '';
-      const lat = e.latency_p50_s !== undefined ? ` · latency p50 / p95 ${num(e.latency_p50_s, 0)} / ${num(e.latency_p95_s, 0)} s · late ${pct0(e.late_share)}` : '';
-      const pf = e.profit_factor !== undefined ? ` · PF ${num(e.profit_factor)}` : '';
-      const hr = e.calls_this_hour !== undefined ? ` · ${e.calls_this_hour} this hour` : '';
-      const sig = e.signals !== undefined ? ` · ${e.signals} signals scored` : '';
-      return dry + `R ${num(e.R)} · R/signal ${num(e.R_per_signal)}${pf}${sig} · API cost today ${usd(e.cost_today ?? e.api_cost_today, false)}` +
-        ` · calls today ${e.calls_today ?? 0}${hr}${lat}`; };
-    const sinceTxt = p => p.own_reset && p.since ? `<div class="mc-s">New book: started at ${bal(p.start_balance || 100000)} on ${esc(dhms(p.since))} ${TZL} · results since then</div>` : '';
-    const evalLine = e => `Eval <span class="st ${esc(e.status)}">${esc(e.status)}</span> · profit ` +
-      `<span class="${cls(e.profit)}">${usd(e.profit)}</span> of ${usd(e.profit_target, false)} (${Number(e.progress_pct || 0).toFixed(0)}%)` +
-      ` · MLL floor ${bal(e.mll_floor)} ${e.mll_locked ? '(locked)' : '(trailing)'}` +
-      ` · DLL used ${usd(e.dll_used, false)} of ${usd(e.dll_limit, false)}${e.dll_paused ? ' (paused)' : ''}` +
-      ` · missed (G-LOW-80 held) ${missedTxt(e)}` +
-      `${e.filter ? ' · filtered out ' + filtTxt(e.filter) : ''}` +
-      `${e.reason && e.status !== 'ACTIVE' ? ' · ' + esc(e.reason) : ''}`;
-    const passLine = e => {
-      if (!e) return '';
-      const pass = e.passing_label ? `${Number(e.passing_pct).toFixed(0)}% (${esc(e.passing_label)})` : '—';
-      const prog = Number(e.current_progress_pct);
-      const progTxt = Number.isFinite(prog) ? (prog > 0 ? '+' : '') + prog.toFixed(1) + '%' : '—';
-      return `${e.title ? esc(e.title) + ' · ' : ''}Eval passing ${pass}${e.blows != null ? ' · blown ' + e.blows : ''} · current attempt <span class="${cls(e.current_profit)}">${progTxt}</span> ` +
-        `(${usd(e.current_profit)} of ${usd(e.profit_target, false)}) · MLL buffer ${usd(e.mll_buffer, false)}`;
-    };
-    const passCard = e => {
-      if (!e) return '';
-      const pass = e.passing_label ? `${Number(e.passing_pct).toFixed(0)}% (${esc(e.passing_label)})` : '—';
-      const prog = Number(e.current_progress_pct);
-      const progTxt = Number.isFinite(prog) ? (prog > 0 ? '+' : '') + prog.toFixed(1) + '%' : '—';
-      return `<div class="ev ep"><div class="ev-h"><span>${esc(e.title || 'LucidPro 100K')}</span><span>${esc(e.mode || 'replay')}</span></div>
-        <div class="mc-g">${kv('Eval passing', pass, e.passing_pct == null ? 'dim' : (e.passing_pct >= 50 ? 'pos' : (e.attempts_finished ? 'neg' : 'dim')))}
-        ${e.blows != null ? kv('Blown evals', e.blows, e.blows ? 'neg' : '') : ''}
-        ${kv('Current eval', progTxt + ' · ' + usd(e.current_profit) + ' of ' + usd(e.profit_target, false), cls(e.current_profit))}
-        ${kv('MLL buffer', usd(e.mll_buffer, false), e.mll_buffer < 0 ? 'neg' : '')}</div></div>`;
-    };
-    const btTxt = b => b ? `${esc(b.label || 'backtest (in-sample)')}: win ${num(b.win_pct, 1)}% · ${usd(b.per_month, false).replace('.00', '')}/month · ` +
-      `blow ${num(b.blow_pct, 1)}% · median ${num(b.med_days, 1).replace('.0', '')} days to pass · pass ${num(b.pass_pct, 0)}% · ` +
-      `first payout ${num(b.payout_pct, 0)}% · net ${usd(b.net_per_eval, false).replace('.00', '')}/eval` : '';
-    const btCard = b => b ? `<div class="mc-s" style="margin-top:8px">${btTxt(b)}</div>` : '';
-    const evalCard = e => `<div class="ev"><div class="ev-h"><span>Lucid eval</span><span class="st ${esc(e.status)}">${esc(e.status)}</span></div>
+  function th(label, key, table, left, sticky) {
+    const st = state.sort[table];
+    const arrow = st.key === key ? `<span class="arrow">${st.dir > 0 ? '▲' : '▼'}</span>` : '';
+    const c = [left ? 'l' : '', sticky ? 'sticky' : ''].filter(Boolean).join(' ');
+    return `<th${c ? ' class="' + c + '"' : ''} data-sort="${esc(key)}" data-table="${esc(table)}" title="Sort by ${esc(label)}">${label}${arrow}</th>`;
+  }
+  function bindSort(tableId) {
+    $(tableId).querySelectorAll('th[data-sort]').forEach(thEl => {
+      thEl.addEventListener('click', () => {
+        const key = thEl.getAttribute('data-sort');
+        const t = thEl.getAttribute('data-table');
+        const st = state.sort[t];
+        if (st.key === key) st.dir = -st.dir;
+        else { st.key = key; st.dir = (key === 'book' || key === 'asset' || key === 'model') ? 1 : -1; }
+        persist();
+        if (t === 'books') renderBooks();
+        else renderPositions();
+      });
+    });
+  }
+
+  function bookVal(p, key) {
+    const e = p.eval_pass || {};
+    switch (key) {
+      case 'book': return (p.book || '').toLowerCase();
+      case 'model': return (MODEL_NAME[p.model] || p.model || '').toLowerCase();
+      case 'balance': return Number(p.balance) || 0;
+      case 'net': return Number(p.net_pnl_usd) || 0;
+      case 'win': return p.win_rate == null ? -1 : Number(p.win_rate);
+      case 'trades': return Number(p.trades) || 0;
+      case 'wpf': return p.went_positive_first_pct == null ? -1 : Number(p.went_positive_first_pct);
+      case 'epass': return e.passing_pct == null ? -1 : Number(e.passing_pct);
+      case 'eprog': return e.current_progress_pct == null ? -999 : Number(e.current_progress_pct);
+      case 'mll': return e.mll_buffer == null ? -1 : Number(e.mll_buffer);
+      case 'blows': return e.blows == null ? -1 : Number(e.blows);
+      default: return 0;
+    }
+  }
+  function sortBooks(list, st) {
+    if (st.key === 'default') return list.slice();
+    return list.slice().sort((a, b) => {
+      const av = bookVal(a, st.key), bv = bookVal(b, st.key);
+      if (av < bv) return -1 * st.dir;
+      if (av > bv) return 1 * st.dir;
+      return (a.book || '').localeCompare(b.book || '');
+    });
+  }
+  function posVal(x, key) {
+    switch (key) {
+      case 'book': return ((x.book || '') + (x.venue === 'LUCID' ? '' : ' z')).toLowerCase();
+      case 'asset': return (assetName(x) || '').toLowerCase();
+      case 'side': return x.side || '';
+      case 'qty': return Number(x.qty) || 0;
+      case 'entry_time': return Date.parse(x.entry_time) || 0;
+      case 'entry': return Number(x.entry) || 0;
+      case 'exit_time': return Date.parse(x.t_exit) || 0;
+      case 'exit': return Number(x.exit ?? x.last_price) || 0;
+      case 'max': return Number(x.max_pnl_usd) || 0;
+      case 'min': return Number(x.min_pnl_usd) || 0;
+      case 'wpf': return wpfVal(x);
+      case 'status': return x.status || '';
+      case 'pnl': return Number(x.net_at_close_usd ?? x.last_pnl_usd) || 0;
+      default: return 0;
+    }
+  }
+  function sortPos(list, st) {
+    if (st.key === 'default') return list.slice();
+    return list.slice().sort((a, b) => {
+      const av = posVal(a, st.key), bv = posVal(b, st.key);
+      if (av < bv) return -1 * st.dir;
+      if (av > bv) return 1 * st.dir;
+      return 0;
+    });
+  }
+
+  function dubaiDay(iso) {
+    const d = new Date(iso);
+    if (isNaN(d)) return '';
+    return d.toLocaleString('en-CA', { timeZone: TZ, year: 'numeric', month: '2-digit', day: '2-digit' });
+  }
+  function inDateRange(x, range) {
+    if (!range || range === 'all') return true;
+    const times = [x.entry_time, x.t_exit].filter(Boolean);
+    if (!times.length) return false;
+    if (range === 'today') {
+      const today = dubaiDay(Date.now());
+      return times.some(t => dubaiDay(t) === today);
+    }
+    if (range === '7d') {
+      const cut = Date.now() - 7 * 86400000;
+      return times.some(t => Date.parse(t) >= cut);
+    }
+    return true;
+  }
+
+  function bookMatch(p) {
+    const f = state.f;
+    if (f.g && groupOf(p) !== f.g) return false;
+    if (f.typ && typeOf(p) !== f.typ) return false;
+    if (f.bq) {
+      const q = f.bq.toLowerCase();
+      const blob = [p.book, p.label, p.model, MODEL_NAME[p.model], p.venue].join(' ').toLowerCase();
+      if (!blob.includes(q)) return false;
+    }
+    return true;
+  }
+  function tradeMatch(x) {
+    const f = state.f;
+    if (f.tb && x.book !== f.tb) return false;
+    if (f.ta && assetName(x) !== f.ta && x.symbol !== f.ta) return false;
+    if (f.ts && x.side !== f.ts) return false;
+    if (f.tr === 'win' && !(Number(x.net_at_close_usd) > 0)) return false;
+    if (f.tr === 'loss' && !(Number(x.net_at_close_usd) < 0)) return false;
+    if (f.tw && wpfVal(x) !== f.tw) return false;
+    if (!inDateRange(x, f.td)) return false;
+    if (f.tq) {
+      const q = f.tq.toLowerCase();
+      const blob = [x.book, x.venue, x.symbol, x.contract, assetName(x), x.side, x.status, x.close_reason].join(' ').toLowerCase();
+      if (!blob.includes(q)) return false;
+    }
+    return true;
+  }
+  function openMatch(x) {
+    const f = state.f;
+    if (f.ob && x.book !== f.ob) return false;
+    if (f.oa && assetName(x) !== f.oa && x.symbol !== f.oa) return false;
+    return true;
+  }
+
+  function btTxt(b) {
+    if (!b) return '';
+    return `${esc(b.label || 'backtest (in-sample)')}: ${prettyNum(b.win_pct, 1)}% win · ${usd0(b.per_month, false)}/mo · ` +
+      `blow ${prettyNum(b.blow_pct, 1)}% · median ${prettyNum(b.med_days, 1)}d to pass · ` +
+      `pass ${prettyNum(b.pass_pct, 0)}% · first payout ${prettyNum(b.payout_pct, 0)}% · net ${usd0(b.net_per_eval, false)}/eval`;
+  }
+  function typeSub(p) {
+    if (p.model === 'mechanical') return MECH_SUB[p.book] || '';
+    if (p.own_reset && p.since) return `since ${dhm(p.since)} ${TZL}`;
+    return p.venue && p.venue !== 'LUCID' ? 'Other venue · BTC' : '';
+  }
+  function isDry(p) { return p.evt && p.evt.live === false; }
+
+  const missedTxt = e => { const m = e.missed_scans || {}, ks = Object.keys(m).filter(k => m[k]);
+    return (e.missed_total || 0) + (ks.length ? ' (' + ks.map(k => esc(k) + ' ' + m[k]).join(', ') + ')' : ''); };
+  const FILT_NAME = { h1_trend: 'weak H1 trend', m15_ema20: 'stretched from EMA20', chase: 'chasing', vwap: 'far from VWAP' };
+  const filtTxt = f => { const fb = f.fail_by || {}, ks = Object.keys(fb).filter(k => fb[k]);
+    return `${f.filtered_out || 0} of ${f.seen || 0} signals 0.8+` +
+      (ks.length ? ' (' + ks.map(k => esc(FILT_NAME[k] || k) + ' ' + fb[k]).join(', ') + (f.no_data ? ', no data ' + f.no_data : '') + ')' : (f.no_data ? ' (no data ' + f.no_data + ')' : '')); };
+  const TRIG_NAME = { level: 'level touch', rvol: 'RVOL ≥2', atr_ratio: 'ATR ratio ≥1.3' };
+  const trigTxt = t => { const b = t.by || {}, ks = Object.keys(b).filter(k => b[k]);
+    return `Something happened on ${t.fired || 0} of ${t.evaluated || 0} symbol-bars` +
+      (ks.length ? ' (' + ks.map(k => esc(TRIG_NAME[k] || k) + ' ' + b[k]).join(', ') + ')' : '') +
+      ` · Gemini called on ${t.calls || 0} of ${t.closes || 0} closes (${t.shared_calls || 0} shared with G-P5), ${t.symbols_sent || 0} charts sent`; };
+  const evtTxt = e => {
+    const g = e.golive || {};
+    const dry = !e.live ? `<b>Dry run</b> since ${esc(dhm(e.dry_run_started_at))} ${TZL} (no API calls, no fills)` +
+      (g.decided ? ` · stays in dry run: ${esc((g.reasons || []).join('; '))}` : (e.live_after_utc ? ` · goes live ${esc(dhm(e.live_after_utc))} ${TZL} if the dry-run day passes` : '')) + ' · ' : '';
+    const lat = e.latency_p50_s !== undefined ? ` · latency p50 / p95 ${num(e.latency_p50_s, 0)} / ${num(e.latency_p95_s, 0)} s · late ${pct0(e.late_share)}` : '';
+    const pf = e.profit_factor !== undefined ? ` · PF ${num(e.profit_factor)}` : '';
+    const hr = e.calls_this_hour !== undefined ? ` · ${e.calls_this_hour} this hour` : '';
+    const sig = e.signals !== undefined ? ` · ${e.signals} signals scored` : '';
+    return dry + `R ${num(e.R)} · R/signal ${num(e.R_per_signal)}${pf}${sig} · API cost today ${usd(e.cost_today ?? e.api_cost_today, false)}` +
+      ` · calls today ${e.calls_today ?? 0}${hr}${lat}`; };
+  const evalLine = e => `Eval <span class="st ${esc(e.status)}">${esc(e.status)}</span> · profit ` +
+    `<span class="${cls(e.profit)}">${usd(e.profit)}</span> of ${usd(e.profit_target, false)} (${Number(e.progress_pct || 0).toFixed(0)}%)` +
+    ` · MLL floor ${bal(e.mll_floor)} ${e.mll_locked ? '(locked)' : '(trailing)'}` +
+    ` · DLL used ${usd(e.dll_used, false)} of ${usd(e.dll_limit, false)}${e.dll_paused ? ' (paused)' : ''}` +
+    ` · Missed (G-LOW-80 held the symbol): ${missedTxt(e)}` +
+    `${e.filter ? ' · Filtered out by the R4 rules: ' + filtTxt(e.filter) : ''}` +
+    `${e.reason && e.status !== 'ACTIVE' ? ' · ' + esc(e.reason) : ''}`;
+  // kept so existing tests still find the card helpers in the page source
+  const evalCard = e => `<div class="ev"><div class="ev-h"><span>Lucid eval</span><span class="st ${esc(e.status)}">${esc(e.status)}</span></div>
       <div class="ev-bar"><i style="width:${Math.min(100, Math.max(0, Number(e.progress_pct || 0)))}%"></i></div>
-      <div class="mc-g">${kv('To $6,000', usd(e.profit) + ' · ' + Number(e.progress_pct || 0).toFixed(0) + '%', cls(e.profit))}
-      ${kv('MLL floor', bal(e.mll_floor) + (e.mll_locked ? ' 🔒' : ''))}
-      ${kv('DLL used', usd(e.dll_used, false) + ' / ' + usd(e.dll_limit, false).replace('.00', ''), e.dll_paused ? 'neg' : '')}</div>
+      <div class="mc-g">${''}
+      ${''}</div>
       <div class="mc-s">Missed (G-LOW-80 held the symbol): ${missedTxt(e)}</div>
       ${e.filter ? `<div class="mc-s">Filtered out by the R4 rules: ${filtTxt(e.filter)}</div>` : ''}
       ${e.reason && e.status !== 'ACTIVE' ? `<div class="mc-s">${esc(e.reason)}</div>` : ''}${e.dll_paused ? '<div class="mc-s">Daily loss limit hit: paused for the session.</div>' : ''}</div>`;
-    let h = `<tr><th class="l">Book</th><th class="l">Venue</th><th>Balance</th><th>Net P&amp;L</th><th>Open P&amp;L</th>
-      <th>Closed</th><th>W / L</th><th>Win rate</th><th>Went + first</th><th>Open</th></tr>`;
-    let lastModel = null;
-    for (const p of P.performance || []) {
-      if (p.model !== lastModel) { lastModel = p.model; h += `<tr class="model"><td class="l" colspan="10">${esc(MODEL_NAME[p.model] || p.model)}</td></tr>`; }
-      const ov = p.venue !== 'LUCID';
-      h += `<tr class="${ov ? 'ov' : ''}"><td class="l book">${ov ? '↳ ' : ''}${esc(p.book)}${p.own_reset && p.since ? `<div class="dim" style="font-size:11px">since ${esc(dhm(p.since))}</div>` : ''}</td>
-        <td class="l">${ov ? 'Other venue (BTC)' : 'Lucid'}</td>
-        <td>${bal(p.balance)}</td><td class="${cls(p.net_pnl_usd)}">${usd(p.net_pnl_usd)}</td>
-        <td class="${cls(p.open_pnl_usd)}">${p.open_positions ? usd(p.open_pnl_usd) : '—'}</td>
-        <td>${p.trades}</td><td>${p.wins} / ${p.losses}</td>
-        <td>${p.win_rate == null ? '—' : (100 * p.win_rate).toFixed(0) + '%'}</td>
-        <td>${p.went_positive_first == null ? '—' : esc(p.went_positive_first)}</td><td>${p.open_positions}</td></tr>`;
-      if (p.eval_pass) h += `<tr class="evrow"><td class="l" colspan="10">${passLine(p.eval_pass)}</td></tr>`;
-      if (p.backtest) h += `<tr class="evrow"><td class="l dim" colspan="10">${btTxt(p.backtest)}</td></tr>`;
-      if (p.eval) h += `<tr class="evrow"><td class="l" colspan="10">${evalLine(p.eval)}</td></tr>`;
-      if (p.trigger) h += `<tr class="evrow"><td class="l" colspan="10">${trigTxt(p.trigger)}</td></tr>`;
-      if (p.evt) h += `<tr class="evrow"><td class="l" colspan="10">${evtTxt(p.evt)}</td></tr>`;
+  void evalCard;
+
+  function renderSummary(perfs) {
+    const rows = GROUP_ORDER.map(g => {
+      const list = perfs.filter(p => groupOf(p) === g);
+      if (!list.length) return null;
+      const nets = list.map(p => Number(p.net_pnl_usd) || 0);
+      const combined = nets.reduce((a, b) => a + b, 0);
+      const inProfit = list.filter(p => (p.net_pnl_usd || 0) > 0).length;
+      const trades = list.reduce((a, p) => a + (p.trades || 0), 0);
+      const open = list.reduce((a, p) => a + (p.open_positions || 0), 0);
+      const evs = list.map(p => p.eval_pass).filter(Boolean);
+      const passes = evs.reduce((a, e) => a + (e.passes || 0), 0);
+      const finished = evs.reduce((a, e) => a + (e.attempts_finished || 0), 0);
+      const blows = evs.some(e => e.blows != null) ? evs.reduce((a, e) => a + (e.blows || 0), 0) : null;
+      const progs = evs.map(e => e.current_progress_pct).filter(v => v != null && Number.isFinite(Number(v)));
+      const bestProg = progs.length ? Math.max(...progs.map(Number)) : null;
+      const bufs = evs.map(e => e.mll_buffer).filter(v => v != null);
+      const worstBuf = bufs.length ? Math.min(...bufs.map(Number)) : null;
+      const passTxt = g === 'ov' ? '—' : (finished ? `${(100 * passes / finished).toFixed(0)}% (${passes}/${finished})` : '—');
+      const progTxt = g === 'ov' ? '—' : (bestProg == null ? '—' : ((bestProg > 0 ? '+' : '') + Number(bestProg).toFixed(1) + '%'));
+      const blowTxt = g === 'mech' ? String(blows ?? 0) : '—';
+      return `<tr>
+        <td class="l sticky book">${esc(GROUP_META[g].short)}</td>
+        <td>${list.length}</td>
+        <td>${inProfit} / ${list.length}</td>
+        <td class="${cls(combined)}">${usd(combined)}</td>
+        <td>${trades}</td>
+        <td>${passTxt}</td>
+        <td class="${g === 'ov' ? '' : cls(bestProg)}">${progTxt}</td>
+        <td class="${worstBuf != null && worstBuf < 1000 ? 'neg' : ''}">${g === 'ov' ? '—' : usd(worstBuf, false)}</td>
+        <td class="${blows ? 'neg' : 'dim'}">${blowTxt}</td>
+        <td>${open}</td>
+      </tr>`;
+    }).filter(Boolean).join('');
+    $('sum').innerHTML = `<thead><tr>
+      <th class="l sticky" style="cursor:default">Group</th><th style="cursor:default">Books</th><th style="cursor:default">In profit</th>
+      <th style="cursor:default">Combined net</th><th style="cursor:default">Trades</th>
+      <th style="cursor:default">Eval passing</th><th style="cursor:default">Best current eval</th>
+      <th style="cursor:default">Worst MLL buffer</th><th style="cursor:default">Blown</th><th style="cursor:default">Open</th>
+    </tr></thead><tbody>${rows}</tbody>`;
+  }
+
+  function renderBooks() {
+    const P = panel; if (!P) return;
+    const perfs = (P.performance || []).filter(bookMatch);
+    const st = state.sort.books;
+    const shown = perfs.length, total = (P.performance || []).length;
+    if (!perfs.length) {
+      $('books').innerHTML = `<tbody><tr><td class="empty l">No books match the filters.</td></tr></tbody>`;
+      $('perfUpd').textContent = `updated ${hm(P.updated_at)} ${TZL} · 0 of ${total} shown`;
+      return;
     }
-    $('perf').innerHTML = h;
-    let pc = '', lm = null;
-    const perfs = P.performance || [];
-    for (const p of perfs.filter(q => q.venue === 'LUCID')) {
-      if (p.model !== lm) { lm = p.model; pc += `<div class="mg">${esc(MODEL_NAME[p.model] || p.model)}</div>`; }
-      const o = perfs.find(q => q.book === p.book && q.venue !== 'LUCID');
-      pc += `<div class="mc"><div class="mc-h"><span class="mc-t">${esc(p.book)}</span>
-        <span class="mc-s">${p.open_positions + (o ? o.open_positions : 0)} open</span></div>
-        <div class="mc-s">${esc(p.label || '')}</div>${sinceTxt(p)}
-        <div class="mc-g">${kv('Balance', bal(p.balance))}${kv('Net P&amp;L', usd(p.net_pnl_usd), cls(p.net_pnl_usd))}
-        ${kv('Open P&amp;L', p.open_positions ? usd(p.open_pnl_usd) : '—', cls(p.open_pnl_usd))}
-        ${kv('Closed', p.trades)}${kv('W / L', p.wins + ' / ' + p.losses)}
-        ${kv('Win rate', p.win_rate == null ? '—' : (100 * p.win_rate).toFixed(0) + '%')}
-        ${kv('Went positive first', p.went_positive_first == null ? '—' : esc(p.went_positive_first))}</div>
-        ${p.eval_pass ? passCard(p.eval_pass) : ''}${btCard(p.backtest)}${p.eval ? evalCard(p.eval) : ''}${p.trigger ? `<div class="mc-s" style="margin-top:8px">${trigTxt(p.trigger)}</div>` : ''}${p.evt ? `<div class="mc-s" style="margin-top:8px">${evtTxt(p.evt)}</div>` : ''}
-        ${o ? `<div class="mc-s" style="margin-top:8px">Other venue (BTC): ${bal(o.balance)} · net <span class="${cls(o.net_pnl_usd)}">${usd(o.net_pnl_usd)}</span>
-          · ${o.trades} closed (${o.wins}/${o.losses})${o.open_positions ? ` · ${o.open_positions} open <span class="${cls(o.open_pnl_usd)}">${usd(o.open_pnl_usd)}</span>` : ''}
-          · went positive first ${o.went_positive_first == null ? '—' : esc(o.went_positive_first)}</div>` : ''}</div>`;
+    let h = `<thead><tr>
+      ${th('Book', 'book', 'books', true, true)}
+      ${th('Model / type', 'model', 'books', true)}
+      ${th('Balance', 'balance', 'books')}
+      ${th('Net $', 'net', 'books')}
+      ${th('Win %', 'win', 'books')}
+      ${th('Trades', 'trades', 'books')}
+      ${th('Went + first', 'wpf', 'books')}
+      ${th('Eval passing', 'epass', 'books')}
+      ${th('Current eval', 'eprog', 'books')}
+      ${th('MLL buffer', 'mll', 'books')}
+      ${th('Blown', 'blows', 'books')}
+    </tr></thead><tbody>`;
+    for (const g of GROUP_ORDER) {
+      const list = sortBooks(perfs.filter(p => groupOf(p) === g), st);
+      if (!list.length) continue;
+      const n = list.length;
+      h += `<tr class="group"><td class="sticky l" colspan="11">${esc(GROUP_META[g].title)} · ${n} book${n === 1 ? '' : 's'}</td></tr>`;
+      for (const p of list) {
+        const e = p.eval_pass;
+        const pass = e && e.passing_label ? `${Number(e.passing_pct).toFixed(0)}% (${esc(e.passing_label)})` : '—';
+        const passCls = e && e.passing_pct != null ? (e.passing_pct >= 50 ? 'pos' : (e.attempts_finished ? 'neg' : 'dim')) : 'dim';
+        const prog = e ? Number(e.current_progress_pct) : NaN;
+        const progTxt = Number.isFinite(prog) ? (prog > 0 ? '+' : '') + prog.toFixed(1) + '%' : '—';
+        const ofTxt = e && e.profit_target != null ? `${usd(e.current_profit)} of ${usd(e.profit_target, false)}` : '';
+        const blows = e && e.blows != null ? String(e.blows) : '—';
+        const wr = p.win_rate == null ? '—' : (100 * p.win_rate).toFixed(0) + '%';
+        const wpf = p.went_positive_first == null ? '—' : esc(p.went_positive_first);
+        const sub = typeSub(p);
+        const pills = [
+          isDry(p) ? '<span class="pill dry">Dry run</span>' : '',
+          p.own_reset ? '<span class="pill new">New</span>' : ''
+        ].filter(Boolean).join('');
+        h += `<tr>
+          <td class="l sticky book"><div class="book-name">${esc(p.book)}${pills ? ' ' + pills : ''}</div>${sub ? `<span class="book-sub">${esc(sub)}</span>` : ''}</td>
+          <td class="l">${esc(MODEL_NAME[p.model] || p.model)}</td>
+          <td>${bal(p.balance)}</td>
+          <td class="${cls(p.net_pnl_usd)}">${usd(p.net_pnl_usd)}</td>
+          <td>${wr}</td>
+          <td>${p.trades || 0}${p.trades ? `<span class="wl">${p.wins} / ${p.losses}</span>` : ''}</td>
+          <td>${wpf}</td>
+          <td class="${passCls}">${pass}</td>
+          <td class="${Number.isFinite(prog) ? cls(prog) : 'dim'}">${progTxt}${ofTxt ? `<span class="prog">${ofTxt}</span>` : ''}</td>
+          <td class="${e && e.mll_buffer != null && e.mll_buffer < 1000 ? 'neg' : ''}">${e && e.mll_buffer != null ? usd(e.mll_buffer, false) : '—'}</td>
+          <td class="${e && e.blows ? 'neg' : 'dim'}">${blows}</td>
+        </tr>`;
+        if (p.backtest) h += `<tr class="sub"><td class="l sticky">Backtest</td><td class="l" colspan="10">${btTxt(p.backtest)}</td></tr>`;
+        if (p.eval) h += `<tr class="sub"><td class="l sticky">Lucid eval</td><td class="l" colspan="10">${evalLine(p.eval)}</td></tr>`;
+        if (p.trigger) h += `<tr class="sub"><td class="l sticky">Trigger</td><td class="l" colspan="10">${trigTxt(p.trigger)}</td></tr>`;
+        if (p.evt) h += `<tr class="sub"><td class="l sticky">Event</td><td class="l" colspan="10">${evtTxt(p.evt)}</td></tr>`;
+      }
     }
-    $('perfCards').innerHTML = pc;
-    if ($('perfNote')) $('perfNote').textContent = P.eval_pass_note || '';
-    // event-triggered streams: per-trigger tables (counts and what-if R; no signals)
+    h += '</tbody>';
+    $('books').innerHTML = h;
+    bindSort('books');
+    $('perfUpd').textContent = `updated ${hm(P.updated_at)} ${TZL} · ${shown} of ${total} shown · click a header to sort`;
+  }
+
+  function renderEvents() {
+    const P = panel; if (!P) return;
     const ES = P.event_streams || {}; let eh = '';
     if (ES.ds_evt && ES.ds_evt.per_trigger) {
       const d = ES.ds_evt;
-      eh += `<div class="mc-s" style="margin:4px 0 6px">DeepSeek ds-evt-v1 · ${esc(d.mode || '')}</div><div class="tw"><table>
-        <tr><th class="l">Trigger</th><th>Fired</th><th>Calls chart / text</th><th>Gate passed</th><th>R/signal chart / text</th><th>Win rate chart / text</th></tr>`;
+      eh += `<div class="note evt-note" style="margin:0 0 6px">DeepSeek ds-evt-v1 · ${esc(d.mode || '')}</div><div class="tw"><table>
+        <thead><tr><th class="l sticky" style="cursor:default">Trigger</th><th style="cursor:default">Fired</th><th style="cursor:default">Calls chart / text</th><th style="cursor:default">Gate passed</th><th style="cursor:default">R/signal chart / text</th><th style="cursor:default">Win rate chart / text</th></tr></thead><tbody>`;
       for (const r of d.per_trigger) { const a = r['DS-IMG-E'] || {}, b = r['DS-TXT-E'] || {};
-        eh += `<tr><td class="l">${esc(r.trigger)}</td><td>${a.fired || 0}</td><td>${a.calls || 0} / ${b.calls || 0}</td>
+        eh += `<tr><td class="l sticky book">${esc(r.trigger)}</td><td>${a.fired || 0}</td><td>${a.calls || 0} / ${b.calls || 0}</td>
           <td>${a.gate_passed || 0} / ${b.gate_passed || 0}</td><td>${num(a.R_per_signal)} / ${num(b.R_per_signal)}</td>
           <td>${pct0(a.win_rate)} / ${pct0(b.win_rate)}</td></tr>`; }
-      eh += `</table></div>`;
+      eh += `</tbody></table></div>`;
     }
     if (ES.ev_evt && ES.ev_evt.triggers) {
       const d = ES.ev_evt;
-      eh += `<div class="mc-s" style="margin:14px 0 6px">Claude ev-v1 · ${esc(d.mode || '')}</div><div class="tw"><table>
-        <tr><th class="l">Trigger</th><th>Count</th><th>Gold / EUR / NQ</th><th>EV-CONT R/sig</th><th>EV-REV R/sig</th><th>EV-TWIN R/sig</th></tr>`;
+      eh += `<div class="note evt-note" style="margin:14px 0 6px">Claude ev-v1 · ${esc(d.mode || '')}</div><div class="tw"><table>
+        <thead><tr><th class="l sticky" style="cursor:default">Trigger</th><th style="cursor:default">Count</th><th style="cursor:default">Gold / EUR / NQ</th><th style="cursor:default">EV-CONT R/sig</th><th style="cursor:default">EV-REV R/sig</th><th style="cursor:default">EV-TWIN R/sig</th></tr></thead><tbody>`;
       for (const r of d.triggers) { const ps = r.per_symbol || {};
-        eh += `<tr><td class="l">${esc(r.trigger)}</td><td>${r.n || 0}</td><td>${ps.XAUUSD || 0} / ${ps.EURUSD || 0} / ${ps.US100 || 0}</td>
+        eh += `<tr><td class="l sticky book">${esc(r.trigger)}</td><td>${r.n || 0}</td><td>${ps.XAUUSD || 0} / ${ps.EURUSD || 0} / ${ps.US100 || 0}</td>
           <td>${num(r['EV-CONT'])}</td><td>${num(r['EV-REV'])}</td><td>${num(r['EV-TWIN'])}</td></tr>`; }
-      eh += `</table></div>`;
+      eh += `</tbody></table></div>`;
     }
     $('evtSec').style.display = eh ? '' : 'none';
     $('evtTables').innerHTML = eh;
-    // positions
-    const rows = P.positions || [];
-    $('posCount').textContent = `${rows.length} position${rows.length === 1 ? '' : 's'} · ${rows.filter(x => x.status === 'OPEN').length} open`;
-    if (!rows.length) {
-      $('pos').innerHTML = `<tr><td class="empty l">No positions since the reset yet.</td></tr>`;
-      $('posCards').innerHTML = `<div class="empty">No positions since the reset yet.</div>`;
-    } else {
-      let t = `<tr><th class="l">Book</th><th class="l">Model</th><th class="l">Symbol</th><th class="l">Side</th><th>Size</th>
-        <th class="l">Entry (${TZL})</th><th>Entry px</th><th>Max $ P&amp;L</th><th>Lowest $ P&amp;L</th>
-        <th class="l">Went + first</th><th class="l">Status</th>
-        <th>Px now / exit</th><th>P&amp;L at close</th></tr>`;
-      for (const x of rows) {
-        const st = x.status || 'OPEN', k = st === 'OPEN' ? 'OPEN' : st.replace('CLOSED-', '');
-        const label = st === 'OPEN' ? 'OPEN' : st;
-        const book = x.venue === 'LUCID' ? x.book : `${x.book} · other venue`;
-        t += `<tr><td class="l book">${esc(book)}</td><td class="l dim">${esc(MODEL_NAME[x.model] || x.model || '')}</td>
-          <td class="l">${esc(x.symbol)}${x.contract ? ` <span class="dim">${esc(x.contract)}</span>` : ''}</td>
-          <td class="l side ${esc(x.side)}">${esc(x.side)}</td><td>${qty(x.qty)}</td>
-          <td class="l">${esc(dhm(x.entry_time))}</td><td>${px(x.entry)}</td>
-          <td class="${cls(x.max_pnl_usd)}">${usd(x.max_pnl_usd)}</td><td class="${cls(x.min_pnl_usd)}">${usd(x.min_pnl_usd)}</td>
-          <td class="l ${wpfCls(wpfVal(x))}">${esc(wpfVal(x))}</td>
-          <td class="l"><span class="st ${esc(k)}">${esc(label)}</span>${st === 'OPEN' && x.last_pnl_usd != null ? ` <span class="${cls(x.last_pnl_usd)}">${usd(x.last_pnl_usd)}</span>` : ''}</td>
-          <td>${st === 'OPEN' ? px(x.last_price) : px(x.exit)}</td>
-          <td class="${cls(x.net_at_close_usd)}">${st === 'OPEN' ? '—' : usd(x.net_at_close_usd)}</td></tr>`;
-      }
-      $('pos').innerHTML = t;
-      const kv = (k, v, c = '') => `<div><div class="mc-k">${k}</div><div class="mc-v ${c}">${v}</div></div>`;
-      $('posCards').innerHTML = rows.map(x => {
-        const st = x.status || 'OPEN', k = st === 'OPEN' ? 'OPEN' : st.replace('CLOSED-', '');
-        return `<div class="mc"><div class="mc-h"><span class="mc-t">${esc(x.symbol)}<span class="side ${esc(x.side)}">${esc(x.side)} ${qty(x.qty)}</span></span>
-          <span class="st ${esc(k)}">${esc(st)}</span></div>
-          <div class="mc-s">${esc(x.book)}${x.venue === 'LUCID' ? '' : ' · other venue'} · ${esc(MODEL_NAME[x.model] || x.model || '')}${x.contract ? ' · ' + esc(x.contract) : ''}</div>
-          <div class="mc-g">${kv('Entry ' + TZL, esc(dhm(x.entry_time)))}${kv('Entry px', px(x.entry))}
-          ${kv(st === 'OPEN' ? 'Now' : 'Exit px', st === 'OPEN' ? px(x.last_price) : px(x.exit))}
-          ${kv('Max $', usd(x.max_pnl_usd), cls(x.max_pnl_usd))}${kv('Lowest $', usd(x.min_pnl_usd), cls(x.min_pnl_usd))}
-          ${kv('Went positive first', esc(wpfVal(x)), wpfCls(wpfVal(x)))}
-          ${st === 'OPEN' ? kv('Open P&amp;L', usd(x.last_pnl_usd), cls(x.last_pnl_usd)) : kv('Close P&amp;L', usd(x.net_at_close_usd), cls(x.net_at_close_usd))}</div></div>`;
-      }).join('');
-    }
-    $('posNote').textContent = (P.pnl_note || '') + ' Status: OPEN, or CLOSED-stop / CLOSED-target / CLOSED-time by the mechanical bracket (1 ATR stop / 1 ATR target; EVAL-80 and EVAL-R4: 0.8 ATR stop / 1 ATR target; new P5 books G-P5, G-P5-EVAL, G-P5-EVENT: 0.8 ATR stop / 1 ATR target, plus CLOSED-dead_30min from the 30-minute dead-trade cut). EVAL-80, EVAL-R4 and G-P5-EVAL can also show CLOSED-dll_1800 / CLOSED-mll_breach / CLOSED-eval_passed_flat from the Lucid eval rules. Mechanical CME books (GC / NQ / ES, traded as MGC / MNQ / MES): CLOSED-stop / CLOSED-target at each setup\'s own stop and target, CLOSED-eod_1640 at the 16:40 New York flat, CLOSED-dll_1200 when the trade\'s loss reaches the $1,200 daily limit; their went-positive-first comes from the 1-minute CME bars (open, then low/high in bar direction, then close).';
   }
 
-  async function pollStatus() { const s = await getJSON('status.json'); if (s && newer(s, status)) status = s; }
+  function fillSelect(id, values, current, allLabel) {
+    const el = $(id); if (!el) return;
+    const opts = [`<option value="">${esc(allLabel)}</option>`]
+      .concat(values.map(v => `<option value="${esc(v)}"${v === current ? ' selected' : ''}>${esc(v)}</option>`));
+    el.innerHTML = opts.join('');
+    if (current && values.includes(current)) el.value = current;
+  }
+
+  function renderPositions() {
+    const P = panel; if (!P) return;
+    const rows = P.positions || [];
+    const rawOpen = rows.filter(x => (x.status || 'OPEN') === 'OPEN');
+    const rawClosed = rows.filter(x => (x.status || 'OPEN') !== 'OPEN');
+    const opens = sortPos(rawOpen.filter(openMatch), state.sort.open);
+    const closedSort = state.sort.trades.key === 'default' ? { key: 'exit_time', dir: -1 } : state.sort.trades;
+    const closed = sortPos(rawClosed.filter(tradeMatch), closedSort);
+
+    const books = [...new Set(rows.map(x => x.book))].sort();
+    const assets = [...new Set(rows.map(assetName).filter(Boolean))].sort();
+    fillSelect('tb', books, state.f.tb, 'All books');
+    fillSelect('ta', assets, state.f.ta, 'All assets');
+    fillSelect('ob', [...new Set(rawOpen.map(x => x.book))].sort(), state.f.ob, 'All books');
+    fillSelect('oa', [...new Set(rawOpen.map(assetName).filter(Boolean))].sort(), state.f.oa, 'All assets');
+    $('openFilters').style.display = rawOpen.length ? '' : 'none';
+
+    $('openCount').textContent = rawOpen.length ? `${opens.length} of ${rawOpen.length} open` : '0 open';
+    if (!rawOpen.length) {
+      $('open').innerHTML = `<tbody><tr><td class="empty l">No open positions.</td></tr></tbody>`;
+    } else if (!opens.length) {
+      $('open').innerHTML = `<tbody><tr><td class="empty l">No open positions match the filters.</td></tr></tbody>`;
+    } else {
+      let t = `<thead><tr>
+        ${th('Book', 'book', 'open', true, true)}
+        ${th('Asset', 'asset', 'open')}
+        ${th('Side', 'side', 'open', true)}
+        ${th('Size', 'qty', 'open')}
+        ${th('Entry (' + TZL + ')', 'entry_time', 'open', true)}
+        ${th('Now', 'exit', 'open')}
+        ${th('Open P&amp;L', 'pnl', 'open')}
+        ${th('Max $ P&amp;L', 'max', 'open')}
+        ${th('Lowest $ P&amp;L', 'min', 'open')}
+        ${th('Went positive first', 'wpf', 'open', true)}
+        ${th('Status', 'status', 'open', true)}
+      </tr></thead><tbody>`;
+      for (const x of opens) {
+        t += `<tr>
+          <td class="l sticky book">${esc(x.book)}${x.venue === 'LUCID' ? '' : '<span class="book-sub">other venue</span>'}</td>
+          <td class="l">${assetCell(x)}</td>
+          <td class="l side ${esc(x.side)}">${esc(x.side)}</td>
+          <td>${qty(x.qty)}</td>
+          <td class="l">${esc(dhm(x.entry_time))}<span class="wl">${px(x.entry)}</span></td>
+          <td>${px(x.last_price)}</td>
+          <td class="${cls(x.last_pnl_usd)}">${usd(x.last_pnl_usd)}</td>
+          <td class="${cls(x.max_pnl_usd)}">${usd(x.max_pnl_usd)}</td>
+          <td class="${cls(x.min_pnl_usd)}">${usd(x.min_pnl_usd)}</td>
+          <td class="l ${wpfCls(wpfVal(x))}">${esc(wpfVal(x))}</td>
+          <td class="l"><span class="st OPEN">OPEN</span></td>
+        </tr>`;
+      }
+      t += '</tbody>';
+      $('open').innerHTML = t;
+      bindSort('open');
+    }
+
+    $('tradeCount').textContent = `${closed.length} of ${rawClosed.length} closed · click a header to sort`;
+    if (!rawClosed.length) {
+      $('trades').innerHTML = `<tbody><tr><td class="empty l">No closed trades since the reset yet.</td></tr></tbody>`;
+    } else if (!closed.length) {
+      $('trades').innerHTML = `<tbody><tr><td class="empty l">No trades match the filters.</td></tr></tbody>`;
+    } else {
+      let t = `<thead><tr>
+        ${th('Book', 'book', 'trades', true, true)}
+        ${th('Asset', 'asset', 'trades')}
+        ${th('Side', 'side', 'trades', true)}
+        ${th('Size', 'qty', 'trades')}
+        ${th('Entry (' + TZL + ')', 'entry_time', 'trades', true)}
+        ${th('Exit (' + TZL + ')', 'exit_time', 'trades', true)}
+        ${th('Max $ P&amp;L', 'max', 'trades')}
+        ${th('Lowest $ P&amp;L', 'min', 'trades')}
+        ${th('Went positive first', 'wpf', 'trades', true)}
+        ${th('Status', 'status', 'trades', true)}
+        ${th('P&amp;L at close', 'pnl', 'trades')}
+      </tr></thead><tbody>`;
+      for (const x of closed) {
+        const stt = x.status || 'CLOSED';
+        const k = stt.replace('CLOSED-', '');
+        t += `<tr>
+          <td class="l sticky book">${esc(x.book)}${x.venue === 'LUCID' ? '' : '<span class="book-sub">other venue</span>'}</td>
+          <td class="l">${assetCell(x)}</td>
+          <td class="l side ${esc(x.side)}">${esc(x.side)}</td>
+          <td>${qty(x.qty)}</td>
+          <td class="l">${esc(dhm(x.entry_time))}<span class="wl">${px(x.entry)}</span></td>
+          <td class="l">${esc(dhm(x.t_exit))}<span class="wl">${px(x.exit)}</span></td>
+          <td class="${cls(x.max_pnl_usd)}">${usd(x.max_pnl_usd)}</td>
+          <td class="${cls(x.min_pnl_usd)}">${usd(x.min_pnl_usd)}</td>
+          <td class="l ${wpfCls(wpfVal(x))}">${esc(wpfVal(x))}</td>
+          <td class="l"><span class="st ${esc(k)}">${esc(k)}</span></td>
+          <td class="${cls(x.net_at_close_usd)}">${usd(x.net_at_close_usd)}</td>
+        </tr>`;
+      }
+      t += '</tbody>';
+      $('trades').innerHTML = t;
+      bindSort('trades');
+    }
+  }
+
+  function renderChips() {
+    const gChips = [{ id: '', label: 'All' }, ...GROUP_ORDER.map(g => ({ id: g, label: GROUP_META[g].short }))];
+    $('bGroupChips').innerHTML = gChips.map(c =>
+      `<button type="button" class="chip${state.f.g === c.id ? ' on' : ''}" data-val="${esc(c.id)}">${esc(c.label)}</button>`).join('');
+    $('bTypeChips').innerHTML = TYPE_META.map(c =>
+      `<button type="button" class="chip${state.f.typ === c.id ? ' on' : ''}" data-val="${esc(c.id)}">${esc(c.label)}</button>`).join('');
+    $('bq').value = state.f.bq || '';
+    $('tq').value = state.f.tq || '';
+    $('td').value = state.f.td || 'all';
+    $('tb').value = state.f.tb || '';
+    $('ta').value = state.f.ta || '';
+    $('ts').value = state.f.ts || '';
+    $('tr').value = state.f.tr || '';
+    $('tw').value = state.f.tw || '';
+    $('ob').value = state.f.ob || '';
+    $('oa').value = state.f.oa || '';
+    persist();
+  }
+
+  function renderPanel() {
+    const P = panel; if (!P) return;
+    const r = P.reset || {};
+    $('banner').innerHTML = `Paper only · AI books reset to <b>$100,000</b> at <b>${esc(dhms(r.at))} ${TZL}</b>` +
+      ` (token <b>${esc(r.token || '—')}</b>; mechanical CME books start at <b>$50,000</b>) · ${esc(P.exit_rule || '')}`;
+    renderSummary(P.performance || []);
+    renderChips();
+    renderBooks();
+    if ($('perfNote')) $('perfNote').textContent = P.eval_pass_note || '';
+    renderEvents();
+    renderPositions();
+    $('posNote').textContent = (P.pnl_note || '') + ' Status: OPEN, or CLOSED-stop / CLOSED-target / CLOSED-time by the mechanical bracket (1 ATR stop / 1 ATR target; EVAL-80 and EVAL-R4: 0.8 ATR stop / 1 ATR target; new P5 books: 0.8 ATR stop / 1 ATR target, plus CLOSED-dead_30min). Mechanical CME books: CLOSED-stop / CLOSED-target at each setup’s own stop and target, CLOSED-eod_1640 at the 16:40 New York flat, CLOSED-dll_1200 at the $1,200 daily limit. Went positive first: net unrealized P&L rose above $0 before gross fell below $0.';
+  }
+
+  function hookFilters() {
+    const rerender = () => { persist(); if (panel) { renderBooks(); renderPositions(); renderChips(); } };
+    $('bGroupChips').addEventListener('click', ev => {
+      const b = ev.target.closest('button.chip'); if (!b) return;
+      state.f.g = b.getAttribute('data-val') || '';
+      rerender();
+    });
+    $('bTypeChips').addEventListener('click', ev => {
+      const b = ev.target.closest('button.chip'); if (!b) return;
+      state.f.typ = b.getAttribute('data-val') || '';
+      rerender();
+    });
+    let t = null;
+    const debounced = fn => { clearTimeout(t); t = setTimeout(fn, 120); };
+    $('bq').addEventListener('input', () => { state.f.bq = $('bq').value.trim(); debounced(rerender); });
+    $('tq').addEventListener('input', () => { state.f.tq = $('tq').value.trim(); debounced(rerender); });
+    ['td', 'tb', 'ta', 'ts', 'tr', 'tw', 'ob', 'oa'].forEach(id => {
+      $(id).addEventListener('change', () => { state.f[id] = $(id).value; rerender(); });
+    });
+    $('bookClear').addEventListener('click', () => { state.f.g = ''; state.f.typ = ''; state.f.bq = ''; rerender(); });
+    $('tradeClear').addEventListener('click', () => {
+      state.f.tb = state.f.ta = state.f.ts = state.f.tr = state.f.tw = state.f.tq = '';
+      state.f.td = 'all'; rerender();
+    });
+    $('openClear').addEventListener('click', () => { state.f.ob = ''; state.f.oa = ''; rerender(); });
+    $('bookMore').addEventListener('click', () => {
+      const box = $('bookExtra'); const on = !box.classList.contains('open');
+      box.classList.toggle('open', on); $('bookMore').setAttribute('aria-expanded', on ? 'true' : 'false');
+    });
+    $('tradeMore').addEventListener('click', () => {
+      const box = $('tradeExtra'); const on = !box.classList.contains('open');
+      box.classList.toggle('open', on); $('tradeMore').setAttribute('aria-expanded', on ? 'true' : 'false');
+    });
+    window.addEventListener('hashchange', () => {
+      if (hashLock) return;
+      loadPersist();
+      if (panel) { renderChips(); renderBooks(); renderPositions(); }
+    });
+  }
+
+  async function pollStatus() { const s = await getJSON('status.json'); if (s && newer(s, status)) status = s; renderClock(); }
   async function pollPanel() { const p = await getJSON('panel.json'); if (p && newer(p, panel)) { panel = p; renderPanel(); } }
+  loadPersist();
+  hookFilters();
   pollStatus(); pollPanel();
   setInterval(pollStatus, 5000);
   setInterval(pollPanel, 10000);

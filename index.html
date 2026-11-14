@@ -168,12 +168,13 @@
 
   // ---- panel.json ----
   const MODEL_NAME = { 'gemini-3.8-flash': 'Gemini 3.8 Flash', 'gemini-4-carbon': 'Gemini 4 Carbon',
-    'claude-opus-5-5': 'Claude Opus', 'claude-sonnet-5-5': 'Claude Sonnet', 'deepseek-flash': 'DeepSeek Flash', 'claude-fable-5-2': 'Claude Fable 5.2' };
+    'claude-opus-5-5': 'Claude Opus', 'claude-sonnet-5-5': 'Claude Sonnet', 'deepseek-flash': 'DeepSeek Flash', 'claude-fable-5-2': 'Claude Fable 5.2',
+    'mechanical': 'Mechanical · CME setups · Lucid 50K (no model)' };
   function renderPanel() {
     const P = panel; if (!P) return;
     const r = P.reset || {};
     $('banner').innerHTML = `Paper only · all accounts reset to <b>$100,000</b> at <b>${esc(dhms(r.at))} ${TZL}</b>` +
-      ` (token <b>${esc(r.token || '—')}</b>) · ${esc(P.exit_rule || '')}`;
+      ` (token <b>${esc(r.token || '—')}</b>; mechanical CME books start at <b>$50,000</b>) · ${esc(P.exit_rule || '')}`;
     $('perfUpd').textContent = `updated ${hm(P.updated_at)} ${TZL}`;
     // performance: grouped by model, one Lucid line + one Other-venue line per book
     const wpfVal = (x) => {
@@ -206,7 +207,7 @@
       const sig = e.signals !== undefined ? ` · ${e.signals} signals scored` : '';
       return dry + `R ${num(e.R)} · R/signal ${num(e.R_per_signal)}${pf}${sig} · API cost today ${usd(e.cost_today ?? e.api_cost_today, false)}` +
         ` · calls today ${e.calls_today ?? 0}${hr}${lat}`; };
-    const sinceTxt = p => p.own_reset && p.since ? `<div class="mc-s">New book: started at $100,000 on ${esc(dhms(p.since))} ${TZL} · results since then</div>` : '';
+    const sinceTxt = p => p.own_reset && p.since ? `<div class="mc-s">New book: started at ${bal(p.start_balance || 100000)} on ${esc(dhms(p.since))} ${TZL} · results since then</div>` : '';
     const evalLine = e => `Eval <span class="st ${esc(e.status)}">${esc(e.status)}</span> · profit ` +
       `<span class="${cls(e.profit)}">${usd(e.profit)}</span> of ${usd(e.profit_target, false)} (${Number(e.progress_pct || 0).toFixed(0)}%)` +
       ` · MLL floor ${bal(e.mll_floor)} ${e.mll_locked ? '(locked)' : '(trailing)'}` +
@@ -219,7 +220,7 @@
       const pass = e.passing_label ? `${Number(e.passing_pct).toFixed(0)}% (${esc(e.passing_label)})` : '—';
       const prog = Number(e.current_progress_pct);
       const progTxt = Number.isFinite(prog) ? (prog > 0 ? '+' : '') + prog.toFixed(1) + '%' : '—';
-      return `Eval passing ${pass} · current attempt <span class="${cls(e.current_profit)}">${progTxt}</span> ` +
+      return `${e.title ? esc(e.title) + ' · ' : ''}Eval passing ${pass}${e.blows != null ? ' · blown ' + e.blows : ''} · current attempt <span class="${cls(e.current_profit)}">${progTxt}</span> ` +
         `(${usd(e.current_profit)} of ${usd(e.profit_target, false)}) · MLL buffer ${usd(e.mll_buffer, false)}`;
     };
     const passCard = e => {
@@ -227,11 +228,16 @@
       const pass = e.passing_label ? `${Number(e.passing_pct).toFixed(0)}% (${esc(e.passing_label)})` : '—';
       const prog = Number(e.current_progress_pct);
       const progTxt = Number.isFinite(prog) ? (prog > 0 ? '+' : '') + prog.toFixed(1) + '%' : '—';
-      return `<div class="ev ep"><div class="ev-h"><span>LucidPro 100K</span><span>replay</span></div>
+      return `<div class="ev ep"><div class="ev-h"><span>${esc(e.title || 'LucidPro 100K')}</span><span>${esc(e.mode || 'replay')}</span></div>
         <div class="mc-g">${kv('Eval passing', pass, e.passing_pct == null ? 'dim' : (e.passing_pct >= 50 ? 'pos' : (e.attempts_finished ? 'neg' : 'dim')))}
+        ${e.blows != null ? kv('Blown evals', e.blows, e.blows ? 'neg' : '') : ''}
         ${kv('Current eval', progTxt + ' · ' + usd(e.current_profit) + ' of ' + usd(e.profit_target, false), cls(e.current_profit))}
         ${kv('MLL buffer', usd(e.mll_buffer, false), e.mll_buffer < 0 ? 'neg' : '')}</div></div>`;
     };
+    const btTxt = b => b ? `${esc(b.label || 'backtest (in-sample)')}: win ${num(b.win_pct, 1)}% · ${usd(b.per_month, false).replace('.00', '')}/month · ` +
+      `blow ${num(b.blow_pct, 1)}% · median ${num(b.med_days, 1).replace('.0', '')} days to pass · pass ${num(b.pass_pct, 0)}% · ` +
+      `first payout ${num(b.payout_pct, 0)}% · net ${usd(b.net_per_eval, false).replace('.00', '')}/eval` : '';
+    const btCard = b => b ? `<div class="mc-s" style="margin-top:8px">${btTxt(b)}</div>` : '';
     const evalCard = e => `<div class="ev"><div class="ev-h"><span>Lucid eval</span><span class="st ${esc(e.status)}">${esc(e.status)}</span></div>
       <div class="ev-bar"><i style="width:${Math.min(100, Math.max(0, Number(e.progress_pct || 0)))}%"></i></div>
       <div class="mc-g">${kv('To $6,000', usd(e.profit) + ' · ' + Number(e.progress_pct || 0).toFixed(0) + '%', cls(e.profit))}
@@ -254,6 +260,7 @@
         <td>${p.win_rate == null ? '—' : (100 * p.win_rate).toFixed(0) + '%'}</td>
         <td>${p.went_positive_first == null ? '—' : esc(p.went_positive_first)}</td><td>${p.open_positions}</td></tr>`;
       if (p.eval_pass) h += `<tr class="evrow"><td class="l" colspan="10">${passLine(p.eval_pass)}</td></tr>`;
+      if (p.backtest) h += `<tr class="evrow"><td class="l dim" colspan="10">${btTxt(p.backtest)}</td></tr>`;
       if (p.eval) h += `<tr class="evrow"><td class="l" colspan="10">${evalLine(p.eval)}</td></tr>`;
       if (p.trigger) h += `<tr class="evrow"><td class="l" colspan="10">${trigTxt(p.trigger)}</td></tr>`;
       if (p.evt) h += `<tr class="evrow"><td class="l" colspan="10">${evtTxt(p.evt)}</td></tr>`;
@@ -272,7 +279,7 @@
         ${kv('Closed', p.trades)}${kv('W / L', p.wins + ' / ' + p.losses)}
         ${kv('Win rate', p.win_rate == null ? '—' : (100 * p.win_rate).toFixed(0) + '%')}
         ${kv('Went positive first', p.went_positive_first == null ? '—' : esc(p.went_positive_first))}</div>
-        ${p.eval_pass ? passCard(p.eval_pass) : ''}${p.eval ? evalCard(p.eval) : ''}${p.trigger ? `<div class="mc-s" style="margin-top:8px">${trigTxt(p.trigger)}</div>` : ''}${p.evt ? `<div class="mc-s" style="margin-top:8px">${evtTxt(p.evt)}</div>` : ''}
+        ${p.eval_pass ? passCard(p.eval_pass) : ''}${btCard(p.backtest)}${p.eval ? evalCard(p.eval) : ''}${p.trigger ? `<div class="mc-s" style="margin-top:8px">${trigTxt(p.trigger)}</div>` : ''}${p.evt ? `<div class="mc-s" style="margin-top:8px">${evtTxt(p.evt)}</div>` : ''}
         ${o ? `<div class="mc-s" style="margin-top:8px">Other venue (BTC): ${bal(o.balance)} · net <span class="${cls(o.net_pnl_usd)}">${usd(o.net_pnl_usd)}</span>
           · ${o.trades} closed (${o.wins}/${o.losses})${o.open_positions ? ` · ${o.open_positions} open <span class="${cls(o.open_pnl_usd)}">${usd(o.open_pnl_usd)}</span>` : ''}
           · went positive first ${o.went_positive_first == null ? '—' : esc(o.went_positive_first)}</div>` : ''}</div>`;
@@ -341,7 +348,7 @@
           ${st === 'OPEN' ? kv('Open P&amp;L', usd(x.last_pnl_usd), cls(x.last_pnl_usd)) : kv('Close P&amp;L', usd(x.net_at_close_usd), cls(x.net_at_close_usd))}</div></div>`;
       }).join('');
     }
-    $('posNote').textContent = (P.pnl_note || '') + ' Status: OPEN, or CLOSED-stop / CLOSED-target / CLOSED-time by the mechanical bracket (1 ATR stop / 1 ATR target; EVAL-80 and EVAL-R4: 0.8 ATR stop / 1 ATR target; new P5 books G-P5, G-P5-EVAL, G-P5-EVENT: 0.8 ATR stop / 1 ATR target, plus CLOSED-dead_30min from the 30-minute dead-trade cut). EVAL-80, EVAL-R4 and G-P5-EVAL can also show CLOSED-dll_1800 / CLOSED-mll_breach / CLOSED-eval_passed_flat from the Lucid eval rules.';
+    $('posNote').textContent = (P.pnl_note || '') + ' Status: OPEN, or CLOSED-stop / CLOSED-target / CLOSED-time by the mechanical bracket (1 ATR stop / 1 ATR target; EVAL-80 and EVAL-R4: 0.8 ATR stop / 1 ATR target; new P5 books G-P5, G-P5-EVAL, G-P5-EVENT: 0.8 ATR stop / 1 ATR target, plus CLOSED-dead_30min from the 30-minute dead-trade cut). EVAL-80, EVAL-R4 and G-P5-EVAL can also show CLOSED-dll_1800 / CLOSED-mll_breach / CLOSED-eval_passed_flat from the Lucid eval rules. Mechanical CME books (GC / NQ / ES, traded as MGC / MNQ / MES): CLOSED-stop / CLOSED-target at each setup\'s own stop and target, CLOSED-eod_1640 at the 16:40 New York flat, CLOSED-dll_1200 when the trade\'s loss reaches the $1,200 daily limit; their went-positive-first comes from the 1-minute CME bars (open, then low/high in bar direction, then close).';
   }
 
   async function pollStatus() { const s = await getJSON('status.json'); if (s && newer(s, status)) status = s; }

@@ -24,7 +24,7 @@ log = logging.getLogger("signals.gha")
 SITE_JSON = ("status.json", "latest_signal.json", "history.json", "lucid.json", "claude.json", "bracket.json", "glow80.json", "eval80.json", "evalr4.json", "gp5.json", "gp5eval.json", "gp5event.json",
              "ds_evt.json", "ds_img_e.json", "ds_txt_e.json", "ev_evt.json", "ev_fable.json", "ev_opus.json",
              "carbon.json", "deepseek.json", "signal_scores.json", "opus_b.json", "m15_scan.json", "other_venue.json",
-             "panel.json")
+             "panel.json", "cme_mech.json")
 DATA_JSON = ("books.json",)  # committed to the data branch only (not deployed to Pages)
 CYCLE_LOG_KEEP_DAYS = 14
 
@@ -99,6 +99,8 @@ class GhaLoop:
         self.event_tasks: list[asyncio.Task] = []
         self.other_venue = None
         self.other_venue_task: asyncio.Task | None = None
+        self.cme_mech = None                 # t340u mechanical CME books on Lucid 50K (signals/cme_mech.py), no model
+        self.cme_mech_task: asyncio.Task | None = None
         for sub in ("state", "logs"):
             (data / sub).mkdir(parents=True, exist_ok=True)
 
@@ -350,6 +352,7 @@ class GhaLoop:
         self.start_gp5()
         self.start_events()
         self.start_m15_scan()
+        self.start_cme_mech()
         self.start_panel()
         while True:
             # The job still wakes every `self.interval` (2 min). The site countdown uses
@@ -817,6 +820,29 @@ class GhaLoop:
             feed = EventFeed(self.cfg, engines)
             self.event_tasks.append(asyncio.create_task(feed.run(), name="event-feed"))
 
+    def start_cme_mech(self) -> None:
+        """Six mechanical CME setups (Lucid 50K, blown evals restart). No model call; Yahoo CME 1-min bars."""
+        if self.dry_run or (self.cfg.get("cme_mech") or {}).get("enabled", True) is False:
+            return
+        try:
+            from .cme_mech import CmeMechEngine, run_cme_mech_loop
+            self.cme_mech = CmeMechEngine(self.cfg, state_dir=self.data / "state", logs_dir=self.data / "logs",
+                                          site_dir=self.data, io_lock=self.io_lock)
+            self.cme_mech.persist()
+            self.cme_mech_task = asyncio.create_task(run_cme_mech_loop(self.cme_mech), name="cme-mech")
+            log.info("cme_mech on: %s", ", ".join(self.cme_mech.books))
+        except Exception:
+            log.exception("cme_mech failed to start (other books unaffected)")
+            self.cme_mech = None
+
+    async def stop_cme_mech(self) -> None:
+        t, self.cme_mech_task = self.cme_mech_task, None
+        if t:
+            t.cancel()
+            with contextlib.suppress(BaseException):
+                await asyncio.wait_for(t, 30)
+        self.cme_mech = None
+
     async def stop_events(self) -> None:
         ts, self.event_tasks = self.event_tasks, []
         for t in ts:
@@ -981,6 +1007,7 @@ class GhaLoop:
         await self.stop_evalr4()
         await self.stop_gp5()
         await self.stop_events()
+        await self.stop_cme_mech()
         await self.stop_deepseek()
         await self.stop_opus_b()
         await self.stop_other_venue()

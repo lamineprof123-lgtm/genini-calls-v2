@@ -17,6 +17,7 @@ from pathlib import Path
 from .risk import _atomic_write
 from . import first_cross as fc
 from .eval_pass import eval_pass_stats
+from .cme_mech import BOOKS as MECH_BOOKS, CONTRACTS as MECH_CONTRACTS, SITE_FILE as MECH_SITE, L50
 
 log = logging.getLogger("signals.panel")
 UTC = timezone.utc
@@ -44,16 +45,23 @@ BOOKS = [
     ("DS-TXT-E", "deepseek-flash", "DeepSeek · text · event (NEW ds-evt-v1: CSV table instead of the chart)"),
     ("EV-FABLE", "claude-fable-5-2", "Event · Claude Fable 5.2 xhigh (NEW ev-v1: called on M5 events)"),
     ("EV-OPUS", "claude-opus-5-5", "Event · Claude Opus 5.5 medium (NEW ev-v1: called on M5 events)"),
+    *[(b, "mechanical", v["label"]) for b, v in MECH_BOOKS.items()],
 ]
 MODEL_OF = {b: m for b, m, _ in BOOKS}
 LABEL_OF = {b: l for b, _, l in BOOKS}
 LUCID, OV = "LUCID", "OTHER-VENUE"
-LUCID_ONLY = {"EVAL-80", "EVAL-R4", "G-P5", "G-P5-EVAL", "G-P5-EVENT", "DS-IMG-E", "DS-TXT-E", "EV-FABLE", "EV-OPUS"}   # no other-venue (BTC) account
+LUCID_ONLY = {"EVAL-80", "EVAL-R4", "G-P5", "G-P5-EVAL", "G-P5-EVENT", "DS-IMG-E", "DS-TXT-E", "EV-FABLE", "EV-OPUS",
+              *MECH_BOOKS}
+# t340u mechanical CME books (signals/cme_mech.py): own $50,000 Lucid 50K accounts, no model call, marks / went-
+# positive-first come from the book's own 1-min CME path (GC / NQ / ES are not on the Dukascopy quote path).
+MECH = set(MECH_BOOKS)
+START_OF = {b: L50["start"] for b in MECH_BOOKS}   # no other-venue (BTC) account
 # New P5 books (13 Nov) start after the shared reset: the panel shows them since their own account's created_at.
 # book -> (state subdir, site file with an "eval" block or None)
 OWN_RESET = {"G-P5": ("gp5", None), "G-P5-EVAL": ("gp5eval", "gp5eval.json"), "G-P5-EVENT": ("gp5event", None),
              "DS-IMG-E": ("ds_img_e", None), "DS-TXT-E": ("ds_txt_e", None),
-             "EV-FABLE": ("ev_fable", None), "EV-OPUS": ("ev_opus", None)}
+             "EV-FABLE": ("ev_fable", None), "EV-OPUS": ("ev_opus", None),
+             **{b: (v["dir"], None) for b, v in MECH_BOOKS.items()}}
 # event-stream books -> the engine site file whose "cards" entry is shown under the book (ds-evt-v1 / ev-v1)
 EVENT_SITE = {"DS-IMG-E": "ds_evt.json", "DS-TXT-E": "ds_evt.json", "EV-FABLE": "ev_evt.json", "EV-OPUS": "ev_evt.json"}
 
@@ -125,7 +133,7 @@ class PanelLedger:
             st = {"reset_token": self.reset.get("token"), "reset_at": self.reset.get("at"), "rows": {}}
         self.s = st
         from .eval80 import eval80_contracts
-        self.contracts = {**eval80_contracts(cfg), **((cfg.get("lucid") or {}).get("contracts") or {})}
+        self.contracts = {**MECH_CONTRACTS, **eval80_contracts(cfg), **((cfg.get("lucid") or {}).get("contracts") or {})}
 
     # ---------------- reset marker
     def _reset_marker(self) -> dict:
@@ -381,14 +389,17 @@ class PanelLedger:
         now = now or datetime.now(UTC)
         self.reset = self._reset_marker()
         opens = self.open_positions()
-        quotes = await self._quotes(sorted({p.get("symbol") for _, _, p in opens if p.get("symbol")}))
+        quotes = await self._quotes(sorted({p.get("symbol") for b, _, p in opens if p.get("symbol") and b not in MECH}))
         live_keys = set()
         for book, venue, p in opens:
             row = self._row(book, venue, p)
             if row is None:
                 continue
             live_keys.add(row["key"])
-            px = quotes.get(p.get("symbol"))
+            if book in MECH:
+                fc.apply_result(row, p)
+                row["first_cross_backfill"] = "mech"
+            px = None if book in MECH else quotes.get(p.get("symbol"))
             if px is None:
                 px = p.get("mark") or p.get("last")
             row["status"] = "OPEN"
@@ -402,8 +413,9 @@ class PanelLedger:
                 row["last_at"] = _iso(now)
                 fees = self.fees_of(venue, p, row)
                 row["fees_usd"] = round(fees, 4)
-                fc.observe_print(row, float(px), now, side=side, entry=float(row["entry"]),
-                                 qty=qty, pv=pv, fees=fees, basis="live_net_tick")
+                if book not in MECH:
+                    fc.observe_print(row, float(px), now, side=side, entry=float(row["entry"]),
+                                     qty=qty, pv=pv, fees=fees, basis="live_net_tick")
             self._merge_ext(row, venue, p, px)
         for book, venue, r in self.closes():
             row = self._row(book, venue, r)
@@ -411,6 +423,9 @@ class PanelLedger:
                 continue
             if row["key"] in live_keys and row["status"] == "OPEN" and not r.get("t_exit"):
                 continue
+            if book in MECH:
+                fc.apply_result(row, r)
+                row["first_cross_backfill"] = "mech"
             row["status"] = status_of(r.get("reason"))
             row["close_reason"] = r.get("reason")
             row["exit"] = r.get("exit")
@@ -426,7 +441,7 @@ class PanelLedger:
         # Exit print is a last-resort crossing only if the live path and the backfill left it unresolved.
         for book, venue, r in self.closes():
             row = self._row(book, venue, r)
-            if row is None or fc.resolved(row) or r.get("exit") is None:
+            if row is None or book in MECH or fc.resolved(row) or r.get("exit") is None:
                 continue
             fc.observe_print(row, float(r["exit"]), _dt(r.get("t_exit")) or now,
                              side=_side(r.get("side") or row.get("side")),
@@ -533,6 +548,7 @@ class PanelLedger:
     def site_payload(self, now: datetime) -> dict:
         rows = sorted(self.s["rows"].values(), key=lambda r: r.get("entry_time") or "", reverse=True)
         bal = self.accounts()
+        mech = {c.get("book"): c for c in (_read(self.site / MECH_SITE) or {}).get("books") or []}
         perf = []
         for book, model, label in BOOKS:
             for venue in ((LUCID,) if book in LUCID_ONLY else (LUCID, OV)):
@@ -547,9 +563,10 @@ class PanelLedger:
                 wpf = fc.book_share(rs)
                 for r in rs:
                     r["went_positive_first_label"] = fc.display_of(r)
+                st0 = START_OF.get(book, START)
                 perf.append({"book": book, "venue": venue, "model": model, "label": label,
-                             "balance": round(float(b), 2) if b is not None else round(START + net, 2),
-                             "start_balance": START, "net_pnl_usd": net, "open_pnl_usd": op,
+                             "balance": round(float(b), 2) if b is not None else round(st0 + net, 2),
+                             "start_balance": st0, "net_pnl_usd": net, "open_pnl_usd": op,
                              "trades": len(closed), "wins": wins, "losses": losses,
                              "win_rate": round(wins / len(closed), 3) if closed else None,
                              "open_positions": len(opn), **wpf})
@@ -573,7 +590,13 @@ class PanelLedger:
                     perf[-1]["eval"] = self.eval_status()
                 if book == "EVAL-R4" and venue == LUCID:
                     perf[-1]["eval"] = self.eval_status("evalr4.json")
-                if venue == LUCID:
+                if book in MECH:
+                    c = mech.get(book) or {}
+                    perf[-1]["eval_pass"] = c.get("eval")
+                    perf[-1]["backtest"] = c.get("backtest") or {**MECH_BOOKS[book]["backtest"],
+                                                                  "label": "backtest (in-sample)"}
+                    perf[-1]["mech_today"] = c.get("today")
+                elif venue == LUCID:
                     # Display-only LucidPro 100K replay (other-venue BTC is already out of this venue).
                     perf[-1]["eval_pass"] = eval_pass_stats(
                         [{"net": r.get("net_at_close_usd"), "t_exit": r.get("t_exit"),
@@ -584,7 +607,8 @@ class PanelLedger:
                 "reset": {"token": self.reset.get("token"), "at": self.reset.get("at")},
                 "exit_rule": ("uniform-1atr-v1: 1 ATR stop · 1 ATR target · 90-min cap (all books, no model exits; "
                               "EVAL-80 / EVAL-R4: 0.8 ATR stop · 1 ATR target · 90-min cap; new P5 books G-P5 / "
-                              "G-P5-EVAL / G-P5-EVENT: 0.8 ATR stop · 1 ATR target · 90-min cap · 30-min dead cut)"),
+                              "G-P5-EVAL / G-P5-EVENT: 0.8 ATR stop · 1 ATR target · 90-min cap · 30-min dead cut; "
+                              "mechanical CME books: each setup's own stop / target, flat 16:40 New York)"),
                 "pnl_note": ("Max / lowest $ P&L: gross mark-to-market reached while open (live quote every "
                              f"{int(self.pc.get('poll_seconds', 15))} s, plus the book's own recorded excursion and "
                              "the exit price). P&L at close is net of commissions/fees. "
@@ -604,7 +628,13 @@ class PanelLedger:
                                    "max loss that locks at $100,100. A pass or a DLL/MLL fail ends the attempt and "
                                    "the next trade starts a fresh $100,000 eval. Current eval progress is the "
                                    "unfinished attempt, including open Lucid P&L, as profit / $6,000 (can be "
-                                   "negative), plus the remaining MLL buffer."),
+                                   "negative), plus the remaining MLL buffer. Mechanical CME books (GOLD-COMBO, "
+                                   "GOLD-0820-TREND, GOLD-0930-TREND, NQ-0930-GAP, GOLD-0820-VOTE60, ES-0930-GAP) "
+                                   "start at $50,000 and run a live LucidPro 50K eval instead: $3,000 target, "
+                                   "$1,200 daily loss limit, $2,000 end-of-day trailing max loss that locks at "
+                                   "$50,100 once the balance reaches $52,100; the day's worst intraday excursion "
+                                   "touching the floor blows the eval, and a blown or passed eval restarts at "
+                                   "$50,000 the next session (blows counted)."),
                 "performance": perf, "positions": rows, "event_streams": self.event_streams()}
 
     def event_streams(self) -> dict:

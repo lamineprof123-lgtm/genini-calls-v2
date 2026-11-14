@@ -1,5 +1,5 @@
 {
- "updated_at": "2026-11-14T12:31:26.840986+00:00",
+ "updated_at": "2026-11-14T12:49:08.391748+00:00",
  "paper_only": true,
  "model_calls": false,
  "lucid50": {
@@ -13,24 +13,42 @@
   "flat_et": "16:45",
   "fee": 120.4
  },
+ "lucid100": {
+  "start": 100000.0,
+  "profit_target": 6000.0,
+  "mll": 3000.0,
+  "dll": 1800.0,
+  "lock_trigger": 103100.0,
+  "locked_floor": 100100.0,
+  "max_micros": 60,
+  "flat_et": "16:45",
+  "fee": 190.4,
+  "consistency": 0.4,
+  "split": 0.9,
+  "cycle_goal": 750.0,
+  "payout_min": 500.0,
+  "first_cap": 2500.0,
+  "later_cap": 3000.0,
+  "buffer": 103100.0
+ },
  "data": {
   "ES": {
    "source": "Yahoo Finance ES=F 1-min (CME futures)",
    "last_bar": "2026-11-13T21:59:00+00:00",
    "bars": 7829,
-   "fetched_at": "2026-11-14T12:31:29.181296+00:00"
+   "fetched_at": "2026-11-14T12:49:10.907446+00:00"
   },
   "GC": {
    "source": "Yahoo Finance GC=F 1-min (CME futures)",
    "last_bar": "2026-11-13T21:59:00+00:00",
    "bars": 7874,
-   "fetched_at": "2026-11-14T12:31:30.027602+00:00"
+   "fetched_at": "2026-11-14T12:49:11.771970+00:00"
   },
   "NQ": {
    "source": "Yahoo Finance NQ=F 1-min (CME futures)",
    "last_bar": "2026-11-13T21:59:00+00:00",
    "bars": 7830,
-   "fetched_at": "2026-11-14T12:31:30.464164+00:00"
+   "fetched_at": "2026-11-14T12:49:12.413090+00:00"
   }
  },
  "books": [
@@ -355,6 +373,348 @@
     "pass_pct": 65,
     "payout_pct": 59,
     "net_per_eval": 2687,
+    "label": "backtest (in-sample)",
+    "window": "GC 27 May - 5 Nov 2026, NQ/ES 4 May - 5 Nov 2026"
+   },
+   "today": {
+    "session": "2026-11-13",
+    "legs": {
+     "09:30": {
+      "done": true,
+      "skip": "before book start"
+     }
+    }
+   }
+  },
+  {
+   "book": "100K-GOLD-COMBO",
+   "label": "Mechanical \u00b7 Gold 08:20 trend 4 MGC + 09:30 trend 2 MGC + 08:20 vote 2 MGC + ES gap 4 MES, one account (no MNQ), each leg its own SL/TP, Lucid 100K",
+   "model": "mechanical",
+   "market": "ES+GC",
+   "contract": "MES/MGC",
+   "balance": 100000.0,
+   "start_balance": 100000.0,
+   "created_at": "2026-11-14T12:49:06.366167+00:00",
+   "open_pnl": 0,
+   "eval": {
+    "title": "LucidPro 100K",
+    "mode": "live sim (blown evals restart)",
+    "passes": 0,
+    "fails": 0,
+    "blows": 0,
+    "attempts_finished": 0,
+    "passing_pct": null,
+    "passing_label": null,
+    "current_profit": 0.0,
+    "current_progress_pct": 0.0,
+    "profit_target": 6000.0,
+    "mll_floor": 97000.0,
+    "mll_buffer": 3000.0,
+    "mll_locked": false,
+    "dll_limit": 1800.0,
+    "dll": 1800.0,
+    "mll": 3000.0,
+    "start_balance": 100000.0,
+    "current_equity": 100000.0,
+    "eval_days": 0,
+    "locked_mll_balance": 100100.0
+   },
+   "attempts": [],
+   "backtest": {
+    "win_pct": 62.7,
+    "per_month": 7117,
+    "blow_pct": 16.4,
+    "med_days": 15.5,
+    "pass_pct": 78,
+    "payout_pct": 72,
+    "net_per_eval": 8347,
+    "label": "backtest (in-sample)",
+    "window": "GC 27 May - 5 Nov 2026, NQ/ES 4 May - 5 Nov 2026"
+   },
+   "today": {
+    "session": "2026-11-13",
+    "legs": {
+     "08:20": {
+      "done": true,
+      "skip": "before book start"
+     },
+     "09:30": {
+      "done": true,
+      "skip": "before book start"
+     },
+     "08:20-vote": {
+      "done": true,
+      "skip": "before book start"
+     },
+     "09:30-es": {
+      "done": true,
+      "skip": "before book start"
+     }
+    }
+   }
+  },
+  {
+   "book": "100K-GOLD-0820-TREND",
+   "label": "Mechanical \u00b7 Gold 08:20 daily trend, ATR gate \u00b7 15 pt stop \u00b7 1.5R \u00b7 5 MGC \u00b7 Lucid 100K",
+   "model": "mechanical",
+   "market": "GC",
+   "contract": "MGC",
+   "balance": 100000.0,
+   "start_balance": 100000.0,
+   "created_at": "2026-11-14T12:49:06.366167+00:00",
+   "open_pnl": 0,
+   "eval": {
+    "title": "LucidPro 100K",
+    "mode": "live sim (blown evals restart)",
+    "passes": 0,
+    "fails": 0,
+    "blows": 0,
+    "attempts_finished": 0,
+    "passing_pct": null,
+    "passing_label": null,
+    "current_profit": 0.0,
+    "current_progress_pct": 0.0,
+    "profit_target": 6000.0,
+    "mll_floor": 97000.0,
+    "mll_buffer": 3000.0,
+    "mll_locked": false,
+    "dll_limit": 1800.0,
+    "dll": 1800.0,
+    "mll": 3000.0,
+    "start_balance": 100000.0,
+    "current_equity": 100000.0,
+    "eval_days": 0,
+    "locked_mll_balance": 100100.0
+   },
+   "attempts": [],
+   "backtest": {
+    "win_pct": 57.9,
+    "per_month": 4020,
+    "blow_pct": 0,
+    "med_days": 27,
+    "pass_pct": 75,
+    "payout_pct": 71,
+    "net_per_eval": 4705,
+    "label": "backtest (in-sample)",
+    "window": "GC 27 May - 5 Nov 2026, NQ/ES 4 May - 5 Nov 2026"
+   },
+   "today": {
+    "session": "2026-11-13",
+    "legs": {
+     "08:20": {
+      "done": true,
+      "skip": "before book start"
+     }
+    }
+   }
+  },
+  {
+   "book": "100K-GOLD-0930-TREND",
+   "label": "Mechanical \u00b7 Gold 09:30 daily trend \u00b7 0.1x ATR14 stop \u00b7 1R \u00b7 22 MGC \u00b7 Lucid 100K",
+   "model": "mechanical",
+   "market": "GC",
+   "contract": "MGC",
+   "balance": 100000.0,
+   "start_balance": 100000.0,
+   "created_at": "2026-11-14T12:49:06.366167+00:00",
+   "open_pnl": 0,
+   "eval": {
+    "title": "LucidPro 100K",
+    "mode": "live sim (blown evals restart)",
+    "passes": 0,
+    "fails": 0,
+    "blows": 0,
+    "attempts_finished": 0,
+    "passing_pct": null,
+    "passing_label": null,
+    "current_profit": 0.0,
+    "current_progress_pct": 0.0,
+    "profit_target": 6000.0,
+    "mll_floor": 97000.0,
+    "mll_buffer": 3000.0,
+    "mll_locked": false,
+    "dll_limit": 1800.0,
+    "dll": 1800.0,
+    "mll": 3000.0,
+    "start_balance": 100000.0,
+    "current_equity": 100000.0,
+    "eval_days": 0,
+    "locked_mll_balance": 100100.0
+   },
+   "attempts": [],
+   "backtest": {
+    "win_pct": 61.9,
+    "per_month": 6346,
+    "blow_pct": 52.6,
+    "med_days": 12,
+    "pass_pct": 44,
+    "payout_pct": 38,
+    "net_per_eval": 4224,
+    "label": "backtest (in-sample)",
+    "window": "GC 27 May - 5 Nov 2026, NQ/ES 4 May - 5 Nov 2026"
+   },
+   "today": {
+    "session": "2026-11-13",
+    "legs": {
+     "09:30": {
+      "done": true,
+      "skip": "before book start"
+     }
+    }
+   }
+  },
+  {
+   "book": "100K-NQ-0930-GAP",
+   "label": "Mechanical \u00b7 NQ 09:30 gap direction \u00b7 0.5x ATR14 stop \u00b7 1R \u00b7 2 MNQ \u00b7 Lucid 100K",
+   "model": "mechanical",
+   "market": "NQ",
+   "contract": "MNQ",
+   "balance": 100000.0,
+   "start_balance": 100000.0,
+   "created_at": "2026-11-14T12:49:06.366167+00:00",
+   "open_pnl": 0,
+   "eval": {
+    "title": "LucidPro 100K",
+    "mode": "live sim (blown evals restart)",
+    "passes": 0,
+    "fails": 0,
+    "blows": 0,
+    "attempts_finished": 0,
+    "passing_pct": null,
+    "passing_label": null,
+    "current_profit": 0.0,
+    "current_progress_pct": 0.0,
+    "profit_target": 6000.0,
+    "mll_floor": 97000.0,
+    "mll_buffer": 3000.0,
+    "mll_locked": false,
+    "dll_limit": 1800.0,
+    "dll": 1800.0,
+    "mll": 3000.0,
+    "start_balance": 100000.0,
+    "current_equity": 100000.0,
+    "eval_days": 0,
+    "locked_mll_balance": 100100.0
+   },
+   "attempts": [],
+   "backtest": {
+    "win_pct": 61.7,
+    "per_month": 3651,
+    "blow_pct": 16.4,
+    "med_days": 32,
+    "pass_pct": 74,
+    "payout_pct": 57,
+    "net_per_eval": 2970,
+    "label": "backtest (in-sample)",
+    "window": "GC 27 May - 5 Nov 2026, NQ/ES 4 May - 5 Nov 2026"
+   },
+   "today": {
+    "session": "2026-11-13",
+    "legs": {
+     "09:30": {
+      "done": true,
+      "skip": "before book start"
+     }
+    }
+   }
+  },
+  {
+   "book": "100K-GOLD-0820-VOTE60",
+   "label": "Mechanical \u00b7 Gold 08:20 vote \u226560% (10 voters) \u00b7 15 pt stop \u00b7 1R \u00b7 5 MGC \u00b7 Lucid 100K",
+   "model": "mechanical",
+   "market": "GC",
+   "contract": "MGC",
+   "balance": 100000.0,
+   "start_balance": 100000.0,
+   "created_at": "2026-11-14T12:49:06.366167+00:00",
+   "open_pnl": 0,
+   "eval": {
+    "title": "LucidPro 100K",
+    "mode": "live sim (blown evals restart)",
+    "passes": 0,
+    "fails": 0,
+    "blows": 0,
+    "attempts_finished": 0,
+    "passing_pct": null,
+    "passing_label": null,
+    "current_profit": 0.0,
+    "current_progress_pct": 0.0,
+    "profit_target": 6000.0,
+    "mll_floor": 97000.0,
+    "mll_buffer": 3000.0,
+    "mll_locked": false,
+    "dll_limit": 1800.0,
+    "dll": 1800.0,
+    "mll": 3000.0,
+    "start_balance": 100000.0,
+    "current_equity": 100000.0,
+    "eval_days": 0,
+    "locked_mll_balance": 100100.0
+   },
+   "attempts": [],
+   "backtest": {
+    "win_pct": 61.4,
+    "per_month": 2529,
+    "blow_pct": 31,
+    "med_days": 26,
+    "pass_pct": 48,
+    "payout_pct": 46,
+    "net_per_eval": 3814,
+    "label": "backtest (in-sample)",
+    "window": "GC 27 May - 5 Nov 2026, NQ/ES 4 May - 5 Nov 2026"
+   },
+   "today": {
+    "session": "2026-11-13",
+    "legs": {
+     "08:20": {
+      "done": true,
+      "skip": "before book start"
+     }
+    }
+   }
+  },
+  {
+   "book": "100K-ES-0930-GAP",
+   "label": "Mechanical \u00b7 ES 09:30 gap direction \u00b7 1.5x 15-min range stop \u00b7 1R \u00b7 6 MES \u00b7 Lucid 100K",
+   "model": "mechanical",
+   "market": "ES",
+   "contract": "MES",
+   "balance": 100000.0,
+   "start_balance": 100000.0,
+   "created_at": "2026-11-14T12:49:06.366167+00:00",
+   "open_pnl": 0,
+   "eval": {
+    "title": "LucidPro 100K",
+    "mode": "live sim (blown evals restart)",
+    "passes": 0,
+    "fails": 0,
+    "blows": 0,
+    "attempts_finished": 0,
+    "passing_pct": null,
+    "passing_label": null,
+    "current_profit": 0.0,
+    "current_progress_pct": 0.0,
+    "profit_target": 6000.0,
+    "mll_floor": 97000.0,
+    "mll_buffer": 3000.0,
+    "mll_locked": false,
+    "dll_limit": 1800.0,
+    "dll": 1800.0,
+    "mll": 3000.0,
+    "start_balance": 100000.0,
+    "current_equity": 100000.0,
+    "eval_days": 0,
+    "locked_mll_balance": 100100.0
+   },
+   "attempts": [],
+   "backtest": {
+    "win_pct": 60.4,
+    "per_month": 4448,
+    "blow_pct": 25.4,
+    "med_days": 29.5,
+    "pass_pct": 72,
+    "payout_pct": 45,
+    "net_per_eval": 2711,
     "label": "backtest (in-sample)",
     "window": "GC 27 May - 5 Nov 2026, NQ/ES 4 May - 5 Nov 2026"
    },

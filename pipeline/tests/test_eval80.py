@@ -144,7 +144,16 @@ def _open(e, sym="XAUUSD", contract="GC", qty=6, entry=3945.0, side=1, atr=5.0):
     e.s["next_id"] += 1
 
 
-def test_dll_soft_pause(cfg, tmp_path):
+def test_dll_soft_pause(cfg, tmp_path, monkeypatch):
+    # eligible() reads datetime.now(); pin it to T0's Lucid day so the test doesn't depend on wall clock
+    import signals.eval80 as E80
+
+    class _DT(datetime):
+        @classmethod
+        def now(cls, tz=None):
+            return T0 if tz is None else T0.astimezone(tz)
+
+    monkeypatch.setattr(E80, "datetime", _DT)
     e = Eval80Book(cfg)
     e.s["day"] = {"day": lucid_day(T0), "net": -1000.0}
     _open(e)

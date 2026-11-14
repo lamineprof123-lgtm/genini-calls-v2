@@ -172,10 +172,48 @@ class GhaLoop:
             if f.is_file() and (not f.name.startswith(".") or f.name == ".nojekyll") \
                     and f.suffix.lower() not in (".py", ".md", ".yml", ".yaml"):
                 shutil.copy2(f, st / f.name)
+        # Refresh index.html / logos from origin/main so a long-running loop cannot
+        # republish a stale checkout after a later UI push (sort/filters would vanish).
+        self._overlay_chrome_from_origin_main(st)
         for f in SITE_JSON:
             if (self.data / f).exists():
                 shutil.copy2(self.data / f, st / f)
         return st
+
+    def _overlay_chrome_from_origin_main(self, dest: Path) -> int:
+        """Copy non-data site files (index.html, logos, favicons) from origin/main into dest.
+
+        Fail-soft: if fetch or git show fails, the checkout copy already in dest is kept.
+        Never overlays SITE_JSON / DATA_JSON (those come from the data branch).
+        Returns the number of files refreshed.
+        """
+        n = 0
+        try:
+            r = _git(self.main_dir, "fetch", "-q", "--depth", "1", "origin", "main", check=False, timeout=40)
+            if r.returncode != 0:
+                log.warning("site chrome: fetch origin/main failed: %s", (r.stderr or r.stdout or "")[-200:])
+                return 0
+            ls = _git(self.main_dir, "ls-tree", "--name-only", "origin/main", check=False, timeout=15)
+            if ls.returncode != 0:
+                return 0
+            skip = set(SITE_JSON) | set(DATA_JSON)
+            for name in (ls.stdout or "").splitlines():
+                if not name or "/" in name or name in skip:
+                    continue
+                if name.startswith(".") and name != ".nojekyll":
+                    continue
+                if Path(name).suffix.lower() in (".py", ".md", ".yml", ".yaml"):
+                    continue
+                show = subprocess.run(["git", "show", f"origin/main:{name}"], cwd=self.main_dir,
+                                      capture_output=True, timeout=20)
+                if show.returncode == 0 and show.stdout:
+                    (dest / name).write_bytes(show.stdout)
+                    n += 1
+            if n:
+                log.info("site chrome: refreshed %d file(s) from origin/main", n)
+        except Exception:
+            log.exception("site chrome: origin/main overlay failed; using checkout copy")
+        return n
 
     def pages_build_version(self) -> str | None:
         """Pages needs a real repo commit per deployment, and repeat deploys of one version stop rolling out.

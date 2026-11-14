@@ -274,16 +274,22 @@ def test_panel_open_positions_show_live_held():
 
 
 def test_index_html_table_sort_filters():
-    """Table UI (no mobile card layout): sortable headers, persistable filters, no countdown/signals."""
+    """Two-table panel: Active books + Trade history, sortable/filterable, no countdown/signals."""
     html = Path(__file__).resolve().parents[2].joinpath("index.html").read_text()
-    for needle in ("id=\"books\"", "id=\"open\"", "id=\"trades\"", "id=\"sum\"",
-                   "data-sort", "bb-panel-filters-v1", "localStorage", "location.hash",
+    for needle in ("id=\"books\"", "id=\"trades\"", "Active books", "Trade history",
+                   "data-sort", "bb-panel-filters-v2", "localStorage", "location.hash",
                    "Search books", "Search trades", "All dates", "Last 7 days",
-                   "Went + first: Yes", "bGroupChips", "bTypeChips"):
+                   "Went + first: Yes", "bGroupChips", "bTypeChips",
+                   "grok bot sent ORB", "Open (", "Close ("):
         assert needle in html, needle
+    # summary / open-positions / event tables were removed (open rows live in trade history)
+    assert 'id="sum"' not in html and 'id="open"' not in html and 'id="evtSec"' not in html
     assert 'id="perfCards"' not in html and 'id="posCards"' not in html
     assert 'id="count"' not in html and "Next scan in" not in html and 'id="countAt"' not in html
     assert "latest_signal.json" not in html and "v-signal" not in html
     assert "UI preview" not in html
-    # card-layout CSS hook from the previous mobile view must stay gone
     assert ".cards { display: none; }" not in html and 'id="perfCards"' not in html
+    # six mechanical books keep their ids; the ORB label is display-only
+    for book in ("GOLD-COMBO", "GOLD-0820-TREND", "GOLD-0930-TREND",
+                 "NQ-0930-GAP", "GOLD-0820-VOTE60", "ES-0930-GAP"):
+        assert book in html, book

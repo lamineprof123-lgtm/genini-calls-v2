@@ -84,3 +84,46 @@ def test_loop_uses_data_head_and_skips_already_deployed_commit(cfg, tmp_path, mo
 def tempfile_dir(tmp_path: Path) -> str:
     import tempfile
     return tempfile.mkdtemp(dir=tmp_path)
+
+
+def test_stage_site_refreshes_index_html_from_origin_main(cfg, tmp_path):
+    """A stale main checkout must not republish old index.html after origin/main moves."""
+    main = _repo(tmp_path / "main")
+    (main / "index.html").write_text("OLD no-sort checkout")
+    (main / "logo-bluebird.png").write_bytes(b"png-old")
+    subprocess.run(["git", "add", "-A"], cwd=main, check=True)
+    subprocess.run(["git", "commit", "-q", "-m", "old"], cwd=main, check=True)
+    subprocess.run(["git", "branch", "-M", "main"], cwd=main, check=True)
+    remote = tmp_path / "remote.git"
+    subprocess.run(["git", "clone", "-q", "--bare", str(main), str(remote)], check=True)
+    subprocess.run(["git", "remote", "add", "origin", str(remote)], cwd=main, check=True)
+    subprocess.run(["git", "push", "-q", "-u", "origin", "main"], cwd=main, check=True)
+    (main / "index.html").write_text('NEW data-sort bindSort Active books')
+    (main / "logo-bluebird.png").write_bytes(b"png-new")
+    subprocess.run(["git", "add", "index.html", "logo-bluebird.png"], cwd=main, check=True)
+    subprocess.run(["git", "commit", "-q", "-m", "new ui"], cwd=main, check=True)
+    subprocess.run(["git", "push", "-q", "origin", "main"], cwd=main, check=True)
+    # leave the working tree on the old commit, as a long-running loop would
+    subprocess.run(["git", "checkout", "-q", "HEAD~1"], cwd=main, check=True)
+    assert "OLD" in (main / "index.html").read_text()
+
+    data = _repo(tmp_path / "data")
+    (data / "panel.json").write_text('{"updated_at":"x"}')
+    lp = gha_loop.GhaLoop(cfg, data, "t", "holder", dry_run=True, deploy=False)
+    lp.main_dir = main
+    staged = Path(lp.stage_site())
+    html = (staged / "index.html").read_text()
+    assert "data-sort" in html and "Active books" in html
+    assert "OLD" not in html
+    assert (staged / "logo-bluebird.png").read_bytes() == b"png-new"
+    assert (staged / "panel.json").read_text() == '{"updated_at":"x"}'
+
+
+def test_overlay_chrome_fails_soft_without_origin(cfg, tmp_path):
+    main = _repo(tmp_path / "main")
+    (main / "index.html").write_text("CHECKOUT")
+    data = _repo(tmp_path / "data")
+    lp = gha_loop.GhaLoop(cfg, data, "t", "holder", dry_run=True, deploy=False)
+    lp.main_dir = main
+    staged = Path(lp.stage_site())
+    assert (staged / "index.html").read_text() == "CHECKOUT"

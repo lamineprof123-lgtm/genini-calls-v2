@@ -64,7 +64,7 @@ def test_reference_cases_cover_every_single_setup_and_exit_kind():
 
 def test_setups_exactly_as_specified():
     B = C.BOOKS
-    assert list(B) == ["GOLD-COMBO", "GOLD-0820-TREND", "GOLD-0930-TREND", "NQ-0930-GAP", "GOLD-0820-VOTE60", "ES-0930-GAP"]
+    assert list(B)[:6] == ["GOLD-COMBO", "GOLD-0820-TREND", "GOLD-0930-TREND", "NQ-0930-GAP", "GOLD-0820-VOTE60", "ES-0930-GAP"]
     g1, g2 = B["GOLD-COMBO"]["legs"]
     assert (g1["O"], g1["sig"], g1["gate"], g1["stop"], g1["tp"], g1["n"]) == (820, "trend", True, ("pts", 15.0), 1.5, 3)
     assert (g2["O"], g2["sig"], g2["gate"], g2["stop"], g2["tp"], g2["n"]) == (930, "trend", False, ("atr", 0.1), 1.0, 4)
@@ -152,7 +152,8 @@ def test_live_engine_replays_two_yahoo_sessions(tmp_path):
     assert got[("GOLD-COMBO", "2026-11-13", "09:30")]["qty"] == 4
     # one-shot walk of the full session equals what the incremental engine booked
     for (b, ds, legname), r in got.items():
-        spec = C.BOOKS[b]; m = spec["m"]; leg = next(x for x in spec["legs"] if x["leg"] == legname)
+        spec = C.BOOKS[b]; leg = next(x for x in spec["legs"] if x["leg"] == legname)
+        m = C.leg_market(b, leg)
         df = C.prep_bars(raw[m].copy())
         g2 = df[df.date.astype(str) == ds].reset_index(drop=True)
         dl = C.daily_stats(eng.eng["daily"][m])
@@ -160,12 +161,12 @@ def test_live_engine_replays_two_yahoo_sessions(tmp_path):
         dec = C.decide(leg, info, m)
         D = C.hm_add(leg["O"], 30)
         w = C.walk(g2[(g2.hm > D) & (g2.hm <= C.CAP)], dec["side"], dec["stop_pts"], dec["tgt_pts"],
-                   C.MK[m]["tick"], leg["n"], C.MK[m]["pv"], final=True)
+                   C.MK[m]["tick"], leg["n"], C.MK[m]["pv"], final=True, dll=C.dll_of(b))
         assert (w["reason"], w["net"]) == (r["reason"], r["net"]), (b, ds)
     # books: own $50k accounts, balance = 50k + realized, evals rolled for both sessions
     for b, s in eng.books.items():
         mine = sum(r["net"] for r in recs if r["book"] == b)
-        assert s["balance"] == pytest.approx(50000 + mine, abs=0.01)
+        assert s["balance"] == pytest.approx(C.plan_of(b)["start"] + mine, abs=0.01)
         assert s["final_through"] == "2026-11-13" and not s["positions"]
     site = json.loads((tmp_path / C.SITE_FILE).read_text())
     assert [c["book"] for c in site["books"]] == list(C.BOOKS) and site["model_calls"] is False
@@ -180,7 +181,7 @@ def test_book_start_blocks_earlier_sessions(tmp_path):
     asyncio.run(eng.tick())
     assert not list((tmp_path / "logs").glob("*/*_trades.jsonl"))
     for s in eng.books.values():
-        assert s["final_through"] == "2026-11-13" and s["lucid50"]["eval"]["days"] == 0
+        assert s["final_through"] == "2026-11-13" and s[C.eval_key(s["book"])]["eval"]["days"] == 0
 
 
 def test_panel_cards_and_rows(tmp_path):
@@ -208,8 +209,9 @@ def test_panel_cards_and_rows(tmp_path):
     perf = {p["book"]: p for p in site["performance"] if p["book"] in C.BOOKS}
     assert set(perf) == set(C.BOOKS) and all(b in LUCID_ONLY and b in OWN_RESET for b in C.BOOKS)
     for b, p in perf.items():
-        assert p["model"] == "mechanical" and p["start_balance"] == 50000.0 and p["venue"] == "LUCID"
-        assert p["eval_pass"]["title"] == "LucidPro 50K" and p["eval_pass"]["profit_target"] == 3000.0
+        assert p["model"] == "mechanical" and p["start_balance"] == C.plan_of(b)["start"] and p["venue"] == "LUCID"
+        assert p["eval_pass"]["title"] == ("LucidPro 100K" if C.BOOKS[b].get("plan") == "L100" else "LucidPro 50K")
+        assert p["eval_pass"]["profit_target"] == C.plan_of(b)["profit_target"]
         assert p["backtest"]["label"] == "backtest (in-sample)"
         assert "went_positive_first_pct" in p
     rows = [r for r in site["positions"] if r["book"] in C.BOOKS]

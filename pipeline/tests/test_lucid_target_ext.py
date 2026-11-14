@@ -289,7 +289,11 @@ def test_index_html_table_sort_filters():
     assert "latest_signal.json" not in html and "v-signal" not in html
     assert "UI preview" not in html
     assert ".cards { display: none; }" not in html and 'id="perfCards"' not in html
-    # six mechanical books keep their ids; the ORB label is display-only
+    # mechanical books keep their ids; the ORB label is display-only
     for book in ("GOLD-COMBO", "GOLD-0820-TREND", "GOLD-0930-TREND",
                  "NQ-0930-GAP", "GOLD-0820-VOTE60", "ES-0930-GAP"):
         assert book in html, book
+    for book in ("100K-GOLD-COMBO", "100K-GOLD-0820-TREND", "100K-GOLD-0930-TREND",
+                 "100K-NQ-0930-GAP", "100K-GOLD-0820-VOTE60", "100K-ES-0930-GAP"):
+        assert book in html, book
+    assert "GOLD-COMBO 100K" in html and "Mechanical · Lucid 100K" in html

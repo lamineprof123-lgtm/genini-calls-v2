@@ -287,11 +287,21 @@
     BTCUSD: 'BITCOIN'
   };
   const ORB_BOOKS = {
-    'GOLD-COMBO': 1, 'GOLD-0820-TREND': 1, 'GOLD-0930-TREND': 1,
-    'NQ-0930-GAP': 1, 'GOLD-0820-VOTE60': 1, 'ES-0930-GAP': 1
+    'GOLD-COMBO': 'GOLD-COMBO',
+    'GOLD-0820-TREND': 'GOLD-0820-TREND',
+    'GOLD-0930-TREND': 'GOLD-0930-TREND',
+    'NQ-0930-GAP': 'NQ-0930-GAP',
+    'GOLD-0820-VOTE60': 'GOLD-0820-VOTE60',
+    'ES-0930-GAP': 'ES-0930-GAP',
+    '100K-GOLD-COMBO': 'GOLD-COMBO 100K',
+    '100K-GOLD-0820-TREND': 'GOLD-0820-TREND 100K',
+    '100K-GOLD-0930-TREND': 'GOLD-0930-TREND 100K',
+    '100K-NQ-0930-GAP': 'NQ-0930-GAP 100K',
+    '100K-GOLD-0820-VOTE60': 'GOLD-0820-VOTE60 100K',
+    '100K-ES-0930-GAP': 'ES-0930-GAP 100K'
   };
   const ORB_TAG = ' (grok bot sent ORB)';
-  function bookLabel(book) { return ORB_BOOKS[book] ? book + ORB_TAG : (book || ''); }
+  function bookLabel(book) { return ORB_BOOKS[book] ? ORB_BOOKS[book] + ORB_TAG : (book || ''); }
   function assetName(x) { return ASSET[x.symbol] || ASSET[x.contract] || x.symbol; }
   function posSub(x) {
     return [x.side, qty(x.qty), [x.symbol, x.contract].filter(Boolean).join(' · ')].filter(Boolean).join(' · ');
@@ -312,7 +322,9 @@
   const isOpen = x => (x.status || 'OPEN') === 'OPEN';
 
   function groupOf(p) {
-    if (p.model === 'mechanical') return 'mech';
+    if (p.model === 'mechanical') {
+      return (Number(p.start_balance) >= 100000 || String(p.book || '').startsWith('100K-')) ? 'mech100' : 'mech';
+    }
     if (p.venue && p.venue !== 'LUCID') return 'ov';
     return 'ai';
   }
@@ -328,9 +340,10 @@
   const GROUP_META = {
     ai:   { title: 'AI books · Lucid 100K', short: 'AI · Lucid 100K' },
     mech: { title: 'Mechanical · Lucid 50K', short: 'Mechanical · Lucid 50K' },
+    mech100: { title: 'Mechanical · Lucid 100K', short: 'Mechanical · Lucid 100K' },
     ov:   { title: 'Other venue (BTC)', short: 'Other venue (BTC)' }
   };
-  const GROUP_ORDER = ['ai', 'mech', 'ov'];
+  const GROUP_ORDER = ['ai', 'mech', 'mech100', 'ov'];
   const TYPE_META = [
     { id: '', label: 'All types' },
     { id: 'gemini', label: 'Gemini' },
@@ -345,7 +358,13 @@
     'GOLD-0930-TREND': '09:30 trend · 0.1×ATR / 1R · 15 MGC',
     'NQ-0930-GAP': '09:30 gap · 1.5×ATR / 2R · 1 MNQ',
     'GOLD-0820-VOTE60': '08:20 vote ≥60% · 15 pt / 1R · 6 MGC',
-    'ES-0930-GAP': '09:30 gap · 10 pt / 3R · 8 MES'
+    'ES-0930-GAP': '09:30 gap · 10 pt / 3R · 8 MES',
+    '100K-GOLD-COMBO': '08:20 trend 4 MGC + 09:30 trend 2 MGC + vote 2 MGC + ES gap 4 MES',
+    '100K-GOLD-0820-TREND': '08:20 trend · 15 pt / 1.5R · 5 MGC',
+    '100K-GOLD-0930-TREND': '09:30 trend · 0.1×ATR / 1R · 22 MGC',
+    '100K-NQ-0930-GAP': '09:30 gap · 0.5×ATR / 1R · 2 MNQ',
+    '100K-GOLD-0820-VOTE60': '08:20 vote ≥60% · 15 pt / 1R · 5 MGC',
+    '100K-ES-0930-GAP': '09:30 gap · 1.5×15m range / 1R · 6 MES'
   };
 
   const state = {
@@ -793,7 +812,7 @@
     const P = panel; if (!P) return;
     const r = P.reset || {};
     $('banner').innerHTML = `Paper only · AI books reset to <b>$100,000</b> at <b>${esc(dhms(r.at))} ${TZL}</b>` +
-      ` (token <b>${esc(r.token || '—')}</b>; mechanical CME books start at <b>$50,000</b>) · ${esc(P.exit_rule || '')}`;
+      ` (token <b>${esc(r.token || '—')}</b>; mechanical 50K books start at <b>$50,000</b>; 100K books start at <b>$100,000</b>) · ${esc(P.exit_rule || '')}`;
     renderChips();
     renderBooks();
     if ($('perfNote')) $('perfNote').textContent = P.eval_pass_note || '';

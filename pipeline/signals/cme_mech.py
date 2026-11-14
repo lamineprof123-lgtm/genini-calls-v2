@@ -26,6 +26,15 @@ trailing on end-of-day balance, floor locks at $50,100 once the balance reaches 
 (the day's worst excursion or close touching the floor) or a pass ends the attempt; the next session starts a
 fresh $50,000 eval (blown evals allowed, counted). The book's own account is ONE continuous $50,000 account that
 never resets (like the backtest's profit / month).
+
+Six more books (t347u) run the same signals on their own Lucid 100K accounts ($100,000 start). The
+50K books above are unchanged. 100K stops / sizes come from orb_vote_optimize_blowok_100k.py sheet
+'best': GOLD-0820-TREND 15 pt / 1.5R / 5 MGC (ATR gate); GOLD-0930-TREND 0.1x ATR14 / 1R / 22 MGC;
+GOLD-0820-VOTE60 15 pt / 1R / 5 MGC; NQ-0930-GAP 0.5x ATR14 / 1R / 2 MNQ; ES-0930-GAP 1.5x 15-min
+range / 1R / 6 MES; GOLD-COMBO is one account with four of those legs (4 + 2 + 2 MGC + 4 MES, no MNQ),
+each leg keeping its own SL/TP. Lucid 100K: $6,000 target, $3,000 EOD-trailing MLL that locks at
+$100,100 once the balance reaches $103,100, DLL $1,800, max 60 micros, fee $190.40. Blown or passed
+evals restart and are counted, same as 50K. The live sim does not model funded payouts (same as 50K).
 """
 from __future__ import annotations
 import asyncio, json, logging, math, time
@@ -88,6 +97,46 @@ BOOKS = {
                     "label": "Mechanical · ES 09:30 gap direction · 10 pt stop · 3R · 8 MES · Lucid 50K",
                     "backtest": {"win_pct": 36.6, "per_month": 2551, "blow_pct": 33, "med_days": 14, "pass_pct": 65,
                                  "payout_pct": 59, "net_per_eval": 2687}},
+    # Lucid 100K books (own accounts). Internal ids keep the 100K- prefix; display names are applied in the panel.
+    "100K-GOLD-COMBO": {"dir": "cme_100k_gold_combo", "m": "GC", "plan": "L100",
+                        "legs": [{**_G0820, "leg": "08:20", "n": 4, "m": "GC"},
+                                 {**_G0930, "leg": "09:30", "n": 2, "m": "GC"},
+                                 {"O": 820, "sig": "vote60", "gate": False, "stop": ("pts", 15.0), "tp": 1.0,
+                                  "leg": "08:20-vote", "n": 2, "m": "GC"},
+                                 {"O": 930, "sig": "gap", "gate": False, "stop": ("rng", 1.5), "tp": 1.0,
+                                  "leg": "09:30-es", "n": 4, "m": "ES"}],
+                        "label": "Mechanical · Gold 08:20 trend 4 MGC + 09:30 trend 2 MGC + 08:20 vote 2 MGC + "
+                                 "ES gap 4 MES, one account (no MNQ), each leg its own SL/TP, Lucid 100K",
+                        "backtest": {"win_pct": 62.7, "per_month": 7117, "blow_pct": 16.4, "med_days": 15.5, "pass_pct": 78,
+                                     "payout_pct": 72, "net_per_eval": 8347}},
+    "100K-GOLD-0820-TREND": {"dir": "cme_100k_gold_0820", "m": "GC", "plan": "L100",
+                             "legs": [{**_G0820, "leg": "08:20", "n": 5, "m": "GC"}],
+                             "label": "Mechanical · Gold 08:20 daily trend, ATR gate · 15 pt stop · 1.5R · 5 MGC · Lucid 100K",
+                             "backtest": {"win_pct": 57.9, "per_month": 4020, "blow_pct": 0, "med_days": 27, "pass_pct": 75,
+                                          "payout_pct": 71, "net_per_eval": 4705}},
+    "100K-GOLD-0930-TREND": {"dir": "cme_100k_gold_0930", "m": "GC", "plan": "L100",
+                             "legs": [{**_G0930, "leg": "09:30", "n": 22, "m": "GC"}],
+                             "label": "Mechanical · Gold 09:30 daily trend · 0.1x ATR14 stop · 1R · 22 MGC · Lucid 100K",
+                             "backtest": {"win_pct": 61.9, "per_month": 6346, "blow_pct": 52.6, "med_days": 12, "pass_pct": 44,
+                                          "payout_pct": 38, "net_per_eval": 4224}},
+    "100K-NQ-0930-GAP": {"dir": "cme_100k_nq_gap", "m": "NQ", "plan": "L100",
+                         "legs": [{"O": 930, "sig": "gap", "gate": False, "stop": ("atr", 0.5), "tp": 1.0,
+                                   "leg": "09:30", "n": 2, "m": "NQ"}],
+                         "label": "Mechanical · NQ 09:30 gap direction · 0.5x ATR14 stop · 1R · 2 MNQ · Lucid 100K",
+                         "backtest": {"win_pct": 61.7, "per_month": 3651, "blow_pct": 16.4, "med_days": 32, "pass_pct": 74,
+                                      "payout_pct": 57, "net_per_eval": 2970}},
+    "100K-GOLD-0820-VOTE60": {"dir": "cme_100k_gold_vote60", "m": "GC", "plan": "L100",
+                              "legs": [{"O": 820, "sig": "vote60", "gate": False, "stop": ("pts", 15.0), "tp": 1.0,
+                                        "leg": "08:20", "n": 5, "m": "GC"}],
+                              "label": "Mechanical · Gold 08:20 vote ≥60% (10 voters) · 15 pt stop · 1R · 5 MGC · Lucid 100K",
+                              "backtest": {"win_pct": 61.4, "per_month": 2529, "blow_pct": 31, "med_days": 26, "pass_pct": 48,
+                                           "payout_pct": 46, "net_per_eval": 3814}},
+    "100K-ES-0930-GAP": {"dir": "cme_100k_es_gap", "m": "ES", "plan": "L100",
+                         "legs": [{"O": 930, "sig": "gap", "gate": False, "stop": ("rng", 1.5), "tp": 1.0,
+                                   "leg": "09:30", "n": 6, "m": "ES"}],
+                         "label": "Mechanical · ES 09:30 gap direction · 1.5x 15-min range stop · 1R · 6 MES · Lucid 100K",
+                         "backtest": {"win_pct": 60.4, "per_month": 4448, "blow_pct": 25.4, "med_days": 29.5, "pass_pct": 72,
+                                      "payout_pct": 45, "net_per_eval": 2711}},
 }
 BOOK_ORDER = list(BOOKS)
 SITE_FILE = "cme_mech.json"
@@ -95,6 +144,32 @@ SITE_FILE = "cme_mech.json"
 # LucidPro 50K (Lucid help centre "LucidPro Evaluation Account", checked 14 Nov 2026)
 L50 = {"start": 50_000.0, "profit_target": 3_000.0, "mll": 2_000.0, "dll": 1_200.0, "lock_trigger": 52_100.0,
        "locked_floor": 50_100.0, "max_micros": 40, "flat_et": "16:45", "fee": 120.40}
+# LucidPro 100K (Lucid help centre + orb_vote_optimize_blowok_100k.py). Funded payout fields are recorded for
+# the backtest; the live engine restarts the eval on pass/blow and does not pay out (same as 50K).
+L100 = {"start": 100_000.0, "profit_target": 6_000.0, "mll": 3_000.0, "dll": 1_800.0, "lock_trigger": 103_100.0,
+        "locked_floor": 100_100.0, "max_micros": 60, "flat_et": "16:45", "fee": 190.40,
+        "consistency": 0.40, "split": 0.90, "cycle_goal": 750.0, "payout_min": 500.0,
+        "first_cap": 2_500.0, "later_cap": 3_000.0, "buffer": 103_100.0}
+
+
+def plan_of(book: str) -> dict:
+    return L100 if BOOKS[book].get("plan") == "L100" else L50
+
+
+def dll_of(book: str) -> float:
+    return float(plan_of(book)["dll"])
+
+
+def eval_key(book: str) -> str:
+    return "lucid100" if BOOKS[book].get("plan") == "L100" else "lucid50"
+
+
+def leg_market(book: str, leg: dict) -> str:
+    return leg.get("m") or BOOKS[book]["m"]
+
+
+def markets_of(book: str) -> list[str]:
+    return sorted({leg_market(book, l) for l in BOOKS[book]["legs"]})
 
 
 def hm_add(hm: int, mins: int) -> int:
@@ -232,7 +307,14 @@ def side_of(leg: dict, info: dict) -> int:
 
 def stop_pts(leg: dict, info: dict, tick: float) -> float | None:
     kind, x = leg["stop"]
-    s = x if kind == "pts" else (x * info["atr"] if info.get("atr") is not None else None)
+    if kind == "pts":
+        s = x
+    elif kind == "atr":
+        s = x * info["atr"] if info.get("atr") is not None else None
+    elif kind == "rng":
+        s = x * info["rng15"] if info.get("rng15") is not None else None
+    else:
+        s = None
     if not s or (isinstance(s, float) and math.isnan(s)) or s <= 0:
         return None
     return max(float(s), 2 * tick)
@@ -256,10 +338,10 @@ def decide(leg: dict, info: dict | None, m: str) -> dict:
 
 
 def walk(path: pd.DataFrame, side: int, stop: float, tgt: float, tick: float, n: int, pv: float,
-         final: bool) -> dict:
+         final: bool, dll: float = DLL) -> dict:
     """Port of orb_vote_optimize.day_arrays + outcome on bars hm > D (path), with the blow-OK DLL cap.
     Returns status 'open' (no exit yet) or 'closed' with pts (per contract, after slippage), mae (pts), reason,
-    exit price and exit bar time. mae$ <= -$1,200 => net -$1,200 (dll_1200)."""
+    exit price and exit bar time. mae$ <= -dll => net -dll (dll_1200 / dll_1800)."""
     p = path[path.hm <= FLAT]
     if not len(p):
         return {"status": "pending"}
@@ -269,25 +351,25 @@ def walk(path: pd.DataFrame, side: int, stop: float, tgt: float, tick: float, n:
         fav = (b.high - e) if side == 1 else (e - b.low)
         adv = (b.low - e) if side == 1 else (e - b.high)
         if adv <= -stop:
-            return _closed(e, side, -stop - tick, -stop, "stop", e - side * (stop + tick), b.ts_ny, n, pv, i)
+            return _closed(e, side, -stop - tick, -stop, "stop", e - side * (stop + tick), b.ts_ny, n, pv, i, dll)
         worst = min(worst, adv)
         if fav >= tgt:
-            return _closed(e, side, tgt, worst, "target", e + side * tgt, b.ts_ny, n, pv, i)
-        if n * (worst * pv) - n * COMM <= -DLL:
-            return _closed(e, side, None, worst, "dll_1200", None, b.ts_ny, n, pv, i)
+            return _closed(e, side, tgt, worst, "target", e + side * tgt, b.ts_ny, n, pv, i, dll)
+        if n * (worst * pv) - n * COMM <= -dll:
+            return _closed(e, side, None, worst, f"dll_{int(dll)}", None, b.ts_ny, n, pv, i, dll)
     last = p.iloc[-1]
     if final or int(last.hm) >= FLAT:
         px = float(last.close)
-        return _closed(e, side, side * (px - e) - tick, worst, "eod_1640", px - side * tick, last.ts_ny, n, pv, len(p) - 1)
+        return _closed(e, side, side * (px - e) - tick, worst, "eod_1640", px - side * tick, last.ts_ny, n, pv, len(p) - 1, dll)
     return {"status": "open", "entry": e, "mae": worst, "mark": float(last.close), "mark_ts": last.ts_ny}
 
 
-def _closed(e, side, pts, mae, reason, px, ts, n, pv, i) -> dict:
+def _closed(e, side, pts, mae, reason, px, ts, n, pv, i, dll=DLL) -> dict:
     mae_usd = n * (mae * pv) - n * COMM
-    if mae_usd <= -DLL:
-        net = -DLL
-        reason = "dll_1200"
-        px = e + side * ((-DLL / n + COMM) / pv)
+    if mae_usd <= -dll:
+        net = -dll
+        reason = f"dll_{int(dll)}"
+        px = e + side * ((-dll / n + COMM) / pv)
     else:
         net = n * (pts * pv - COMM)
     return {"status": "closed", "entry": e, "pts": pts, "mae": mae, "reason": reason, "exit": px,
@@ -295,65 +377,70 @@ def _closed(e, side, pts, mae, reason, px, ts, n, pv, i) -> dict:
             "bar_i": i}
 
 
-def day_net_mae(results: list[dict]) -> tuple[float, float]:
-    """Combined day (one account): summed net / worst excursion, capped at -$1,200 (blow-OK combo rule)."""
+def day_net_mae(results: list[dict], dll: float = DLL) -> tuple[float, float]:
+    """Combined day (one account): summed net / worst excursion, capped at -dll (blow-OK combo rule)."""
     pnl = sum(r["net"] for r in results); mae = sum(r["mae_usd"] for r in results)
-    if mae <= -DLL:
-        pnl, mae = -DLL, -DLL
-    pnl = max(pnl, -DLL)
+    if mae <= -dll:
+        pnl, mae = -dll, -dll
+    pnl = max(pnl, -dll)
     return pnl, min(mae, pnl, 0.0)
 
 
-# ---------------------------------------------------------------- Lucid 50K eval tracker (run_path, sequential)
-def fresh_eval(start_day: str | None = None) -> dict:
-    return {"balance": L50["start"], "peak": L50["start"], "locked": False, "days": 0, "start_day": start_day}
+# ---------------------------------------------------------------- Lucid eval tracker (run_path, sequential). Default rules = Lucid 50K.
+def fresh_eval(start_day: str | None = None, rules: dict | None = None) -> dict:
+    R = rules or L50
+    return {"balance": R["start"], "peak": R["start"], "locked": False, "days": 0, "start_day": start_day}
 
 
-def eval_floor(ev: dict) -> float:
-    return L50["locked_floor"] if ev["locked"] else ev["peak"] - L50["mll"]
+def eval_floor(ev: dict, rules: dict | None = None) -> float:
+    R = rules or L50
+    return R["locked_floor"] if ev["locked"] else ev["peak"] - R["mll"]
 
 
-def eval_day(st: dict, day: str, pnl: float, mae: float) -> str | None:
+def eval_day(st: dict, day: str, pnl: float, mae: float, rules: dict | None = None) -> str | None:
     """Apply one session (pnl, mae) to the current attempt. Returns 'pass' / 'blow' / None.
     st: {'eval': {...}, 'passes', 'blows', 'attempts': [...]}"""
+    R = rules or L50
     ev = st["eval"]
     ev["days"] += 1
-    floor = eval_floor(ev)
-    mae_eff = max(mae, -L50["dll"]); pnl_eff = max(pnl, -L50["dll"]) if pnl < 0 else pnl
+    floor = eval_floor(ev, R)
+    mae_eff = max(mae, -R["dll"]); pnl_eff = max(pnl, -R["dll"]) if pnl < 0 else pnl
     if ev["balance"] + mae_eff <= floor + 1e-9 or ev["balance"] + pnl_eff <= floor + 1e-9:
         st["blows"] += 1
         st["attempts"].append({"result": "blow", "day": day, "days": ev["days"], "balance": round(ev["balance"] + pnl_eff, 2),
                                "floor": round(floor, 2), "start_day": ev.get("start_day")})
-        st["eval"] = fresh_eval()
+        st["eval"] = fresh_eval(rules=R)
         return "blow"
     ev["balance"] = round(ev["balance"] + pnl_eff, 2)
-    if ev["balance"] >= L50["lock_trigger"]:
+    if ev["balance"] >= R["lock_trigger"]:
         ev["locked"] = True
     ev["peak"] = max(ev["peak"], ev["balance"])
-    if ev["balance"] >= L50["start"] + L50["profit_target"] - 1e-9:
+    if ev["balance"] >= R["start"] + R["profit_target"] - 1e-9:
         st["passes"] += 1
         st["attempts"].append({"result": "pass", "day": day, "days": ev["days"], "balance": ev["balance"],
                                "start_day": ev.get("start_day")})
-        st["eval"] = fresh_eval()
+        st["eval"] = fresh_eval(rules=R)
         return "pass"
     return None
 
 
-def eval_snapshot(st: dict, open_pnl: float = 0.0, day_net: float = 0.0) -> dict:
+def eval_snapshot(st: dict, open_pnl: float = 0.0, day_net: float = 0.0, rules: dict | None = None) -> dict:
+    R = rules or L50
     ev = st["eval"]
     equity = round(ev["balance"] + day_net + open_pnl, 2)
-    profit = round(equity - L50["start"], 2)
+    profit = round(equity - R["start"], 2)
     fin = st["passes"] + st["blows"]
-    floor = eval_floor(ev)
-    return {"title": "LucidPro 50K", "mode": "live sim (blown evals restart)",
+    floor = eval_floor(ev, R)
+    title = "LucidPro 100K" if R.get("profit_target") == 6_000.0 else "LucidPro 50K"
+    return {"title": title, "mode": "live sim (blown evals restart)",
             "passes": st["passes"], "fails": st["blows"], "blows": st["blows"], "attempts_finished": fin,
             "passing_pct": round(100.0 * st["passes"] / fin, 1) if fin else None,
             "passing_label": f"{st['passes']}/{fin}" if fin else None,
-            "current_profit": profit, "current_progress_pct": round(100.0 * profit / L50["profit_target"], 1),
-            "profit_target": L50["profit_target"], "mll_floor": round(floor, 2), "mll_buffer": round(equity - floor, 2),
-            "mll_locked": bool(ev["locked"]), "dll_limit": L50["dll"], "dll": L50["dll"], "mll": L50["mll"],
-            "start_balance": L50["start"], "current_equity": equity, "eval_days": ev["days"],
-            "locked_mll_balance": L50["locked_floor"]}
+            "current_profit": profit, "current_progress_pct": round(100.0 * profit / R["profit_target"], 1),
+            "profit_target": R["profit_target"], "mll_floor": round(floor, 2), "mll_buffer": round(equity - floor, 2),
+            "mll_locked": bool(ev["locked"]), "dll_limit": R["dll"], "dll": R["dll"], "mll": R["mll"],
+            "start_balance": R["start"], "current_equity": equity, "eval_days": ev["days"],
+            "locked_mll_balance": R["locked_floor"]}
 
 
 # ---------------------------------------------------------------- data
@@ -427,12 +514,13 @@ class CmeMechEngine:
         self.books = {}
         now = self.now_fn()
         for b, spec in BOOKS.items():
-            p = self.state_dir / spec["dir"] / "account.json"
-            s = _read(p) or {}
+            pth = self.state_dir / spec["dir"] / "account.json"
+            s = _read(pth) or {}
+            rules = plan_of(b)
             if not s.get("created_at"):
-                s = {"book": b, "created_at": _iso(now), "balance": L50["start"], "start_balance": L50["start"],
+                s = {"book": b, "created_at": _iso(now), "balance": rules["start"], "start_balance": rules["start"],
                      "positions": [], "sessions": {}, "final_through": None, "trades": 0}
-            s.setdefault("lucid50", {"eval": fresh_eval(), "passes": 0, "blows": 0, "attempts": []})
+            s.setdefault(eval_key(b), {"eval": fresh_eval(rules=rules), "passes": 0, "blows": 0, "attempts": []})
             self.books[b] = s
 
     # ---- persistence
@@ -498,7 +586,7 @@ class CmeMechEngine:
     async def tick(self) -> dict:
         now = self.now_fn()
         now_et = now.astimezone(ET)
-        needed = sorted({BOOKS[b]["m"] for b in BOOKS})
+        needed = sorted({m for b in BOOKS for m in markets_of(b)})
         out = {}
         frames = {}
         for m in needed:
@@ -508,11 +596,10 @@ class CmeMechEngine:
             frames[m] = df
             self._update_daily(m, df, now_et)
         for b in BOOK_ORDER:
-            m = BOOKS[b]["m"]
-            if m not in frames:
+            if not any(m in frames for m in markets_of(b)):
                 continue
             try:
-                out[b] = self._process_book(b, frames[m], now_et)
+                out[b] = self._process_book(b, frames, now_et)
             except Exception:
                 log.exception("cme_mech %s process failed", b)
         self.eng["updated_at"] = _iso(now)
@@ -523,40 +610,56 @@ class CmeMechEngine:
             self.persist()
         return out
 
-    def _process_book(self, b: str, df: pd.DataFrame, now_et: datetime) -> dict:
+    def _process_book(self, b: str, frames: dict, now_et: datetime) -> dict:
         spec, s = BOOKS[b], self.books[b]
-        m = spec["m"]; mk = MK[m]
         created = datetime.fromisoformat(s["created_at"]).astimezone(ET)
-        dl = daily_stats(self.eng["daily"][m])
-        e5 = ema5(df, 820) if any(l["sig"] == "vote60" for l in spec["legs"]) else None
+        dll = dll_of(b)
+        dls = {m: daily_stats(self.eng["daily"][m]) for m in markets_of(b) if m in self.eng.get("daily", {})}
+        e5s = {}
+        for leg in spec["legs"]:
+            if leg["sig"] == "vote60":
+                m = leg_market(b, leg)
+                if m in frames and m not in e5s:
+                    e5s[m] = ema5(frames[m], leg["O"])
+        dates = set()
+        for m, df in frames.items():
+            if m in dls or m in markets_of(b):
+                dates.update(df["date"].unique())
         res = {}
-        for d, g in df.groupby("date"):
-            ds = d.isoformat()
+        for d in sorted(dates, key=lambda x: str(x)):
+            ds = d.isoformat() if hasattr(d, "isoformat") else str(d)
             if s.get("final_through") and ds <= s["final_through"]:
                 continue
             sess = s["sessions"].setdefault(ds, {"legs": {}, "final": False})
             if sess.get("final"):
                 continue
-            g = g.reset_index(drop=True)
             complete = self._session_complete(ds, now_et)
-            prev = prev_stats(dl, ds)
             for leg in spec["legs"]:
                 L = sess["legs"].setdefault(leg["leg"], {})
                 if L.get("done"):
                     continue
+                m = leg_market(b, leg)
+                mk = MK[m]
+                df = frames.get(m)
+                if df is None:
+                    if complete:
+                        L.update({"done": True, "skip": "no bars for market"})
+                    continue
+                g = df[df.date.astype(str) == ds].reset_index(drop=True)
                 D = hm_add(leg["O"], 30)
                 t_dec = datetime.fromisoformat(ds).replace(hour=D // 100, minute=D % 100, tzinfo=ET)
                 if t_dec < created:
                     L.update({"done": True, "skip": "before book start"}); continue
                 if sess.get("halted"):
-                    L.update({"done": True, "skip": "day ended by the $1,200 DLL"}); continue
+                    L.update({"done": True, "skip": f"day ended by the ${int(dll):,} DLL"}); continue
                 path = g[(g.hm > D) & (g.hm <= CAP)]
                 if "side" not in L:
                     if not len(path) and not complete:
                         continue                      # entry bar not closed yet
                     if complete and len(g) < 300:
                         L.update({"done": True, "skip": "session < 300 bars"}); continue
-                    info = votes_for(g, leg["O"], m, prev, e5)
+                    prev = prev_stats(dls[m], ds) if m in dls else None
+                    info = votes_for(g, leg["O"], m, prev, e5s.get(m))
                     dec = decide(leg, info, m)
                     L["decided_at"] = _iso(self.now_fn())
                     if info and info.get("votes"):
@@ -570,7 +673,8 @@ class CmeMechEngine:
                     L.update({"side": dec["side"], "stop_pts": dec["stop_pts"], "tgt_pts": dec["tgt_pts"], "n": leg["n"]})
                     self._event(b, "signal", session=ds, leg=leg["leg"], side=dec["side"], stop_pts=dec["stop_pts"],
                                 tgt_pts=dec["tgt_pts"], votes=(info or {}).get("votes"))
-                r = walk(path, L["side"], L["stop_pts"], L["tgt_pts"], mk["tick"], leg["n"], mk["pv"], final=complete)
+                r = walk(path, L["side"], L["stop_pts"], L["tgt_pts"], mk["tick"], leg["n"], mk["pv"],
+                         final=complete, dll=dll)
                 if r["status"] == "pending":
                     continue
                 self._sync_position(b, ds, leg, L, r, path)
@@ -585,7 +689,7 @@ class CmeMechEngine:
         return f"{b}|{ds}|{leg['leg']}"
 
     def _sync_position(self, b, ds, leg, L, r, path) -> None:
-        s = self.books[b]; m = BOOKS[b]["m"]; mk = MK[m]
+        s = self.books[b]; m = leg_market(b, leg); mk = MK[m]
         side = L["side"]; e = r["entry"]
         pid = self._pos_id(b, ds, leg)
         et0 = path.ts_ny.iloc[0]
@@ -648,24 +752,25 @@ class CmeMechEngine:
         return out
 
     def _combo_dll(self, b, ds, sess) -> None:
-        """One account, several legs: the day's summed worst excursion / P&L capped at -$1,200 ends the day."""
+        """One account, several legs: the day's summed worst excursion / P&L capped at -dll ends the day."""
         if len(BOOKS[b]["legs"]) < 2 or sess.get("halted"):
             return
+        dll = dll_of(b)
         legs = sess["legs"].values()
         closed = [x["result"] for x in legs if x.get("result")]
         opens = [p for p in self.books[b]["positions"] if p.get("session") == ds and p.get("status") == "OPEN"]
-        mae_open = sum(min(-(p.get("mae_pts") or 0) * p["qty"] * MK[BOOKS[b]["m"]]["pv"] - COMM * p["qty"], 0.0) for p in opens)
+        mae_open = sum(min(-(p.get("mae_pts") or 0) * p["qty"] * MK[p["symbol"]]["pv"] - COMM * p["qty"], 0.0) for p in opens)
         tot = sum(r["mae_usd"] for r in closed) + mae_open
-        if tot > -DLL or not opens:
+        if tot > -dll or not opens:
             return
         sess["halted"] = True
-        rest = -DLL - sum(r["net"] for r in closed)
+        rest = -dll - sum(r["net"] for r in closed)
         for i, p in enumerate(opens):
             net = round(rest / len(opens), 2)
             side = 1 if p["side"] == "LONG" else -1
-            px = p["entry"] + side * ((net / p["qty"] + COMM) / MK[BOOKS[b]["m"]]["pv"])
+            px = p["entry"] + side * ((net / p["qty"] + COMM) / MK[p["symbol"]]["pv"])
             fake = {"status": "closed", "entry": p["entry"], "exit": px, "t_exit": datetime.fromisoformat(p.get("mark_at") or p["entry_time"]),
-                    "reason": "dll_1200_day", "net": net, "gross": round(net + COMM * p["qty"], 2), "mae_usd": net, "bar_i": 0}
+                    "reason": f"dll_{int(dll)}_day", "net": net, "gross": round(net + COMM * p["qty"], 2), "mae_usd": net, "bar_i": 0}
             leg = next(l for l in BOOKS[b]["legs"] if l["leg"] == p["leg"])
             self._close_direct(b, ds, leg, sess["legs"][p["leg"]], p, fake)
 
@@ -690,11 +795,11 @@ class CmeMechEngine:
             sess["final"] = True
             s["final_through"] = max(s.get("final_through") or "", ds)
             return
-        pnl, mae = day_net_mae(results) if results else (0.0, 0.0)
-        st = s["lucid50"]
+        pnl, mae = day_net_mae(results, dll_of(b)) if results else (0.0, 0.0)
+        st = s[eval_key(b)]
         if st["eval"].get("start_day") is None:
             st["eval"]["start_day"] = ds
-        outcome = eval_day(st, ds, pnl, mae)
+        outcome = eval_day(st, ds, pnl, mae, rules=plan_of(b))
         if outcome:
             self._event(b, f"eval_{outcome}", session=ds, passes=st["passes"], blows=st["blows"])
         sess.update({"final": True, "day_pnl": round(pnl, 2), "day_mae": round(mae, 2), "traded": traded_any,
@@ -709,15 +814,17 @@ class CmeMechEngine:
         s = self.books[b]
         opens = [p for p in s["positions"] if p.get("status") == "OPEN"]
         op = sum(float(p.get("open_pnl") or 0) for p in opens)
-        st = s["lucid50"]
+        rules = plan_of(b)
+        st = s[eval_key(b)]
         today = max(s["sessions"]) if s["sessions"] else None
         day_net = 0.0
         if today and not s["sessions"][today].get("final"):
             day_net = sum(x["result"]["net"] for x in s["sessions"][today]["legs"].values() if x.get("result"))
-        return {"book": b, "label": BOOKS[b]["label"], "model": MODEL, "market": BOOKS[b]["m"],
-                "contract": MK[BOOKS[b]["m"]]["contract"], "balance": s["balance"], "start_balance": L50["start"],
+        mkts = markets_of(b)
+        return {"book": b, "label": BOOKS[b]["label"], "model": MODEL, "market": "+".join(mkts),
+                "contract": "/".join(MK[m]["contract"] for m in mkts), "balance": s["balance"], "start_balance": rules["start"],
                 "created_at": s["created_at"], "open_pnl": round(op, 2),
-                "eval": eval_snapshot(st, op, day_net), "attempts": st["attempts"][-20:],
+                "eval": eval_snapshot(st, op, day_net, rules=rules), "attempts": st["attempts"][-20:],
                 "backtest": {**BOOKS[b]["backtest"], "label": "backtest (in-sample)",
                              "window": "GC 27 May - 5 Nov 2026, NQ/ES 4 May - 5 Nov 2026"},
                 "today": ({"session": today, "legs": {k: {kk: vv for kk, vv in v.items() if kk not in ("info",)}
@@ -725,7 +832,7 @@ class CmeMechEngine:
 
     def site_payload(self) -> dict:
         return {"updated_at": self.eng.get("updated_at"), "paper_only": True, "model_calls": False,
-                "lucid50": L50, "data": self.eng.get("data"), "books": [self.card(b) for b in BOOK_ORDER]}
+                "lucid50": L50, "lucid100": L100, "data": self.eng.get("data"), "books": [self.card(b) for b in BOOK_ORDER]}
 
 
 def trading_window(now: datetime) -> bool:

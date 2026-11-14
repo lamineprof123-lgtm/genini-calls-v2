@@ -99,7 +99,7 @@ class GhaLoop:
         self.event_tasks: list[asyncio.Task] = []
         self.other_venue = None
         self.other_venue_task: asyncio.Task | None = None
-        self.cme_mech = None                 # t340u mechanical CME books on Lucid 50K (signals/cme_mech.py), no model
+        self.cme_mech = None                 # mechanical CME books on Lucid 50K + 100K (signals/cme_mech.py), no model
         self.cme_mech_task: asyncio.Task | None = None
         for sub in ("state", "logs"):
             (data / sub).mkdir(parents=True, exist_ok=True)
@@ -859,7 +859,7 @@ class GhaLoop:
             self.event_tasks.append(asyncio.create_task(feed.run(), name="event-feed"))
 
     def start_cme_mech(self) -> None:
-        """Six mechanical CME setups (Lucid 50K, blown evals restart). No model call; Yahoo CME 1-min bars."""
+        """Mechanical CME setups (Lucid 50K + Lucid 100K, blown evals restart). No model call; Yahoo CME 1-min bars."""
         if self.dry_run or (self.cfg.get("cme_mech") or {}).get("enabled", True) is False:
             return
         try:

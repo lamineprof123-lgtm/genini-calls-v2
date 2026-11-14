@@ -280,7 +280,9 @@ def test_index_html_table_sort_filters():
                    "data-sort", "bb-panel-filters-v2", "localStorage", "location.hash",
                    "Search books", "Search trades", "All dates", "Last 7 days",
                    "Went + first: Yes", "bGroupChips", "bTypeChips",
-                   "grok bot sent ORB", "Open (", "Close ("):
+                   "grok bot sent ORB", "Open (", "Close (",
+                   "Eval pass %", "trades · W/L", "yes / trades",
+                   "class=\"colhead\"", "booksHeaderRow", "evalPassOf"):
         assert needle in html, needle
     # summary / open-positions / event tables were removed (open rows live in trade history)
     assert 'id="sum"' not in html and 'id="open"' not in html and 'id="evtSec"' not in html

@@ -622,7 +622,7 @@ class PanelLedger:
                              "otherwise from M1 bars; a bar that hits both sides with no 15s path is ?."),
                 "wpf_basis": ("net_usd = gross - round-trip fees; live_net_tick / tick_15s = 15s last-print path; "
                               "m1_ohlc = M1 fallback"),
-                "eval_pass_note": ("Eval passing replays each book's Lucid-only closed trades from $100,000 "
+                "eval_pass_note": ("Eval pass % (passed/attempts) replays each book's Lucid-only closed trades from $100,000 "
                                    "(other-venue BTC excluded; prop firms do not offer BTC) against LucidPro 100K "
                                    "rules: $6,000 profit target, $1,800 daily loss limit, $3,000 end-of-day trailing "
                                    "max loss that locks at $100,100. A pass or a DLL/MLL fail ends the attempt and "

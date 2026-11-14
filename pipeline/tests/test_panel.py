@@ -67,7 +67,7 @@ def test_ledger_tracks_open_mfe_mae_and_close(tmp_path):
     assert ep["mll_buffer"] == 2196.5 and ep["mll_floor"] == 97000.0 and ep["lucid_trades"] == 1
     ov = next(p for p in site["performance"] if p["book"] == "MAIN" and p["venue"] != "LUCID")
     assert "eval_pass" not in ov
-    assert "Eval passing" in site["eval_pass_note"]
+    assert "Eval pass % (passed/attempts)" in site["eval_pass_note"]
     assert site["reset"]["token"] == "tok-1" and site["reset"]["at"].startswith("2026-11-12T18:00")
     assert {p["book"] for p in site["performance"]} >= {"MAIN", "C-OPUS-B", "DS-FLASH", "CB-BRACKET", "C-SONNET"}
 

@@ -33,7 +33,7 @@
   .state.live .dot { animation: pulse 2.4s ease-in-out infinite; }
   @keyframes pulse { 50% { opacity: .25; } }
   .wrap { max-width: 1280px; margin: 16px auto 0; width: 100%; }
-  .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 14px 14px 10px; margin-bottom: 14px; overflow: hidden; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 14px 14px 10px; margin-bottom: 14px; overflow: visible; }
   .card h2 { font-size: 11px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase; color: var(--muted);
              display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; align-items: baseline; }
   .card h2 small { font-weight: 400; letter-spacing: .04em; text-transform: none; color: var(--faint); }
@@ -53,7 +53,9 @@
   td.book, th.sticky, td.sticky {
     position: sticky; left: 0; background: var(--card); z-index: 1; box-shadow: 1px 0 0 var(--line);
   }
-  thead th.sticky { z-index: 4; background: var(--head); }
+  thead th.sticky, tr.colhead th.sticky { z-index: 4; background: var(--head); }
+  tr.colhead th { border-top: 0; box-shadow: 0 1px 0 var(--line); }
+  th .th-hint { display: block; margin-top: 2px; font-size: 8.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--faint); font-weight: 400; }
   tr.group td { background: var(--head); font-family: var(--sans); font-size: 10px; letter-spacing: .14em; text-transform: uppercase;
                 color: var(--muted); padding: 7px 7px; border-top: 1px solid #262c36; text-align: left; white-space: normal; }
   tr.group td.sticky { background: var(--head); z-index: 3; box-shadow: none; }
@@ -444,14 +446,20 @@
   }
 
   const TEXT_KEYS = { book: 1, asset: 1, model: 1, side: 1, status: 1, wpf: 1 };
-  function th(label, key, table, left, sticky, subLabel, subKey, hideSm) {
+  function th(label, key, table, left, sticky, subLabel, subKey, hideSm, hint) {
     const st = state.sort[table] || { key: 'default', dir: 1 };
     const onPri = st.key === key, onSub = !!(subKey && st.key === subKey);
     const arrow = onPri ? `<span class="arrow">${st.dir > 0 ? '▲' : '▼'}</span>`
       : (onSub ? '' : `<span class="arrow idle">↕</span>`);
-    const sub = subLabel ? `<span class="subsort${onSub ? ' on' : ''}" data-sort="${esc(subKey)}" data-table="${esc(table)}">${subLabel}${onSub ? `<span class="arrow">${st.dir > 0 ? '▲' : '▼'}</span>` : `<span class="arrow idle">↕</span>`}</span>` : '';
+    const hintHtml = hint ? `<span class="th-hint">${hint}</span>` : '';
+    let sub = '';
+    if (subLabel) {
+      sub = subKey
+        ? `<span class="subsort${onSub ? ' on' : ''}" data-sort="${esc(subKey)}" data-table="${esc(table)}">${subLabel}${onSub ? `<span class="arrow">${st.dir > 0 ? '▲' : '▼'}</span>` : `<span class="arrow idle">↕</span>`}</span>`
+        : `<span class="th-hint">${subLabel}</span>`;
+    }
     const c = [left ? 'l' : '', sticky ? 'sticky' : '', hideSm ? 'sm-hide' : ''].filter(Boolean).join(' ');
-    return `<th${c ? ' class="' + c + '"' : ''} data-sort="${esc(key)}" data-table="${esc(table)}" title="Sort by ${esc(label)}">${label}${arrow}${sub}</th>`;
+    return `<th${c ? ' class="' + c + '"' : ''} data-sort="${esc(key)}" data-table="${esc(table)}" title="Sort by ${esc(label)}">${label}${arrow}${hintHtml}${sub}</th>`;
   }
   function applySort(t, key) {
     const st = state.sort[t];
@@ -506,7 +514,7 @@
   }
 
   function bookVal(p, key) {
-    const e = p.eval_pass || {};
+    const e = evalPassOf(p) || {};
     switch (key) {
       case 'book': return (p.book || '').toLowerCase();
       case 'model': return (MODEL_NAME[p.model] || p.model || '').toLowerCase();
@@ -660,6 +668,20 @@
     return `<td class="l sticky book"><div class="book-cell">${moreBtn()}<div class="book-body">${esc(bookTitle(x.book))}${orb}${x.venue === 'LUCID' ? '' : '<span class="book-sub">other venue</span>'}</div></div></td>`;
   }
 
+  function evalPassOf(p) {
+    // Lucid-tradable symbols only. BTC-only other-venue books have no Lucid eval.
+    if ((p.venue || '') === 'OTHER-VENUE') return null;
+    return p.eval_pass || null;
+  }
+  function booksHeaderRow() {
+    return `<tr class="colhead">
+      ${th('Book', 'book', 'books', true, true, 'Model / type', 'model')}
+      ${th('Balance', 'balance', 'books', false, false, 'Net $', 'net')}
+      ${th('Win rate', 'win', 'books', false, false, 'trades · W/L', 'trades')}
+      ${th('Went + first %', 'wpf', 'books', false, false, 'yes / trades')}
+      ${th('Eval pass %', 'epass', 'books', false, false, 'Current eval · MLL buffer', 'eprog', false, '(passed / attempts)')}
+    </tr>`;
+  }
   function renderBooks() {
     const P = panel; if (!P) return;
     const perfs = (P.performance || []).filter(bookMatch);
@@ -670,20 +692,16 @@
       $('perfUpd').textContent = `updated ${hm(P.updated_at)} ${TZL} · 0 of ${total} shown`;
       return;
     }
-    let h = `<thead><tr>
-      ${th('Book', 'book', 'books', true, true, 'Model / type', 'model')}
-      ${th('Balance', 'balance', 'books', false, false, 'Net $', 'net')}
-      ${th('Win rate', 'win', 'books', false, false, 'Trades W/L', 'trades')}
-      ${th('Went + first', 'wpf', 'books')}
-      ${th('Eval passing', 'epass', 'books', false, false, 'Current eval · MLL buffer', 'eprog')}
-    </tr></thead><tbody>`;
+    let h = '';
     for (const g of GROUP_ORDER) {
       const list = sortBooks(perfs.filter(p => groupOf(p) === g), st);
       if (!list.length) continue;
       const n = list.length;
-      h += `<tr class="group"><td class="sticky l" colspan="5">${esc(GROUP_META[g].title)} · ${n} book${n === 1 ? '' : 's'}</td></tr>`;
+      h += `<tbody>
+        <tr class="group"><td class="sticky l" colspan="5">${esc(GROUP_META[g].title)} · ${n} book${n === 1 ? '' : 's'}</td></tr>
+        ${booksHeaderRow()}`;
       for (const p of list) {
-        const e = p.eval_pass;
+        const e = evalPassOf(p);
         const pass = e && e.passing_label ? `${Number(e.passing_pct).toFixed(0)}% (${esc(e.passing_label)})` : '—';
         const passCls = e && e.passing_pct != null ? (e.passing_pct >= 50 ? 'pos' : (e.attempts_finished ? 'neg' : 'dim')) : 'dim';
         const prog = e ? Number(e.current_progress_pct) : NaN;
@@ -693,7 +711,7 @@
         const evalSec = [progTxt, mll ? 'MLL ' + mll : '', blows].filter(Boolean).join(' · ');
         const wr = p.win_rate == null ? '—' : (100 * p.win_rate).toFixed(0) + '%';
         const wpf = p.went_positive_first == null ? '—' : esc(p.went_positive_first);
-        const tradesSec = p.trades ? `${p.trades} · ${p.wins} / ${p.losses}` : '0 trades';
+        const tradesSec = p.trades ? `${p.trades} trades · ${p.wins}/${p.losses} W/L` : '0 trades';
         h += `<tr>
           ${bookHeadCell(p)}
           ${tdStack(bal(p.balance), `<span class="${cls(p.net_pnl_usd)}">${usd(p.net_pnl_usd)}</span>`)}
@@ -707,17 +725,17 @@
           ['Balance', bal(p.balance)],
           ['Net $', `<span class="${cls(p.net_pnl_usd)}">${usd(p.net_pnl_usd)}</span>`],
           ['Win rate', wr],
-          ['Trades', p.trades ? `${p.trades} · ${p.wins} W / ${p.losses} L` : '0'],
-          ['Went + first', wpf],
-          ['Eval passing', pass],
+          ['Trades · W/L', p.trades ? `${p.trades} trades · ${p.wins}/${p.losses} W/L` : '0 trades'],
+          ['Went + first % (yes / trades)', wpf],
+          ['Eval pass % (passed / attempts)', pass],
           ['Current eval', progTxt || '—'],
           ['MLL buffer', e && e.mll_buffer != null ? usd(e.mll_buffer, false) : '—'],
           ['Blown', e && e.blows != null ? String(e.blows) : '—'],
           p.eval ? ['Lucid eval', evalLine(p.eval)] : null
         ]));
       }
+      h += '</tbody>';
     }
-    h += '</tbody>';
     $('books').innerHTML = h;
     bindSort('books');
     bindMore('books');

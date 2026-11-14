@@ -301,7 +301,8 @@
     '100K-ES-0930-GAP': 'ES-0930-GAP 100K'
   };
   const ORB_TAG = ' (grok bot sent ORB)';
-  function bookLabel(book) { return ORB_BOOKS[book] ? ORB_BOOKS[book] + ORB_TAG : (book || ''); }
+  function bookTitle(book) { return ORB_BOOKS[book] || book || ''; }
+  function bookLabel(book) { return ORB_BOOKS[book] ? bookTitle(book) + ORB_TAG : (book || ''); }
   function assetName(x) { return ASSET[x.symbol] || ASSET[x.contract] || x.symbol; }
   function posSub(x) {
     return [x.side, qty(x.qty), [x.symbol, x.contract].filter(Boolean).join(' · ')].filter(Boolean).join(' · ');
@@ -652,11 +653,11 @@
       isDry(p) ? '<span class="pill dry">Dry run</span>' : '',
       p.own_reset ? '<span class="pill new">New</span>' : ''
     ].filter(Boolean).join('');
-    return `<td class="l sticky book"><div class="book-cell">${moreBtn()}<div class="book-body"><div class="book-name">${esc(p.book)}${orb}${pills ? ' ' + pills : ''}</div><span class="book-sub">${esc(model)}</span>${sub ? `<span class="book-sub">${esc(sub)}</span>` : ''}</div></div></td>`;
+    return `<td class="l sticky book"><div class="book-cell">${moreBtn()}<div class="book-body"><div class="book-name">${esc(bookTitle(p.book))}${orb}${pills ? ' ' + pills : ''}</div><span class="book-sub">${esc(model)}</span>${sub ? `<span class="book-sub">${esc(sub)}</span>` : ''}</div></div></td>`;
   }
   function tradeBookCell(x) {
     const orb = ORB_BOOKS[x.book] ? `<span class="orb">${esc(ORB_TAG)}</span>` : '';
-    return `<td class="l sticky book"><div class="book-cell">${moreBtn()}<div class="book-body">${esc(x.book)}${orb}${x.venue === 'LUCID' ? '' : '<span class="book-sub">other venue</span>'}</div></div></td>`;
+    return `<td class="l sticky book"><div class="book-cell">${moreBtn()}<div class="book-body">${esc(bookTitle(x.book))}${orb}${x.venue === 'LUCID' ? '' : '<span class="book-sub">other venue</span>'}</div></div></td>`;
   }
 
   function renderBooks() {
@@ -723,10 +724,11 @@
     $('perfUpd').textContent = `updated ${hm(P.updated_at)} ${TZL} · ${shown} of ${total} shown · click a header to sort`;
   }
 
-  function fillSelect(id, values, current, allLabel) {
+  function fillSelect(id, values, current, allLabel, labelFn) {
     const el = $(id); if (!el) return;
+    const lab = v => labelFn ? labelFn(v) : v;
     const opts = [`<option value="">${esc(allLabel)}</option>`]
-      .concat(values.map(v => `<option value="${esc(v)}"${v === current ? ' selected' : ''}>${esc(v)}</option>`));
+      .concat(values.map(v => `<option value="${esc(v)}"${v === current ? ' selected' : ''}>${esc(lab(v))}</option>`));
     el.innerHTML = opts.join('');
     if (current && values.includes(current)) el.value = current;
   }
@@ -739,7 +741,7 @@
     const shown = sortTrades(rows.filter(tradeMatch), state.sort.trades);
     const books = [...new Set(rows.map(x => x.book))].sort();
     const assets = [...new Set(rows.map(assetName).filter(Boolean))].sort();
-    fillSelect('tb', books, state.f.tb, 'All books');
+    fillSelect('tb', books, state.f.tb, 'All books', bookLabel);
     fillSelect('ta', assets, state.f.ta, 'All assets');
 
     $('tradeCount').textContent = `${shown.length} of ${rows.length} shown · ${nOpen} open · ${nClosed} closed · click a header to sort`;

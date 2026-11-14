@@ -297,3 +297,4 @@ def test_index_html_table_sort_filters():
                  "100K-NQ-0930-GAP", "100K-GOLD-0820-VOTE60", "100K-ES-0930-GAP"):
         assert book in html, book
     assert "GOLD-COMBO 100K" in html and "Mechanical · Lucid 100K" in html
+    assert "bookTitle(" in html

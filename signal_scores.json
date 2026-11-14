@@ -1,9 +1,9 @@
 {
-  "updated_at": "2026-11-14T00:32:29.375569+00:00",
+  "updated_at": "2026-11-14T00:34:36.207002+00:00",
   "exit_mode": "uniform-1atr-v1",
   "paper_only": true,
-  "pending": 2631,
-  "n_scored": 15728,
+  "pending": 2608,
+  "n_scored": 15740,
   "models": {
     "gemini-3.6-flash": {
       "n": 474,
@@ -211,12 +211,12 @@
       }
     },
     "deepseek-flash": {
-      "n": 13,
+      "n": 14,
       "label": "deepseek-flash",
-      "win_pct": 0.462,
-      "avg_R": -0.136,
-      "twin_avg_R": -0.231,
-      "edge_R": 0.094,
+      "win_pct": 0.5,
+      "avg_R": -0.056,
+      "twin_avg_R": -0.287,
+      "edge_R": 0.231,
       "by_band": {
         "<0.55": {
           "n": 7,
@@ -226,28 +226,28 @@
           "edge_R": 0.164
         },
         "0.55-0.75": {
-          "n": 6,
-          "win_pct": 0.5,
-          "avg_R": -0.029,
-          "twin_avg_R": -0.042,
-          "edge_R": 0.013
+          "n": 7,
+          "win_pct": 0.571,
+          "avg_R": 0.117,
+          "twin_avg_R": -0.182,
+          "edge_R": 0.299
         }
       },
       "excursions": {
         "2h": {
-          "avg_mfe_atr": 1.133,
-          "avg_mae_atr": 1.117,
-          "n": 13
+          "avg_mfe_atr": 1.311,
+          "avg_mae_atr": 1.06,
+          "n": 14
         },
         "3h": {
-          "avg_mfe_atr": 1.42,
-          "avg_mae_atr": 1.117,
-          "n": 13
+          "avg_mfe_atr": 1.609,
+          "avg_mae_atr": 1.06,
+          "n": 14
         },
         "4h": {
-          "avg_mfe_atr": 1.538,
-          "avg_mae_atr": 1.307,
-          "n": 13
+          "avg_mfe_atr": 1.718,
+          "avg_mae_atr": 1.236,
+          "n": 14
         }
       }
     },
@@ -375,19 +375,19 @@
       }
     },
     "claude-opus-5-5@C-OPUS-B": {
-      "n": 12,
+      "n": 14,
       "label": "claude-opus-5-5@C-OPUS-B",
-      "win_pct": 0.667,
-      "avg_R": 0.304,
-      "twin_avg_R": 0.454,
-      "edge_R": -0.15,
+      "win_pct": 0.714,
+      "avg_R": 0.402,
+      "twin_avg_R": 0.531,
+      "edge_R": -0.129,
       "by_band": {
         "<0.55": {
-          "n": 8,
-          "win_pct": 0.5,
-          "avg_R": -0.038,
-          "twin_avg_R": 0.187,
-          "edge_R": -0.226
+          "n": 10,
+          "win_pct": 0.6,
+          "avg_R": 0.168,
+          "twin_avg_R": 0.348,
+          "edge_R": -0.181
         },
         "0.55-0.75": {
           "n": 4,
@@ -399,36 +399,36 @@
       },
       "excursions": {
         "2h": {
-          "avg_mfe_atr": 3.94,
-          "avg_mae_atr": 0.684,
-          "n": 12
+          "avg_mfe_atr": 3.895,
+          "avg_mae_atr": 0.632,
+          "n": 14
         },
         "3h": {
-          "avg_mfe_atr": 4.116,
-          "avg_mae_atr": 0.684,
-          "n": 12
+          "avg_mfe_atr": 4.108,
+          "avg_mae_atr": 0.632,
+          "n": 14
         },
         "4h": {
-          "avg_mfe_atr": 4.325,
-          "avg_mae_atr": 1.013,
-          "n": 12
+          "avg_mfe_atr": 4.287,
+          "avg_mae_atr": 0.915,
+          "n": 14
         }
       }
     },
     "deepseek-flash@DS-FLASH": {
-      "n": 5,
+      "n": 6,
       "label": "deepseek-flash@DS-FLASH",
-      "win_pct": 0.4,
-      "avg_R": -0.044,
-      "twin_avg_R": -0.447,
-      "edge_R": 0.403,
+      "win_pct": 0.5,
+      "avg_R": 0.129,
+      "twin_avg_R": -0.542,
+      "edge_R": 0.671,
       "by_band": {
         "0.55-0.75": {
-          "n": 3,
-          "win_pct": 0.667,
-          "avg_R": 0.605,
-          "twin_avg_R": -0.731,
-          "edge_R": 1.336
+          "n": 4,
+          "win_pct": 0.75,
+          "avg_R": 0.702,
+          "twin_avg_R": -0.803,
+          "edge_R": 1.505
         },
         "<0.55": {
           "n": 2,
@@ -440,19 +440,19 @@
       },
       "excursions": {
         "2h": {
-          "avg_mfe_atr": 1.628,
-          "avg_mae_atr": 0.837,
-          "n": 5
+          "avg_mfe_atr": 1.96,
+          "avg_mae_atr": 0.751,
+          "n": 6
         },
         "3h": {
-          "avg_mfe_atr": 1.675,
-          "avg_mae_atr": 0.837,
-          "n": 5
+          "avg_mfe_atr": 2.073,
+          "avg_mae_atr": 0.751,
+          "n": 6
         },
         "4h": {
-          "avg_mfe_atr": 1.684,
-          "avg_mae_atr": 1.331,
-          "n": 5
+          "avg_mfe_atr": 2.081,
+          "avg_mae_atr": 1.163,
+          "n": 6
         }
       }
     },
